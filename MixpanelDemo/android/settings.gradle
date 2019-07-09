@@ -1,0 +1,5 @@
+rootProject.name = 'MixpanelDemo'
+include ':react-native-ts'
+project(':react-native-ts').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-ts/android')
+
+include ':app'

@@ -1,0 +1,6 @@
+module Pods_MixpanelDemo {
+  umbrella header "Pods-MixpanelDemo-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,1 @@
+../../../Mixpanel-swift/Mixpanel/ExceptionWrapper.h

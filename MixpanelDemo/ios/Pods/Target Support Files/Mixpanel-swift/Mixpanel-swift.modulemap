@@ -1,0 +1,6 @@
+module Mixpanel {
+  umbrella header "Mixpanel-swift-umbrella.h"
+
+  export *
+  module * { export * }
+}

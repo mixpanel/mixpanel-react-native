@@ -1,0 +1,1 @@
+../../../Target Support Files/Mixpanel-swift/Mixpanel-swift-umbrella.h

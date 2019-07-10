@@ -1,0 +1,1 @@
+../../../Mixpanel-swift/Mixpanel/Mixpanel.h

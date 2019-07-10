@@ -8,7 +8,8 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
-import MixpanelReactNative from 'react-native-ts'
+import MixpanelReactNative from 'react-native-ts';
+
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
   android:
@@ -20,9 +21,11 @@ type Props = {};
 export default class App extends Component<Props> {
   render() {
     if(MixpanelReactNative){
-      MixpanelReactNative.getInformation().then(t => alert(t));
+      MixpanelReactNative.getInformation().then((t) => {
+        return alert(t);
+      });
     }else{
-      alert("Undefined SDK");
+      alert("Undefined MixpanelReactNative");
     }
     return (
       <View style={styles.container}>

@@ -1,8 +1,32 @@
 import Foundation
 import Mixpanel
+import UIKit
 
 @objc(MixpanelReactNative)
 class MixpanelReactNative: NSObject {
+    private var mInstance: MixpanelInstance?;
+    private var welcomeText = "IOS library invoked:: TSPL project";
+    
+    // MARK: - Mixpanel Instance
+    @objc
+    func initialize(_ apiToken: String,
+                    resolver resolve: RCTPromiseResolveBlock,
+                    rejecter reject: RCTPromiseRejectBlock) -> Void {
+        
+        let mpInstance = initialize(apiToken);
+        if(mpInstance != nil){
+            self.mInstance = mpInstance;
+        }
+    }
+    private func initialize(_ apiToken: String,
+                            launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil,
+                            flushInterval: Double = 60,
+                            instanceName: String = UUID().uuidString,
+                            automaticPushTracking: Bool = true,
+                            optOutTrackingByDefault: Bool = true) -> MixpanelInstance? {
+        
+        return Mixpanel.initialize(token: apiToken, launchOptions: launchOptions, flushInterval: flushInterval, instanceName: instanceName, automaticPushTracking: automaticPushTracking, optOutTrackingByDefault: optOutTrackingByDefault);
+    }
     
     @objc
     func getInformation(_ resolve: RCTPromiseResolveBlock,
@@ -15,4 +39,3 @@ class MixpanelReactNative: NSObject {
         resolve(welcomeText);
     }
 }
-

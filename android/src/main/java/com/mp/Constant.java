@@ -1,6 +1,6 @@
 package com.mp;
 
-public class Constants {
+public class Constant {
 
     static final String INSTANCE_NOT_FOUND_ERROR  = "Mixpanel instance not found";
     static final String NULL_EXCEPTION = "Null exception occurred";

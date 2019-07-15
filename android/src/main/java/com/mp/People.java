@@ -30,7 +30,7 @@ public class People {
     {
         if(mInstance == null)
         {
-            promise.resolve(Constants.INSTANCE_NOT_FOUND_ERROR);
+            promise.resolve(Constant.INSTANCE_NOT_FOUND_ERROR);
         }
         else
         {
@@ -48,12 +48,12 @@ public class People {
     {
         if(mInstance == null)
         {
-            promise.resolve(Constants.INSTANCE_NOT_FOUND_ERROR);
+            promise.resolve(Constant.INSTANCE_NOT_FOUND_ERROR);
         }
         else
         {
             mInstance.getPeople().identify(distinctId);
-            promise.resolve(Constants.IDENTIFIED_SUCCESS);
+            promise.resolve(Constant.IDENTIFIED_SUCCESS);
         }
     }
 
@@ -77,13 +77,13 @@ public class People {
 
         if(mInstance == null || jsonObject == null)
         {
-            promise.reject(new Throwable(Constants.NULL_EXCEPTION));
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
         }
         else
         {
 
             mInstance.getPeople().set(jsonObject);
-            promise.resolve(Constants.SET_SUCCESS);
+            promise.resolve(Constant.SET_SUCCESS);
         }
 
     }
@@ -107,12 +107,12 @@ public class People {
         }
         if(mInstance == null || jsonObject == null)
         {
-            promise.reject(new Throwable(Constants.NULL_EXCEPTION));
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
         }
         else
         {
             mInstance.getPeople().setOnce(jsonObject);
-            promise.resolve(Constants.SET_SUCCESS);
+            promise.resolve(Constant.SET_SUCCESS);
         }
 
     }
@@ -135,12 +135,12 @@ public class People {
         }
         if(mInstance == null || jsonObject == null)
         {
-            promise.reject(new Throwable(Constants.NULL_EXCEPTION));
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
         }
         else
         {
             mInstance.getPeople().trackCharge(charge, jsonObject);
-            promise.resolve(Constants.TRACK_CHARGE_SUCCESS);
+            promise.resolve(Constant.TRACK_CHARGE_SUCCESS);
         }
     }
 
@@ -153,12 +153,12 @@ public class People {
     {
         if(mInstance == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
             mInstance.getPeople().clearCharges();
-            promise.resolve(Constants.CLEAR_CHARGE_SUCCESS);
+            promise.resolve(Constant.CLEAR_CHARGE_SUCCESS);
         }
     }
 

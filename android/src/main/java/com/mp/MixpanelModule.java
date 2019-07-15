@@ -39,7 +39,7 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void getInformation(Promise promise)
     {
-        promise.resolve(Constants.LIBRARY_INVOKED);
+        promise.resolve(Constant.LIBRARY_INVOKED);
     }
 
     /*
@@ -55,7 +55,7 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
 
     /*
     Get the instance of MixpanelAPI with providing your project token
-    and boolean value for opting out tracking,  dafault value for optOutTrackingDefault is
+    and boolean value for opting out tracking,  default value for optOutTrackingDefault is
     false by setting it to true will prevent data from being collected by default
     This instance of MixpanelAPI you can use to send events and updates to Mixpanel.
     */
@@ -70,7 +70,7 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
         else
         {
             mInstance = mpInstance;
-            promise.resolve(Constants.GET_INSTANCE_SUCCESS);
+            promise.resolve(Constant.GET_INSTANCE_SUCCESS);
         }
     }
 
@@ -95,19 +95,19 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
     Identify the user uniquely by providing the user distinct id, so all the event, update ,track call
     will manipulate the data only for identified users profile.
     This call does not identify the user for People Analytics to do that you have to call
-    MizpanelAPI.People.identify(String) method.
+    MixpanelAPI.People.identify(String) method.
     */
     @ReactMethod
     public void identify(final String distinctId, Promise promise)
     {
         if(mInstance == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
             mInstance.identify(distinctId);
-            promise.resolve(Constants.IDENTIFIED_SUCCESS);
+            promise.resolve(Constant.IDENTIFIED_SUCCESS);
         }
     }
 
@@ -119,7 +119,7 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
         {
         if(mInstance == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
@@ -137,12 +137,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
     {
         if(mInstance == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
             mInstance.optInTracking();
-            promise.resolve(Constants.OPT_IN_SUCCESS);
+            promise.resolve(Constant.OPT_IN_SUCCESS);
         }
     }
 
@@ -157,12 +157,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
     {
        if(mInstance == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
             mInstance.optInTracking(distinctId);
-            promise.resolve(Constants.OPT_IN_SUCCESS);
+            promise.resolve(Constant.OPT_IN_SUCCESS);
         }
     }
     /*
@@ -184,12 +184,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
             e.printStackTrace();
         }
         if (mInstance == null || jsonObject == null) {
-            promise.reject(new Throwable(Constants.NULL_EXCEPTION));
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
         }
         else
         {
             mInstance.optInTracking(distinctId, jsonObject);
-            promise.resolve(Constants.OPT_IN_SUCCESS);
+            promise.resolve(Constant.OPT_IN_SUCCESS);
         }
     }
     /*
@@ -201,12 +201,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
     {
         if(mInstance == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
             mInstance.optOutTracking();
-            promise.resolve(Constants.OPT_OUT_SUCCESS);
+            promise.resolve(Constant.OPT_OUT_SUCCESS);
         }
     }
 
@@ -222,12 +222,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
 
         if(mInstance == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
             mInstance.track(eventName);
-            promise.resolve(Constants.EVENT_TRACK_SUCCESS);
+            promise.resolve(Constant.EVENT_TRACK_SUCCESS);
         }
 
     }
@@ -251,13 +251,13 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
         }
         if (mInstance== null || jsonObject == null)
         {
-            promise.reject(new Throwable(Constants.NULL_EXCEPTION));
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
         }
         else
         {
 
             mInstance.track(eventName, jsonObject);
-            promise.resolve(Constants.EVENT_TRACK_SUCCESS);
+            promise.resolve(Constant.EVENT_TRACK_SUCCESS);
         }
     }
     /*
@@ -279,12 +279,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
         }
         if(mInstance == null || jsonObject == null)
         {
-            promise.reject(new Throwable(Constants.NULL_EXCEPTION));
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
         }
         else
         {
             mInstance.registerSuperProperties(jsonObject);
-            promise.resolve(Constants.REGISTER_SUPER_PROPERTY_SUCCESS);
+            promise.resolve(Constant.REGISTER_SUPER_PROPERTY_SUCCESS);
         }
     }
 
@@ -306,12 +306,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
         }
         if(mInstance == null || jsonObject == null)
         {
-            promise.reject(new Throwable(Constants.NULL_EXCEPTION));
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
         }
         else
         {
             mInstance.registerSuperPropertiesOnce(jsonObject);
-            promise.resolve(Constants.REGISTER_SUPER_PROPERTY_SUCCESS);
+            promise.resolve(Constant.REGISTER_SUPER_PROPERTY_SUCCESS);
         }
 
     }
@@ -324,12 +324,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
     {
         if(mInstance == null)
         {
-            promise.reject(new Throwable(Constants.NULL_EXCEPTION));
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
         }
         else
         {
             mInstance.unregisterSuperProperty(superPropertyName);
-            promise.resolve(Constants.UNREGISTER_SUPER_PROPERTY_SUCCESS);
+            promise.resolve(Constant.UNREGISTER_SUPER_PROPERTY_SUCCESS);
         }
     }
     /*
@@ -343,7 +343,7 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
     {
         if(mInstance == null)
         {
-            promise.reject(new Throwable(Constants.NULL_EXCEPTION));
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
         }
         else {
             try
@@ -369,12 +369,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
 
         if(mInstance == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
             mInstance.clearSuperProperties();
-            promise.resolve(Constants.CLEAR_SUPER_PROPERTY_SUCCESS);
+            promise.resolve(Constant.CLEAR_SUPER_PROPERTY_SUCCESS);
         }
     }
 
@@ -397,12 +397,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
         }
         if(mInstance == null || jsonObject == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
             mInstance.setGroup(groupKey, jsonObject);
-            promise.resolve(Constants.SET_GROUP_SUCCESS);
+            promise.resolve(Constant.SET_GROUP_SUCCESS);
         }
     }
 
@@ -425,12 +425,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
         }
         if(mInstance == null || jsonArray == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
-            mInstance.setGroup(groupKey, groupIDs);
-            promise.resolve(Constants.SET_GROUP_SUCCESS);
+            mInstance.setGroup(groupKey, jsonArray);
+            promise.resolve(Constant.SET_GROUP_SUCCESS);
         }
     }
 
@@ -453,12 +453,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
         }
         if(mInstance == null || jsonObject == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
-            mInstance.setGroup(groupKey, jsonObject);
-            promise.resolve(Constants.ADD_GROUP_SUCCESS);
+            mInstance.addGroup(groupKey, jsonObject);
+            promise.resolve(Constant.ADD_GROUP_SUCCESS);
         }
     }
 
@@ -482,12 +482,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
         }
         if(mInstance == null || jsonObject == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
-            mInstance.setGroup(groupKey, groupID);
-            promise.resolve(Constants.REMOVE_GROUP_SUCCESS);
+            mInstance.removeGroup(groupKey, jsonObject);
+            promise.resolve(Constant.REMOVE_GROUP_SUCCESS);
         }
     }
 
@@ -505,12 +505,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
     {
         if(mInstance == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
             mInstance.alias(alias,original);
-            promise.resolve(Constants.ALIAS_SUCCESS);
+            promise.resolve(Constant.ALIAS_SUCCESS);
         }
     }
 
@@ -525,12 +525,12 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
     {
         if(mInstance == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {
             mInstance.timeEvent(event);
-            promise.resolve(Constants.TIME_EVENT_SUCCESS);
+            promise.resolve(Constant.TIME_EVENT_SUCCESS);
         }
     }
 
@@ -538,7 +538,7 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
     Push all queued Mixpanel events and People Analytics changes to Mixpanel servers.
     Events and People messages are pushed gradually throughout the lifetime of your application.
     This means that to ensure that all messages are sent to Mixpanel
-    when your application is shut down, you willneed to call flush()
+    when your application is shut down, you will need to call flush()
     to let the Mixpanel library know it should send all remaining messages to the server.
     */
 
@@ -547,7 +547,7 @@ public class MixpanelModule extends ReactContextBaseJavaModule {
     {
         if(mInstance == null)
         {
-            promise.reject(new Throwable(Constants.INSTANCE_NOT_FOUND_ERROR));
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         }
         else
         {

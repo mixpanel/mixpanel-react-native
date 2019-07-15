@@ -38,7 +38,7 @@ public class ReactNativeHelper {
                     jsonObject.put(key, reactToJSON(readableMap.getArray(key)));
                     break;
                 default:
-                    throw new IllegalArgumentException(Constants.UNSUPPORTED_TYPE + valueType);
+                    throw new IllegalArgumentException(Constant.UNSUPPORTED_TYPE + valueType);
 
             }
         }
@@ -70,7 +70,7 @@ public class ReactNativeHelper {
                     jsonArray.put(reactToJSON(readableArray.getArray(i)));
                     break;
                 default:
-                    throw new IllegalArgumentException(Constants.UNSUPPORTED_TYPE + valueType);
+                    throw new IllegalArgumentException(Constant.UNSUPPORTED_TYPE + valueType);
             }
         }
         return jsonArray;

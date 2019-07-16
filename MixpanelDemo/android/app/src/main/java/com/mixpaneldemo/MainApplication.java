@@ -3,7 +3,7 @@ package com.mixpaneldemo;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.mp.MixpanelReactNativePackage;
+import com.mp.MixpanelPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -24,7 +24,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new MixpanelReactNativePackage()
+            new MixpanelPackage()
       );
     }
 

@@ -2,17 +2,24 @@ PODS:
   - Mixpanel-swift (2.6.3):
     - Mixpanel-swift/Complete (= 2.6.3)
   - Mixpanel-swift/Complete (2.6.3)
+  - MixpanelReactNative (1.0.8):
+    - Mixpanel-swift
 
 DEPENDENCIES:
-  - Mixpanel-swift
+  - MixpanelReactNative (from `../node_modules/react-native-ts`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Mixpanel-swift
 
+EXTERNAL SOURCES:
+  MixpanelReactNative:
+    :path: "../node_modules/react-native-ts"
+
 SPEC CHECKSUMS:
   Mixpanel-swift: b022ad6cc352f916581b4f223f8a1e76d047fbe3
+  MixpanelReactNative: bacaae287cb9d9a31d3316fd7ad1586e0ed23427
 
-PODFILE CHECKSUM: 396a530fcdb11694b767dc79e7da8dfb62d4c273
+PODFILE CHECKSUM: 147c140d36427aac83dffa61e9ac41ab5cb1d1fd
 
 COCOAPODS: 1.7.2

@@ -6,6 +6,19 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		19EE36336D4327C60A9103D5156582D0 /* MixpanelReactNative */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = ED45920525F0EF85A7F10295A5BD877C /* Build configuration list for PBXAggregateTarget "MixpanelReactNative" */;
+			buildPhases = (
+			);
+			dependencies = (
+				71BA85B4FBBE1B44E70F04B5BEAC5073 /* PBXTargetDependency */,
+			);
+			name = MixpanelReactNative;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		022A8B487294F0DB9731EFFCC6362FCB /* FileLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC402960A58A75A4B2E52747EFDCE96 /* FileLogging.swift */; };
 		02C0E1F7F38EBDFE7402F04ADC256432 /* AutomaticEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46A180CCDC536D01F62FD332BC9E9C2D /* AutomaticEvents.swift */; };
@@ -15,12 +28,12 @@
 		0A1A07FEE461416D145F89F6A2372F2C /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD41A71A4FC7F15AAB1177C138D20D4 /* Network.swift */; };
 		0E16CEE5894BAC75DFFA6722BF8EE068 /* UIViewSelectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA3299894DFE094B54C5BB051762F6F /* UIViewSelectors.swift */; };
 		0E4CCDCC759D7E71BE6EAFB4CF5CB77E /* Mixpanel-swift-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 92C328E3C4C43560F45BAB11A3D7C19D /* Mixpanel-swift-dummy.m */; };
+		0EAB4662F19B53002BCDF9ECD01BE8E9 /* Pods-MixpanelDemo-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = FEEBCC11EA43FBA72525E29370B6FFB6 /* Pods-MixpanelDemo-dummy.m */; };
 		130F27B3C004C268CB8EFA0CF04822DF /* DisplayTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD1F078D793C79AA7BE78643B7D17F8C /* DisplayTrigger.swift */; };
 		13C6233DAEA682BF931D937C2AA0CA45 /* VariantTweak.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78E74B0FFEDFAFEF67F91004AD769D8F /* VariantTweak.swift */; };
 		1413EBC2428F6EC6B22F6FAF7B699754 /* TweakLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32778231DD098821EBA05A34336B5E2F /* TweakLibrary.swift */; };
 		1884878D9C9C572CB7895B0A66382CC4 /* MixpanelInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F4D75453D61B3FC2A59B5D3EE8F1A4 /* MixpanelInstance.swift */; };
 		1B4262547EC13C25D95AAD80398156B7 /* SHA256.swift in Sources */ = {isa = PBXBuildFile; fileRef = 301ADA5FC1296E35BC30B23526E2F802 /* SHA256.swift */; };
-		21913D0D019921698E855F6F07486D16 /* Pods-MixpanelDemo-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 74FC57419ACE8CAB673BA4080B34E710 /* Pods-MixpanelDemo-umbrella.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		22016479767B4F656A093274C233DC29 /* BaseWebSocketMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6D0159D16EAD31946CEF3592FD1C67 /* BaseWebSocketMessage.swift */; };
 		255689B315A96B9B71A1E8A551B9C085 /* UIImageToNSDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316469789A1128C25A84CF7B4ECD8402 /* UIImageToNSDictionary.swift */; };
 		25774125CC533CF3E97C9033D61D76BB /* UIColorToNSString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB8E57DA1EF6B097EF5DF84556E30E5 /* UIColorToNSString.swift */; };
@@ -35,7 +48,6 @@
 		392D637B481F2B159346F20206D3388F /* TakeoverNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B11184A59DCC4EAAB2C5C32995D56A /* TakeoverNotification.swift */; };
 		3C6D948A97494088706F188EAD228427 /* CGAffineTransformToNSDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C9FDA10C582706C25D2CAAC8F117328 /* CGAffineTransformToNSDictionary.swift */; };
 		40337ED91F83D3B0A50148FE40D3F959 /* Flush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ADB89A451D88E849A8084B4A3F6122C /* Flush.swift */; };
-		428E849F5AF1900C3EEABCB04744012C /* Pods-MixpanelDemo-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = FEEBCC11EA43FBA72525E29370B6FFB6 /* Pods-MixpanelDemo-dummy.m */; };
 		49850BA673D055A8EAAA3F5EA860306D /* CGPointToNSDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3720BC783199BD522ECE5EA3D537E42 /* CGPointToNSDictionary.swift */; };
 		4E2BEC0725A14AC16BE23A61A3DF647F /* TweakPersistency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E22236B26517A9EC6423827397BDBF2 /* TweakPersistency.swift */; };
 		517BB920E71329FE49559ECBACE369AC /* PrintLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B83F6646A0ADF6CAE231066E0F4FF1C /* PrintLogging.swift */; };
@@ -49,10 +61,11 @@
 		618462488BBE803CD9364C89573114DC /* VariantAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE0731C99A87D4483546D8A46FCAEA9 /* VariantAction.swift */; };
 		649AC0DA8CCC3FF6D07EFDA5278E0E7A /* Pods-MixpanelDemo-tvOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F92739C4B12D75CA8F41197E447A2193 /* Pods-MixpanelDemo-tvOS-dummy.m */; };
 		69315E9D0DF6C1BFBD56B69101DFDB0C /* CGRectToNSDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB257DA777237F763F4F440E87C196B /* CGRectToNSDictionary.swift */; };
-		6B5F3779AEA497647DAEFBF6D834C51B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8143A63A7605FCCE182B0B916B4ED614 /* Foundation.framework */; };
 		722229A9A09E897FC1AEDB01FC6D048D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CFCDF8F448D838A287AE7CF3F8E3BF /* Constants.swift */; };
+		7249D74A703F06C865265C0DE4979A21 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
 		759547DB543E045C0C26BDFAC51AF5E0 /* SessionMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99889FD452C5E4B1528F604E5B74FD56 /* SessionMetadata.swift */; };
 		7B17FFA37F2FED3C0AC8735C42CEAF00 /* Clip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96664C9F50CF10A93E297909C90A1225 /* Clip.swift */; };
+		7BC9EA68DF8ADFB2B828E57899FD2DD0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
 		802AB4AA751BE7324DB5E0EF2A644774 /* Mixpanel-swift-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = BC750DB1A0A1B6D1557B77E4E4B8559B /* Mixpanel-swift-umbrella.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		84AFB9B7C0CB8272332CBD25EFA4166D /* Pods-MixpanelDemo-tvOS-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E395AE8535B36355D991FBDA5029780 /* Pods-MixpanelDemo-tvOS-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		861EAF2FCCE1950298E9D5C0CF93E889 /* TweakClusterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FB91B1C1F8D2AE1EA543D2120E5BA7A /* TweakClusterType.swift */; };
@@ -81,6 +94,7 @@
 		C441FE58259527B05BD64FC9A816039A /* TweakBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DCB07FCE7C7168E715FBB0A190443B1 /* TweakBinding.swift */; };
 		C53B66A5404F39545568C87242420A60 /* AutomaticProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6DA7638290DE55B31C019E3D4D95AB4 /* AutomaticProperties.swift */; };
 		C74141935929FDA53B6FC677E2AA46A3 /* FlushRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63678F97FF2532DA3AF2EDE16FB41506 /* FlushRequest.swift */; };
+		C8EADB5D915050A46970E3D1DFA97B6F /* Pods-MixpanelDemo-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 74FC57419ACE8CAB673BA4080B34E710 /* Pods-MixpanelDemo-umbrella.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		CA9270580CC97B52A7BA100961263AF2 /* Variant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F8D4FEBD6B1A1F39AF01000428A9834 /* Variant.swift */; };
 		CCD7A428D07F8BE046B17F1B48B8713E /* MD5.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05A67761831C6090C1BFBD5D5E529D3 /* MD5.swift */; };
 		CE5225F45B254AC41AD4A20B72816E05 /* TweakViewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49802C4B18226BFDE3FED67977479A5C /* TweakViewData.swift */; };
@@ -97,7 +111,6 @@
 		E7394A3F94DFFDD6A03F3AF52C6B7D55 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9B72002E92E1A8CC073BA6F2F011DED /* Error.swift */; };
 		EE67D125AB8041734CF6348F4AB09B9D /* TakeoverNotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D250A1B7001FD8D6E4613F29A49FA0AD /* TakeoverNotificationViewController.swift */; };
 		EE7ECD610B02702D4495DC3BE3DD6FB0 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95CA1CF4F86B6445D04CE4CD023E4497 /* WebSocket.swift */; };
-		EF4D49225591F14D57670DBF2AF59ECD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8143A63A7605FCCE182B0B916B4ED614 /* Foundation.framework */; };
 		EFCB518340AAE7C94D1B090BD35D350B /* MiniNotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B62D16DE23958C9175087B71B7C29000 /* MiniNotificationViewController.swift */; };
 		F26B3822105D5EB239DB1BC8D5DE425E /* Mixpanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FA4D84E8AF0C4EF916BC99C40EA0E5A /* Mixpanel.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		F270199CEEDA22BBE0833EF479323A8F /* TweakCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D977CACDC16403D0CE0E66700D1475BB /* TweakCollection.swift */; };
@@ -108,7 +121,21 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		8A8D9D173F3F5F5C62C7887F810303DA /* PBXContainerItemProxy */ = {
+		086EBE8BACC8B531668EB2E38090558E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 19EE36336D4327C60A9103D5156582D0;
+			remoteInfo = MixpanelReactNative;
+		};
+		3163CED1AA746E8A5D565E34546C1667 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E1886A99D3887E7B636CFCD67E199412;
+			remoteInfo = "Mixpanel-swift";
+		};
+		CB55E10F77A28A395FF658E0F785ED2F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
@@ -153,9 +180,11 @@
 		301ADA5FC1296E35BC30B23526E2F802 /* SHA256.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SHA256.swift; path = Mixpanel/SHA256.swift; sourceTree = "<group>"; };
 		3106651F608FF9E872964798302D36DE /* libMixpanel-swift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libMixpanel-swift.a"; path = "libMixpanel-swift.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		316469789A1128C25A84CF7B4ECD8402 /* UIImageToNSDictionary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UIImageToNSDictionary.swift; path = Mixpanel/UIImageToNSDictionary.swift; sourceTree = "<group>"; };
+		3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		32778231DD098821EBA05A34336B5E2F /* TweakLibrary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TweakLibrary.swift; path = Mixpanel/TweakLibrary.swift; sourceTree = "<group>"; };
 		3403C21A057AF6658C8DD2A5ED4EB027 /* Pods-MixpanelDemo-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-MixpanelDemo-acknowledgements.markdown"; sourceTree = "<group>"; };
 		35869F1408AF8C83D9D7246CA4B76FE1 /* Pods-MixpanelDemo-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-MixpanelDemo-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		3A9D2C5DC3CE03EB615D83ABB04A759E /* MixpanelReactNative.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; path = MixpanelReactNative.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		3BA0284594809FF340679CA02C8B9C4C /* CodelessBinding.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CodelessBinding.swift; path = Mixpanel/CodelessBinding.swift; sourceTree = "<group>"; };
 		3BCD8ECA29C87696F9DDFD41A0B3ABD3 /* Tweak.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Tweak.swift; path = Mixpanel/Tweak.swift; sourceTree = "<group>"; };
 		3C465AA7BE28F36077D5D03A4B888BA2 /* Pods-MixpanelDemo-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-MixpanelDemo-acknowledgements.plist"; sourceTree = "<group>"; };
@@ -176,6 +205,7 @@
 		5602FA03D19FE98C2F05D2484D641D46 /* Mixpanel-swift-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Mixpanel-swift-prefix.pch"; sourceTree = "<group>"; };
 		565B4F3C59B4B46DEEF9F574094683E1 /* MPCloseButton@3x.png */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = image.png; name = "MPCloseButton@3x.png"; path = "Mixpanel/MPCloseButton@3x.png"; sourceTree = "<group>"; };
 		57A19B5A361652FA836D422336A2B19C /* Pods-MixpanelDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-MixpanelDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		595E4FF4258971CB3B35CC7A6AE88AE9 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; path = README.md; sourceTree = "<group>"; };
 		5AE6AC7ED522481FEA7C24AB0DCEB6B0 /* SnapshotMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SnapshotMessage.swift; path = Mixpanel/SnapshotMessage.swift; sourceTree = "<group>"; };
 		5C9FDA10C582706C25D2CAAC8F117328 /* CGAffineTransformToNSDictionary.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CGAffineTransformToNSDictionary.swift; path = Mixpanel/CGAffineTransformToNSDictionary.swift; sourceTree = "<group>"; };
 		5CAF37E31839D4A860F4F8C1E49EC720 /* Pods_MixpanelDemo_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_MixpanelDemo_tvOS.framework; path = "Pods-MixpanelDemo-tvOS.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -186,6 +216,7 @@
 		69200EBCE498BD7C95B8E92E259F3789 /* InAppButton.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = InAppButton.swift; path = Mixpanel/InAppButton.swift; sourceTree = "<group>"; };
 		6E6D0159D16EAD31946CEF3592FD1C67 /* BaseWebSocketMessage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BaseWebSocketMessage.swift; path = Mixpanel/BaseWebSocketMessage.swift; sourceTree = "<group>"; };
 		6FFB343F8BE8E3333E7A5BC8F8DCCC4E /* TweakGroup.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TweakGroup.swift; path = Mixpanel/TweakGroup.swift; sourceTree = "<group>"; };
+		724FF40AFF057D990D057FF33DA698F8 /* MixpanelReactNative.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = MixpanelReactNative.xcconfig; sourceTree = "<group>"; };
 		74CBEF51D38A51533070D07546395DB2 /* Pods-MixpanelDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-MixpanelDemo.release.xcconfig"; sourceTree = "<group>"; };
 		74FC57419ACE8CAB673BA4080B34E710 /* Pods-MixpanelDemo-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-MixpanelDemo-umbrella.h"; sourceTree = "<group>"; };
 		78E74B0FFEDFAFEF67F91004AD769D8F /* VariantTweak.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VariantTweak.swift; path = Mixpanel/VariantTweak.swift; sourceTree = "<group>"; };
@@ -194,7 +225,6 @@
 		7C6F0355C5F98321E0058ABD63188F8D /* TweakableType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TweakableType.swift; path = Mixpanel/TweakableType.swift; sourceTree = "<group>"; };
 		7EB3AB911E5EE72CD2235DF6D257946E /* People.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = People.swift; path = Mixpanel/People.swift; sourceTree = "<group>"; };
 		7FB91B1C1F8D2AE1EA543D2120E5BA7A /* TweakClusterType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TweakClusterType.swift; path = Mixpanel/TweakClusterType.swift; sourceTree = "<group>"; };
-		8143A63A7605FCCE182B0B916B4ED614 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		821CAC51A06EFB927BDAD88B2384D753 /* ObjectSerializer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ObjectSerializer.swift; path = Mixpanel/ObjectSerializer.swift; sourceTree = "<group>"; };
 		82D9ECC89486516BBE76C6C43945CF0F /* MiniNotificationViewController.xib */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = file.xib; name = MiniNotificationViewController.xib; path = Mixpanel/MiniNotificationViewController.xib; sourceTree = "<group>"; };
 		8EB8E57DA1EF6B097EF5DF84556E30E5 /* UIColorToNSString.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UIColorToNSString.swift; path = Mixpanel/UIColorToNSString.swift; sourceTree = "<group>"; };
@@ -259,6 +289,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		069D6E996724103A87FFC1E1BCEC9AA6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		85668D3E44997A31AA18D372238C9E06 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -270,7 +307,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6B5F3779AEA497647DAEFBF6D834C51B /* Foundation.framework in Frameworks */,
+				7BC9EA68DF8ADFB2B828E57899FD2DD0 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,14 +315,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EF4D49225591F14D57670DBF2AF59ECD /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E3293B68693AD9FE822654A9299F98DC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				7249D74A703F06C865265C0DE4979A21 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,12 +346,14 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		1F9FCB3618DC551B524D67B669081319 /* Frameworks */ = {
+		43AC5E47D37D2EC4A1D2A5F621DD3F88 /* MixpanelReactNative */ = {
 			isa = PBXGroup;
 			children = (
-				D02E61C1D1A202565BB5EEA211202F55 /* tvOS */,
+				B67F8DB6452448FAA09404219386B668 /* Pod */,
+				DB2E3DCF1BC3A2B6C487E110DCF57C61 /* Support Files */,
 			);
-			name = Frameworks;
+			name = MixpanelReactNative;
+			path = "../../node_modules/react-native-ts";
 			sourceTree = "<group>";
 		};
 		546AFBA7489E96403497E66D5F53EEB6 /* Complete */ = {
@@ -419,6 +451,14 @@
 			name = Complete;
 			sourceTree = "<group>";
 		};
+		7527D4E62AA6ECA6F500BBE6E5C47226 /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				43AC5E47D37D2EC4A1D2A5F621DD3F88 /* MixpanelReactNative */,
+			);
+			name = "Development Pods";
+			sourceTree = "<group>";
+		};
 		90391EAB308148890EAD9AB3D6E8D5C0 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -463,6 +503,23 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		B67F8DB6452448FAA09404219386B668 /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				3A9D2C5DC3CE03EB615D83ABB04A759E /* MixpanelReactNative.podspec */,
+				595E4FF4258971CB3B35CC7A6AE88AE9 /* README.md */,
+			);
+			name = Pod;
+			sourceTree = "<group>";
+		};
+		C0834CEBB1379A84116EF29F93051C60 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
 		CE130C411671FF2E2D037131E54DD14D /* Targets Support Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -477,19 +534,29 @@
 			isa = PBXGroup;
 			children = (
 				9D940727FF8FB9C785EB98E56350EF41 /* Podfile */,
-				1F9FCB3618DC551B524D67B669081319 /* Frameworks */,
+				7527D4E62AA6ECA6F500BBE6E5C47226 /* Development Pods */,
+				D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */,
 				1254959D798DE0E6978B43ECF7703730 /* Pods */,
 				E057EB670281C6F8C1A58792610EE79E /* Products */,
 				CE130C411671FF2E2D037131E54DD14D /* Targets Support Files */,
 			);
 			sourceTree = "<group>";
 		};
-		D02E61C1D1A202565BB5EEA211202F55 /* tvOS */ = {
+		D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				8143A63A7605FCCE182B0B916B4ED614 /* Foundation.framework */,
+				C0834CEBB1379A84116EF29F93051C60 /* iOS */,
 			);
-			name = tvOS;
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DB2E3DCF1BC3A2B6C487E110DCF57C61 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				724FF40AFF057D990D057FF33DA698F8 /* MixpanelReactNative.xcconfig */,
+			);
+			name = "Support Files";
+			path = "../../ios/Pods/Target Support Files/MixpanelReactNative";
 			sourceTree = "<group>";
 		};
 		E057EB670281C6F8C1A58792610EE79E /* Products */ = {
@@ -541,19 +608,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4BB6E4AB0312908F8884F7D6E74659B7 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C8EADB5D915050A46970E3D1DFA97B6F /* Pods-MixpanelDemo-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5AC65820C9021DAD091FBD11C0494463 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				84AFB9B7C0CB8272332CBD25EFA4166D /* Pods-MixpanelDemo-tvOS-umbrella.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		5B1B664917C9C066F2379A78F5C5E805 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				21913D0D019921698E855F6F07486D16 /* Pods-MixpanelDemo-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -572,16 +639,17 @@
 /* Begin PBXNativeTarget section */
 		447C36E429D183F19BE479742852D735 /* Pods-MixpanelDemo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6E69D63690B363688251D3B16EEAE77A /* Build configuration list for PBXNativeTarget "Pods-MixpanelDemo" */;
+			buildConfigurationList = BDF56F281310F8D1E0F7222184A65F03 /* Build configuration list for PBXNativeTarget "Pods-MixpanelDemo" */;
 			buildPhases = (
-				5B1B664917C9C066F2379A78F5C5E805 /* Headers */,
-				747510EEFCFA0DEA92BAE75FFD0BC8D1 /* Sources */,
-				E3293B68693AD9FE822654A9299F98DC /* Frameworks */,
+				4BB6E4AB0312908F8884F7D6E74659B7 /* Headers */,
+				857805245BBF9A495577B46E85A30246 /* Sources */,
+				069D6E996724103A87FFC1E1BCEC9AA6 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				D44E71464C5AB125A333FCDBE591794A /* PBXTargetDependency */,
+				465D5337623DDE1E33783A58AC0446B8 /* PBXTargetDependency */,
+				5C6F4F3DD884C085FE864A6B19B04526 /* PBXTargetDependency */,
 			);
 			name = "Pods-MixpanelDemo";
 			productName = "Pods-MixpanelDemo";
@@ -665,6 +733,7 @@
 			projectRoot = "";
 			targets = (
 				E1886A99D3887E7B636CFCD67E199412 /* Mixpanel-swift */,
+				19EE36336D4327C60A9103D5156582D0 /* MixpanelReactNative */,
 				447C36E429D183F19BE479742852D735 /* Pods-MixpanelDemo */,
 				8463867ABB299E3887236E9741825E42 /* Pods-MixpanelDemo-tvOS */,
 				D4D73D4EF626467FA08A0D5C9C153A34 /* Pods-MixpanelDemo-tvOSTests */,
@@ -733,11 +802,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		747510EEFCFA0DEA92BAE75FFD0BC8D1 /* Sources */ = {
+		857805245BBF9A495577B46E85A30246 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				428E849F5AF1900C3EEABCB04744012C /* Pods-MixpanelDemo-dummy.m in Sources */,
+				0EAB4662F19B53002BCDF9ECD01BE8E9 /* Pods-MixpanelDemo-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -844,41 +913,30 @@
 			target = 8463867ABB299E3887236E9741825E42 /* Pods-MixpanelDemo-tvOS */;
 			targetProxy = DADBF5FC8A5F3A8BBBEFB4626DDEF09B /* PBXContainerItemProxy */;
 		};
-		D44E71464C5AB125A333FCDBE591794A /* PBXTargetDependency */ = {
+		465D5337623DDE1E33783A58AC0446B8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "Mixpanel-swift";
 			target = E1886A99D3887E7B636CFCD67E199412 /* Mixpanel-swift */;
-			targetProxy = 8A8D9D173F3F5F5C62C7887F810303DA /* PBXContainerItemProxy */;
+			targetProxy = CB55E10F77A28A395FF658E0F785ED2F /* PBXContainerItemProxy */;
+		};
+		5C6F4F3DD884C085FE864A6B19B04526 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MixpanelReactNative;
+			target = 19EE36336D4327C60A9103D5156582D0 /* MixpanelReactNative */;
+			targetProxy = 086EBE8BACC8B531668EB2E38090558E /* PBXContainerItemProxy */;
+		};
+		71BA85B4FBBE1B44E70F04B5BEAC5073 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Mixpanel-swift";
+			target = E1886A99D3887E7B636CFCD67E199412 /* Mixpanel-swift */;
+			targetProxy = 3163CED1AA746E8A5D565E34546C1667 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		0117D00964786961DBDF5A4D31EC456C /* Release */ = {
+		1A821F280C052A7AF6389D80DF5E917D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 74CBEF51D38A51533070D07546395DB2 /* Pods-MixpanelDemo.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-MixpanelDemo/Pods-MixpanelDemo.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		2A6BF336C0426E5809937650B4958C4C /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 35869F1408AF8C83D9D7246CA4B76FE1 /* Pods-MixpanelDemo-tvOSTests.release.xcconfig */;
+			baseConfigurationReference = F86AB1E48128305C318B79F19F8E2074 /* Pods-MixpanelDemo-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CODE_SIGN_IDENTITY = "";
@@ -892,6 +950,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "Target Support Files/Pods-MixpanelDemo-tvOSTests/Pods-MixpanelDemo-tvOSTests-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-MixpanelDemo-tvOSTests/Pods-MixpanelDemo-tvOSTests.modulemap";
@@ -900,15 +959,46 @@
 				PODS_ROOT = "$(SRCROOT)";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = appletvos;
+				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.2;
-				VALIDATE_PRODUCT = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Release;
+			name = Debug;
+		};
+		212CC228C168242727DAE9A9755030A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2FF19830E9E8D2E6516B409E39381C2C /* Pods-MixpanelDemo-tvOS.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-MixpanelDemo-tvOS/Pods-MixpanelDemo-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-MixpanelDemo-tvOS/Pods-MixpanelDemo-tvOS.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
 		};
 		3E0B936ECFE96FCA483BE9DA0F3B2F0E /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -959,7 +1049,91 @@
 			};
 			name = Debug;
 		};
-		480747ED71ED613F95D08E24EDB2DE97 /* Debug */ = {
+		444A26ED08E4E60EC9F9BFC4D40D90B7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 724FF40AFF057D990D057FF33DA698F8 /* MixpanelReactNative.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4F469AA115E7C830226EAF02D6CCC5C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 35869F1408AF8C83D9D7246CA4B76FE1 /* Pods-MixpanelDemo-tvOSTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-MixpanelDemo-tvOSTests/Pods-MixpanelDemo-tvOSTests-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-MixpanelDemo-tvOSTests/Pods-MixpanelDemo-tvOSTests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		769C3472D1AA8B64ADBE7FC3832B3D9E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 724FF40AFF057D990D057FF33DA698F8 /* MixpanelReactNative.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		852F20C07FC6F18682DEDD460E217204 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 74CBEF51D38A51533070D07546395DB2 /* Pods-MixpanelDemo.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-MixpanelDemo/Pods-MixpanelDemo.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		894CACB6711C1A51674095998587FB73 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 57A19B5A361652FA836D422336A2B19C /* Pods-MixpanelDemo.debug.xcconfig */;
 			buildSettings = {
@@ -981,7 +1155,7 @@
 			};
 			name = Debug;
 		};
-		68F07807C8D62F2D76C744A41F3D874D /* Release */ = {
+		8F17DC3A99F99FBAD606CE6963886315 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1038,111 +1212,10 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
-				TVOS_DEPLOYMENT_TARGET = 9.2;
 			};
 			name = Release;
 		};
-		9A2ADF7FBAE4B179FC51A862D9774128 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = F86AB1E48128305C318B79F19F8E2074 /* Pods-MixpanelDemo-tvOSTests.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-MixpanelDemo-tvOSTests/Pods-MixpanelDemo-tvOSTests-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-MixpanelDemo-tvOSTests/Pods-MixpanelDemo-tvOSTests.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.2;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		BBEFF88395D6EBA25CBDAFC3BA0CC85B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2FF19830E9E8D2E6516B409E39381C2C /* Pods-MixpanelDemo-tvOS.debug.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-MixpanelDemo-tvOS/Pods-MixpanelDemo-tvOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-MixpanelDemo-tvOS/Pods-MixpanelDemo-tvOS.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.2;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		CF3372873828F9FA3C2BCE0CCDE79974 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2F0361B8AB7935EB2CC7750201B0FF61 /* Pods-MixpanelDemo-tvOS.release.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-MixpanelDemo-tvOS/Pods-MixpanelDemo-tvOS-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-MixpanelDemo-tvOS/Pods-MixpanelDemo-tvOS.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = appletvos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.2;
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		E1ED6DABFEFD9C54EE38EDA3D2F7092C /* Debug */ = {
+		916E0404255105F480DC4950B7625F7A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1203,9 +1276,42 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
-				TVOS_DEPLOYMENT_TARGET = 9.2;
 			};
 			name = Debug;
+		};
+		E384B823EA2EC0E39D513750A2961A34 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2F0361B8AB7935EB2CC7750201B0FF61 /* Pods-MixpanelDemo-tvOS.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-MixpanelDemo-tvOS/Pods-MixpanelDemo-tvOS-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-MixpanelDemo-tvOS/Pods-MixpanelDemo-tvOS.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
@@ -1213,8 +1319,8 @@
 		0491939CEB2D927963044BF672A667E1 /* Build configuration list for PBXNativeTarget "Pods-MixpanelDemo-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BBEFF88395D6EBA25CBDAFC3BA0CC85B /* Debug */,
-				CF3372873828F9FA3C2BCE0CCDE79974 /* Release */,
+				212CC228C168242727DAE9A9755030A9 /* Debug */,
+				E384B823EA2EC0E39D513750A2961A34 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1222,17 +1328,8 @@
 		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E1ED6DABFEFD9C54EE38EDA3D2F7092C /* Debug */,
-				68F07807C8D62F2D76C744A41F3D874D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		6E69D63690B363688251D3B16EEAE77A /* Build configuration list for PBXNativeTarget "Pods-MixpanelDemo" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				480747ED71ED613F95D08E24EDB2DE97 /* Debug */,
-				0117D00964786961DBDF5A4D31EC456C /* Release */,
+				916E0404255105F480DC4950B7625F7A /* Debug */,
+				8F17DC3A99F99FBAD606CE6963886315 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1249,8 +1346,26 @@
 		8E45C7B3B492E63B0607C56858016BE1 /* Build configuration list for PBXNativeTarget "Pods-MixpanelDemo-tvOSTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9A2ADF7FBAE4B179FC51A862D9774128 /* Debug */,
-				2A6BF336C0426E5809937650B4958C4C /* Release */,
+				1A821F280C052A7AF6389D80DF5E917D /* Debug */,
+				4F469AA115E7C830226EAF02D6CCC5C6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BDF56F281310F8D1E0F7222184A65F03 /* Build configuration list for PBXNativeTarget "Pods-MixpanelDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				894CACB6711C1A51674095998587FB73 /* Debug */,
+				852F20C07FC6F18682DEDD460E217204 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ED45920525F0EF85A7F10295A5BD877C /* Build configuration list for PBXAggregateTarget "MixpanelReactNative" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				444A26ED08E4E60EC9F9BFC4D40D90B7 /* Debug */,
+				769C3472D1AA8B64ADBE7FC3832B3D9E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

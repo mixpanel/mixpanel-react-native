@@ -23,7 +23,6 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
-		2A76BD964D394E279E72C93E /* libMixpanelReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 106681A3D5E6449699087264 /* libMixpanelReactNative.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -37,12 +36,13 @@
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* MixpanelDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MixpanelDemoTests.m */; };
 		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
-		518279919B7FD2C272526517 /* libPods-MixpanelDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F069EC33DE82BC52F4DE16C /* libPods-MixpanelDemo.a */; };
-		6E63ACAF22D6026E008D1A17 /* Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E63ACAE22D6026E008D1A17 /* Default.swift */; };
+		3FC89546842823D98F26C03D /* Pods_MixpanelDemo_tvOSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAE2FB65AC1B8C3E6C9D159F /* Pods_MixpanelDemo_tvOSTests.framework */; };
+		5D28BB3233BA765B475184C3 /* Pods_MixpanelDemo_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DE712B0D65233658AA93DE3 /* Pods_MixpanelDemo_tvOS.framework */; };
+		65DE78121E1DE05E4283BD68 /* libPods-MixpanelDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 579AF8435FDA58415D516809 /* libPods-MixpanelDemo.a */; };
+		6A758D612CAC449CAF186F7C /* libMixpanelReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 237D36D5021A44EE81584A6B /* libMixpanelReactNative.a */; };
+		6EF868C322DDCE6700CA0877 /* Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF868C222DDCE6700CA0877 /* Default.swift */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
-		8ED39B9BEECABF01D11134AF /* Pods_MixpanelDemo_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1056C8A20318C23B5D4B7FB /* Pods_MixpanelDemo_tvOS.framework */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
-		E25FEE82745BB5978B4230B4 /* Pods_MixpanelDemo_tvOSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3D83DCBCB44F4DA8B346E07 /* Pods_MixpanelDemo_tvOSTests.framework */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
 		ED2971652150620600B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED2971642150620600B7C4FE /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
@@ -272,37 +272,37 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
-		6E63ACA022D6025C008D1A17 /* PBXContainerItemProxy */ = {
+		6EF868E922DDCE6800CA0877 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = EDEBC6D6214B3E7000DD5AC8;
 			remoteInfo = jsi;
 		};
-		6E63ACA222D6025C008D1A17 /* PBXContainerItemProxy */ = {
+		6EF868EB22DDCE6800CA0877 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = EDEBC73B214B45A300DD5AC8;
 			remoteInfo = jsiexecutor;
 		};
-		6E63ACA422D6025C008D1A17 /* PBXContainerItemProxy */ = {
+		6EF868ED22DDCE6800CA0877 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = ED296FB6214C9A0900B7C4FE;
 			remoteInfo = "jsi-tvOS";
 		};
-		6E63ACA622D6025C008D1A17 /* PBXContainerItemProxy */ = {
+		6EF868EF22DDCE6800CA0877 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = ED296FEE214C9CF800B7C4FE;
 			remoteInfo = "jsiexecutor-tvOS";
 		};
-		6E63ACAB22D6025D008D1A17 /* PBXContainerItemProxy */ = {
+		6EF8692722DDCF3600CA0877 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A34D51F96E6E4E1588A37B83 /* MixpanelReactNative.xcodeproj */;
+			containerPortal = 189869123C5548FDA5FF904E /* MixpanelReactNative.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = MixpanelReactNative;
@@ -340,8 +340,6 @@
 		00E356EE1AD99517003FC87E /* MixpanelDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MixpanelDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* MixpanelDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MixpanelDemoTests.m; sourceTree = "<group>"; };
-		0E677820F1318F1225CD2B35 /* Pods-MixpanelDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MixpanelDemo.release.xcconfig"; path = "Target Support Files/Pods-MixpanelDemo/Pods-MixpanelDemo.release.xcconfig"; sourceTree = "<group>"; };
-		106681A3D5E6449699087264 /* libMixpanelReactNative.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libMixpanelReactNative.a; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* MixpanelDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MixpanelDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -352,26 +350,28 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MixpanelDemo/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MixpanelDemo/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+		189869123C5548FDA5FF904E /* MixpanelReactNative.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = MixpanelReactNative.xcodeproj; path = "../node_modules/react-native-ts/ios/MixpanelReactNative.xcodeproj"; sourceTree = "<group>"; };
+		237D36D5021A44EE81584A6B /* libMixpanelReactNative.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libMixpanelReactNative.a; sourceTree = "<group>"; };
+		2A49460706D76C80293610FF /* Pods-MixpanelDemo-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MixpanelDemo-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-MixpanelDemo-tvOSTests/Pods-MixpanelDemo-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* MixpanelDemo-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MixpanelDemo-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* MixpanelDemo-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "MixpanelDemo-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		35C64EF3909F3DBCB97A748B /* Pods-MixpanelDemo-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MixpanelDemo-tvOS.release.xcconfig"; path = "Target Support Files/Pods-MixpanelDemo-tvOS/Pods-MixpanelDemo-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		55F0146828340BF98C623C57 /* Pods-MixpanelDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MixpanelDemo.release.xcconfig"; path = "Target Support Files/Pods-MixpanelDemo/Pods-MixpanelDemo.release.xcconfig"; sourceTree = "<group>"; };
+		579AF8435FDA58415D516809 /* libPods-MixpanelDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MixpanelDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DE712B0D65233658AA93DE3 /* Pods_MixpanelDemo_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MixpanelDemo_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
-		6E63ACAD22D6026D008D1A17 /* MixpanelDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MixpanelDemo-Bridging-Header.h"; sourceTree = "<group>"; };
-		6E63ACAE22D6026E008D1A17 /* Default.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Default.swift; sourceTree = "<group>"; };
+		6EF868C122DDCE6600CA0877 /* MixpanelDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MixpanelDemo-Bridging-Header.h"; sourceTree = "<group>"; };
+		6EF868C222DDCE6700CA0877 /* Default.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Default.swift; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
-		7F069EC33DE82BC52F4DE16C /* libPods-MixpanelDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MixpanelDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
-		93C5F06BD60DA05D2187C971 /* Pods-MixpanelDemo-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MixpanelDemo-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-MixpanelDemo-tvOSTests/Pods-MixpanelDemo-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		A1056C8A20318C23B5D4B7FB /* Pods_MixpanelDemo_tvOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MixpanelDemo_tvOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A34D51F96E6E4E1588A37B83 /* MixpanelReactNative.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = MixpanelReactNative.xcodeproj; path = "../node_modules/react-native-ts/ios/MixpanelReactNative.xcodeproj"; sourceTree = "<group>"; };
+		84BF497D1E3D44320C02022C /* Pods-MixpanelDemo-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MixpanelDemo-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-MixpanelDemo-tvOS/Pods-MixpanelDemo-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		89755BA53DA5D10C93CAA5FB /* Pods-MixpanelDemo-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MixpanelDemo-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-MixpanelDemo-tvOSTests/Pods-MixpanelDemo-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
-		B1182DC7E2DB762827E36F27 /* Pods-MixpanelDemo-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MixpanelDemo-tvOS.release.xcconfig"; path = "Target Support Files/Pods-MixpanelDemo-tvOS/Pods-MixpanelDemo-tvOS.release.xcconfig"; sourceTree = "<group>"; };
-		C3D83DCBCB44F4DA8B346E07 /* Pods_MixpanelDemo_tvOSTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MixpanelDemo_tvOSTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C855AAD2091EB15B1A44F829 /* Pods-MixpanelDemo-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MixpanelDemo-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-MixpanelDemo-tvOSTests/Pods-MixpanelDemo-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
-		E888ADC53A867D252DF3E7A8 /* Pods-MixpanelDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MixpanelDemo.debug.xcconfig"; path = "Target Support Files/Pods-MixpanelDemo/Pods-MixpanelDemo.debug.xcconfig"; sourceTree = "<group>"; };
-		E966D6CFDEC6AA1CCF146A13 /* Pods-MixpanelDemo-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MixpanelDemo-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-MixpanelDemo-tvOS/Pods-MixpanelDemo-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		DEF1527A55C3096E5C2AE759 /* Pods-MixpanelDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MixpanelDemo.debug.xcconfig"; path = "Target Support Files/Pods-MixpanelDemo/Pods-MixpanelDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		FAE2FB65AC1B8C3E6C9D159F /* Pods_MixpanelDemo_tvOSTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MixpanelDemo_tvOSTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -400,8 +400,8 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
-				2A76BD964D394E279E72C93E /* libMixpanelReactNative.a in Frameworks */,
-				518279919B7FD2C272526517 /* libPods-MixpanelDemo.a in Frameworks */,
+				6A758D612CAC449CAF186F7C /* libMixpanelReactNative.a in Frameworks */,
+				65DE78121E1DE05E4283BD68 /* libPods-MixpanelDemo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -418,7 +418,7 @@
 				2D02E4C61E0B4AEC006451C7 /* libRCTSettings-tvOS.a in Frameworks */,
 				2D02E4C71E0B4AEC006451C7 /* libRCTText-tvOS.a in Frameworks */,
 				2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */,
-				8ED39B9BEECABF01D11134AF /* Pods_MixpanelDemo_tvOS.framework in Frameworks */,
+				5D28BB3233BA765B475184C3 /* Pods_MixpanelDemo_tvOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -427,7 +427,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */,
-				E25FEE82745BB5978B4230B4 /* Pods_MixpanelDemo_tvOSTests.framework in Frameworks */,
+				3FC89546842823D98F26C03D /* Pods_MixpanelDemo_tvOSTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -493,6 +493,20 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		062C1CC7D934A7E8F39FE3CC /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				DEF1527A55C3096E5C2AE759 /* Pods-MixpanelDemo.debug.xcconfig */,
+				55F0146828340BF98C623C57 /* Pods-MixpanelDemo.release.xcconfig */,
+				84BF497D1E3D44320C02022C /* Pods-MixpanelDemo-tvOS.debug.xcconfig */,
+				35C64EF3909F3DBCB97A748B /* Pods-MixpanelDemo-tvOS.release.xcconfig */,
+				89755BA53DA5D10C93CAA5FB /* Pods-MixpanelDemo-tvOSTests.debug.xcconfig */,
+				2A49460706D76C80293610FF /* Pods-MixpanelDemo-tvOSTests.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		139105B71AF99BAD00B5F7CC /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -523,8 +537,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				6E63ACAE22D6026E008D1A17 /* Default.swift */,
-				6E63ACAD22D6026D008D1A17 /* MixpanelDemo-Bridging-Header.h */,
+				6EF868C222DDCE6700CA0877 /* Default.swift */,
+				6EF868C122DDCE6600CA0877 /* MixpanelDemo-Bridging-Header.h */,
 			);
 			name = MixpanelDemo;
 			sourceTree = "<group>";
@@ -544,10 +558,10 @@
 				2DF0FFE52056DD460020B375 /* libthird-party.a */,
 				2DF0FFE72056DD460020B375 /* libdouble-conversion.a */,
 				2DF0FFE92056DD460020B375 /* libdouble-conversion.a */,
-				6E63ACA122D6025C008D1A17 /* libjsi.a */,
-				6E63ACA322D6025C008D1A17 /* libjsiexecutor.a */,
-				6E63ACA522D6025C008D1A17 /* libjsi-tvOS.a */,
-				6E63ACA722D6025C008D1A17 /* libjsiexecutor-tvOS.a */,
+				6EF868EA22DDCE6800CA0877 /* libjsi.a */,
+				6EF868EC22DDCE6800CA0877 /* libjsiexecutor.a */,
+				6EF868EE22DDCE6800CA0877 /* libjsi-tvOS.a */,
+				6EF868F022DDCE6800CA0877 /* libjsiexecutor-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -558,9 +572,9 @@
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
-				7F069EC33DE82BC52F4DE16C /* libPods-MixpanelDemo.a */,
-				A1056C8A20318C23B5D4B7FB /* Pods_MixpanelDemo_tvOS.framework */,
-				C3D83DCBCB44F4DA8B346E07 /* Pods_MixpanelDemo_tvOSTests.framework */,
+				579AF8435FDA58415D516809 /* libPods-MixpanelDemo.a */,
+				5DE712B0D65233658AA93DE3 /* Pods_MixpanelDemo_tvOS.framework */,
+				FAE2FB65AC1B8C3E6C9D159F /* Pods_MixpanelDemo_tvOSTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -574,18 +588,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		6E63AC7A22D6025B008D1A17 /* Recovered References */ = {
+		6EF868FD22DDCF3500CA0877 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				106681A3D5E6449699087264 /* libMixpanelReactNative.a */,
+				237D36D5021A44EE81584A6B /* libMixpanelReactNative.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
 		};
-		6E63ACA822D6025C008D1A17 /* Products */ = {
+		6EF8692422DDCF3600CA0877 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6E63ACAC22D6025D008D1A17 /* libMixpanelReactNative.a */,
+				6EF8692822DDCF3600CA0877 /* libMixpanelReactNative.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -614,7 +628,7 @@
 				832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */,
 				00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */,
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
-				A34D51F96E6E4E1588A37B83 /* MixpanelReactNative.xcodeproj */,
+				189869123C5548FDA5FF904E /* MixpanelReactNative.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -636,8 +650,8 @@
 				00E356EF1AD99517003FC87E /* MixpanelDemoTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				6E63AC7A22D6025B008D1A17 /* Recovered References */,
-				D3053D342651545F8F5981CF /* Pods */,
+				6EF868FD22DDCF3500CA0877 /* Recovered References */,
+				062C1CC7D934A7E8F39FE3CC /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -662,20 +676,6 @@
 				2D16E6721FA4F8DC00B85C8A /* libRCTBlob-tvOS.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		D3053D342651545F8F5981CF /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				E888ADC53A867D252DF3E7A8 /* Pods-MixpanelDemo.debug.xcconfig */,
-				0E677820F1318F1225CD2B35 /* Pods-MixpanelDemo.release.xcconfig */,
-				E966D6CFDEC6AA1CCF146A13 /* Pods-MixpanelDemo-tvOS.debug.xcconfig */,
-				B1182DC7E2DB762827E36F27 /* Pods-MixpanelDemo-tvOS.release.xcconfig */,
-				C855AAD2091EB15B1A44F829 /* Pods-MixpanelDemo-tvOSTests.debug.xcconfig */,
-				93C5F06BD60DA05D2187C971 /* Pods-MixpanelDemo-tvOSTests.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -703,12 +703,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "MixpanelDemo" */;
 			buildPhases = (
-				B1EDD621F120EBAC681B8141 /* [CP] Check Pods Manifest.lock */,
+				7C05ED34A6C323BE538B3BBD /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				063F6A9799DBFDEDEA34CE33 /* [CP] Copy Pods Resources */,
+				5F0FDA95697B339730606D56 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -723,7 +723,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "MixpanelDemo-tvOS" */;
 			buildPhases = (
-				4EF543C2D83C0B55940B2E48 /* [CP] Check Pods Manifest.lock */,
+				4A4B78D94FFEE724812B9816 /* [CP] Check Pods Manifest.lock */,
 				2D02E4771E0B4A5D006451C7 /* Sources */,
 				2D02E4781E0B4A5D006451C7 /* Frameworks */,
 				2D02E4791E0B4A5D006451C7 /* Resources */,
@@ -742,7 +742,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "MixpanelDemo-tvOSTests" */;
 			buildPhases = (
-				5ECBA9F90D0C30CFD6B486CE /* [CP] Check Pods Manifest.lock */,
+				3E6A86B6158BBB298F478E9E /* [CP] Check Pods Manifest.lock */,
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
 				2D02E48D1E0B4A5D006451C7 /* Frameworks */,
 				2D02E48E1E0B4A5D006451C7 /* Resources */,
@@ -798,8 +798,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 6E63ACA822D6025C008D1A17 /* Products */;
-					ProjectRef = A34D51F96E6E4E1588A37B83 /* MixpanelReactNative.xcodeproj */;
+					ProductGroup = 6EF8692422DDCF3600CA0877 /* Products */;
+					ProjectRef = 189869123C5548FDA5FF904E /* MixpanelReactNative.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
@@ -1071,39 +1071,39 @@
 			remoteRef = 5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E63ACA122D6025C008D1A17 /* libjsi.a */ = {
+		6EF868EA22DDCE6800CA0877 /* libjsi.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libjsi.a;
-			remoteRef = 6E63ACA022D6025C008D1A17 /* PBXContainerItemProxy */;
+			remoteRef = 6EF868E922DDCE6800CA0877 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E63ACA322D6025C008D1A17 /* libjsiexecutor.a */ = {
+		6EF868EC22DDCE6800CA0877 /* libjsiexecutor.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libjsiexecutor.a;
-			remoteRef = 6E63ACA222D6025C008D1A17 /* PBXContainerItemProxy */;
+			remoteRef = 6EF868EB22DDCE6800CA0877 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E63ACA522D6025C008D1A17 /* libjsi-tvOS.a */ = {
+		6EF868EE22DDCE6800CA0877 /* libjsi-tvOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libjsi-tvOS.a";
-			remoteRef = 6E63ACA422D6025C008D1A17 /* PBXContainerItemProxy */;
+			remoteRef = 6EF868ED22DDCE6800CA0877 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E63ACA722D6025C008D1A17 /* libjsiexecutor-tvOS.a */ = {
+		6EF868F022DDCE6800CA0877 /* libjsiexecutor-tvOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libjsiexecutor-tvOS.a";
-			remoteRef = 6E63ACA622D6025C008D1A17 /* PBXContainerItemProxy */;
+			remoteRef = 6EF868EF22DDCE6800CA0877 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E63ACAC22D6025D008D1A17 /* libMixpanelReactNative.a */ = {
+		6EF8692822DDCF3600CA0877 /* libMixpanelReactNative.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = libMixpanelReactNative.a;
-			remoteRef = 6E63ACAB22D6025D008D1A17 /* PBXContainerItemProxy */;
+			remoteRef = 6EF8692722DDCF3600CA0877 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		78C398B91ACF4ADC00677621 /* libRCTLinking.a */ = {
@@ -1178,7 +1178,65 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		063F6A9799DBFDEDEA34CE33 /* [CP] Copy Pods Resources */ = {
+		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Bundle React Native Code And Images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+		};
+		3E6A86B6158BBB298F478E9E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-MixpanelDemo-tvOSTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4A4B78D94FFEE724812B9816 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-MixpanelDemo-tvOS-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5F0FDA95697B339730606D56 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1210,65 +1268,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MixpanelDemo/Pods-MixpanelDemo-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Bundle React Native Code And Images";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
-		};
-		4EF543C2D83C0B55940B2E48 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-MixpanelDemo-tvOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5ECBA9F90D0C30CFD6B486CE /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-MixpanelDemo-tvOSTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B1EDD621F120EBAC681B8141 /* [CP] Check Pods Manifest.lock */ = {
+		7C05ED34A6C323BE538B3BBD /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1306,7 +1306,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
-				6E63ACAF22D6026E008D1A17 /* Default.swift in Sources */,
+				6EF868C322DDCE6700CA0877 /* Default.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1367,7 +1367,7 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-ts/ios",
+					"$(SRCROOT)/../node_modules/react-native-ts/ios/**",
 				);
 				INFOPLIST_FILE = MixpanelDemoTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -1394,7 +1394,7 @@
 				COPY_PHASE_STRIP = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-ts/ios",
+					"$(SRCROOT)/../node_modules/react-native-ts/ios/**",
 				);
 				INFOPLIST_FILE = MixpanelDemoTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -1415,7 +1415,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E888ADC53A867D252DF3E7A8 /* Pods-MixpanelDemo.debug.xcconfig */;
+			baseConfigurationReference = DEF1527A55C3096E5C2AE759 /* Pods-MixpanelDemo.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -1423,7 +1423,7 @@
 				DEAD_CODE_STRIPPING = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-ts/ios",
+					"$(SRCROOT)/../node_modules/react-native-ts/ios/**",
 				);
 				INFOPLIST_FILE = MixpanelDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1443,14 +1443,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0E677820F1318F1225CD2B35 /* Pods-MixpanelDemo.release.xcconfig */;
+			baseConfigurationReference = 55F0146828340BF98C623C57 /* Pods-MixpanelDemo.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-ts/ios",
+					"$(SRCROOT)/../node_modules/react-native-ts/ios/**",
 				);
 				INFOPLIST_FILE = MixpanelDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1469,7 +1469,7 @@
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E966D6CFDEC6AA1CCF146A13 /* Pods-MixpanelDemo-tvOS.debug.xcconfig */;
+			baseConfigurationReference = 84BF497D1E3D44320C02022C /* Pods-MixpanelDemo-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1482,7 +1482,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-ts/ios",
+					"$(SRCROOT)/../node_modules/react-native-ts/ios/**",
 				);
 				INFOPLIST_FILE = "MixpanelDemo-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1504,7 +1504,7 @@
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B1182DC7E2DB762827E36F27 /* Pods-MixpanelDemo-tvOS.release.xcconfig */;
+			baseConfigurationReference = 35C64EF3909F3DBCB97A748B /* Pods-MixpanelDemo-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1517,7 +1517,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-ts/ios",
+					"$(SRCROOT)/../node_modules/react-native-ts/ios/**",
 				);
 				INFOPLIST_FILE = "MixpanelDemo-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1539,7 +1539,7 @@
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C855AAD2091EB15B1A44F829 /* Pods-MixpanelDemo-tvOSTests.debug.xcconfig */;
+			baseConfigurationReference = 89755BA53DA5D10C93CAA5FB /* Pods-MixpanelDemo-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1551,7 +1551,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-ts/ios",
+					"$(SRCROOT)/../node_modules/react-native-ts/ios/**",
 				);
 				INFOPLIST_FILE = "MixpanelDemo-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1573,7 +1573,7 @@
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 93C5F06BD60DA05D2187C971 /* Pods-MixpanelDemo-tvOSTests.release.xcconfig */;
+			baseConfigurationReference = 2A49460706D76C80293610FF /* Pods-MixpanelDemo-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1585,7 +1585,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/react-native-ts/ios",
+					"$(SRCROOT)/../node_modules/react-native-ts/ios/**",
 				);
 				INFOPLIST_FILE = "MixpanelDemo-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";

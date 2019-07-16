@@ -21,9 +21,12 @@ type Props = {};
 export default class App extends Component<Props> {
   render() {
     if(MixpanelReactNative){
-      MixpanelReactNative.getInformation().then((t) => {
-        return alert(t);
-      });
+      MixpanelReactNative.getInstance("bb71c6d97ef1bde11ffe83037a388b57",false).then((t) => {
+        alert(t);
+        //MixpanelReactNative.getInformation().then(s => alert(s));
+        //return MixpanelReactNative.hasOptedOutTracking().then(s => alert(s));
+        return MixpanelReactNative.optInTracking("123456789",{}).then(s => alert(s))
+      }).catch(e => console.log(e.message, e.code));
     }else{
       alert("Undefined MixpanelReactNative");
     }

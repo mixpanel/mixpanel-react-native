@@ -9,6 +9,7 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Map;
 
 
 public class People {
@@ -159,6 +160,53 @@ public class People {
         {
             mInstance.getPeople().clearCharges();
             promise.resolve(Constant.CLEAR_CHARGE_SUCCESS);
+        }
+    }
+
+    /*
+    Add the given amount to an existing property on the identified user. If the user does not already
+    have the associated property, the amount will be added to zero. To reduce a property,
+    provide a negative number for the value.
+    */
+
+    @ReactMethod
+    public void increment(String name, Double incrementValue, Promise promise)
+    {
+        if(mInstance == null)
+        {
+            promise.resolve(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.getPeople().increment(name,incrementValue);
+            promise.resolve(Constant.INCREMENT_SUCCESS);
+        }
+    }
+
+
+   /*
+    Change the existing values of multiple People Analytics properties at once.
+
+    If the user does not already have the associated property, the amount will
+    be added to zero. To reduce a property, provide a negative number for the value.
+
+    @param properties A map of String properties names to Long amounts. Each
+    property associated with a name in the map will have its value changed by the given amount.
+    */
+
+    @ReactMethod
+    public void increment(ReadableMap properties, Promise promise)
+    {
+        Map map = ReactNativeHelper.toMap(properties);
+
+        if(mInstance == null || map == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.getPeople().increment(map);
+            promise.resolve(Constant.INCREMENT_SUCCESS);
         }
     }
 

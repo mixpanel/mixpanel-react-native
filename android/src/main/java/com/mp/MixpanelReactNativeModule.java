@@ -18,6 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Map;
+
 public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
     private final ReactApplicationContext mReactContext;
@@ -260,6 +262,33 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(Constant.EVENT_TRACK_SUCCESS);
         }
     }
+
+    /*
+    Track an event.
+
+    Every call to track eventually results in a data point sent to Mixpanel.
+    These data points are what are measured, counted, and broken down to create your Mixpanel reports.
+    Events have a string name, and an optional set of name/value pairs that describe the properties of
+    that event.
+
+    @param eventName The name of the event to send
+    @param properties A Map containing the key value pairs of the properties to include in this event.
+    Pass null if no extra properties exist.
+    */
+    @ReactMethod
+    public void trackMap(String eventName, ReadableMap properties, Promise promise)
+    {
+        Map map = ReactNativeHelper.toMap(properties);
+        if(mInstance == null ||map == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.trackMap(eventName, map);
+            promise.resolve(Constant.EVENT_TRACK_SUCCESS);
+        }
+    }
     /*
     registerSuperProperties will store a new superProperty and possibly overwriting any existing superProperty with the same name.
     Register properties that will be sent with every subsequent call to track().
@@ -314,6 +343,45 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(Constant.REGISTER_SUPER_PROPERTY_SUCCESS);
         }
 
+    }
+    /*
+    registerSuperPropertiesMap will store a new superProperty and possibly overwriting any existing superProperty with the same name.
+    Register properties that will be sent with every subsequent call to track().
+    @param superProperties    A Map containing super properties to register
+    */
+    @ReactMethod
+    public void registerSuperPropertiesMap(ReadableMap superProperties, Promise promise)
+    {
+        Map map = ReactNativeHelper.toMap(superProperties);
+        if(mInstance == null || map == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.registerSuperPropertiesMap(map);
+            promise.resolve(Constant.REGISTER_SUPER_PROPERTY_SUCCESS);
+        }
+    }
+
+    /*
+    Register super properties for events, only if no other super property with the same names has already been registered.
+    Calling registerSuperPropertiesOnce will never overwrite existing properties.
+    @param superProperties A Map containing the super properties to register.
+    */
+    @ReactMethod
+    public void registerSuperPropertiesOnceMap(ReadableMap superProperties, Promise promise)
+    {
+        Map map = ReactNativeHelper.toMap(superProperties);
+        if(mInstance == null || map == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.registerSuperPropertiesOnceMap(map);
+            promise.resolve(Constant.REGISTER_SUPER_PROPERTY_SUCCESS);
+        }
     }
     /*
     Remove a single superProperty, so that it will not be sent with future calls to track(String, JSONObject).

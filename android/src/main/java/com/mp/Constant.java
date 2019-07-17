@@ -23,6 +23,7 @@ public class Constant {
     static final String TRACK_CHARGE_SUCCESS = "Charges tracked successfully";
     static final String CLEAR_CHARGE_SUCCESS = "Charges cleared successfully";
     static final String GET_INSTANCE_SUCCESS = "Instance created successfully";
+    static final String INCREMENT_SUCCESS  = "Amount added to the property successfully";
 
 
 

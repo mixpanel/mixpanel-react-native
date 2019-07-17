@@ -68,26 +68,103 @@ class MixpanelReactNative: NSObject {
      */
     @objc
     func optInTracking(_ distinctId: String?,
-                       properties: NSDictionary?,
+                       properties: [String: AnyObject]?,
                        resolver resolve: RCTPromiseResolveBlock,
                        rejecter reject: RCTPromiseRejectBlock) -> Void {
         if(mInstance != nil){
             mInstance?.optInTracking(distinctId: distinctId, properties: properties as? Properties);
-            resolve(Constants.OPT_IN_SUCCESS);
         }
     }
+    // MARK: - Automatically Track Events
+    // MARK: - Sending Events
+    // MARK: - Timing Events
+    
+    /**
+     Begin timing of an event. Calling timeEvent("EventName") will not send an event, but
+     when you eventually call track("EventName"), your tracked event will be sent with a
+     "$duration"property, representing the number of seconds between your calls.
+     @param eventName the name of the event to track with timing.
+     */
+    
+    @objc
+    func timeEvent(_ event: String,
+                   resolver resolve: RCTPromiseResolveBlock,
+                   rejecter reject: RCTPromiseRejectBlock) -> Void {
+        if(mInstance != nil){
+            mInstance?.time(event: event);
+            mInstance?.flush();
+            resolve(Constants.TIME_EVENT_SUCCESS);
+        }
+    }
+    @objc
+    func clearTimedEvents(_ resolve: RCTPromiseResolveBlock,
+                          rejecter reject: RCTPromiseRejectBlock) -> Void {
+        if(mInstance != nil){
+            mInstance?.clearTimedEvents();
+            resolve(Constants.TIME_EVENT_SUCCESS);
+        }
+    }
+    
+    // MARK: - Managing User Identity
+    /**
+     Identify the user uniquely by providing the user distinct id, so all the event, update ,track call
+     will manipulate the data only for identified users profile.
+     This call does not identify the user for People Analytics to do that you have to call
+     MixpanelAPI.People.identify(String) method.
+     */
+    @objc
+    func identify(_ distinctId: String,
+                  resolver resolve: RCTPromiseResolveBlock,
+                  rejecter reject: RCTPromiseRejectBlock) -> Void {
+        if(mInstance != nil){
+            mInstance?.identify(distinctId: distinctId);
+            resolve(Constants.USER_IDENTIFIED_SUCCESS);
+        }
+    }
+    
+    /**
+     */
+    
+    @objc
+    func alias(_ alias: String,
+               distinctId: String,
+               usePeople: Bool = true,
+               resolver resolve: RCTPromiseResolveBlock,
+               rejecter reject: RCTPromiseRejectBlock) -> Void {
+        if(mInstance != nil){
+            mInstance?.createAlias(alias, distinctId: distinctId, usePeople: usePeople);
+            resolve(Constants.ALIAS_SUCCESS);
+        }
+    }
+    
+    /**
+     Push all queued Mixpanel events and People Analytics changes to Mixpanel servers.
+     Events and People messages are pushed gradually throughout the lifetime of your application.
+     This means that to ensure that all messages are sent to Mixpanel
+     when your application is shut down, you will need to call flush()
+     to let the Mixpanel library know it should send all remaining messages to the server.
+     */
+    @objc
+    func flush(_ resolve: RCTPromiseResolveBlock,
+               rejecter reject: RCTPromiseRejectBlock) -> Void {
+        if(mInstance != nil){
+            mInstance?.flush();
+            resolve(Constants.FLUSH_SUCCESS);
+        }
+    }
+    // MARK: - Storing User Profiles
+    // MARK: - Registering for Push Notifications
     
     // MARK: - Test Method
     @objc
     func getInformation(_ resolve: RCTPromiseResolveBlock,
                         rejecter reject: RCTPromiseRejectBlock) -> Void {
         if(mInstance != nil){
-            mInstance?.identify(distinctId: "1234abcd");
-            mInstance?.people.set(property: "$name", to: "Gayatri Lokhnde");
+            mInstance?.identify(distinctId: "abcd");
+            mInstance?.people.set(property: "$name", to: "Gayatri Lokhande");
             mInstance?.flush();
             let welcomeText = "IOS library invoked :: Mixpanel Demo app:: opt";
             resolve(welcomeText);
         }
-        
     }
 }

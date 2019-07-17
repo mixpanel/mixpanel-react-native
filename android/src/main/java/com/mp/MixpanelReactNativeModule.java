@@ -18,19 +18,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MixpanelModule extends ReactContextBaseJavaModule {
+public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
     private final ReactApplicationContext mReactContext;
     private People mPeople;
     private MixpanelAPI mInstance;
-    public MixpanelModule(ReactApplicationContext reactContext) {
+    public MixpanelReactNativeModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.mReactContext = reactContext;
     }
 
     @Override
     public String getName() {
-        return "Mixpanel";
+        return "MixpanelReactNative";
     }
 
 

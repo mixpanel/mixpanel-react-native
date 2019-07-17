@@ -1,6 +1,6 @@
 {
-  "name": "react-native-ts",
-  "version": "1.0.8",
+  "name": "mixpanel-react-native",
+  "version": "1.0.0",
   "description": "## Getting started",
   "main": "index.js",
   "scripts": {

@@ -7,37 +7,38 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6E63AC6D22D6006E008D1A17 /* Mixpanel.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E63AC6622D60050008D1A17 /* Mixpanel.framework */; };
+		6E70D7A622E086C3007B9F01 /* Mixpanel.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6E70D79F22E086B5007B9F01 /* Mixpanel.framework */; };
+		6E70D81022E0884D007B9F01 /* MixpanelTypeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E70D80F22E0884D007B9F01 /* MixpanelTypeHandler.swift */; };
 		6EF8684022DD967700CA0877 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF8683F22DD967700CA0877 /* Constants.swift */; };
 		A684A1AD22D4B0870060663F /* MixpanelReactNative.swift in Sources */ = {isa = PBXBuildFile; fileRef = A684A1AC22D4B0870060663F /* MixpanelReactNative.swift */; };
 		B3E7B58A1CC2AC0600A0062D /* MixpanelReactNative.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* MixpanelReactNative.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		6E63AC6522D60050008D1A17 /* PBXContainerItemProxy */ = {
+		6E70D79E22E086B5007B9F01 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E63AC5E22D60050008D1A17 /* Mixpanel.xcodeproj */;
+			containerPortal = 6E70D79722E086B4007B9F01 /* Mixpanel.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = E115947D1CFF1491007F8B4F;
 			remoteInfo = Mixpanel;
 		};
-		6E63AC6722D60050008D1A17 /* PBXContainerItemProxy */ = {
+		6E70D7A022E086B5007B9F01 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E63AC5E22D60050008D1A17 /* Mixpanel.xcodeproj */;
+			containerPortal = 6E70D79722E086B4007B9F01 /* Mixpanel.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = E12782B31D4AB4B30025FB05;
 			remoteInfo = Mixpanel_tvOS;
 		};
-		6E63AC6922D60050008D1A17 /* PBXContainerItemProxy */ = {
+		6E70D7A222E086B5007B9F01 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E63AC5E22D60050008D1A17 /* Mixpanel.xcodeproj */;
+			containerPortal = 6E70D79722E086B4007B9F01 /* Mixpanel.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = E1F15FC91E64A10700391AE3;
 			remoteInfo = Mixpanel_macOS;
 		};
-		6E63AC6B22D60050008D1A17 /* PBXContainerItemProxy */ = {
+		6E70D7A422E086B5007B9F01 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 6E63AC5E22D60050008D1A17 /* Mixpanel.xcodeproj */;
+			containerPortal = 6E70D79722E086B4007B9F01 /* Mixpanel.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 86F86E81224404BD00B69832;
 			remoteInfo = Mixpanel_watchOS;
@@ -51,7 +52,7 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				6E63AC6D22D6006E008D1A17 /* Mixpanel.framework in CopyFiles */,
+				6E70D7A622E086C3007B9F01 /* Mixpanel.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,7 +60,8 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libMixpanelReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMixpanelReactNative.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E63AC5E22D60050008D1A17 /* Mixpanel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Mixpanel.xcodeproj; path = "../mixpanel-swift-master/Mixpanel.xcodeproj"; sourceTree = "<group>"; };
+		6E70D79722E086B4007B9F01 /* Mixpanel.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Mixpanel.xcodeproj; path = "../mixpanel-swift-master/Mixpanel.xcodeproj"; sourceTree = "<group>"; };
+		6E70D80F22E0884D007B9F01 /* MixpanelTypeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixpanelTypeHandler.swift; sourceTree = "<group>"; };
 		6EF8683F22DD967700CA0877 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		A684A1AB22D4B0870060663F /* MixpanelReactNative-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MixpanelReactNative-Bridging-Header.h"; sourceTree = "<group>"; };
 		A684A1AC22D4B0870060663F /* MixpanelReactNative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixpanelReactNative.swift; sourceTree = "<group>"; };
@@ -88,7 +90,7 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				6EF8683F22DD967700CA0877 /* Constants.swift */,
+				6E70D80E22E087B6007B9F01 /* Utilities */,
 				6E63AC5D22D60015008D1A17 /* Libraries */,
 				A684A1AC22D4B0870060663F /* MixpanelReactNative.swift */,
 				B3E7B5891CC2AC0600A0062D /* MixpanelReactNative.m */,
@@ -101,20 +103,29 @@
 		6E63AC5D22D60015008D1A17 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				6E63AC5E22D60050008D1A17 /* Mixpanel.xcodeproj */,
+				6E70D79722E086B4007B9F01 /* Mixpanel.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
 		};
-		6E63AC5F22D60050008D1A17 /* Products */ = {
+		6E70D79822E086B4007B9F01 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				6E63AC6622D60050008D1A17 /* Mixpanel.framework */,
-				6E63AC6822D60050008D1A17 /* Mixpanel.framework */,
-				6E63AC6A22D60050008D1A17 /* Mixpanel.framework */,
-				6E63AC6C22D60050008D1A17 /* Mixpanel.framework */,
+				6E70D79F22E086B5007B9F01 /* Mixpanel.framework */,
+				6E70D7A122E086B5007B9F01 /* Mixpanel.framework */,
+				6E70D7A322E086B5007B9F01 /* Mixpanel.framework */,
+				6E70D7A522E086B5007B9F01 /* Mixpanel.framework */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6E70D80E22E087B6007B9F01 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				6EF8683F22DD967700CA0877 /* Constants.swift */,
+				6E70D80F22E0884D007B9F01 /* MixpanelTypeHandler.swift */,
+			);
+			name = Utilities;
 			sourceTree = "<group>";
 		};
 		6EF8687822DD970300CA0877 /* Frameworks */ = {
@@ -172,8 +183,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 6E63AC5F22D60050008D1A17 /* Products */;
-					ProjectRef = 6E63AC5E22D60050008D1A17 /* Mixpanel.xcodeproj */;
+					ProductGroup = 6E70D79822E086B4007B9F01 /* Products */;
+					ProjectRef = 6E70D79722E086B4007B9F01 /* Mixpanel.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -184,32 +195,32 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		6E63AC6622D60050008D1A17 /* Mixpanel.framework */ = {
+		6E70D79F22E086B5007B9F01 /* Mixpanel.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = Mixpanel.framework;
-			remoteRef = 6E63AC6522D60050008D1A17 /* PBXContainerItemProxy */;
+			remoteRef = 6E70D79E22E086B5007B9F01 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E63AC6822D60050008D1A17 /* Mixpanel.framework */ = {
+		6E70D7A122E086B5007B9F01 /* Mixpanel.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = Mixpanel.framework;
-			remoteRef = 6E63AC6722D60050008D1A17 /* PBXContainerItemProxy */;
+			remoteRef = 6E70D7A022E086B5007B9F01 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E63AC6A22D60050008D1A17 /* Mixpanel.framework */ = {
+		6E70D7A322E086B5007B9F01 /* Mixpanel.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = Mixpanel.framework;
-			remoteRef = 6E63AC6922D60050008D1A17 /* PBXContainerItemProxy */;
+			remoteRef = 6E70D7A222E086B5007B9F01 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		6E63AC6C22D60050008D1A17 /* Mixpanel.framework */ = {
+		6E70D7A522E086B5007B9F01 /* Mixpanel.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = Mixpanel.framework;
-			remoteRef = 6E63AC6B22D60050008D1A17 /* PBXContainerItemProxy */;
+			remoteRef = 6E70D7A422E086B5007B9F01 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -221,6 +232,7 @@
 			files = (
 				A684A1AD22D4B0870060663F /* MixpanelReactNative.swift in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* MixpanelReactNative.m in Sources */,
+				6E70D81022E0884D007B9F01 /* MixpanelTypeHandler.swift in Sources */,
 				6EF8684022DD967700CA0877 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

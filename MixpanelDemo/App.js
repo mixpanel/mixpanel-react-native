@@ -8,7 +8,7 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
-import MixpanelReactNative from 'react-native-ts';
+import Mixpanel from 'mixpanel-react-native';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -20,16 +20,8 @@ const instructions = Platform.select({
 type Props = {};
 export default class App extends Component<Props> {
   render() {
-    if(MixpanelReactNative){
-      MixpanelReactNative.getInstance("bb71c6d97ef1bde11ffe83037a388b57",false).then((t) => {
-        alert(t);
-        //MixpanelReactNative.getInformation().then(s => alert(s));
-        //return MixpanelReactNative.hasOptedOutTracking().then(s => alert(s));
-        return MixpanelReactNative.optInTracking("123456789",{}).then(s => alert(s))
-      }).catch(e => console.log(e.message, e.code));
-    }else{
-      alert("Undefined MixpanelReactNative");
-    }
+    var mixpanel = new Mixpanel("bb71c6d97ef1bde11ffe83037a388b57");
+    mixpanel.getInformation();
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>Welcome to React Native!</Text>

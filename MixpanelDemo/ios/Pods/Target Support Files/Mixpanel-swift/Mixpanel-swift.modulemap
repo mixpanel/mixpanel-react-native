@@ -1,4 +1,4 @@
-module Mixpanel {
+framework module Mixpanel {
   umbrella header "Mixpanel-swift-umbrella.h"
 
   export *

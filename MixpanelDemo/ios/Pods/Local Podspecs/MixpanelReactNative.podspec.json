@@ -1,6 +1,6 @@
 {
   "name": "MixpanelReactNative",
-  "version": "1.0.8",
+  "version": "1.0.0",
   "summary": "## Getting started",
   "description": "## Getting started",
   "license": "ISC",
@@ -13,7 +13,7 @@
   },
   "source": {
     "git": "https://github.com/author/MixpanelReactNative.git",
-    "tag": "1.0.8"
+    "tag": "1.0.0"
   },
   "source_files": "MixpanelReactNative/ios/*.{swift,h,m}",
   "requires_arc": true,
@@ -24,6 +24,9 @@
     "index.js"
   ],
   "dependencies": {
+    "React": [
+
+    ],
     "Mixpanel-swift": [
 
     ]

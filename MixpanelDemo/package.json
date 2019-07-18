@@ -7,16 +7,16 @@
     "test": "jest"
   },
   "dependencies": {
+    "mixpanel-react-native": "file:../mixpanel-react-native-1.0.0.tgz",
     "react": "16.8.3",
-    "react-native": "0.59.9",
-    "react-native-ts": "file:../react-native-ts-1.0.8.tgz"
+    "react-native": "0.59.9"
   },
   "devDependencies": {
-    "@babel/core": "7.5.4",
-    "@babel/runtime": "7.5.4",
-    "babel-jest": "24.8.0",
-    "jest": "24.8.0",
-    "metro-react-native-babel-preset": "0.55.0",
+    "@babel/core": "^7.5.5",
+    "@babel/runtime": "^7.5.5",
+    "babel-jest": "^24.8.0",
+    "jest": "^24.8.0",
+    "metro-react-native-babel-preset": "^0.55.0",
     "react-test-renderer": "16.8.3"
   },
   "jest": {

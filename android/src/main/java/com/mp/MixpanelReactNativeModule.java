@@ -1,8 +1,6 @@
 
 package com.mp;
 
-import android.provider.SyncStateContract;
-
 import com.facebook.common.references.SharedReference;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -10,20 +8,20 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableMapKeySetIterator;
-import com.facebook.react.bridge.ReadableType;
+
+import com.facebook.react.bridge.WritableMap;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.google.gson.Gson;
 
 import java.util.Map;
 
 public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
     private final ReactApplicationContext mReactContext;
-    private People mPeople;
     private MixpanelAPI mInstance;
     public MixpanelReactNativeModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -109,6 +107,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         else
         {
             mInstance.identify(distinctId);
+            mInstance.getPeople().identify(distinctId);
             promise.resolve(Constant.IDENTIFIED_SUCCESS);
         }
     }
@@ -602,6 +601,34 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
     }
 
+    @ReactMethod
+    public void eventElapsedTime(final String eventName, Promise promise)
+    {
+        if(mInstance == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.eventElapsedTime(eventName);
+            promise.resolve(Constant.EVENT_ELAPSED_TIME_SUCCESS);
+        }
+    }
+
+    @ReactMethod
+    public void reset(Promise promise)
+    {
+        if(mInstance == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.reset();
+            promise.resolve(Constant.RESET_SUCCESS);
+        }
+    }
+
     /*
     Push all queued Mixpanel events and People Analytics changes to Mixpanel servers.
     Events and People messages are pushed gradually throughout the lifetime of your application.
@@ -619,20 +646,326 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
         else
         {
-
             mInstance.flush();
         }
         promise.resolve(null);
     }
 
-    //endregion
-
-    public People getPeople()
+     /*
+    Checks if the people profile is identified or not.
+    @return boolean value Whether the current user is identified or not.
+    */
+    @ReactMethod
+    public void isIdentified(Promise promise)
     {
-        if(mPeople == null)
-             mPeople = new People(mInstance);
-        return mPeople;
+        if(mInstance == null)
+        {
+            promise.resolve(Constant.INSTANCE_NOT_FOUND_ERROR);
+        }
+        else
+        {
+            promise.resolve(mInstance.getPeople().isIdentified());
+        }
     }
+
+    /*
+    Set a collection of properties on the identified user all at once.
+    */
+    @ReactMethod
+    public void set(ReadableMap properties, Promise promise)
+    {
+        JSONObject jsonObject = null;
+        try
+        {
+            jsonObject = ReactNativeHelper.reactToJSON(properties);
+        }
+        catch(JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        if(mInstance == null || jsonObject == null)
+        {
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
+        }
+        else
+        {
+
+            mInstance.getPeople().set(jsonObject);
+            promise.resolve(Constant.SET_SUCCESS);
+        }
+
+    }
+    /*
+    Sets a single property with the given name and value for this user.
+    The given name and value will be assigned to the user in Mixpanel People Analytics,
+    possibly overwriting an existing property with the same name.
+    */
+    @ReactMethod
+    public void set(String propertyName, ReadableMap properties, Promise promise)
+    {
+        JSONObject jsonObject = null;
+        try
+        {
+            jsonObject = ReactNativeHelper.reactToJSON(properties);
+        }
+        catch(JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        if(mInstance == null || jsonObject == null)
+        {
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
+        }
+        else
+        {
+
+            mInstance.getPeople().set(propertyName, jsonObject);
+            promise.resolve(Constant.SET_SUCCESS);
+        }
+
+    }
+    /*
+    Sets a single property with the given name and value for this user.
+    The given name and value will be assigned to the user in Mixpanel People Analytics,
+    it will not overwrite existing property with same name.
+    */
+    @ReactMethod
+    public void setOnce(ReadableMap properties, Promise promise)
+    {
+
+        JSONObject jsonObject = null;
+        try
+        {
+            jsonObject = ReactNativeHelper.reactToJSON(properties);
+        }
+        catch(JSONException e)
+        {
+            e.printStackTrace();
+        }
+        if(mInstance == null || jsonObject == null)
+        {
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
+        }
+        else
+        {
+            mInstance.getPeople().setOnce(jsonObject);
+            promise.resolve(Constant.SET_SUCCESS);
+        }
+
+    }
+    /*
+    Track a revenue transaction for the identified people profile.
+    @param charge - the amount of money exchanged. Positive amounts represent purchases or income from the customer, negative amounts represent refunds or payments to the customer.
+    @param properties - an optional collection of properties to associate with this transaction.
+    */
+    @ReactMethod
+    public void trackCharge(double charge, ReadableMap properties, Promise promise)
+    {
+        JSONObject jsonObject = null;
+        try
+        {
+            jsonObject = ReactNativeHelper.reactToJSON(properties);
+        }
+        catch(JSONException e)
+        {
+            e.printStackTrace();
+        }
+        if(mInstance == null || jsonObject == null)
+        {
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
+        }
+        else
+        {
+            mInstance.getPeople().trackCharge(charge, jsonObject);
+            promise.resolve(Constant.TRACK_CHARGE_SUCCESS);
+        }
+    }
+
+    /*
+    It will permanently clear the whole transaction history for the identified people profile.
+    */
+
+    @ReactMethod
+    public void clearCharges(Promise promise)
+    {
+        if(mInstance == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.getPeople().clearCharges();
+            promise.resolve(Constant.CLEAR_CHARGE_SUCCESS);
+        }
+    }
+
+    /*
+    Add the given amount to an existing property on the identified user. If the user does not already
+    have the associated property, the amount will be added to zero. To reduce a property,
+    provide a negative number for the value.
+    */
+
+    @ReactMethod
+    public void increment(String name, double incrementValue, Promise promise)
+    {
+        if(mInstance == null)
+        {
+            promise.resolve(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.getPeople().increment(name,incrementValue);
+            promise.resolve(Constant.INCREMENT_SUCCESS);
+        }
+    }
+
+
+   /*
+    Change the existing values of multiple People Analytics properties at once.
+
+    If the user does not already have the associated property, the amount will
+    be added to zero. To reduce a property, provide a negative number for the value.
+
+    @param properties A map of String properties names to Long amounts. Each
+    property associated with a name in the map will have its value changed by the given amount.
+    */
+
+    @ReactMethod
+    public void increment(ReadableMap properties, Promise promise)
+    {
+        Map map = ReactNativeHelper.toMap(properties);
+
+        if(mInstance == null || map == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.getPeople().increment(map);
+            promise.resolve(Constant.INCREMENT_SUCCESS);
+        }
+    }
+
+    @ReactMethod
+    public void append(String name, ReadableArray properties, Promise promise)
+    {
+        JSONArray jsonArray = null;
+        try
+        {
+            jsonArray = ReactNativeHelper.reactToJSON(properties);
+        }
+        catch(JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        if(mInstance == null || jsonArray == null)
+        {
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
+        }
+        else
+        {
+            mInstance.getPeople().append(name, jsonArray);
+            promise.resolve(Constant.APPEND_SUCCESS);
+        }
+    }
+
+    @ReactMethod
+    public void deleteUser(Promise promise)
+    {
+        if(mInstance == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.getPeople().deleteUser();
+            promise.resolve(Constant.DELETE_SUCCESS);
+        }
+    }
+
+    @ReactMethod
+    public void merge(String propertyName, ReadableMap updates, Promise promise)
+    {
+        JSONObject jsonObject = null;
+        try
+        {
+            jsonObject = ReactNativeHelper.reactToJSON(updates);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        if(mInstance == null || jsonObject == null)
+        {
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
+        }
+        else
+        {
+            mInstance.getPeople().merge(propertyName,jsonObject);
+            promise.resolve(Constant.MERGE_SUCCESS);
+        }
+    }
+
+    @ReactMethod
+    public void setPushRegistrationId(String token, Promise promise)
+    {
+        if(mInstance == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.getPeople().setPushRegistrationId(token);
+            promise.resolve(Constant.SET_PUSH_REGISTRATION_ID_SUCCESS);
+        }
+    }
+
+    @ReactMethod
+    public void getPushRegistrationId(Promise promise)
+    {
+        if(mInstance == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            promise.resolve(mInstance.getPeople().getPushRegistrationId());
+        }
+    }
+
+    @ReactMethod
+    public void clearPushRegistrationId(String registrationId, Promise promise)
+    {
+        if(mInstance == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.getPeople().clearPushRegistrationId(registrationId);
+            promise.resolve(Constant.ClEAR_PUSH_REGISTRATION_ID_SUCCESS);
+        }
+    }
+
+    @ReactMethod
+    public void clearPushRegistrationId(Promise promise)
+    {
+        if(mInstance == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.getPeople().clearPushRegistrationId();
+            promise.resolve(Constant.ClEAR_ALL_PUSH_REGISTRATION_ID_SUCCESS);
+        }
+    }
+
+
+    //endregion
 
 
    

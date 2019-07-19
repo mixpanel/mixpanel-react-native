@@ -10,39 +10,45 @@ var ERROR_MESSAGE = {
     NEED_MP_TOKEN: "The Mixpanel Client needs a Mixpanel token: `init(token)`"    
 };
 
+var DEFAULT_OPT_OUT = false;
+
 export default class Mixpanel {
     apiToken = "";
-    people = undefined;
+    people = this.people = new People();      
     
     constructor(token){
         if(!token) {
             throw new Error(ERROR_MESSAGE.NEED_MP_TOKEN);
-        }
-        alert("Constructor called");
+        }        
         this.apiToken = token;
-        MixpanelReactNative.getInstance(token);
-        MixpanelReactNative.getPeople().then(p => {
-            this.people = new People(p);
-        })
-    }
-    
-    track(event, properties){
-        alert("track called");
-        MixpanelReactNative.track(event, properties);
     }
 
-    getInformation(){
-        MixpanelReactNative.getInformation().then(t=> alert(t));
+    async getInstance(){
+        return MixpanelReactNative.getInstance(this.apiToken, DEFAULT_OPT_OUT);
     }
+    
+    async identify(distinct_id){
+        return MixpanelReactNative.identify(distinct_id);
+    }
+    async track(event, properties){
+        alert("track called");
+        return MixpanelReactNative.track(event, properties);
+    }
+
+    async getInformation(){
+        let t = await MixpanelReactNative.getInformation();
+        alert (t);
+    }    
 }
 
-class People {
-    constructor(internalPeople){    
-        this.people = internalPeople;    
+export class People {
+
+    async identify(distinct_id){
+        return MixpanelReactNative.identify(distinct_id);
     }
-    
-    set(distinct_id, properties){
-        alert("People set called");
-        this.people.set(distinct_id, properties);
+
+    async set(properties){        
+        alert("Set called - ");
+        return MixpanelReactNative.set(properties);
     }
 }

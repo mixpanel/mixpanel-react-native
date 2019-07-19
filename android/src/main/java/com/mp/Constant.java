@@ -19,11 +19,19 @@ public class Constant {
     static final String REMOVE_GROUP_SUCCESS = "Group is removed successfully";
     static final String ALIAS_SUCCESS = "Alias successfully";
     static final String TIME_EVENT_SUCCESS = "Time event invoked successfully";
+    static final String EVENT_ELAPSED_TIME_SUCCESS = "Time elapsed for event retrieved successfully";
     static final String SET_SUCCESS = "Properties set to the user profiles successfully";
+    static final String RESET_SUCCESS = "Data reset successfully";
     static final String TRACK_CHARGE_SUCCESS = "Charges tracked successfully";
     static final String CLEAR_CHARGE_SUCCESS = "Charges cleared successfully";
     static final String GET_INSTANCE_SUCCESS = "Instance created successfully";
     static final String INCREMENT_SUCCESS  = "Amount added to the property successfully";
+    static final String APPEND_SUCCESS  = "Values appended to the property successfully ";
+    static final String DELETE_SUCCESS  = "User record deleted successfully";
+    static final String MERGE_SUCCESS  = "Updates merged successfully";
+    static final String SET_PUSH_REGISTRATION_ID_SUCCESS  = "Push registration id is set successfully";
+    static final String ClEAR_PUSH_REGISTRATION_ID_SUCCESS  = "Push registration token is cleared successfully";
+    static final String ClEAR_ALL_PUSH_REGISTRATION_ID_SUCCESS  = "All push registration tokens are cleared successfully";
 
 
 

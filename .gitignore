@@ -44,4 +44,6 @@ buck-out/
 \.buckd/
 *.keystore
 
+
+MixpanelDemo/
      

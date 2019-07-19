@@ -12,4 +12,16 @@ struct Constants {
     static var REGISTER_SUPER_PROPERTY_SUCCESS = "Super properties registered successfully"
     static var TRACK_SUCCESS = "Track logged successfully"
     
+    static var SET_SUCCESS = "Set properties invoked successfully"
+    static var SET_ONCE_SUCCESS = "Setonce invoked successfully"
+    static var UNSET_SUCCESS = "Unset properties invoked successfully"
+    static var APPEND_SUCCESS = "Append properties invoked successfully"
+    static var REMOVE_SUCCESS = "Remove properties invoked successfully"
+    static var UNION_SUCCESS = "Union properties invoked successfully"
+    static var TRACK_CHARGE_SUCCESS = "Track charges invoked successfully"
+    static var CLEAR_CHARGE_SUCCESS = "Clear charges invoked successfully"
+    static var GET_INSTANCE_SUCCESS = "Instance created successfully"
+    static var INCREMENT_SUCCESS  = "Property incremented successfully"
+    static var INCREMENT_PROPERTIES_SUCCESS  = "Properties incremented successfully"
+    static var DELETE_USER_SUCCESS = "Delete user invoked successfully"
 }

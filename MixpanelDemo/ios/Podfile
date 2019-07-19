@@ -23,13 +23,6 @@ pod 'React', :path => '../node_modules/react-native', :subspecs => [
 
     pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
   
-target 'MixpanelDemoTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-
-
 end
 
 target 'MixpanelDemo-tvOS' do

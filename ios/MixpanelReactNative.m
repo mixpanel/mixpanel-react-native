@@ -50,9 +50,34 @@ RCT_EXTERN_METHOD(unregisterSuperProperty: (NSString *)propertyName properties: 
 RCT_EXTERN_METHOD(clearSuperProperties: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
 
 // MARK: - Storing User Profiles
+
+RCT_EXTERN_METHOD(set: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(setPropertyTo: (NSString *)property to: (id)to resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(setOnce: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(unset: (NSArray *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(increment: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(incrementPropertyby: (NSString *)property by: (double)by resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(append: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(remove: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(union: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(trackCharge: (double)amount properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(clearCharges: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(deleteUser: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
 // MARK: - Registering for Push Notifications
 // MARK: - Test Method
 
 
 RCT_EXTERN_METHOD(getInformation: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
 @end
+

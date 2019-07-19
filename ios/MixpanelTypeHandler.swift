@@ -6,47 +6,50 @@
         switch object
         {
         case let value as String:
-            return value as MixpanelType;
+            return value as MixpanelType
             
         case let value as Int:
-            return value as MixpanelType;
+            return value as MixpanelType
             
         case let value as UInt:
-            return value as MixpanelType;
+            return value as MixpanelType
             
         case let value as Double:
-            return value as MixpanelType;
+            return value as MixpanelType
             
         case let value as Float:
-            return value as MixpanelType;
+            return value as MixpanelType
             
         case let value as Bool:
-            return value as MixpanelType;
+            return value as MixpanelType
             
         case let value as Date:
-            return value as MixpanelType;
+            return value as MixpanelType
+            
+        case let value as MixpanelType:
+            return value
             
         case let value as [MixpanelType]:
-            return value;
+            return value
             
         case let value as [String: MixpanelType]:
-            return value;
+            return value
             
         case let value as URL:
-            return value;
+            return value
             
         case let value as NSNull:
-            return value;
+            return value
             
         default:
-            return nil;
+            return nil
         }
     }
     
    static func processProperties(properties: Dictionary<String, Any>? = nil) -> Dictionary<String, MixpanelType> {
         var mpProperties = Dictionary<String, MixpanelType>()
         for (key,value) in properties ?? [:] {
-            mpProperties[key] = ToMixpanelType(value);
+            mpProperties[key] = ToMixpanelType(value)
         }
         return mpProperties
     }

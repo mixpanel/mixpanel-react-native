@@ -1,4 +1,5 @@
 struct Constants {
+    static var LIBRARY_INVOKED  = "iOS library invoked successfully"
     static var OPT_OUT_SUCCESS = "User opted out successfully"
     static var OPT_IN_SUCCESS = "User opted in successfully"
     static var USER_IDENTIFIED_SUCCESS = "User identified successfully"

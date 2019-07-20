@@ -4,7 +4,6 @@ import { NativeModules } from 'react-native';
 
 const { MixpanelReactNative } = NativeModules;
 
-//export default MixpanelReactNative;
 
 var ERROR_MESSAGE = {
     NEED_MP_TOKEN: "The Mixpanel Client needs a Mixpanel token: `init(token)`"    
@@ -12,18 +11,15 @@ var ERROR_MESSAGE = {
 
 var DEFAULT_OPT_OUT = false;
 
-export default class Mixpanel {
+export class Mixpanel {
     apiToken = "";
     people = this.people = new People();      
     
-    constructor(token){
-        if(!token) {
+    getInstance(token){
+        if(!token || token === "") {
             throw new Error(ERROR_MESSAGE.NEED_MP_TOKEN);
-        }        
+        }
         this.apiToken = token;
-    }
-
-    getInstance(){
         return MixpanelReactNative.getInstance(this.apiToken, DEFAULT_OPT_OUT);
     }
     
@@ -31,24 +27,29 @@ export default class Mixpanel {
         return MixpanelReactNative.identify(distinct_id);
     }
     track(event, properties){
-        alert("track called");
         return MixpanelReactNative.track(event, properties);
     }
 
     getInformation(){
-        let t = await MixpanelReactNative.getInformation();
-        alert (t);
-    }    
+        return MixpanelReactNative.getInformation().then(t => alert(t));
+    }  
+    
+    flush(){
+        return MixpanelReactNative.flush();
+    }
 }
 
 export class People {
 
     identify(distinct_id){
-        return MixpanelReactNative.identify(distinct_id);
+        return MixpanelReactNative.identify(distinct_id).then(t => alert(t));
     }
 
     set(properties){        
         alert("Set called - ");
-        return MixpanelReactNative.set(properties);
+        return MixpanelReactNative.set(properties).then(t => alert(t));
     }
 }
+
+const mixpanel = new Mixpanel();
+export default mixpanel;

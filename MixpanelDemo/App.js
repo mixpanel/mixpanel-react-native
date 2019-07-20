@@ -8,7 +8,7 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
-import Mixpanel from 'mixpanel-react-native';
+import mixpanel from 'mixpanel-react-native';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -20,15 +20,14 @@ const instructions = Platform.select({
 type Props = {};
 export default class App extends Component<Props> {
   render() {
-    var mixpanel = new Mixpanel("bb71c6d97ef1bde11ffe83037a388b57");
-    //mixpanel.getInstance();
-
+    //var mixpanel = new Mixpanel("bb71c6d97ef1bde11ffe83037a388b57");
+    mixpanel.getInstance("bb71c6d97ef1bde11ffe83037a388b57");
     var properties = 
     {
       "TestKey":"TestValue"
     };
     mixpanel.identify("abcd");
-    mixpanel.track("Test event",{});
+    mixpanel.track("New Test event",{}).then( t=> alert(t));
     mixpanel.flush();
     //mixpanel.people.set(properties).then(t => alert(t));
 

@@ -20,17 +20,18 @@ const instructions = Platform.select({
 type Props = {};
 export default class App extends Component<Props> {
   render() {
-
     var mixpanel = new Mixpanel("bb71c6d97ef1bde11ffe83037a388b57");
-    await mixpanel.getInstance();
+    //mixpanel.getInstance();
 
     var properties = 
     {
       "TestKey":"TestValue"
     };
-    await mixpanel.people.identify("aj1234567810");
-    mixpanel.people.set(properties).then(t => alert(t));
-    
+    mixpanel.identify("abcd");
+    mixpanel.track("Test event",{});
+    mixpanel.flush();
+    //mixpanel.people.set(properties).then(t => alert(t));
+
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>Welcome to React Native!</Text>

@@ -23,19 +23,19 @@ export default class Mixpanel {
         this.apiToken = token;
     }
 
-    async getInstance(){
+    getInstance(){
         return MixpanelReactNative.getInstance(this.apiToken, DEFAULT_OPT_OUT);
     }
     
-    async identify(distinct_id){
+    identify(distinct_id){
         return MixpanelReactNative.identify(distinct_id);
     }
-    async track(event, properties){
+    track(event, properties){
         alert("track called");
         return MixpanelReactNative.track(event, properties);
     }
 
-    async getInformation(){
+    getInformation(){
         let t = await MixpanelReactNative.getInformation();
         alert (t);
     }    
@@ -43,11 +43,11 @@ export default class Mixpanel {
 
 export class People {
 
-    async identify(distinct_id){
+    identify(distinct_id){
         return MixpanelReactNative.identify(distinct_id);
     }
 
-    async set(properties){        
+    set(properties){        
         alert("Set called - ");
         return MixpanelReactNative.set(properties);
     }

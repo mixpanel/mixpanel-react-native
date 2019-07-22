@@ -36,6 +36,15 @@ export class Mixpanel {
     }
 
     optInTracking(distinct_id, properties){
+        if (arguments.length === 0) {
+            distinct_id = null;
+            properties = null;
+        } else if (typeof distinct_id === "string") {
+            distinct_id = Helper.getValidString(distinct_id, KEY.DISTINCT_ID);
+        }else if (typeof distinct_id === "object") {
+            properties = distinct_id;
+            distinct_id = null;
+        }
         return MixpanelReactNative.optInTracking(distinct_id, properties);
     }
 
@@ -52,37 +61,32 @@ export class Mixpanel {
     }
 
     track(event_name, properties){
-        return MixpanelReactNative.track(Helper.getValidString(event_name,KEY.EVENT_NAME), properties);
+        if (arguments.length === 0) {
+            event_name = null;
+            properties = null;
+        } else if (typeof distinct_id === "string") {
+            event_name = Helper.getValidString(event_name, KEY.EVENT_NAME);
+        }else if (typeof event_name === "object") {
+            properties = event_name;
+            event_name = null;
+        }
+        return MixpanelReactNative.track(event_name, properties);
     }
     
-    //for andriod only
-    trackMap(event_name, properties){
-        return MixpanelReactNative.trackMap(Helper.getValidString(event_name,KEY.EVENT_NAME), properties);
-    }
-
     registerSuperProperties(properties){
-        return MixpanelReactNative.registerSuperProperties(Helper.getValidObject(properties, KEY.PROPERTIES));
+        return MixpanelReactNative.registerSuperProperties(properties);
     }
     //According to Android
     registerSuperPropertiesOnce(properties){
-        return MixpanelReactNative.registerSuperProperties(Helper.getValidObject(properties, KEY.PROPERTIES));
-    }
-    //for andriod only
-    registerSuperPropertiesMap(properties){
-        return MixpanelReactNative.registerSuperPropertiesMap(Helper.getValidObject(properties ,KEY.PROPERTIES));
+        return MixpanelReactNative.registerSuperProperties(properties);
     }
 
-    unregisterSuperProperty(properties_name){
-        return MixpanelReactNative.unregisterSuperProperty(Helper.getValidString(properties_name,KEY.PROPERTY_NAME));
+    unregisterSuperProperty(property_name){
+        return MixpanelReactNative.unregisterSuperProperty(Helper.getValidString(property_name,KEY.PROPERTY_NAME));
     }
 
     getSuperProperties(){
         return MixpanelReactNative.getSuperProperties();
-    }
-    
-    //for andriod only
-    registerSuperPropertiesOnceMap(properties){
-        return MixpanelReactNative.registerSuperPropertiesOnceMap(Helper.getValidObject(properties, KEY.PROPERTIES));
     }
 
     clearSuperProperties(){
@@ -100,7 +104,7 @@ export class Mixpanel {
     reset(){
         return MixpanelReactNative.reset();
     }
-
+    //for andriod only
     isIdentified(){
         return MixpanelReactNative.isIdentified();
     }
@@ -117,7 +121,7 @@ export class Mixpanel {
 export class People {
     
     identify(distinct_id){
-        return MixpanelReactNative.identify(distinct_id);
+        return MixpanelReactNative.identify(Helper.getValidString(distinct_id, KEY.DISTINCT_ID));
     }
 
     set(properties){
@@ -143,8 +147,9 @@ export class People {
         return MixpanelReactNative.append(name, properties);
     }
 
+    // for android only
     merge(property_name, properties){
-        return MixpanelReactNative.merge(property_name, properties);
+        return MixpanelReactNative.merge(Helper.getValidString(property_name,KEY.PROPERTY_NAME),properties);
     }
 
     deleteUser(){
@@ -172,7 +177,7 @@ class Helper {
     return str;
    }
    static getValidObject(obj, parameter_name){
-    if(obj && typeof value === 'object' && obj !== 'null' && obj !== 'undefined') {
+    if(typeof obj == null || typeof obj == 'undefined') {
         throw new Error(parameter_name + ERROR_MESSAGE.REQUIRED_OBJECT );
     }
     return obj; 

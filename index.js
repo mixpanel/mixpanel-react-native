@@ -97,36 +97,6 @@ export class Mixpanel {
         return MixpanelReactNative.isIdentified();
     }
 
-    set(properties){
-        return MixpanelReactNative.set(properties);
-    }
-    setOnce(properties){
-        return MixpanelReactNative.setOnce(properties);
-    }
-
-    trackCharge(charge, properties){
-        return MixpanelReactNative.trackCharge(charge, properties);
-    }
-
-    clearCharges(){
-        return MixpanelReactNative.clearCharges();
-    }
-
-    increment(name, incrementValue){
-        return MixpanelReactNative.increment(name, incrementValue);
-    }
-
-    append(name, properties){
-        return MixpanelReactNative.append(name, properties);
-    }
-
-    merge(property_name, properties){
-        return MixpanelReactNative.merge(property_name, properties);
-    }
-
-    deleteUser(){
-        return MixpanelReactNative.deleteUser();
-    }
     getInformation(){
         return MixpanelReactNative.getInformation();
     }  

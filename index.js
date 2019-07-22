@@ -3,11 +3,18 @@
 import { NativeModules } from 'react-native';
 
 const { MixpanelReactNative } = NativeModules;
-
+var KEY = {
+    DISTINCT_ID: "Distinct id",
+    ALIAS: "Alias",
+    EVENT_NAME: "Event name",
+    PROPERTIES: "Properties",
+    PROPERTY_NAME: "Property name"
+};
 
 var ERROR_MESSAGE = {
     NEED_MP_TOKEN: "The Mixpanel Client needs a Mixpanel token: `init(token)`",
-    REQUIRED_PARAMETER: "is required"
+    REQUIRED_PARAMETER: " is required",
+    REQUIRED_OBJECT: " is required. Cannot be null or undefined"
 };
 
 var DEFAULT_OPT_OUT = false;
@@ -25,7 +32,7 @@ export class Mixpanel {
     }
 
     hasOptedOutTracking(){
-        return MixpanelReactNative.hasOptedOutTracking(distinct_id);
+        return MixpanelReactNative.hasOptedOutTracking();
     }
 
     optInTracking(distinct_id, properties){
@@ -37,56 +44,57 @@ export class Mixpanel {
     }
     
     identify(distinct_id){
-        return MixpanelReactNative.identify(distinct_id);
+        return MixpanelReactNative.identify(Helper.getValidString(distinct_id, KEY.DISTINCT_ID));
     }
 
     alias(alias, distinct_id){
-        return MixpanelReactNative.alias(alias, distinct_id);
+        return MixpanelReactNative.alias(Helper.getValidString(alias, KEY.ALIAS), Helper.getValidString(distinct_id, KEY.DISTINCT_ID));
     }
 
     track(event_name, properties){
-        return MixpanelReactNative.track(event_name, properties);
+        return MixpanelReactNative.track(Helper.getValidString(event_name,KEY.EVENT_NAME), properties);
     }
     
     //for andriod only
     trackMap(event_name, properties){
-        return MixpanelReactNative.trackMap(event_name, properties);
+        return MixpanelReactNative.trackMap(Helper.getValidString(event_name,KEY.EVENT_NAME), properties);
     }
 
     registerSuperProperties(properties){
-        return MixpanelReactNative.registerSuperProperties(properties);
+        return MixpanelReactNative.registerSuperProperties(Helper.getValidObject(properties, KEY.PROPERTIES));
     }
     //According to Android
     registerSuperPropertiesOnce(properties){
-        return MixpanelReactNative.registerSuperProperties(properties);
+        return MixpanelReactNative.registerSuperProperties(Helper.getValidObject(properties, KEY.PROPERTIES));
     }
-
+    //for andriod only
     registerSuperPropertiesMap(properties){
-        return MixpanelReactNative.registerSuperPropertiesMap(properties);
+        return MixpanelReactNative.registerSuperPropertiesMap(Helper.getValidObject(properties ,KEY.PROPERTIES));
     }
 
     unregisterSuperProperty(properties_name){
-        return MixpanelReactNative.unregisterSuperProperty(properties_name);
+        return MixpanelReactNative.unregisterSuperProperty(Helper.getValidString(properties_name,KEY.PROPERTY_NAME));
     }
 
-    getSuperProperties(properties_name){
-        return MixpanelReactNative.getSuperProperties(properties_name);
+    getSuperProperties(){
+        return MixpanelReactNative.getSuperProperties();
     }
-
+    
+    //for andriod only
     registerSuperPropertiesOnceMap(properties){
-        return MixpanelReactNative.registerSuperPropertiesOnceMap(properties);
+        return MixpanelReactNative.registerSuperPropertiesOnceMap(Helper.getValidObject(properties, KEY.PROPERTIES));
     }
 
     clearSuperProperties(){
         return MixpanelReactNative.clearSuperProperties();
     }
 
-    timeEvent(event){
-        return MixpanelReactNative.timeEvent(event);
+    timeEvent(event_name){
+        return MixpanelReactNative.timeEvent(Helper.getValidString(event_name,KEY.EVENT_NAME));
     }
 
     eventElapsedTime(event_name){
-        return MixpanelReactNative.eventElapsedTime(event_name);
+        return MixpanelReactNative.eventElapsedTime(Helper.getValidString(event_name,KEY.EVENT_NAME));
     }
 
     reset(){
@@ -107,7 +115,7 @@ export class Mixpanel {
 }
 
 export class People {
-
+    
     identify(distinct_id){
         return MixpanelReactNative.identify(distinct_id);
     }
@@ -148,13 +156,29 @@ export class People {
     }
     //android only
     getPushRegistrationId(){
-        return MixpanelReactNative.getPushRegistrationId(token);
+        return MixpanelReactNative.getPushRegistrationId();
     }
 
     clearPushRegistrationId(token){
         return MixpanelReactNative.clearPushRegistrationId(token);
     }
 }
+
+class Helper {
+    static getValidString(str,parameter_name){
+    if(!str || str === "" ) {
+        throw new Error(parameter_name + ERROR_MESSAGE.REQUIRED_PARAMETER );
+    }
+    return str;
+   }
+   static getValidObject(obj, parameter_name){
+    if(obj && typeof value === 'object' && obj !== 'null' && obj !== 'undefined') {
+        throw new Error(parameter_name + ERROR_MESSAGE.REQUIRED_OBJECT );
+    }
+    return obj; 
+   }
+}
+
 
 const mixpanel = new Mixpanel();
 export default mixpanel;

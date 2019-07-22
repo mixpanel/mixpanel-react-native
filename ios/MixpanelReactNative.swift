@@ -678,7 +678,11 @@ class MixpanelReactNative: NSObject {
     func getInformation(_ resolve: RCTPromiseResolveBlock,
                         rejecter reject: RCTPromiseRejectBlock) -> Void {
         if(mInstance != nil){
-            resolve(Constants.LIBRARY_INVOKED)
+            mInstance?.identify(distinctId: "abcd")
+            mInstance?.people.set(property: "$name", to: "Gayatri Lokhande")
+            mInstance?.flush()
+            let welcomeText = "IOS library invoked :: Mixpanel Demo app:: opt"
+            resolve(welcomeText)
         }
     }
 }

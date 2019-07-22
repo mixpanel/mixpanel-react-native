@@ -26,8 +26,9 @@ export default class App extends Component<Props> {
     {
       "TestKey":"TestValue"
     };
-    mixpanel.identify("abcd");
-    mixpanel.track("New Test event",{}).then( t=> alert(t));
+   // mixpanel.identify("abcd");
+    //mixpanel.hasOptedOutTracking
+   // mixpanel.track("New Test event",{}).then( t=> alert(t));
     mixpanel.flush();
     //mixpanel.people.set(properties).then(t => alert(t));
 

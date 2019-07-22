@@ -406,22 +406,14 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     */
 
     @ReactMethod
-    public void getSuperProperties(String propertyName, Promise promise)
+    public void getSuperProperties(Promise promise)
     {
         if(mInstance == null)
         {
             promise.reject(new Throwable(Constant.NULL_EXCEPTION));
         }
         else {
-            try
-            {
-                JSONObject currentProperties = mInstance.getSuperProperties();
-                promise.resolve(currentProperties.getString(propertyName));
-            }
-            catch (JSONException e)
-            {
-                promise.reject(e);
-            }
+             promise.resolve(mInstance.getSuperProperties());
         }
 
     }

@@ -124,8 +124,14 @@ export class People {
         return MixpanelReactNative.identify(Helper.getValidString(distinct_id, KEY.DISTINCT_ID));
     }
 
-    set(properties){
-        return MixpanelReactNative.set(properties);
+    set(property_name, properties){
+        var prop = {};
+        if (typeof(property_name) === 'object') {
+            prop = property_name;
+        } else {
+            prop[property_name] = properties;
+        }
+        return MixpanelReactNative.set(prop, properties);
     }
     setOnce(properties){
         return MixpanelReactNative.setOnce(properties);

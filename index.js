@@ -37,16 +37,10 @@ export class Mixpanel {
     }
     
     identify(distinct_id){
-        if(!distinct_id || distinct_id === "") {
-            throw new Error(ERROR_MESSAGE.NEED_DISTINCT_ID);
-        }
         return MixpanelReactNative.identify(distinct_id);
     }
 
     alias(alias, distinct_id){
-        if(!distinct_id || distinct_id === "") {
-            throw new Error(ERROR_MESSAGE.NEED_DISTINCT_ID);
-        }
         return MixpanelReactNative.alias(alias, distinct_id);
     }
 
@@ -126,15 +120,15 @@ export class Mixpanel {
         return MixpanelReactNative.append(name, properties);
     }
 
-    merge(properties_name, properties){
-        return MixpanelReactNative.merge(properties_name, properties);
+    merge(property_name, properties){
+        return MixpanelReactNative.merge(property_name, properties);
     }
 
     deleteUser(){
         return MixpanelReactNative.deleteUser();
     }
     getInformation(){
-        return MixpanelReactNative.getInformation().then(t => alert(t));
+        return MixpanelReactNative.getInformation();
     }  
     
     flush(){
@@ -145,12 +139,50 @@ export class Mixpanel {
 export class People {
 
     identify(distinct_id){
-        return MixpanelReactNative.identify(distinct_id).then(t => alert(t));
+        return MixpanelReactNative.identify(distinct_id);
     }
 
-    set(properties){        
-        alert("Set called - ");
-        return MixpanelReactNative.set(properties).then(t => alert(t));
+    set(properties){
+        return MixpanelReactNative.set(properties);
+    }
+    setOnce(properties){
+        return MixpanelReactNative.setOnce(properties);
+    }
+
+    trackCharge(charge, properties){
+        return MixpanelReactNative.trackCharge(charge, properties);
+    }
+
+    clearCharges(){
+        return MixpanelReactNative.clearCharges();
+    }
+
+    increment(name, incrementValue){
+        return MixpanelReactNative.increment(name, incrementValue);
+    }
+
+    append(name, properties){
+        return MixpanelReactNative.append(name, properties);
+    }
+
+    merge(property_name, properties){
+        return MixpanelReactNative.merge(property_name, properties);
+    }
+
+    deleteUser(){
+        return MixpanelReactNative.deleteUser();
+    }
+
+    setPushRegistrationId(token){
+        return MixpanelReactNative.setPushRegistrationId(token);
+    }
+    //android only
+    getPushRegistrationId(){
+        return MixpanelReactNative.getPushRegistrationId(token);
+    }
+
+    clearPushRegistrationId(token){
+        return MixpanelReactNative.clearPushRegistrationId(token);
     }
 }
 

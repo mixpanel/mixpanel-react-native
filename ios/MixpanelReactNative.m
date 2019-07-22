@@ -3,7 +3,7 @@
 #import "React/RCTConvert.h"
 
 @interface RCT_EXTERN_MODULE(MixpanelReactNative, NSObject)
- // MARK: - Mixpanel Instance
+// MARK: - Mixpanel Instance
 
 RCT_EXTERN_METHOD(getInstance: (NSString *)apiToken optOutTrackingByDefault: (BOOL)optOutTrackingByDefault resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
 
@@ -74,9 +74,15 @@ RCT_EXTERN_METHOD(trackCharge: (double)amount properties: (NSDictionary *)proper
 RCT_EXTERN_METHOD(clearCharges: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
 
 RCT_EXTERN_METHOD(deleteUser: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
-// MARK: - Registering for Push Notifications
-// MARK: - Test Method
 
+// MARK: - Registering for Push Notifications
+
+RCT_EXTERN_METHOD(setPushRegistrationId: (NSData *)deviceToken resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(clearPushRegistrationId: (NSData *)deviceToken resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+
+RCT_EXTERN_METHOD(clearAllPushRegistrationId: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+// MARK: - Test Method
 
 RCT_EXTERN_METHOD(getInformation: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
 @end

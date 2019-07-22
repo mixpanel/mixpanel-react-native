@@ -1,5 +1,7 @@
 struct Constants {
-    static var LIBRARY_INVOKED  = "iOS library invoked successfully"
+    static var ERROR_NAME = "Mipanel instance"
+    static var INSTANCE_NOT_FOUND_ERROR  = "Instance not found: Invoke `getInstance(token)`";
+    static var LIBRARY_INVOKED  = "iOS library invoked successfully";
     static var OPT_OUT_SUCCESS = "User opted out successfully"
     static var OPT_IN_SUCCESS = "User opted in successfully"
     static var USER_IDENTIFIED_SUCCESS = "User identified successfully"
@@ -25,4 +27,7 @@ struct Constants {
     static var INCREMENT_SUCCESS  = "Property incremented successfully"
     static var INCREMENT_PROPERTIES_SUCCESS  = "Properties incremented successfully"
     static var DELETE_USER_SUCCESS = "Delete user invoked successfully"
+    static var SET_PUSH_REGISTRATION_ID_SUCCESS  = "Push registration id is set successfully";
+    static var CLEAR_PUSH_REGISTRATION_ID_SUCCESS  = "Push registration token is cleared successfully";
+    static var CLEAR_ALL_PUSH_REGISTRATION_ID_SUCCESS  = "All push registration tokens are cleared successfully"
 }

@@ -697,7 +697,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     possibly overwriting an existing property with the same name.
     */
     @ReactMethod
-    public void set(String propertyName, ReadableMap properties, Promise promise)
+    public void setPropertyTo(String propertyName, ReadableMap properties, Promise promise)
     {
         JSONObject jsonObject = null;
         try
@@ -805,7 +805,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     */
 
     @ReactMethod
-    public void increment(String name, double incrementValue, Promise promise)
+    public void incrementPropertyby(String name, double incrementValue, Promise promise)
     {
         if(mInstance == null)
         {

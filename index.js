@@ -124,14 +124,11 @@ export class People {
         return MixpanelReactNative.identify(Helper.getValidString(distinct_id, KEY.DISTINCT_ID));
     }
 
-    set(property_name, properties){
-        var prop = {};
-        if (typeof(property_name) === 'object') {
-            prop = property_name;
-        } else {
-            prop[property_name] = properties;
-        }
-        return MixpanelReactNative.set(prop, properties);
+    set(prop, to){
+        if (typeof(prop) === 'object') {
+           return MixpanelReactNative.set(prop);
+        } 
+        return MixpanelReactNative.setPropertyTo(prop, to);
     }
     setOnce(properties){
         return MixpanelReactNative.setOnce(properties);
@@ -145,8 +142,11 @@ export class People {
         return MixpanelReactNative.clearCharges();
     }
 
-    increment(name, incrementValue){
-        return MixpanelReactNative.increment(name, incrementValue);
+    increment(prop, by){
+        if(typeof(prop) === 'object'){
+            return MixpanelReactNative.increment(prop);
+        }
+        return MixpanelReactNative.incrementPropertyby(prop, by);
     }
 
     append(name, properties){

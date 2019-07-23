@@ -7,7 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "mixpanel-react-native": "file:../mixpanel-react-native-1.0.0.tgz",
+    "mixpanel-react-native": "file:../mixpanel-react-native-1.0.1.tgz",
     "react": "16.8.3",
     "react-native": "0.59.9"
   },

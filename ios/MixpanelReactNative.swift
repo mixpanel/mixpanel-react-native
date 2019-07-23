@@ -84,8 +84,7 @@ class MixpanelReactNative: NSObject {
                        resolver resolve: RCTPromiseResolveBlock,
                        rejecter reject: RCTPromiseRejectBlock) -> Void {
         if(mInstance != nil){
-            var mpProperties = MixpanelTypeHandler.processProperties(properties: properties);
-                appendLibraryProperties(mpProperties);
+            let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true);
             mInstance?.optInTracking(distinctId: distinctId, properties: mpProperties);
             resolve(Constants.OPT_IN_SUCCESS)
         }else{
@@ -99,8 +98,7 @@ class MixpanelReactNative: NSObject {
                resolver resolve: RCTPromiseResolveBlock,
                rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
         if(mInstance != nil){
-            var mpProperties = MixpanelTypeHandler.processProperties(properties: properties);
-            appendLibraryProperties(mpProperties);
+            let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true);
             mInstance?.track(event: event, properties: mpProperties)
             resolve(Constants.TRACK_SUCCESS)
         }else{
@@ -387,8 +385,7 @@ class MixpanelReactNative: NSObject {
              resolver resolve: RCTPromiseResolveBlock,
              rejecter reject: RCTPromiseRejectBlock) -> Void {
         if(mInstance != nil){
-            var mpProperties = MixpanelTypeHandler.processProperties(properties: properties);
-            appendLibraryProperties(mpProperties);
+            let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true);
             mInstance?.people.set(properties: mpProperties)
             resolve(Constants.SET_SUCCESS)
         }else{
@@ -433,8 +430,7 @@ class MixpanelReactNative: NSObject {
                  resolver resolve: RCTPromiseResolveBlock,
                  rejecter reject: RCTPromiseRejectBlock) -> Void {
         if(mInstance != nil){
-            var mpProperties = MixpanelTypeHandler.processProperties(properties: properties);
-            appendLibraryProperties(mpProperties);
+            let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true);
             mInstance?.people.setOnce(properties: mpProperties)
             resolve(Constants.SET_ONCE_SUCCESS)
         }else{
@@ -694,4 +690,5 @@ class MixpanelReactNative: NSObject {
         }
     }
 }
+
 

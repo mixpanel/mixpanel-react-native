@@ -24,11 +24,14 @@ export default class App extends Component<Props> {
     mixpanel.getInstance("bb71c6d97ef1bde11ffe83037a388b57");
     var properties = 
     {
-      "TestKey":"TestValue"
+      "Name":"Gayatri",
+      "City": "Pune"
     };
-   // mixpanel.identify("abcd");
+     mixpanel.identify("gl22234");
+     
     //mixpanel.hasOptedOutTracking
-   // mixpanel.track("New Test event",{}).then( t=> alert(t));
+     mixpanel.people.set(properties);
+    //mixpanel.track("Test event android",properties).then( t=> alert(t));
     mixpanel.flush();
     //mixpanel.people.set(properties).then(t => alert(t));
 

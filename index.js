@@ -3,6 +3,7 @@
 import { NativeModules } from 'react-native';
 
 const { MixpanelReactNative } = NativeModules;
+
 var KEY = {
     DISTINCT_ID: "Distinct id",
     ALIAS: "Alias",
@@ -31,24 +32,34 @@ export class Mixpanel {
         this.apiToken = token;
         return MixpanelReactNative.getInstance(this.apiToken, DEFAULT_OPT_OUT);
     }
-
+    /**
+     * Returns if the current user has opted out tracking.
+     */
     hasOptedOutTracking(){
         return MixpanelReactNative.hasOptedOutTracking();
     }
-
+    /**
+     * Opt in tracking.
+     * Use this method to opt in an already opted out user from tracking. People updates and track calls will be
+     * sent to Mixpanel after using this method.
+     */
     optInTracking(distinct_id, properties){
         if (arguments.length === 0) {
-            distinct_id = null;
-            properties = null;
+            properties = {};
         } else if (typeof distinct_id === "string") {
             distinct_id = Helper.getValidString(distinct_id, KEY.DISTINCT_ID);
-        }else if (typeof distinct_id === "object") {
+            properties = {};
+        } else if (typeof distinct_id === "object") {
             properties = distinct_id;
             distinct_id = null;
         }
         return MixpanelReactNative.optInTracking(distinct_id, properties);
     }
-
+    /**
+     * Opt out tracking.
+     * This method is used to opt out tracking. This causes all events and people request no longer
+     * to be sent back to the Mixpanel server.
+     */
     optOutTracking(){
         return MixpanelReactNative.optInTracking();
     }
@@ -72,11 +83,11 @@ export class Mixpanel {
      */
     track(event_name, properties){
         if (arguments.length === 0) {
-            event_name = null;
-            properties = null;
+            properties = {};
         } else if (typeof event_name === "string") {
             event_name = Helper.getValidString(event_name, KEY.EVENT_NAME);
-        }else if (typeof event_name === "object") {
+            properties = {};
+        } else if (typeof event_name === "object") {
             properties = event_name;
             event_name = null;
         }
@@ -120,11 +131,11 @@ export class Mixpanel {
      * with the event.
      */
     timeEvent(event_name){
-        return MixpanelReactNative.timeEvent(Helper.getValidString(event_name,KEY.EVENT_NAME));
+        return MixpanelReactNative.timeEvent(Helper.getValidString(event_name, KEY.EVENT_NAME));
     }
 
     eventElapsedTime(event_name){
-        return MixpanelReactNative.eventElapsedTime(Helper.getValidString(event_name,KEY.EVENT_NAME));
+        return MixpanelReactNative.eventElapsedTime(Helper.getValidString(event_name, KEY.EVENT_NAME));
     } 
     /**
      * Clears super properties and generates a new random distinct_id for this instance.
@@ -215,7 +226,22 @@ export class People {
     deleteUser(){
         return MixpanelReactNative.deleteUser();
     }
-
+    /**
+     * Removes list properties.
+     */
+    remove(name, properties){
+        return MixpanelReactNative.remove(name, properties);
+    }
+    /**
+     * Remove a list of properties and their values from the current user's profile
+     * in Mixpanel People.
+     */
+    unset(property_name){
+        return MixpanelReactNative.unset(property_name);
+    }
+    /**
+     * Register the given device to receive push notifications.
+     */
     setPushRegistrationId(token){
         return MixpanelReactNative.setPushRegistrationId(token);
     }
@@ -223,14 +249,16 @@ export class People {
     getPushRegistrationId(){
         return MixpanelReactNative.getPushRegistrationId();
     }
-
+    /**
+     * Register the given device to receive push notifications.
+     */
     clearPushRegistrationId(token){
         return MixpanelReactNative.clearPushRegistrationId(token);
     }
 }
 
 class Helper {
-    static getValidString(str,parameter_name){
+    static getValidString(str, parameter_name){
     if(!str || str === "" ) {
         throw new Error(parameter_name + ERROR_MESSAGE.REQUIRED_PARAMETER );
     }

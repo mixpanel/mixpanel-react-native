@@ -128,44 +128,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
     }
 
-    /*
-    Use this method to opt-in an already opted-out user from tracking.
-    People updates and track calls will be sent to Mixpanel after using this method.
-    This method will internally track an opt-in event to your project.
-    */
-    @ReactMethod
-    public void optInTracking(Promise promise)
-    {
-        if(mInstance == null)
-        {
-            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-        }
-        else
-        {
-            mInstance.optInTracking();
-            promise.resolve(Constant.OPT_IN_SUCCESS);
-        }
-    }
 
-    /*
-    Use this method to opt-in an already opted-out user from tracking.
-    String to use as the distinct ID for events. This will call identify(String).
-    People updates and track calls will be sent to Mixpanel after using this method.
-    This method will internally track an opt-in event to your project.
-    */
-    @ReactMethod
-    public void optInTracking(final String distinctId, Promise promise)
-    {
-       if(mInstance == null)
-        {
-            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-        }
-        else
-        {
-            mInstance.optInTracking(distinctId);
-            promise.resolve(Constant.OPT_IN_SUCCESS);
-        }
-    }
     /*
     Use this method to opt-in an already opted-out user from tracking.
     String to use as the distinct ID for events. This will call identify(String).
@@ -210,28 +173,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             mInstance.optOutTracking();
             promise.resolve(Constant.OPT_OUT_SUCCESS);
         }
-    }
-
-    /*
-    Use for Track an event.
-    Every call to track eventually results in a data point sent to Mixpanel.
-    These data points are what are measured, counted, and broken down to create your Mixpanel reports.
-    Events have a string name with event get logged into the Mixpanel.
-    */
-    @ReactMethod
-    public void track(final String eventName, Promise promise)
-    {
-
-        if(mInstance == null)
-        {
-            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-        }
-        else
-        {
-            mInstance.track(eventName);
-            promise.resolve(Constant.EVENT_TRACK_SUCCESS);
-        }
-
     }
 
     /*
@@ -905,7 +846,47 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(Constant.MERGE_SUCCESS);
         }
     }
+    @ReactMethod
+    public void unset(String propertyName, Promise promise)
+    {
+        if(mInstance == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.getPeople().unset(propertyName);
+            promise.resolve(Constant.UNSET_SUCCESS);
+        }
+    }
+    /**
+     * Remove value from a list-valued property only if they are already present in the list.
+     * If the property does not currently exist, the remove will be ignored.
+     * If the property exists and is not list-valued, the remove will be ignored.
+     */
+    @ReactMethod
+    public void remove(String name, ReadableArray properties, Promise promise)
+    {
+        JSONArray jsonArray = null;
+        try
+        {
+            jsonArray = ReactNativeHelper.reactToJSON(properties);
+        }
+        catch(JSONException e)
+        {
+            e.printStackTrace();
+        }
 
+        if(mInstance == null || jsonArray == null)
+        {
+            promise.reject(new Throwable(Constant.NULL_EXCEPTION));
+        }
+        else
+        {
+            mInstance.getPeople().remove(name, jsonArray);
+            promise.resolve(Constant.REMOVE_SUCCESS);
+        }
+    }
     @ReactMethod
     public void setPushRegistrationId(String token, Promise promise)
     {

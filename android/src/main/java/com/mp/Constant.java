@@ -29,6 +29,8 @@ public class Constant {
     static final String APPEND_SUCCESS  = "Values appended to the property successfully ";
     static final String DELETE_SUCCESS  = "User record deleted successfully";
     static final String MERGE_SUCCESS  = "Updates merged successfully";
+    static final String UNSET_SUCCESS = "Property unset from the user profile successfully";
+    static final String REMOVE_SUCCESS  = "Remove listed-valued property successfully ";
     static final String SET_PUSH_REGISTRATION_ID_SUCCESS  = "Push registration id is set successfully";
     static final String ClEAR_PUSH_REGISTRATION_ID_SUCCESS  = "Push registration token is cleared successfully";
     static final String ClEAR_ALL_PUSH_REGISTRATION_ID_SUCCESS  = "All push registration tokens are cleared successfully";

@@ -535,7 +535,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(Constant.TIME_EVENT_SUCCESS);
         }
     }
-
+    /*
+    Retrieves the time elapsed for the named event since timeEvent() was called.
+    */
     @ReactMethod
     public void eventElapsedTime(final String eventName, Promise promise)
     {
@@ -549,7 +551,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(Constant.EVENT_ELAPSED_TIME_SUCCESS);
         }
     }
-
+    /*
+    Clears tweaks and all distinct_ids, superProperties, and push registrations from persistent storage. Will not clear referrer information.
+    */
     @ReactMethod
     public void reset(Promise promise)
     {
@@ -662,6 +666,22 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(Constant.SET_SUCCESS);
         }
 
+    }
+    /*
+    permanently removes the property with the given name from the user's profile
+    */
+    @ReactMethod
+    public void unset(String propertyName, Promise promise)
+    {
+        if(mInstance == null)
+        {
+            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+        }
+        else
+        {
+            mInstance.getPeople().unset(propertyName);
+            promise.resolve(Constant.UNSET_SUCCESS);
+        }
     }
     /*
     Sets a single property with the given name and value for this user.
@@ -785,7 +805,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(Constant.INCREMENT_SUCCESS);
         }
     }
-
+    /*
+    Appends a value to a list-valued property. If the property does not currently exist, it will be created as a list of one element.
+    If the property does exist and doesn't currently have a list value, the append will be ignored.
+    */
     @ReactMethod
     public void append(String name, ReadableArray properties, Promise promise)
     {
@@ -809,7 +832,11 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(Constant.APPEND_SUCCESS);
         }
     }
-
+    /*
+    Permanently deletes the identified user's record from People Analytics.
+    Calling deleteUser deletes an entire record completely.
+    Any future calls to People Analytics using the same distinct id will create and store new values.
+    */
     @ReactMethod
     public void deleteUser(Promise promise)
     {
@@ -824,6 +851,11 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
     }
 
+    /*
+    Merge a given JSONObject into the object-valued property named name.
+    If the user does not already have the associated property, an new property will be created with the value of the given updates.
+    If the user already has a value for the given property, the updates will be merged into the existing value
+    */
     @ReactMethod
     public void merge(String propertyName, ReadableMap updates, Promise promise)
     {
@@ -887,6 +919,14 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(Constant.REMOVE_SUCCESS);
         }
     }
+
+/*
+    Manually send a Firebase Cloud Messaging token to Mixpanel.
+    If you are handling Firebase Cloud Messages in your own application, but would like to allow Mixpanel to handle messages originating from Mixpanel campaigns,
+    you should call setPushRegistrationId with the FCM token.
+    setPushRegistrationId should only be called after identify(String) has been called.
+    */
+
     @ReactMethod
     public void setPushRegistrationId(String token, Promise promise)
     {
@@ -900,7 +940,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(Constant.SET_PUSH_REGISTRATION_ID_SUCCESS);
         }
     }
-
+    /*
+    Retrieves current Firebase Cloud Messaging token.
+    getPushRegistrationId() should only be called after identify(String) has been called.
+    */
     @ReactMethod
     public void getPushRegistrationId(Promise promise)
     {
@@ -913,7 +956,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(mInstance.getPeople().getPushRegistrationId());
         }
     }
-
+    /*
+    Manually clear all current Firebase Cloud Messaging tokens from Mixpanel.
+    clearPushRegistrationId() should only be called after identify(String) has been called.
+    */
     @ReactMethod
     public void clearPushRegistrationId(String registrationId, Promise promise)
     {
@@ -927,7 +973,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(Constant.ClEAR_PUSH_REGISTRATION_ID_SUCCESS);
         }
     }
-
+    /*
+    Manually clear all current Firebase Cloud Messaging tokens from Mixpanel.
+    clearPushRegistrationId() should only be called after identify(String) has been called.
+    */
     @ReactMethod
     public void clearPushRegistrationId(Promise promise)
     {

@@ -488,7 +488,7 @@ class MixpanelReactNative: NSObject {
      - parameter by:       amount to increment by
      */
     @objc
-    func incrementPropertyby(_ property: String,
+    func incrementPropertyBy(_ property: String,
                              by: Double,
                              resolver resolve: RCTPromiseResolveBlock,
                              rejecter reject: RCTPromiseRejectBlock) -> Void {

@@ -805,7 +805,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     */
 
     @ReactMethod
-    public void incrementPropertyby(String name, double incrementValue, Promise promise)
+    public void incrementPropertyBy(String name, double incrementValue, Promise promise)
     {
         if(mInstance == null)
         {

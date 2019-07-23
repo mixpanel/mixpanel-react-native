@@ -8,7 +8,7 @@
 node_modules/
 npm-debug.log
 yarn-error.log
-  
+*.tgz
 
 # Xcode
 #
@@ -43,4 +43,5 @@ local.properties
 buck-out/
 \.buckd/
 *.keystore
-      
+
+     

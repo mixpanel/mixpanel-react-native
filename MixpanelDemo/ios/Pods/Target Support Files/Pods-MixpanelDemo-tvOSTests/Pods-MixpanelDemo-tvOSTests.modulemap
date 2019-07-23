@@ -1,0 +1,6 @@
+framework module Pods_MixpanelDemo_tvOSTests {
+  umbrella header "Pods-MixpanelDemo-tvOSTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

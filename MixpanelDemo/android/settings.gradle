@@ -1,0 +1,5 @@
+rootProject.name = 'MixpanelDemo'
+include ':mixpanel-react-native'
+project(':mixpanel-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/mixpanel-react-native/android')
+
+include ':app'

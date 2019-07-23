@@ -1,8 +1,7 @@
-
 {
-  "name": "-mixpanel-react-native",
-  "version": "1.0.0",
-  "description": "",
+  "name": "mixpanel-react-native",
+  "version": "1.0.1",
+  "description": "## Getting started",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,9 +9,17 @@
   "keywords": [
     "react-native"
   ],
-  "author": "",
-  "license": "",
+  "author": "Tap Sense",
+  "license": "ISC",
   "peerDependencies": {
     "react-native": "^0.41.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/tapsense/mixpanel-react-native.git"
+  },
+  "bugs": {
+    "url": "https://gitlab.com/tapsense/mixpanel-react-native/issues"
+  },
+  "homepage": "https://gitlab.com/tapsense/mixpanel-react-native#readme"
 }

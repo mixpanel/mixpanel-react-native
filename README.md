@@ -1,43 +1,61 @@
 
-# -mixpanel-react-native
+# mixpanel-react-native
 
 ## Getting started
 
-`$ npm install -mixpanel-react-native --save`
+`$ npm install mixpanel-react-native --save`
 
-### Mostly automatic installation
+### Installation
 
-`$ react-native link -mixpanel-react-native`
+`$ react-native link mixpanel-react-native`
 
-### Manual installation
+#### iOS 
 
+If you're already using Cocoapods, add the following to your Podfile
+```
+pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
+```
 
-#### iOS
+Otherwise, setup Podfile according to [react native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps), so the Podfile will look like this:
+```
+source 'https://github.com/CocoaPods/Specs.git'
 
-1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
-2. Go to `node_modules` ➜ `-mixpanel-react-native` and add `MixpanelReactNative.xcodeproj`
-3. In XCode, in the project navigator, select your project. Add `libMixpanelReactNative.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
-4. Run your project (`Cmd+R`)<
+platform :ios, '11.0'
+
+target 'YourTargetName' do
+    pod 'React', :path => '../node_modules/react-native', :subspecs => [
+        'Core',
+        'CxxBridge', # Include this for RN >= 0.47
+        'DevSupport', # Include this to enable In-App Devmenu if RN >= 0.43
+        'RCTText',
+        'RCTNetwork',
+        'RCTWebSocket', # Needed for debugging
+        'RCTAnimation', # Needed for FlatList and animations running on native UI thread
+        ]
+    # Explicitly include Yoga if you are using RN >= 0.42.0
+    pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+    pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
+    pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
+    pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+
+    pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
+
+end
+```
+
+Remember to replace *YourTargetName* with your actual target name.
+
+Next, run ```pod install```.
+
 
 #### Android
 
-1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-  - Add `import com.mp.MixpanelReactNativePackage;` to the imports at the top of the file
-  - Add `new MixpanelReactNativePackage()` to the list returned by the `getPackages()` method
-2. Append the following lines to `android/settings.gradle`:
-  	```
-  	include ':-mixpanel-react-native'
-  	project(':-mixpanel-react-native').projectDir = new File(rootProject.projectDir, 	'../node_modules/-mixpanel-react-native/android')
-  	```
-3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
-  	```
-      compile project(':-mixpanel-react-native')
-  	```
+Android does not need additional setup, installing the package and linking will take care rest of the setup.
 
 
 ## Usage
 ```javascript
-import MixpanelReactNative from '-mixpanel-react-native';
+import MixpanelReactNative from 'mixpanel-react-native';
 
 // TODO: What to do with the module?
 MixpanelReactNative;

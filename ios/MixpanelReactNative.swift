@@ -84,7 +84,9 @@ class MixpanelReactNative: NSObject {
                        resolver resolve: RCTPromiseResolveBlock,
                        rejecter reject: RCTPromiseRejectBlock) -> Void {
         if(mInstance != nil){
-            mInstance?.optInTracking(distinctId: distinctId, properties: MixpanelTypeHandler.processProperties(properties: properties))
+            var mpProperties = MixpanelTypeHandler.processProperties(properties: properties);
+                appendLibraryProperties(mpProperties);
+            mInstance?.optInTracking(distinctId: distinctId, properties: mpProperties);
             resolve(Constants.OPT_IN_SUCCESS)
         }else{
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
@@ -97,7 +99,9 @@ class MixpanelReactNative: NSObject {
                resolver resolve: RCTPromiseResolveBlock,
                rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
         if(mInstance != nil){
-            mInstance?.track(event: event, properties: MixpanelTypeHandler.processProperties(properties: properties))
+            var mpProperties = MixpanelTypeHandler.processProperties(properties: properties);
+            appendLibraryProperties(mpProperties);
+            mInstance?.track(event: event, properties: mpProperties)
             resolve(Constants.TRACK_SUCCESS)
         }else{
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
@@ -383,7 +387,9 @@ class MixpanelReactNative: NSObject {
              resolver resolve: RCTPromiseResolveBlock,
              rejecter reject: RCTPromiseRejectBlock) -> Void {
         if(mInstance != nil){
-            mInstance?.people.set(properties: MixpanelTypeHandler.processProperties(properties: properties))
+            var mpProperties = MixpanelTypeHandler.processProperties(properties: properties);
+            appendLibraryProperties(mpProperties);
+            mInstance?.people.set(properties: mpProperties)
             resolve(Constants.SET_SUCCESS)
         }else{
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
@@ -427,7 +433,9 @@ class MixpanelReactNative: NSObject {
                  resolver resolve: RCTPromiseResolveBlock,
                  rejecter reject: RCTPromiseRejectBlock) -> Void {
         if(mInstance != nil){
-            mInstance?.people.setOnce(properties: MixpanelTypeHandler.processProperties(properties: properties))
+            var mpProperties = MixpanelTypeHandler.processProperties(properties: properties);
+            appendLibraryProperties(mpProperties);
+            mInstance?.people.setOnce(properties: mpProperties)
             resolve(Constants.SET_ONCE_SUCCESS)
         }else{
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);

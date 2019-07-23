@@ -3,6 +3,7 @@
  
  class MixpanelTypeHandler {
     static func ToMixpanelType(_ object: Any) -> MixpanelType? {
+
         switch object
         {
         case let value as String:
@@ -51,8 +52,19 @@
         for (key,value) in properties ?? [:] {
             mpProperties[key] = ToMixpanelType(value)
         }
+        mpProperties["mp_lib"] = "react-native";
+        mpProperties["$lib_version"] = "1.0.0";
         return mpProperties
     }
+    static func appendLibraryProperties(properties: Dictionary<String, MixpanelType>? = nil) -> Void {
+        if properties == nil{
+            properties = Dictionary<String, MixpanelType>()
+        }
+
+        properties["mp_lib"] = "react-native";
+        properties["$lib_version"] = "1.0.0";
+    }
+
  }
  
  

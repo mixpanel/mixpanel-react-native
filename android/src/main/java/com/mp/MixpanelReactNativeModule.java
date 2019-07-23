@@ -179,6 +179,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         try
         {
             jsonObject = ReactNativeHelper.reactToJSON(properties);
+            ReactNativeHelper.appendLibraryProperties(jsonObject);
         }
         catch (JSONException e)
         {
@@ -245,6 +246,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         try
         {
             jsonObject = ReactNativeHelper.reactToJSON(properties);
+            ReactNativeHelper.appendLibraryProperties(jsonObject);
         }
         catch (JSONException e)
         {
@@ -670,6 +672,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         try
         {
             jsonObject = ReactNativeHelper.reactToJSON(properties);
+            ReactNativeHelper.appendLibraryProperties(jsonObject);
         }
         catch(JSONException e)
         {
@@ -700,6 +703,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         try
         {
             jsonObject = ReactNativeHelper.reactToJSON(properties);
+            ReactNativeHelper.appendLibraryProperties(jsonObject);
         }
         catch(JSONException e)
         {
@@ -731,6 +735,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         try
         {
             jsonObject = ReactNativeHelper.reactToJSON(properties);
+            ReactNativeHelper.appendLibraryProperties(jsonObject);
         }
         catch(JSONException e)
         {

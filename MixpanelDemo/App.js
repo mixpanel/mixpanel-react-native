@@ -26,29 +26,12 @@ export default class App extends Component<Props> {
     {
       "$name": "Gayatri",
       "$city": "Pune",
-      "Age" : 23
+      "Age" : 23,
+      "DOB" : "22/01/1996"
     };
-     mixpanel.identify("abcd123");
-     mixpanel.track("Test android", properties);
-     mixpanel.flush();
-     mixpanel.optInTracking("abcd", properties);
-    /* mixpanel.track(properties);
-     mixpanel.flush();
-     mixpanel.identify("abcd123");
-     mixpanel.track("Test", properties);
-    */
-     
-
-     //mixpanel.optInTracking();
-     // mixpanel.flush();
-     //mixpanel.optInTracking(properties);
-     //mixpanel.flush();
-     //mixpanel.hasOptedOutTracking
-     //mixpanel.people.set(properties);
-     //mixpanel.people.unset("Age");
-    //mixpanel.track("Test event android",properties).then( t=> alert(t));
+    mixpanel.identify("abcd123");
+    mixpanel.track("Test", properties);
     mixpanel.flush();
-    //mixpanel.people.set(properties).then(t => alert(t));
 
     return (
       <View style={styles.container}>

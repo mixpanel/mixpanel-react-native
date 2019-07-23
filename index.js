@@ -48,7 +48,7 @@ export class Mixpanel {
             properties = {};
         } else if (typeof distinct_id === "string") {
             distinct_id = Helper.getValidString(distinct_id, KEY.DISTINCT_ID);
-            properties = {};
+            properties = properties || {};
         } else if (typeof distinct_id === "object") {
             properties = distinct_id;
             distinct_id = null;
@@ -86,7 +86,7 @@ export class Mixpanel {
             properties = {};
         } else if (typeof event_name === "string") {
             event_name = Helper.getValidString(event_name, KEY.EVENT_NAME);
-            properties = {};
+            properties = properties || {};
         } else if (typeof event_name === "object") {
             properties = event_name;
             event_name = null;

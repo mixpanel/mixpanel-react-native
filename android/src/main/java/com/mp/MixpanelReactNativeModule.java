@@ -878,19 +878,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(Constant.MERGE_SUCCESS);
         }
     }
-    @ReactMethod
-    public void unset(String propertyName, Promise promise)
-    {
-        if(mInstance == null)
-        {
-            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-        }
-        else
-        {
-            mInstance.getPeople().unset(propertyName);
-            promise.resolve(Constant.UNSET_SUCCESS);
-        }
-    }
+
     /**
      * Remove value from a list-valued property only if they are already present in the list.
      * If the property does not currently exist, the remove will be ignored.

@@ -9,12 +9,11 @@ class MixpanelReactNative: NSObject {
     // MARK: - Mixpanel Instance
     
     /**
-     Get the instance of MixpanelAPI with providing your project token
+     Get the instance of Mixpanel with providing your project token
      and boolean value for opting out tracking,  default value for optOutTrackingDefault is
      false by setting it to true will prevent data from being collected by default
-     This instance of MixpanelAPI you can use to send events and updates to Mixpanel.
+     This instance of Mixpanel you can use to send events and updates to Mixpanel.
      */
-    
     @objc
     func getInstance(_ apiToken: String,
                      optOutTrackingByDefault: Bool = false,
@@ -33,6 +32,7 @@ class MixpanelReactNative: NSObject {
                     optOutTrackingByDefault: Bool = false) -> MixpanelInstance {
         return Mixpanel.initialize(token: apiToken, launchOptions: launchOptions, flushInterval: flushInterval, instanceName: instanceName, automaticPushTracking: automaticPushTracking, optOutTrackingByDefault: optOutTrackingByDefault)
     }
+    
     // MARK: - Opting Users Out of Tracking
     
     /**
@@ -44,10 +44,10 @@ class MixpanelReactNative: NSObject {
     @objc
     func optOutTracking(_ resolve: RCTPromiseResolveBlock,
                         rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.optOutTracking()
             resolve(Constants.OPT_OUT_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -60,9 +60,9 @@ class MixpanelReactNative: NSObject {
     @objc
     func hasOptedOutTracking(_ resolve: RCTPromiseResolveBlock,
                              rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             resolve(mInstance?.hasOptedOutTracking())
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -83,31 +83,40 @@ class MixpanelReactNative: NSObject {
                        properties: [String: Any]? = nil,
                        resolver resolve: RCTPromiseResolveBlock,
                        rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true);
             mInstance?.optInTracking(distinctId: distinctId, properties: mpProperties);
             resolve(Constants.OPT_IN_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
+    
     // MARK: - Track Events
+    
+    /**
+     Tracks an event with properties.
+     Properties are optional and can be added only if needed.
+     Properties will allow you to segment your events in your Mixpanel reports.
+     If the event is being timed, the timer will stop and be added as a property.
+     
+     - parameter event:      event name
+     - parameter properties: properties dictionary
+     */
     @objc
     func track(_ event: String?,
                properties: [String: Any]? = nil,
                resolver resolve: RCTPromiseResolveBlock,
                rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true);
             mInstance?.track(event: event, properties: mpProperties)
             resolve(Constants.TRACK_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
     
-    // MARK: - Automatically Track Events
-    // MARK: - Sending Events
     // MARK: - Timing Events
     
     /**
@@ -130,17 +139,16 @@ class MixpanelReactNative: NSObject {
      }
      
      - parameter event: the event name to be timed
-     
      */
     @objc
     func timeEvent(_ event: String,
                    resolver resolve: RCTPromiseResolveBlock,
                    rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.time(event: event)
             mInstance?.flush()
             resolve(Constants.TIME_EVENT_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -151,10 +159,10 @@ class MixpanelReactNative: NSObject {
     @objc
     func clearTimedEvents(_ resolve: RCTPromiseResolveBlock,
                           rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.clearTimedEvents()
             resolve(Constants.CLEAR_TIME_EVENT_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -168,14 +176,15 @@ class MixpanelReactNative: NSObject {
     func eventElapsedTime(_ event: String,
                           resolver resolve: RCTPromiseResolveBlock,
                           rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             resolve(mInstance?.eventElapsedTime(event: event))
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
     
     // MARK: - Managing User Identity
+    
     /**
      Identify the user uniquely by providing the user distinct id, so all the event, update ,track call
      will manipulate the data only for identified users profile.
@@ -190,10 +199,10 @@ class MixpanelReactNative: NSObject {
     func identify(_ distinctId: String,
                   resolver resolve: RCTPromiseResolveBlock,
                   rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.identify(distinctId: distinctId)
             resolve(Constants.USER_IDENTIFIED_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -219,16 +228,15 @@ class MixpanelReactNative: NSObject {
      - parameter usePeople: boolean that controls whether or not to set the people distinctId to the event distinctId.
      This should only be set to false if you wish to prevent people profile updates for that user.
      */
-    
     @objc
     func alias(_ alias: String,
                distinctId: String,
                resolver resolve: RCTPromiseResolveBlock,
                rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.createAlias(alias, distinctId: distinctId)
             resolve(Constants.ALIAS_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -240,15 +248,14 @@ class MixpanelReactNative: NSObject {
      default for `flushInterval`), and on background (since
      `flushOnBackground` is on by default). You only need to call this
      method manually if you want to force a flush at a particular moment.
-     
      */
     @objc
     func flush(_ resolve: RCTPromiseResolveBlock,
                rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.flush()
             resolve(Constants.FLUSH_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -260,10 +267,10 @@ class MixpanelReactNative: NSObject {
     @objc
     func reset(_ resolve: RCTPromiseResolveBlock,
                rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.reset()
             resolve(Constants.RESET_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -285,10 +292,10 @@ class MixpanelReactNative: NSObject {
     func registerSuperProperties(_ properties: [String: Any],
                                  resolver resolve: RCTPromiseResolveBlock,
                                  rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.registerSuperProperties(MixpanelTypeHandler.processProperties(properties: properties))
             resolve(Constants.REGISTER_SUPER_PROPERTY_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -308,10 +315,10 @@ class MixpanelReactNative: NSObject {
                                      defaultValue: Any? = nil,
                                      resolver resolve: RCTPromiseResolveBlock,
                                      rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.registerSuperPropertiesOnce(MixpanelTypeHandler.processProperties(properties: properties), defaultValue: MixpanelTypeHandler.ToMixpanelType(defaultValue as Any))
             resolve(Constants.REGISTER_SUPER_PROPERTY_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -319,12 +326,13 @@ class MixpanelReactNative: NSObject {
     @objc
     func getSuperProperties(_ resolve: RCTPromiseResolveBlock,
                             rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             resolve(mInstance?.currentSuperProperties())
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
+    
     /**
      Removes a previously registered super property.
      
@@ -342,23 +350,24 @@ class MixpanelReactNative: NSObject {
     func unregisterSuperProperty(_ propertyName: String,
                                  resolver resolve: RCTPromiseResolveBlock,
                                  rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.unregisterSuperProperty(propertyName)
             resolve(Constants.UNREGISTER_SUPER_PROPERTY_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
+    
     /**
      Clears all currently set super properties.
      */
     @objc
     func clearSuperProperties(_ resolve: RCTPromiseResolveBlock,
                               rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.clearSuperProperties()
             resolve(Constants.CLEAR_SUPER_PROPERTY_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -384,14 +393,15 @@ class MixpanelReactNative: NSObject {
     func set(_ properties: [String: Any],
              resolver resolve: RCTPromiseResolveBlock,
              rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true);
             mInstance?.people.set(properties: mpProperties)
             resolve(Constants.SET_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
+    
     /**
      Convenience method for setting a single property in Mixpanel People.
      
@@ -406,10 +416,10 @@ class MixpanelReactNative: NSObject {
                        to: Any,
                        resolver resolve: RCTPromiseResolveBlock,
                        rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.people.set(property: property, to: MixpanelTypeHandler.ToMixpanelType(to as Any)!)
             resolve(Constants.SET_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -429,11 +439,11 @@ class MixpanelReactNative: NSObject {
     func setOnce(_ properties: [String: Any],
                  resolver resolve: RCTPromiseResolveBlock,
                  rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true);
             mInstance?.people.setOnce(properties: mpProperties)
             resolve(Constants.SET_ONCE_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -451,10 +461,10 @@ class MixpanelReactNative: NSObject {
     func unset(_ properties: [String],
                resolver resolve: RCTPromiseResolveBlock,
                rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.people.unset(properties: properties)
             resolve(Constants.UNSET_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -472,10 +482,10 @@ class MixpanelReactNative: NSObject {
     func increment(_ properties: [String: Any],
                    resolver resolve: RCTPromiseResolveBlock,
                    rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.people.increment(properties: MixpanelTypeHandler.processProperties(properties: properties))
             resolve(Constants.INCREMENT_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -492,10 +502,10 @@ class MixpanelReactNative: NSObject {
                              by: Double,
                              resolver resolve: RCTPromiseResolveBlock,
                              rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.people.increment(property: property, by: by)
             resolve(Constants.INCREMENT_PROPERTIES_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -506,16 +516,20 @@ class MixpanelReactNative: NSObject {
      Property keys must be String objects and the supported value types need to conform to MixpanelType.
      MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType], [String: MixpanelType], Date, URL, or NSNull.
      
+     - parameter propertyName: the People Analytics property that should have it's value appended to
      - parameter properties: mapping of list property names to values to append
      */
     @objc
-    func append(_ properties: [String: Any],
+    func append(_ propertyName: String,
+                properties: [String: Any],
                 resolver resolve: RCTPromiseResolveBlock,
                 rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
-            mInstance?.people.append(properties: MixpanelTypeHandler.processProperties(properties: properties))
+        if (mInstance != nil) {
+            var mProperties = [String: Any]();
+            mProperties[propertyName] = properties;
+            mInstance?.people.append(properties: MixpanelTypeHandler.processProperties(properties: mProperties))
             resolve(Constants.APPEND_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -526,16 +540,20 @@ class MixpanelReactNative: NSObject {
      Property keys must be String objects and the supported value types need to conform to MixpanelType.
      MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType], [String: MixpanelType], Date, URL, or NSNull.
      
+     - parameter propertyName: name the People Analytics property that should have it's value removed from
      - parameter properties: mapping of list property names to values to remove
      */
     @objc
-    func remove(_ properties: [String: Any],
+    func remove(_ propertyName: String,
+                properties: [String: Any],
                 resolver resolve: RCTPromiseResolveBlock,
                 rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
-            mInstance?.people.remove(properties: MixpanelTypeHandler.processProperties(properties: properties))
+        if (mInstance != nil) {
+            var mProperties = [String: Any]();
+            mProperties[propertyName] = properties;
+            mInstance?.people.remove(properties: MixpanelTypeHandler.processProperties(properties: mProperties))
             resolve(Constants.REMOVE_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -545,16 +563,20 @@ class MixpanelReactNative: NSObject {
      
      Property values must be array objects.
      
+     - parameter propertyName: name of the list-valued property to set or modify
      - parameter properties: mapping of list property names to lists to union
      */
     @objc
-    func union(_ properties: [String: Any],
+    func union(_ propertyName: String,
+               properties: [String: Any],
                resolver resolve: RCTPromiseResolveBlock,
                rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
-            mInstance?.people.union(properties: MixpanelTypeHandler.processProperties(properties: properties))
+        if (mInstance != nil) {
+            var mProperties = [String: Any]();
+            mProperties[propertyName] = properties;
+            mInstance?.people.union(properties: MixpanelTypeHandler.processProperties(properties: mProperties))
             resolve(Constants.UNION_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -575,10 +597,10 @@ class MixpanelReactNative: NSObject {
                      properties: [String: Any]? = nil,
                      resolver resolve: RCTPromiseResolveBlock,
                      rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.people.trackCharge(amount: amount, properties: MixpanelTypeHandler.processProperties(properties: properties))
             resolve(Constants.TRACK_CHARGE_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -589,10 +611,10 @@ class MixpanelReactNative: NSObject {
     @objc
     func clearCharges(_ resolve: RCTPromiseResolveBlock,
                       rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.people.clearCharges();
             resolve(Constants.CLEAR_CHARGE_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -603,13 +625,15 @@ class MixpanelReactNative: NSObject {
     @objc
     func deleteUser(_ resolve: RCTPromiseResolveBlock,
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.people.deleteUser();
             resolve(Constants.DELETE_USER_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
+    
+    // MARK: - Registering for Push Notifications
     
     /**
      Register the given device to receive push notifications.
@@ -627,10 +651,10 @@ class MixpanelReactNative: NSObject {
     func setPushRegistrationId(_ deviceToken: Data,
                                resolver resolve: RCTPromiseResolveBlock,
                                rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.people.addPushDeviceToken(deviceToken)
             resolve(Constants.SET_PUSH_REGISTRATION_ID_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -651,10 +675,10 @@ class MixpanelReactNative: NSObject {
     func clearPushRegistrationId(_ deviceToken: Data,
                                  resolver resolve: RCTPromiseResolveBlock,
                                  rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.people.removePushDeviceToken(deviceToken)
             resolve(Constants.CLEAR_PUSH_REGISTRATION_ID_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
@@ -668,20 +692,19 @@ class MixpanelReactNative: NSObject {
     @objc
     func clearAllPushRegistrationId(_ resolve: RCTPromiseResolveBlock,
                                     rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.people.removeAllPushDeviceTokens()
             resolve(Constants.CLEAR_ALL_PUSH_REGISTRATION_ID_SUCCESS)
-        }else{
+        } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
         }
     }
-    // MARK: - Registering for Push Notifications
     
     // MARK: - Test Method
     @objc
     func getInformation(_ resolve: RCTPromiseResolveBlock,
                         rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if(mInstance != nil){
+        if (mInstance != nil) {
             mInstance?.identify(distinctId: "abcd")
             mInstance?.people.set(property: "$name", to: "Gayatri Lokhande")
             mInstance?.flush()

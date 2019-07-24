@@ -525,9 +525,7 @@ class MixpanelReactNative: NSObject {
                 resolver resolve: RCTPromiseResolveBlock,
                 rejecter reject: RCTPromiseRejectBlock) -> Void {
         if (mInstance != nil) {
-            var mProperties = [String: Any]();
-            mProperties[propertyName] = properties;
-            mInstance?.people.append(properties: MixpanelTypeHandler.processProperties(properties: mProperties))
+            mInstance?.people.append(properties: MixpanelTypeHandler.processProperties(properties: properties))
             resolve(Constants.APPEND_SUCCESS)
         } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
@@ -549,9 +547,7 @@ class MixpanelReactNative: NSObject {
                 resolver resolve: RCTPromiseResolveBlock,
                 rejecter reject: RCTPromiseRejectBlock) -> Void {
         if (mInstance != nil) {
-            var mProperties = [String: Any]();
-            mProperties[propertyName] = properties;
-            mInstance?.people.remove(properties: MixpanelTypeHandler.processProperties(properties: mProperties))
+            mInstance?.people.remove(properties: MixpanelTypeHandler.processProperties(properties: properties))
             resolve(Constants.REMOVE_SUCCESS)
         } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
@@ -572,9 +568,7 @@ class MixpanelReactNative: NSObject {
                resolver resolve: RCTPromiseResolveBlock,
                rejecter reject: RCTPromiseRejectBlock) -> Void {
         if (mInstance != nil) {
-            var mProperties = [String: Any]();
-            mProperties[propertyName] = properties;
-            mInstance?.people.union(properties: MixpanelTypeHandler.processProperties(properties: mProperties))
+            mInstance?.people.union(properties: MixpanelTypeHandler.processProperties(properties: properties))
             resolve(Constants.UNION_SUCCESS)
         } else {
             reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);

@@ -64,7 +64,7 @@ export class Mixpanel {
       to be sent back to the Mixpanel server.
      */
     optOutTracking() {
-        return MixpanelReactNative.optInTracking();
+        return MixpanelReactNative.optOutTracking();
     }
 
     /**
@@ -115,7 +115,7 @@ export class Mixpanel {
      */
     registerSuperPropertiesOnce(properties) {
         properties = properties || {};
-        return MixpanelReactNative.registerSuperProperties(properties);
+        return MixpanelReactNative.registerSuperPropertiesOnce(properties);
     }
 
     /**

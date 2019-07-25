@@ -290,7 +290,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      * superProperties registered before the clearSuperProperties method was called.
      */
     @ReactMethod
-    public void clearSuperProperties(final String mpToken, Promise promise) {
+    public void clearSuperProperties(Promise promise) {
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {

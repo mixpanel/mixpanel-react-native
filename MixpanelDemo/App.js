@@ -24,31 +24,14 @@ export default class App extends Component<Props> {
     mixpanel.getInstance("bb71c6d97ef1bde11ffe83037a388b57");
     var properties = 
     {
-      "$name": "Gayatri",
-      "$city": "Pune",
-      "Age" : 23
+      "Age" : 4
     };
-     mixpanel.identify("abcd123");
-     mixpanel.track("Test android", properties);
-     mixpanel.flush();
-     mixpanel.optInTracking("abcd", properties);
-    /* mixpanel.track(properties);
-     mixpanel.flush();
-     mixpanel.identify("abcd123");
-     mixpanel.track("Test", properties);
-    */
-     
-
-     //mixpanel.optInTracking();
-     // mixpanel.flush();
-     //mixpanel.optInTracking(properties);
-     //mixpanel.flush();
-     //mixpanel.hasOptedOutTracking
-     //mixpanel.people.set(properties);
-     //mixpanel.people.unset("Age");
-    //mixpanel.track("Test event android",properties).then( t=> alert(t));
+    mixpanel.people.identify("gl222");
+    mixpanel.people.increment("Age", 3).then((t) => alert(t));
     mixpanel.flush();
-    //mixpanel.people.set(properties).then(t => alert(t));
+    mixpanel.identify("gl222");
+    mixpanel.track("increment Called")
+    mixpanel.flush();
 
     return (
       <View style={styles.container}>

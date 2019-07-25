@@ -527,7 +527,6 @@
 		6EDEB7AF22E1F3F600665C60 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				A10AB25CEAE2481C9A0D37C7 /* libMixpanelReactNative.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -1245,7 +1244,6 @@
 				DEAD_CODE_STRIPPING = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/mixpanel-react-native/ios/**",
 				);
 				INFOPLIST_FILE = MixpanelDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1272,7 +1270,6 @@
 				CURRENT_PROJECT_VERSION = 1;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/mixpanel-react-native/ios/**",
 				);
 				INFOPLIST_FILE = MixpanelDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1304,7 +1301,6 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/mixpanel-react-native/ios/**",
 				);
 				INFOPLIST_FILE = "MixpanelDemo-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1339,7 +1335,6 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/mixpanel-react-native/ios/**",
 				);
 				INFOPLIST_FILE = "MixpanelDemo-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1373,7 +1368,6 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/mixpanel-react-native/ios/**",
 				);
 				INFOPLIST_FILE = "MixpanelDemo-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -1407,7 +1401,6 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../node_modules/mixpanel-react-native/ios/**",
 				);
 				INFOPLIST_FILE = "MixpanelDemo-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";

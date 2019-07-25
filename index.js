@@ -199,6 +199,7 @@ export class People {
             prop = prop || {};
             return MixpanelReactNative.set(prop);
         } 
+        to = to || {};
         return MixpanelReactNative.setPropertyTo(Helper.getValidString(prop, KEY.PROPERTY_NAME), to);
     }
 
@@ -245,7 +246,7 @@ export class People {
         }else if (typeof by === "number" || !by) {
             by = by || 1; 
         }
-        return MixpanelReactNative.incrementPropertyBy(prop, by);
+        return MixpanelReactNative.incrementPropertyBy(Helper.getValidString(prop, KEY.PROPERTY_NAME), by);
     }
 
     /**

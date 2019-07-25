@@ -24,13 +24,13 @@ export default class App extends Component<Props> {
     mixpanel.getInstance("bb71c6d97ef1bde11ffe83037a388b57");
     var properties = 
     {
-      "$name": "Gayatri",
-      "$city": "Pune",
-      "Age" : 23,
-      "DOB" : "22/01/1996"
+      "Age" : 4
     };
-    mixpanel.identify("abcd123");
-    mixpanel.track("Test", properties);
+    mixpanel.people.identify("gl222");
+    mixpanel.people.increment("Age", 3).then((t) => alert(t));
+    mixpanel.flush();
+    mixpanel.identify("gl222");
+    mixpanel.track("increment Called")
     mixpanel.flush();
 
     return (

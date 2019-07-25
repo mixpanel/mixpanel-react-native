@@ -3,7 +3,7 @@ package com.mixpaneldemo;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.mp.MixpanelReactNativePackage;
+import com.mixpanel.react.MixpanelReactNativePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;

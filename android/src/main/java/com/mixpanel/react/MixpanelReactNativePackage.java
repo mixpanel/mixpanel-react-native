@@ -1,5 +1,5 @@
 
-package com.mp;
+package com.mixpanel.react;
 
 import java.util.Arrays;
 import java.util.Collections;

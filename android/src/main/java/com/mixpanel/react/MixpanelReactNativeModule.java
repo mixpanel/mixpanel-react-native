@@ -1,5 +1,5 @@
 
-package com.mp;
+package com.mixpanel.react;
 
 import com.facebook.common.references.SharedReference;
 import com.facebook.react.bridge.Promise;

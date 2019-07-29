@@ -1,4 +1,4 @@
-package com.mp;
+package com.mixpanel.react;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;

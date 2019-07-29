@@ -63,11 +63,11 @@ RCT_EXTERN_METHOD(increment: (NSDictionary *)properties resolver: (RCTPromiseRes
 
 RCT_EXTERN_METHOD(incrementPropertyBy: (NSString *)property by: (double)by resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
 
-RCT_EXTERN_METHOD(append: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+RCT_EXTERN_METHOD(append: (NSString *)propertyName properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
 
-RCT_EXTERN_METHOD(remove: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+RCT_EXTERN_METHOD(remove: (NSString *)propertyName properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
 
-RCT_EXTERN_METHOD(union: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
+RCT_EXTERN_METHOD(union: (NSString *)propertyName properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
 
 RCT_EXTERN_METHOD(trackCharge: (double)amount properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject);
 

@@ -1,4 +1,4 @@
-package com.mp;
+package com.mixpanel.react;
 
 public class Constant {
 

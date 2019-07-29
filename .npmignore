@@ -10,9 +10,7 @@ npm-debug.log
 yarn-error.log
 *.tgz
 
-# Xcode
-#
-build/
+ios/build/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -28,16 +26,19 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-project.xcworkspace
+ios/project.xcworkspace
       
 
 # Android/IntelliJ
 #
-build/
-.idea
-.gradle
-local.properties
+android/build/
+android/.idea
+android/.gradle
+android/.settings
+android/local.properties
 *.iml
+*.class
+
 
 # BUCK
 buck-out/
@@ -45,5 +46,6 @@ buck-out/
 *.keystore
 
 /MixpanelDemo
-
+/Mixpanel-swift-master
+/ios/Mixpanel copy.framework
      

@@ -55,7 +55,7 @@ Android does not need additional setup, installing the package and linking will 
 
 ## Usage
 ```javascript
-import MixpanelReactNative from 'mixpanel-react-native';
+import mixpanel from 'mixpanel-react-native';
 
 // TODO: What to do with the module?
 MixpanelReactNative;

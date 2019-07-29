@@ -17,8 +17,7 @@ Pod::Spec.new do |s|
 
   s.preserve_paths = 'LICENSE', 'README.md', 'package.json', 'index.js'
   s.dependency "React"
-  s.dependency "Mixpanel-swift"
-
+  s.dependency "Mixpanel-swift", '~> 2.6.3'
 end
 
   

@@ -27,6 +27,7 @@ public class ReactNativeHelper {
         while (iterator.hasNextKey()) {
             String key = iterator.nextKey();
             ReadableType valueType = value.getType(key);
+            
             switch (valueType) {
                 case Null:
                     properties.put(key, JSONObject.NULL);
@@ -58,6 +59,7 @@ public class ReactNativeHelper {
 
         for (int i = 0; i < value.size(); i++) {
             ReadableType valueType = value.getType(i);
+
             switch (valueType) {
                 case Null:
                     properties.put(JSONObject.NULL);
@@ -91,6 +93,7 @@ public class ReactNativeHelper {
         while (iterator.hasNextKey()) {
             String key = iterator.nextKey();
             ReadableType type = value.getType(key);
+
             switch (type) {
                 case Null:
                     mapProperties.put(key, null);
@@ -120,6 +123,7 @@ public class ReactNativeHelper {
 
         for (int i = 0; i < value.size(); i++) {
             ReadableType type = value.getType(i);
+            
             switch (type) {
                 case Null:
                     propertyList[i] = null;
@@ -151,6 +155,7 @@ public class ReactNativeHelper {
         while (iterator.hasNext()) {
             String key = iterator.next();
             Object value = properties.get(key);
+
             if (value instanceof JSONObject) {
                 mapProperties.putMap(key, convertJsonToMap((JSONObject) value));
             } else if (value instanceof JSONArray) {
@@ -175,6 +180,7 @@ public class ReactNativeHelper {
 
         for (int i = 0; i < properties.length(); i++) {
             Object value = properties.get(i);
+
             if (value instanceof JSONObject) {
                 propertyList.pushMap(convertJsonToMap((JSONObject) value));
             } else if (value instanceof JSONArray) {

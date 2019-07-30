@@ -15,11 +15,14 @@
     "react-native": "^0.41.2"
   },
   "repository": {
+    "TODO": "Change the git URL before publishing on npm",
     "type": "git",
     "url": "git+https://gitlab.com/tapsense/mixpanel-react-native.git"
   },
   "bugs": {
+    "TODO": "Change the git URL before publishing on npm",
     "url": "https://gitlab.com/tapsense/mixpanel-react-native/issues"
   },
+  "TODO": "Change the git URL before publishing on npm",
   "homepage": "https://gitlab.com/tapsense/mixpanel-react-native#readme"
 }

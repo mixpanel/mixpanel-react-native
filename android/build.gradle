@@ -3,7 +3,6 @@ buildscript {
         jcenter()
         google()
     }
-
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.1'
     }
@@ -14,8 +13,6 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
-
-
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 26
@@ -23,7 +20,7 @@ android {
         versionName "1.0"
     }
     lintOptions {
-        abortOnError false
+        abortOnError true
     }
 }
 

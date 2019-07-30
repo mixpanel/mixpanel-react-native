@@ -1,7 +1,7 @@
 {
   "name": "mixpanel-react-native",
-  "version": "1.0.1",
-  "description": "## Getting started",
+  "version": "1.0.0",
+  "description": "Mixpanel tracking library for react-native",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,8 +9,8 @@
   "keywords": [
     "react-native"
   ],
-  "author": "Tap Sense",
-  "license": "ISC",
+  "author": "Mixpanel",
+  "license": "Apache License, Version 2.0",
   "peerDependencies": {
     "react-native": "^0.41.2"
   },

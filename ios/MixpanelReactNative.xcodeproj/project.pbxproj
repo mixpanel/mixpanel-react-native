@@ -60,20 +60,12 @@
 			isa = PBXGroup;
 			children = (
 				6E70D80E22E087B6007B9F01 /* Utilities */,
-				6E63AC5D22D60015008D1A17 /* Libraries */,
 				A684A1AC22D4B0870060663F /* MixpanelReactNative.swift */,
 				B3E7B5891CC2AC0600A0062D /* MixpanelReactNative.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
 				A684A1AB22D4B0870060663F /* MixpanelReactNative-Bridging-Header.h */,
 				6EF8687822DD970300CA0877 /* Frameworks */,
 			);
-			sourceTree = "<group>";
-		};
-		6E63AC5D22D60015008D1A17 /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Libraries;
 			sourceTree = "<group>";
 		};
 		6E70D80E22E087B6007B9F01 /* Utilities */ = {

@@ -48,7 +48,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.optOutTracking()
             resolve(Constants.OPT_OUT_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -63,7 +63,7 @@ class MixpanelReactNative: NSObject {
         if (mInstance != nil) {
             resolve(mInstance?.hasOptedOutTracking())
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -84,11 +84,11 @@ class MixpanelReactNative: NSObject {
                        resolver resolve: RCTPromiseResolveBlock,
                        rejecter reject: RCTPromiseRejectBlock) -> Void {
         if (mInstance != nil) {
-            let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true);
-            mInstance?.optInTracking(distinctId: distinctId, properties: mpProperties);
+            let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true)
+            mInstance?.optInTracking(distinctId: distinctId, properties: mpProperties)
             resolve(Constants.OPT_IN_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -109,11 +109,11 @@ class MixpanelReactNative: NSObject {
                resolver resolve: RCTPromiseResolveBlock,
                rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
         if (mInstance != nil) {
-            let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true);
+            let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true)
             mInstance?.track(event: event, properties: mpProperties)
             resolve(Constants.TRACK_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -149,7 +149,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.flush()
             resolve(Constants.TIME_EVENT_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -163,7 +163,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.clearTimedEvents()
             resolve(Constants.CLEAR_TIME_EVENT_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -179,7 +179,7 @@ class MixpanelReactNative: NSObject {
         if (mInstance != nil) {
             resolve(mInstance?.eventElapsedTime(event: event))
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -203,7 +203,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.identify(distinctId: distinctId)
             resolve(Constants.USER_IDENTIFIED_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -237,7 +237,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.createAlias(alias, distinctId: distinctId)
             resolve(Constants.ALIAS_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -256,7 +256,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.flush()
             resolve(Constants.FLUSH_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -271,7 +271,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.reset()
             resolve(Constants.RESET_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -296,7 +296,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.registerSuperProperties(MixpanelTypeHandler.processProperties(properties: properties))
             resolve(Constants.REGISTER_SUPER_PROPERTY_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -319,7 +319,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.registerSuperPropertiesOnce(MixpanelTypeHandler.processProperties(properties: properties), defaultValue: MixpanelTypeHandler.ToMixpanelType(defaultValue as Any))
             resolve(Constants.REGISTER_SUPER_PROPERTY_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -329,7 +329,7 @@ class MixpanelReactNative: NSObject {
         if (mInstance != nil) {
             resolve(mInstance?.currentSuperProperties())
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -354,7 +354,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.unregisterSuperProperty(propertyName)
             resolve(Constants.UNREGISTER_SUPER_PROPERTY_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -368,7 +368,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.clearSuperProperties()
             resolve(Constants.CLEAR_SUPER_PROPERTY_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -394,11 +394,11 @@ class MixpanelReactNative: NSObject {
              resolver resolve: RCTPromiseResolveBlock,
              rejecter reject: RCTPromiseRejectBlock) -> Void {
         if (mInstance != nil) {
-            let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true);
+            let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true)
             mInstance?.people.set(properties: mpProperties)
             resolve(Constants.SET_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -420,7 +420,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.people.set(property: property, to: MixpanelTypeHandler.ToMixpanelType(to as Any)!)
             resolve(Constants.SET_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -440,11 +440,11 @@ class MixpanelReactNative: NSObject {
                  resolver resolve: RCTPromiseResolveBlock,
                  rejecter reject: RCTPromiseRejectBlock) -> Void {
         if (mInstance != nil) {
-            let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true);
+            let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true)
             mInstance?.people.setOnce(properties: mpProperties)
             resolve(Constants.SET_ONCE_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -465,7 +465,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.people.unset(properties: properties)
             resolve(Constants.UNSET_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -486,7 +486,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.people.increment(properties: MixpanelTypeHandler.processProperties(properties: properties))
             resolve(Constants.INCREMENT_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -506,7 +506,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.people.increment(property: property, by: by)
             resolve(Constants.INCREMENT_PROPERTIES_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -528,7 +528,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.people.append(properties: MixpanelTypeHandler.processProperties(properties: properties))
             resolve(Constants.APPEND_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -550,7 +550,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.people.remove(properties: MixpanelTypeHandler.processProperties(properties: properties))
             resolve(Constants.REMOVE_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -571,7 +571,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.people.union(properties: MixpanelTypeHandler.processProperties(properties: properties))
             resolve(Constants.UNION_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -595,7 +595,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.people.trackCharge(amount: amount, properties: MixpanelTypeHandler.processProperties(properties: properties))
             resolve(Constants.TRACK_CHARGE_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -606,10 +606,10 @@ class MixpanelReactNative: NSObject {
     func clearCharges(_ resolve: RCTPromiseResolveBlock,
                       rejecter reject: RCTPromiseRejectBlock) -> Void {
         if (mInstance != nil) {
-            mInstance?.people.clearCharges();
+            mInstance?.people.clearCharges()
             resolve(Constants.CLEAR_CHARGE_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -620,10 +620,10 @@ class MixpanelReactNative: NSObject {
     func deleteUser(_ resolve: RCTPromiseResolveBlock,
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         if (mInstance != nil) {
-            mInstance?.people.deleteUser();
+            mInstance?.people.deleteUser()
             resolve(Constants.DELETE_USER_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -649,7 +649,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.people.addPushDeviceToken(deviceToken)
             resolve(Constants.SET_PUSH_REGISTRATION_ID_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -673,7 +673,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.people.removePushDeviceToken(deviceToken)
             resolve(Constants.CLEAR_PUSH_REGISTRATION_ID_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -690,7 +690,7 @@ class MixpanelReactNative: NSObject {
             mInstance?.people.removeAllPushDeviceTokens()
             resolve(Constants.CLEAR_ALL_PUSH_REGISTRATION_ID_SUCCESS)
         } else {
-            reject(Constants.ERROR_NAME,Constants.INSTANCE_NOT_FOUND_ERROR,nil);
+            reject(Constants.MIXPANEL_INSTANCE,Constants.INSTANCE_NOT_FOUND_ERROR,nil)
         }
     }
     
@@ -699,13 +699,7 @@ class MixpanelReactNative: NSObject {
     func getInformation(_ resolve: RCTPromiseResolveBlock,
                         rejecter reject: RCTPromiseRejectBlock) -> Void {
         if (mInstance != nil) {
-            mInstance?.identify(distinctId: "abcd")
-            mInstance?.people.set(property: "$name", to: "Gayatri Lokhande")
-            mInstance?.flush()
-            let welcomeText = "IOS library invoked :: Mixpanel Demo app:: opt"
-            resolve(welcomeText)
+          resolve(Constants.LIBRARY_INVOKED)
         }
     }
 }
-
-

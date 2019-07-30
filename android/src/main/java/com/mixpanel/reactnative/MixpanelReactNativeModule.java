@@ -1,5 +1,6 @@
+package com.mixpanel.reactnative;
 
-package com.mixpanel.react;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import com.facebook.common.references.SharedReference;
 import com.facebook.react.bridge.Promise;
@@ -9,18 +10,14 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 
-import com.facebook.react.bridge.WritableMap;
-import com.mixpanel.android.mpmetrics.MixpanelAPI;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.gson.Gson;
-
 import java.util.Map;
 
 public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
+
     private final ReactApplicationContext mReactContext;
     private MixpanelAPI mInstance;
 
@@ -281,7 +278,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         } else {
             promise.resolve(mInstance.getSuperProperties());
         }
-
     }
 
     /**
@@ -606,7 +602,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
     }
 
-
     /**
      * Change the existing values of multiple People Analytics properties at once.
      * <p>
@@ -743,7 +738,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
             mInstance.getPeople().clearPushRegistrationId(registrationId);
-            promise.resolve(Constant.ClEAR_PUSH_REGISTRATION_ID_SUCCESS);
+            promise.resolve(Constant.CLEAR_PUSH_REGISTRATION_ID_SUCCESS);
         }
     }
 
@@ -757,7 +752,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
             mInstance.getPeople().clearPushRegistrationId();
-            promise.resolve(Constant.ClEAR_ALL_PUSH_REGISTRATION_ID_SUCCESS);
+            promise.resolve(Constant.CLEAR_ALL_PUSH_REGISTRATION_ID_SUCCESS);
         }
     }
 }

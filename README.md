@@ -1,4 +1,3 @@
-
 # mixpanel-react-native
 
 ## Getting started
@@ -19,8 +18,6 @@ pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 Otherwise, setup Podfile according to [react native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps), so the Podfile will look like this:
 ```
 source 'https://github.com/CocoaPods/Specs.git'
-
-platform :ios, '11.0'
 
 target 'YourTargetName' do
     pod 'React', :path => '../node_modules/react-native', :subspecs => [

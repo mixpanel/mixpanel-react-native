@@ -1,16 +1,13 @@
 # OSX
-#
 .DS_Store
 
 # node.js
-#
 node_modules/
 npm-debug.log
 yarn-error.log
 *.tgz
 
 # Xcode
-#
 ios/build/
 *.pbxuser
 !default.pbxuser
@@ -29,8 +26,7 @@ DerivedData
 *.xcuserstate
 ios/project.xcworkspace
       
-# Android/IntelliJ
-#
+# Android
 android/build/
 android/.idea
 android/.gradle
@@ -42,7 +38,6 @@ android/.project
 *.class
 
 # BUCK
-#
 buck-out/
 \.buckd/
 *.keystore

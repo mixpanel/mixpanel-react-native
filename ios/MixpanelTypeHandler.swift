@@ -51,9 +51,16 @@
             mpProperties[key] = ToMixpanelType(value)
         }
         if (includeLibInfo) {
-            mpProperties["mp_lib"] = "react-native"
-            mpProperties["$lib_version"] = "1.0.0"
+            mpProperties.merge(dict: AutomaticProperties.peopleProperties)
         }
         return mpProperties
+    }
+ }
+ 
+ extension Dictionary {
+    mutating func merge(dict: [Key: Value]){
+        for (k, v) in dict {
+            updateValue(v, forKey: k)
+        }
     }
  }

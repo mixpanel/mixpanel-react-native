@@ -30,3 +30,10 @@ struct Constants {
     static let CLEAR_PUSH_REGISTRATION_ID_SUCCESS  = "Push registration token is cleared successfully"
     static let CLEAR_ALL_PUSH_REGISTRATION_ID_SUCCESS  = "All push registration tokens are cleared successfully"
 }
+
+struct LibraryMetadata {
+    static let MP_LIB_KEY = "mp_lib"
+    static let VERSION_KEY = "$lib_version"
+    static let MP_LIB_VALUE = "react-native"
+    static let VERSION_VALUE = "1.0.0"
+}

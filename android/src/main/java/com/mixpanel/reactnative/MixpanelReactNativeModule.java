@@ -74,10 +74,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void optInTracking(final String distinctId, ReadableMap properties, Promise promise) {
-        JSONObject eventProperties = null;
+         JSONObject eventProperties = null;
         try {
             eventProperties = ReactNativeHelper.reactToJSON(properties);
-            ReactNativeHelper.appendLibraryProperties(eventProperties);
+            AutomaticProperties.appendLibraryProperties(eventProperties);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -143,7 +143,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         JSONObject eventProperties = null;
         try {
             eventProperties = ReactNativeHelper.reactToJSON(properties);
-            ReactNativeHelper.appendLibraryProperties(eventProperties);
+            AutomaticProperties.appendLibraryProperties(eventProperties);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -483,7 +483,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         JSONObject sendProperties = null;
         try {
             sendProperties = ReactNativeHelper.reactToJSON(properties);
-            ReactNativeHelper.appendLibraryProperties(sendProperties);
+            AutomaticProperties.appendLibraryProperties(sendProperties);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -505,7 +505,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         JSONObject sendProperties = null;
         try {
             sendProperties = ReactNativeHelper.reactToJSON(properties);
-            ReactNativeHelper.appendLibraryProperties(sendProperties);
+            AutomaticProperties.appendLibraryProperties(sendProperties);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -540,7 +540,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         JSONObject sendProperties = null;
         try {
             sendProperties = ReactNativeHelper.reactToJSON(properties);
-            ReactNativeHelper.appendLibraryProperties(sendProperties);
+            AutomaticProperties.appendLibraryProperties(sendProperties);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -203,12 +203,4 @@ public class ReactNativeHelper {
     public static JSONObject toJsonObject(Object value) throws JSONException {
         return (new JSONObject((new Gson()).toJson(value)));
     }
-
-    public static void appendLibraryProperties(JSONObject properties) throws JSONException {
-        if (properties == null) {
-            properties = new JSONObject();
-        }
-        properties.put("mp_lib", "react-native");
-        properties.put("$lib_version", "1.0.0");
-    }
 }

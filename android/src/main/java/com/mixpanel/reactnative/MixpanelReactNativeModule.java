@@ -276,7 +276,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.NULL_EXCEPTION));
         } else {
-            promise.resolve(mInstance.getSuperProperties());
+            promise.resolve(ReactNativeHelper.convertJsonToMap(mInstance.getSuperProperties()));
         }
     }
 

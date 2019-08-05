@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, "8.0"
   # TODO: Change the git URL before publishing on npm
   s.source       = { :git => "https://github.com/author/MixpanelReactNative.git", :tag => s.version }
-  s.source_files  = "MixpanelReactNative/ios/*.{swift,h,m}"
+  s.source_files  = "ios/*.{swift,h,m}"
   s.requires_arc = true
   s.preserve_paths = 'LICENSE', 'README.md', 'package.json', 'index.js'
   s.dependency "React"

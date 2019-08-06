@@ -2,10 +2,10 @@
 platform :ios, '9.0'
 
 target 'MixpanelDemo' do
- use_frameworks!
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
 
-  # Pods for MixpanelDemo
-pod 'React', :path => '../node_modules/react-native', :subspecs => [
+  pod 'React', :path => '../node_modules/react-native', :subspecs => [
         'Core',
         'CxxBridge', # Include this for RN >= 0.47
         'DevSupport', # Include this to enable In-App Devmenu if RN >= 0.43
@@ -22,13 +22,17 @@ pod 'React', :path => '../node_modules/react-native', :subspecs => [
 
     pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 
+
+
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
 end
 
 target 'MixpanelDemo-tvOS' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-
-  # Pods for MixpanelDemo-tvOS
 
   target 'MixpanelDemo-tvOSTests' do
     inherit! :search_paths

@@ -7,9 +7,23 @@
     "test": "jest"
   },
   "dependencies": {
-    "mixpanel-react-native": "file:../mixpanel-react-native-1.0.1.tgz",
-    "react": "16.8.3",
-    "react-native": "0.59.9"
+    "@expo/vector-icons": "^10.0.3",
+    "bootstrap": "^4.3.1",
+    "expo": "^34.0.1",
+    "mixpanel-react-native": "file:../mixpanel-react-native-1.0.0.tgz",
+    "native-base": "^2.13.4",
+    "react": "^16.8.3",
+    "react-bootstrap": "^1.0.0-beta.9",
+    "react-dom": "^16.8.6",
+    "react-native": "0.59.9",
+    "react-native-elements": "^1.1.0",
+    "react-native-gesture-handler": "^1.3.0",
+    "react-native-interactable": "^1.0.0",
+    "react-native-ionicons": "^4.6.1",
+    "react-native-simple-login": "^1.1.0",
+    "react-native-snap-carousel": "^3.8.0",
+    "react-native-vector-icons": "^6.6.0",
+    "react-navigation": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "7.5.5",

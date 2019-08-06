@@ -1,9 +1,10 @@
-/**
- * @format
- */
+/** @format */
 
 import {AppRegistry} from 'react-native';
-import App from './App';
-import {name as appName} from './app.json';
+import App from './src/App';
+import {name as MixpanelDemo} from './app.json';
 
-AppRegistry.registerComponent(appName, () => App);
+// Disable the yellow box
+console.disableYellowBox = true;
+
+AppRegistry.registerComponent(MixpanelDemo, () => App);

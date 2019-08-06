@@ -1,7 +1,6 @@
-package com.mixpaneldemo;
+package com.MixpanelDemo;
 
 import com.facebook.react.ReactActivity;
-
 public class MainActivity extends ReactActivity {
 
     /**

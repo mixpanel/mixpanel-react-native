@@ -272,7 +272,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      * and persist beyond the lifetime of your application.
      */
     @ReactMethod
-    public void getSuperProperties(Promise promise) {
+    public void getSuperProperties(Promise promise) throws JSONException {
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.NULL_EXCEPTION));
         } else {

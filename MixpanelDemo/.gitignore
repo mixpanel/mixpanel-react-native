@@ -32,7 +32,6 @@ ios/Pods/
 build/
 .idea
 .gradle
-.vs
 local.properties
 *.iml
 

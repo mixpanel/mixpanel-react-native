@@ -3,14 +3,17 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 import Logo from './logo'
 
 class HomeScreen extends React.Component {
-  open = () => {
+  /**
+     * Navigate screen to Welcome page
+  */
+  navigate = () => {
     this.props.navigation.navigate('Welcome');
   };
   render() {
     return (
       <View >
         <Text style={styles.text}>Welcome To ReactNative DemoApp</Text><Logo />
-        <Button containerStyle={styles.button} onPress={this.open} title='Lets get started' />
+        <Button containerStyle={styles.button} onPress={this.navigate} title='Lets get started' />
       </View>
     );
   }

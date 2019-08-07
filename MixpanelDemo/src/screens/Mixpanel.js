@@ -3,6 +3,9 @@ import { Text, TouchableOpacity, StyleSheet, View, TextInput } from 'react-nativ
 import mixpanel from "mixpanel-react-native";
 
 export default class Mixpanel extends React.Component {
+  /**
+     * Set a collection of properties on the identified user.
+  */
   set = () => {
     var key = this.state.TextInput_Key;
     var value = this.state.TextInput_Value;
@@ -10,10 +13,17 @@ export default class Mixpanel extends React.Component {
     properties[key] = value;
     mixpanel.people.set(properties).then(t => alert(t));
   }
+  /**
+     * Track a revenue transaction for the identified people profile.
+     * @param charge-the amount of money exchanged.
+  */
   trackCharge = () => {
     var chargeInDouble = parseFloat(this.state.TextInput_Charge)
     mixpanel.people.trackCharge(chargeInDouble).then(t => alert(t));
   }
+  /**
+     * Push all queued Mixpanel events and People Analytics changes to Mixpanel servers.
+  */
   flush = () => {
     mixpanel.flush().then(t => alert(t));
   }

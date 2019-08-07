@@ -3,7 +3,8 @@ import { createAppContainer, createBottomTabNavigator } from 'react-navigation';
 import MixpanelInstance from './MixpanelInstance';
 import Mixpanel from './Mixpanel';
 import People from './People';
-import GetInstance from './GetInstance'
+import GetInstance from './GetInstance';
+import MultipleInstance from './MultipleInstance';
 
 export default class Welcome extends React.Component {
   render() {
@@ -12,11 +13,12 @@ export default class Welcome extends React.Component {
     )
   }
 }
-
+/* Botton Tab Navigator: To navigate between Screens*/ 
 const tabBar = createBottomTabNavigator({
   Screen1: GetInstance,
-  screen2: Mixpanel,
+  Screen2: Mixpanel,
   Screen3: MixpanelInstance,
-  Screen4: People
+  Screen4: People,
+  Screen5: MultipleInstance
 });
 const Tab = createAppContainer(tabBar)

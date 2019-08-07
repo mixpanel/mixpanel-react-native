@@ -5,6 +5,7 @@ import Welcome from './screens/Welcome';
 import MixpanelInstance from './screens/MixpanelInstance';
 import Mixpanel from './screens/Mixpanel';
 import People from './screens/People';
+import MultipleInstance from './screens/MultipleInstance';
 
 const Router = createStackNavigator({
   Home:
@@ -26,6 +27,10 @@ const Router = createStackNavigator({
   People:
     {
       screen: People
+    },
+  MultipleInstance:
+    {
+      screen: MultipleInstance
     }
 });
 const AppContainer = createAppContainer(Router);

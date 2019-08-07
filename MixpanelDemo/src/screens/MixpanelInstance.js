@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import mixpanel from 'mixpanel-react-native';
 
 class MixpanelInstance extends React.Component {
@@ -7,13 +7,21 @@ class MixpanelInstance extends React.Component {
     super(props);
     this.state = { TextInput_Id: '' }
   }
-
+  /**
+       * Identify the user uniquely by providing the user distinct id
+   */
   identify = () => {
     mixpanel.people.identify(this.state.TextInput_Id).then(t => alert(t));
   }
+  /**
+       * Use this method to opt-in an already opted-out user from tracking.
+  */
   optIn = () => {
     mixpanel.optInTracking(this.state.TextInput_Id).then(t => alert(t));
   }
+  /**
+       * Use to accept user entered properties in the format of key-value pair.
+  */
   takeProperty = () => {
     var key = this.state.TextInput_Key;
     var value = this.state.TextInput_Value;
@@ -21,18 +29,30 @@ class MixpanelInstance extends React.Component {
     properties[key] = value;
     return properties;
   }
+  /**
+     * Use for Track an event.
+  */
   track = () => {
     var properties = this.takeProperty();
     mixpanel.track(this.state.TextInput_EventName, properties).then(t => alert(t));
   }
+  /**
+     * registerSuperProperties will store a new superProperty and possibly overwriting any existing superProperty with the same name.
+  */
   registerSuperProperty = () => {
     var properties = this.takeProperty();
     mixpanel.registerSuperProperties(properties).then(t => alert(t));
   }
+  /**
+     * Erase all currently registered superProperties.
+  */
   clearSuperProperty = () => {
     var properties = this.takeProperty();
     mixpanel.clearSuperProperties(properties).then(t => alert(t));
   }
+  /**
+     * Returns a json object of the user's current super properties
+  */
   getSuperProperty = () => {
     mixpanel.getSuperProperties().then(t => {
       alert(JSON.stringify(t));

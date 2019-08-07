@@ -1,5 +1,5 @@
 {
-  "name": "mixpanel-react-native",
+  "name": "@tapsensetech/mixpanel-react-native",
   "version": "1.0.0",
   "description": "Mixpanel tracking library for react-native",
   "main": "index.js",
@@ -23,5 +23,9 @@
     "url": "https://gitlab.com/tapsense/mixpanel-react-native/issues"
   },
   "TODO": "Change the git URL before publishing on npm",
-  "homepage": "https://gitlab.com/tapsense/mixpanel-react-native#readme"
+  "homepage": "https://gitlab.com/tapsense/mixpanel-react-native#readme",
+  "dependencies": {
+    "mixpanel-react-native": "^1.0.0"
+  },
+  "devDependencies": {}
 }

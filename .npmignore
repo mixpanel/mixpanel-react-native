@@ -28,6 +28,7 @@ ios/project.xcworkspace
       
 # Android
 android/build/
+android/app/build/
 android/.idea
 android/.gradle
 android/.settings

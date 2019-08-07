@@ -1,5 +1,5 @@
 {
-  "name": "mixpanel-react-native-dev",
+  "name": "mixpanel-react-native",
   "version": "1.0.0",
   "description": "Mixpanel tracking library for react-native",
   "main": "index.js",

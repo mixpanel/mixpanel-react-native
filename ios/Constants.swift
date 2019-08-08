@@ -1,6 +1,6 @@
 struct Constants {
-    static let MIXPANEL_INSTANCE = "Mixpanel instance"
-    static let INSTANCE_NOT_FOUND_ERROR  = "Instance not found: Invoke `getInstance(token)`"
+    static let ERROR = "ERROR: "
+    static let INSTANCE_NOT_FOUND_ERROR  = "You have to call `getInstance(token)` before calling methods on Mixpanel Instance"
     static let LIBRARY_INVOKED  = "iOS library invoked successfully"
 }
 

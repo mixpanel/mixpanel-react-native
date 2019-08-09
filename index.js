@@ -26,7 +26,7 @@ export class Mixpanel {
     people = this.people = new People();
     constructor(){        
         packageJson.metadata["$lib_version"] = packageJson.version;
-        MixpanelReactNative.setMetadata(metadata);
+        MixpanelReactNative.setMetadata(packageJson.metadata);
     }      
        
     getInstance(token) {

@@ -4,13 +4,13 @@ import mixpanel from "mixpanel-react-native";
 
 export default class Mixpanel extends React.Component {
     setPushRegistrationId = () => {
-        mixpanel.people.setPushRegistrationId(this.state.TextInput_Token).then(t => alert(t));
+        mixpanel.people.setPushRegistrationId(this.state.TextInput_Token);
     }
     clearPushRegistrationId = () => {
-        mixpanel.people.clearPushRegistrationId().then(t => alert(t));
+        mixpanel.people.clearPushRegistrationId();
     }
     getPushRegistrationId = () => {
-        mixpanel.people.getPushRegistrationId().then(t => alert(t));
+        mixpanel.people.getPushRegistrationId();
     }
     render() {
         return (

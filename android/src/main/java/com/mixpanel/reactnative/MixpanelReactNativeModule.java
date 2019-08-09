@@ -36,8 +36,12 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         promise.resolve(Constant.LIBRARY_INVOKED);
     }
 
+   /**
+    * Set the properties present in json file.
+    * @param metadata  The name of the json object containing properties to send
+    */
     @ReactMethod
-    public void setMetadata(String version, ReadableMap metadata) throws JSONException {
+    public void setMetadata(ReadableMap metadata) throws JSONException {
         JSONObject sendProperties = ReactNativeHelper.reactToJSON(metadata);
         AutomaticProperties.setAutomaticProperties(sendProperties);
     }

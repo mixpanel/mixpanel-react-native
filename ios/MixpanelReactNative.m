@@ -83,7 +83,7 @@ RCT_EXTERN_METHOD(clearPushRegistrationId: (NSData *)deviceToken resolver: (RCTP
 
 RCT_EXTERN_METHOD(clearAllPushRegistrationId: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-// MARK: - Registering for Push Notifications
+RCT_EXTERN_METHOD(setMetadata: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 // MARK: - Test Method
 
 RCT_EXTERN_METHOD(getInformation: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)

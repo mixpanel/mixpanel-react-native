@@ -692,6 +692,16 @@ class MixpanelReactNative: NSObject {
         }
     }
     
+    /**
+     Sets metadata like `$lib_version`, `mp_lib`
+    */
+    @objc
+    func setMetadata(_ properties: [String: Any],
+             resolver resolve: RCTPromiseResolveBlock,
+             rejecter reject: RCTPromiseRejectBlock) -> Void {
+        AutomaticProperties.setAutomaticProperties(properties)
+    }
+    
     // MARK: - Test Method
     @objc
     func getInformation(_ resolve: RCTPromiseResolveBlock,

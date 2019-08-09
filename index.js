@@ -181,6 +181,17 @@ export class Mixpanel {
     flush() {
         return MixpanelReactNative.flush();
     }
+
+    /**
+      TODO: remove this method in final release. This is just to check integration with Native modules.
+     */
+    getInformation() {
+        if (MixpanelReactNative) {
+            MixpanelReactNative.getInformation().then(t=> alert(t));
+        } else {
+            alert("Mixpanel react native not found");
+        }
+    }
 }
 
 export class People {

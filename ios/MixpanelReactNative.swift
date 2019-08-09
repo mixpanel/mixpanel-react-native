@@ -703,11 +703,13 @@ class MixpanelReactNative: NSObject {
     }
     
     // MARK: - Test Method
+    
+    /**
+     TODO: Remove this method in the final release
+     */
     @objc
     func getInformation(_ resolve: RCTPromiseResolveBlock,
                         rejecter reject: RCTPromiseRejectBlock) -> Void {
-        if !mToken.isEmpty {
-          resolve(Constants.LIBRARY_INVOKED)
-        }
+        resolve(Constants.LIBRARY_INVOKED)
     }
 }

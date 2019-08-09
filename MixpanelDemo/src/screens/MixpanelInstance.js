@@ -11,13 +11,13 @@ class MixpanelInstance extends React.Component {
        * Identify the user uniquely by providing the user distinct id
    */
   identify = () => {
-    mixpanel.people.identify(this.state.TextInput_Id).then(t => alert(t));
+    mixpanel.people.identify(this.state.TextInput_Id);
   }
   /**
        * Use this method to opt-in an already opted-out user from tracking.
   */
   optIn = () => {
-    mixpanel.optInTracking(this.state.TextInput_Id).then(t => alert(t));
+    mixpanel.optInTracking(this.state.TextInput_Id);
   }
   /**
        * Use to accept user entered properties in the format of key-value pair.
@@ -34,21 +34,21 @@ class MixpanelInstance extends React.Component {
   */
   track = () => {
     var properties = this.takeProperty();
-    mixpanel.track(this.state.TextInput_EventName, properties).then(t => alert(t));
+    mixpanel.track(this.state.TextInput_EventName, properties);
   }
   /**
      * registerSuperProperties will store a new superProperty and possibly overwriting any existing superProperty with the same name.
   */
   registerSuperProperty = () => {
     var properties = this.takeProperty();
-    mixpanel.registerSuperProperties(properties).then(t => alert(t));
+    mixpanel.registerSuperProperties(properties);
   }
   /**
      * Erase all currently registered superProperties.
   */
   clearSuperProperty = () => {
     var properties = this.takeProperty();
-    mixpanel.clearSuperProperties(properties).then(t => alert(t));
+    mixpanel.clearSuperProperties(properties);
   }
   /**
      * Returns a json object of the user's current super properties

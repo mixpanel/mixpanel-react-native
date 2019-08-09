@@ -20,7 +20,7 @@ class MixpanelReactNative: NSObject {
                      rejecter reject: RCTPromiseRejectBlock) -> Void {
         mToken = apiToken
         let mInstance = initialize(apiToken: apiToken,instanceName: apiToken,optOutTrackingByDefault: optOutTrackingByDefault)
-        mInstance != nil ? resolve(true) : resolve(false)
+        resolve(nil)
     }
     
     func initialize(apiToken: String,

@@ -8,15 +8,15 @@ class MultipleInstance extends React.Component {
     */
     track1 = () => {
         mixpanel.getInstance(this.state.TextInput_Token1);
-        mixpanel.track("EventName:Test_Event").then(t => alert(t));
+        mixpanel.track("Instance 1").then(t => mixpanel.flush());
     }
     track2 = () => {
         mixpanel.getInstance(this.state.TextInput_Token2);
-        mixpanel.track("EventName:Test_Event").then(t => alert(t));
+        mixpanel.track("Instance 2").then(t =>  mixpanel.flush());
     }
     track3 = () => {
         mixpanel.getInstance(this.state.TextInput_Token3);
-        mixpanel.track("EventName:Test_Event").then(t => alert(t));
+        mixpanel.track("Instance 3").then(t =>  mixpanel.flush());
     }
 
     render() {

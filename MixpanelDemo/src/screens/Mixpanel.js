@@ -11,7 +11,7 @@ export default class Mixpanel extends React.Component {
     var value = this.state.TextInput_Value;
     var properties = {};
     properties[key] = value;
-    mixpanel.people.set(properties).then(t => alert(t));
+    mixpanel.people.set(properties);
   }
   /**
      * Track a revenue transaction for the identified people profile.
@@ -19,13 +19,13 @@ export default class Mixpanel extends React.Component {
   */
   trackCharge = () => {
     var chargeInDouble = parseFloat(this.state.TextInput_Charge)
-    mixpanel.people.trackCharge(chargeInDouble).then(t => alert(t));
+    mixpanel.people.trackCharge(chargeInDouble);
   }
   /**
      * Push all queued Mixpanel events and People Analytics changes to Mixpanel servers.
   */
   flush = () => {
-    mixpanel.flush().then(t => alert(t));
+    mixpanel.flush();
   }
   render() {
     return (

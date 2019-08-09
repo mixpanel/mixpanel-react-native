@@ -1,7 +1,7 @@
 "use strict";
 
 import { NativeModules } from 'react-native';
-
+import packageJson from "./package.json";
 const { MixpanelReactNative } = NativeModules;
 
 var KEY = {
@@ -23,8 +23,12 @@ var DEFAULT_OPT_OUT = false;
 
 export class Mixpanel {
     apiToken = "";
-    people = this.people = new People();      
-   
+    people = this.people = new People();
+    constructor(){        
+        packageJson.metadata["$lib_version"] = packageJson.version;
+        MixpanelReactNative.setMetadata(metadata);
+    }      
+       
     getInstance(token) {
         if (!token || token === "") {
             throw new Error(ERROR_MESSAGE.NEED_MP_TOKEN);

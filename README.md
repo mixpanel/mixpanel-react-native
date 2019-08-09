@@ -1,18 +1,18 @@
-# mixpanel-react-native
+#  @tapsensetech/mixpanel-react-native
 
 ## Getting started
 
-`$ npm install mixpanel-react-native --save`
+`$ npm install  @tapsensetech/mixpanel-react-native --save`
 
 ### Installation
 
-`$ react-native link mixpanel-react-native`
+`$ react-native link  @tapsensetech/mixpanel-react-native`
 
 #### iOS 
 
 If you're already using Cocoapods, add the following to your Podfile
 ```
-pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
+pod 'MixpanelReactNative', path: '../node_modules/@tapsensetech/mixpanel-react-native'
 ```
 
 Otherwise, setup Podfile according to [react native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps), so the Podfile will look like this:
@@ -35,7 +35,7 @@ target 'YourTargetName' do
     pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
     pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-    pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
+    pod 'MixpanelReactNative', path: '../node_modules/@tapsensetech/mixpanel-react-native'
 
 end
 ```
@@ -52,7 +52,7 @@ Android does not need additional setup, installing the package and linking will 
 
 ## Usage
 ```javascript
-import mixpanel from 'mixpanel-react-native';
+import mixpanel from ' @tapsensetech/mixpanel-react-native';
 
 // TODO: What to do with the module?
 MixpanelReactNative;

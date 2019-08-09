@@ -30,12 +30,12 @@ ios/project.xcworkspace
 # Android
 android/build/
 android/app/
-android/.idea
-android/.gradle
-android/.settings
+*.idea
+*.gradle
+*.settings
 android/local.properties
-android/.classpath
-android/.project
+*.classpath
+*.project
 *.iml
 *.class
 

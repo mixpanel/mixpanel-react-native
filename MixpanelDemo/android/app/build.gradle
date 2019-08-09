@@ -139,7 +139,7 @@ android {
 }
 
 dependencies {
-    implementation project(':mixpanel-react-native')
+    implementation project(':@tapsensetech_mixpanel-react-native')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-gesture-handler')
     implementation fileTree(dir: "libs", include: ["*.jar"])

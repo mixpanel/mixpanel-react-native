@@ -36,6 +36,11 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         promise.resolve(Constant.LIBRARY_INVOKED);
     }
 
+    @ReactMethod
+    public void setMetadata(String version, ReadableMap metadata) throws JSONException {
+        JSONObject sendProperties = ReactNativeHelper.reactToJSON(metadata);
+        AutomaticProperties.setAutomaticProperties(sendProperties);
+    }
     /**
      * Get the instance of MixpanelAPI with providing your project token
      * and boolean value for opting out tracking,  default value for optOutTrackingDefault is
@@ -74,11 +79,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void optInTracking(final String distinctId, ReadableMap properties, Promise promise) throws JSONException {
-        JSONObject eventProperties = null;
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
-            eventProperties = ReactNativeHelper.reactToJSON(properties);
+            JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
             AutomaticProperties.appendLibraryProperties(eventProperties);
             mInstance.optInTracking(distinctId, eventProperties);
             promise.resolve(null);
@@ -136,11 +140,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void track(final String eventName, ReadableMap properties, Promise promise) throws JSONException {
-        JSONObject eventProperties = null;
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
-            eventProperties = ReactNativeHelper.reactToJSON(properties);
+            JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
             AutomaticProperties.appendLibraryProperties(eventProperties);
             mInstance.track(eventName, eventProperties);
             promise.resolve(null);
@@ -176,11 +179,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void registerSuperProperties(ReadableMap properties, Promise promise) throws JSONException {
-        JSONObject superProperties = null;
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
-            superProperties = ReactNativeHelper.reactToJSON(properties);
+            JSONObject superProperties = ReactNativeHelper.reactToJSON(properties);
             mInstance.registerSuperProperties(superProperties);
             promise.resolve(null);
         }
@@ -192,11 +194,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void registerSuperPropertiesOnce(ReadableMap properties, Promise promise) throws JSONException {
-        JSONObject superProperties = null;
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
-            superProperties = ReactNativeHelper.reactToJSON(properties);
+            JSONObject superProperties = ReactNativeHelper.reactToJSON(properties);
             mInstance.registerSuperPropertiesOnce(superProperties);
             promise.resolve(null);
         }
@@ -286,13 +287,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      * @param groupID  The group the user belongs to.
      */
     @ReactMethod
-    public void setGroup(final String groupKey, ReadableMap groupID, Promise promise) {
-        JSONObject groupValue = null;
-        try {
-            groupValue = ReactNativeHelper.reactToJSON(groupID);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void setGroup(final String groupKey, ReadableMap groupID, Promise promise) throws JSONException {
+        JSONObject groupValue = ReactNativeHelper.reactToJSON(groupID);
         if (mInstance == null || groupValue == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
@@ -308,13 +304,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      * @param groupIDs The list of groups the user belongs to.
      */
     @ReactMethod
-    public void setGroup(String groupKey, ReadableArray groupIDs, Promise promise) {
-        JSONArray groupValue = null;
-        try {
-            groupValue = ReactNativeHelper.reactToJSON(groupIDs);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void setGroup(String groupKey, ReadableArray groupIDs, Promise promise) throws JSONException {
+        JSONArray groupValue = ReactNativeHelper.reactToJSON(groupIDs);        
         if (mInstance == null || groupValue == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
@@ -330,13 +321,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      * @param groupID  The new group the user belongs to.
      */
     @ReactMethod
-    public void addGroup(final String groupKey, ReadableMap groupID, Promise promise) {
-        JSONObject groupValue = null;
-        try {
-            groupValue = ReactNativeHelper.reactToJSON(groupID);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void addGroup(final String groupKey, ReadableMap groupID, Promise promise) throws JSONException {
+        JSONObject groupValue = ReactNativeHelper.reactToJSON(groupID);        
         if (mInstance == null || groupValue == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
@@ -352,13 +338,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      * @param groupID  The group value to remove.
      */
     @ReactMethod
-    public void removeGroup(final String groupKey, ReadableMap groupID, Promise promise) {
-        JSONObject groupValue = null;
-        try {
-            groupValue = ReactNativeHelper.reactToJSON(groupID);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    public void removeGroup(final String groupKey, ReadableMap groupID, Promise promise) throws JSONException {
+        JSONObject groupValue = ReactNativeHelper.reactToJSON(groupID);
         if (mInstance == null || groupValue == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
@@ -462,12 +443,11 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      * Set a collection of properties on the identified user all at once.
      */
     @ReactMethod
-    public void set(ReadableMap properties, Promise promise) throws JSONException {
-        JSONObject sendProperties = null;
+    public void set(ReadableMap properties, Promise promise) throws JSONException {         
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
-            sendProperties = ReactNativeHelper.reactToJSON(properties);
+            JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
             AutomaticProperties.appendLibraryProperties(sendProperties);
             mInstance.getPeople().set(sendProperties);
             promise.resolve(null);
@@ -481,11 +461,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void setPropertyTo(String propertyName, ReadableMap properties, Promise promise) throws JSONException {
-        JSONObject sendProperties = null;
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
-            sendProperties = ReactNativeHelper.reactToJSON(properties);
+            JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
             AutomaticProperties.appendLibraryProperties(sendProperties);
             mInstance.getPeople().set(propertyName, sendProperties);
             promise.resolve(null);
@@ -512,11 +491,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void setOnce(ReadableMap properties, Promise promise) throws JSONException {
-        JSONObject sendProperties = null;
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
-            sendProperties = ReactNativeHelper.reactToJSON(properties);
+            JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
             AutomaticProperties.appendLibraryProperties(sendProperties);
             mInstance.getPeople().setOnce(sendProperties);
             promise.resolve(null);
@@ -531,11 +509,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void trackCharge(double charge, ReadableMap properties, Promise promise) throws JSONException {
-        JSONObject transactionValue = null;
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
-            transactionValue = ReactNativeHelper.reactToJSON(properties);
+            JSONObject transactionValue = ReactNativeHelper.reactToJSON(properties);
             mInstance.getPeople().trackCharge(charge, transactionValue);
             promise.resolve(null);
         }
@@ -595,11 +572,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void append(String name, ReadableArray properties, Promise promise) throws JSONException {
-        JSONArray sendProperties = null;
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
-            sendProperties = ReactNativeHelper.reactToJSON(properties);
+            JSONArray sendProperties = ReactNativeHelper.reactToJSON(properties);
             mInstance.getPeople().append(name, sendProperties);
             promise.resolve(null);
         }
@@ -627,11 +603,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void merge(String propertyName, ReadableMap updates, Promise promise) throws JSONException {
-        JSONObject properties = null;
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
-            properties = ReactNativeHelper.reactToJSON(updates);
+            JSONObject properties = ReactNativeHelper.reactToJSON(updates);
             mInstance.getPeople().merge(propertyName, properties);
             promise.resolve(null);
         }
@@ -644,11 +619,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      */
     @ReactMethod
     public void remove(String name, ReadableArray properties, Promise promise) throws JSONException {
-        JSONArray sendProperties = null;
         if (mInstance == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
         } else {
-            sendProperties = ReactNativeHelper.reactToJSON(properties);
+            JSONArray sendProperties = ReactNativeHelper.reactToJSON(properties);
             mInstance.getPeople().remove(name, sendProperties);
             promise.resolve(null);
         }

@@ -3,17 +3,24 @@ package com.mixpanel.reactnative;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class AutomaticProperties {
-    private static final String MP_LIB_KEY ="mp_lib";
-    private static final String MP_LIB_VALUE="react-native";
-    private static final String VERSION_KEY="$lib_version";
-    private static final String VERSION_VALUE="1.0.0";
+import java.util.Iterator;
 
+public class AutomaticProperties {
+    private static JSONObject sAutomaticProperties;
+
+    public static void setAutomaticProperties(JSONObject properties) {
+        sAutomaticProperties = properties;
+    }
+    
     public static void appendLibraryProperties(JSONObject properties) throws JSONException {
-        if (properties == null){
+        if (properties == null) {
             properties = new JSONObject();
         }
-        properties.put(MP_LIB_KEY,MP_LIB_VALUE);
-        properties.put(VERSION_KEY,VERSION_VALUE);
+
+        //merge automatic properties
+        for(Iterator<String> keys = sAutomaticProperties.keys(); keys.hasNext();) {
+            String key = keys.next();
+            properties.put(key, sAutomaticProperties.get(key));
+        }
     }
 }

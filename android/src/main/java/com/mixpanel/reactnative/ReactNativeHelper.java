@@ -20,6 +20,10 @@ import java.util.Map;
 import com.google.gson.Gson;
 
 public class ReactNativeHelper {
+
+    /**
+     * This method will convert the input of type ReadableMap into the Json object.
+     */
     public static JSONObject reactToJSON(ReadableMap value) throws JSONException {
         JSONObject properties = new JSONObject();
         ReadableMapKeySetIterator iterator = value.keySetIterator();
@@ -54,6 +58,9 @@ public class ReactNativeHelper {
         return properties;
     }
 
+    /**
+     * This method will convert the input of type ReadableArray into the Json object.
+     */
     public static JSONArray reactToJSON(ReadableArray value) throws JSONException {
         JSONArray properties = new JSONArray();
 
@@ -86,6 +93,9 @@ public class ReactNativeHelper {
         return properties;
     }
 
+    /**
+     * This method will convert the input of type ReadableMap into the Map.
+     */
     public static Map<String, Object> toMap(ReadableMap value) {
         Map<String, Object> mapProperties = new HashMap<>();
         ReadableMapKeySetIterator iterator = value.keySetIterator();
@@ -118,6 +128,9 @@ public class ReactNativeHelper {
         return mapProperties;
     }
 
+    /**
+     * This method will convert the input of type ReadableArray into the Array.
+     */
     public static Object[] toArray(ReadableArray value) {
         Object[] propertyList = new Object[value.size()];
 
@@ -148,6 +161,9 @@ public class ReactNativeHelper {
         return propertyList;
     }
 
+    /**
+     * This method will convert the input of type Json object into the Map.
+     */
     public static WritableMap convertJsonToMap(JSONObject properties) throws JSONException {
         WritableMap mapProperties = new WritableNativeMap();
         Iterator<String> iterator = properties.keys();
@@ -175,6 +191,9 @@ public class ReactNativeHelper {
         return mapProperties;
     }
 
+    /**
+     * This method will convert the input of type Json object into the Array.
+     */
     public static WritableArray convertJsonToArray(JSONArray properties) throws JSONException {
         WritableArray propertyList = new WritableNativeArray();
 
@@ -200,6 +219,9 @@ public class ReactNativeHelper {
         return propertyList;
     }
 
+    /**
+     * This method will convert the input of type Object into the Json object.
+     */
     public static JSONObject toJsonObject(Object value) throws JSONException {
         return (new JSONObject((new Gson()).toJson(value)));
     }

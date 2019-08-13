@@ -9,15 +9,15 @@ public class AutomaticProperties {
     private static JSONObject sAutomaticProperties;
 
     /**
-    * It will set the properties coming from json file.
-    */
+     * It will set the properties coming from json file.
+     */
     public static void setAutomaticProperties(JSONObject properties) {
         sAutomaticProperties = properties;
     }
     
     /**
-    * This method will append library properties to the default properties
-    */
+     * This method will append library properties to the default properties
+     */
     public static void appendLibraryProperties(JSONObject properties) throws JSONException {
         if (properties == null) {
             properties = new JSONObject();

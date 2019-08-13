@@ -16,8 +16,6 @@ Pod::Spec.new do |s|
   s.source_files  = "ios/*.{swift,h,m}"
   s.requires_arc = true
   s.preserve_paths = 'LICENSE', 'README.md', 'package.json', 'index.js'
-
-
   s.dependency "React"
   s.dependency "Mixpanel-swift"
 end

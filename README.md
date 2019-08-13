@@ -57,4 +57,3 @@ import mixpanel from ' @tapsensetech/mixpanel-react-native';
 // TODO: What to do with the module?
 MixpanelReactNative;
 ```
-  

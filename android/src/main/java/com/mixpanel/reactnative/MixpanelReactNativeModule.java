@@ -45,6 +45,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         JSONObject sendProperties = ReactNativeHelper.reactToJSON(metadata);
         AutomaticProperties.setAutomaticProperties(sendProperties);
     }
+    
     /**
      * Get the instance of MixpanelAPI with providing your project token
      * and boolean value for opting out tracking,  default value for optOutTrackingDefault is

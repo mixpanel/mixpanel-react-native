@@ -24,7 +24,8 @@ var DEFAULT_OPT_OUT = false;
 export class Mixpanel {
     apiToken = "";
     people = this.people = new People();
-    constructor(){        
+
+    constructor() {        
         packageJson.metadata["$lib_version"] = packageJson.version;
         MixpanelReactNative.setMetadata(packageJson.metadata);
     }      

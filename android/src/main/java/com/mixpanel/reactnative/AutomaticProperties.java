@@ -14,6 +14,7 @@ public class AutomaticProperties {
     public static void setAutomaticProperties(JSONObject properties) {
         sAutomaticProperties = properties;
     }
+    
     /**
     * This method will append library properties to the default properties
     */

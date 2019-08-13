@@ -8,4 +8,3 @@ public class Constant {
     static final String ADD_GROUP_SUCCESS = "Group is added successfully";
     static final String REMOVE_GROUP_SUCCESS = "Group is removed successfully";
 }
-

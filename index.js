@@ -30,6 +30,9 @@ export class Mixpanel {
         MixpanelReactNative.setMetadata(packageJson.metadata);
     }      
        
+    /**
+      Gets the Mixpanel instance associated with your Mixpanel project token
+     */
     getInstance(token) {
         if (!token || token === "") {
             throw new Error(ERROR_MESSAGE.NEED_MP_TOKEN);
@@ -319,6 +322,9 @@ export class People {
 }
 
 class Helper {
+    /**
+     * Gets valid string 
+     */
     static getValidString(str, parameter_name) {
     if (!str || str === "" ) {
         throw new Error(parameter_name + ERROR_MESSAGE.REQUIRED_PARAMETER );

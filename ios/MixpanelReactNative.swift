@@ -321,6 +321,11 @@ class MixpanelReactNative: NSObject {
         }
     }
     
+    /**
+     Returns the currently set super properties.
+     
+     - returns: the current super properties
+     */
     @objc
     func getSuperProperties(_ resolve: RCTPromiseResolveBlock,
                             rejecter reject: RCTPromiseRejectBlock) -> Void {
@@ -694,11 +699,11 @@ class MixpanelReactNative: NSObject {
     
     /**
      Sets metadata like `$lib_version`, `mp_lib`
-    */
+     */
     @objc
     func setMetadata(_ properties: [String: Any],
-             resolver resolve: RCTPromiseResolveBlock,
-             rejecter reject: RCTPromiseRejectBlock) -> Void {
+                     resolver resolve: RCTPromiseResolveBlock,
+                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         AutomaticProperties.setAutomaticProperties(properties)
     }
     

@@ -2,6 +2,9 @@
  import Mixpanel
  
  class MixpanelTypeHandler {
+    /**
+     Converts given object to MixpanelType
+     */
     static func ToMixpanelType(_ object: Any) -> MixpanelType? {
         switch object {
         case let value as String:
@@ -45,6 +48,9 @@
         }
     }
     
+    /**
+     Merge User added properties and Automatic properties
+     */
     static func processProperties(properties: Dictionary<String, Any>? = nil, includeLibInfo: Bool = false) -> Dictionary<String, MixpanelType> {
         var mpProperties = Dictionary<String, MixpanelType>()
         for (key,value) in properties ?? [:] {

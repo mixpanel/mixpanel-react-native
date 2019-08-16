@@ -1,6 +1,6 @@
 rootProject.name = 'MixpanelDemo'
-include ':@tapsensetech_mixpanel-react-native'
-project(':@tapsensetech_mixpanel-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/@tapsensetech/mixpanel-react-native/android')
+include ':mixpanel-react-native'
+project(':mixpanel-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/mixpanel-react-native/android')
 include ':react-native-vector-icons'
 project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
 include ':react-native-gesture-handler'

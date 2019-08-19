@@ -645,11 +645,11 @@ class MixpanelReactNative: NSObject {
      `application:didRegisterForRemoteNotificationsWithDeviceToken:`
      */
     @objc
-    func setPushRegistrationId(_ deviceToken: Data,
+    func setPushRegistrationId(_ deviceToken: String,
                                resolver resolve: RCTPromiseResolveBlock,
                                rejecter reject: RCTPromiseRejectBlock) -> Void {
         if !mToken.isEmpty {
-            Mixpanel.mainInstance().people.addPushDeviceToken(deviceToken)
+            Mixpanel.mainInstance().people.union(properties: ["$ios_devices": [deviceToken] ])
             resolve(nil)
         } else {
             reject(Constants.ERROR,Constants.INSTANCE_NOT_FOUND,nil)

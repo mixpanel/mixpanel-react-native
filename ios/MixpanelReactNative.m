@@ -76,7 +76,7 @@ RCT_EXTERN_METHOD(clearCharges: (RCTPromiseResolveBlock)resolve rejecter: (RCTPr
 
 RCT_EXTERN_METHOD(deleteUser: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(setPushRegistrationId: (NSData *)deviceToken resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setPushRegistrationId: (NSString *)deviceToken resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(clearPushRegistrationId: (NSData *)deviceToken resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 

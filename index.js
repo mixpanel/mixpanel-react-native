@@ -292,6 +292,15 @@ export class People {
     }
 
     /**
+     Adds values to a list-valued property only if they are not already present in the list.
+     If the property does not currently exist,
+     it will be created with the given list as it's value.
+     */
+    union(name, value) {
+        return MixpanelReactNative.union(name, value);
+    }
+
+    /**
       Remove a list of properties and their values from the current user's profile
       in Mixpanel People.
      */

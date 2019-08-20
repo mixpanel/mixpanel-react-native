@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import mixpanel from 'mixpanel-react-native';
+import Mixpanel from 'mixpanel-react-native';
 
 class MultipleInstance extends React.Component {
     /**
        * Use for Track an event.
     */
     track1 = () => {
-        mixpanel.getInstance(this.state.TextInput_Token1);
-        mixpanel.track("Instance 1").then(t => mixpanel.flush());
+        //mixpanel.getInstance(this.state.TextInput_Token1);
+        //mixpanel.track("Instance 1").then(t => mixpanel.flush());
     }
     track2 = () => {
-        mixpanel.getInstance(this.state.TextInput_Token2);
-        mixpanel.track("Instance 2").then(t =>  mixpanel.flush());
+        //mixpanel.getInstance(this.state.TextInput_Token2);
+        //mixpanel.track("Instance 2").then(t =>  mixpanel.flush());
     }
     track3 = () => {
-        mixpanel.getInstance(this.state.TextInput_Token3);
-        mixpanel.track("Instance 3").then(t =>  mixpanel.flush());
+        //mixpanel.getInstance(this.state.TextInput_Token3);
+        //mixpanel.track("Instance 3").then(t =>  mixpanel.flush());
     }
 
     render() {

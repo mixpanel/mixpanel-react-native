@@ -1,7 +1,7 @@
 {
-  "name": "mixpanel-react-native",
+  "name": "@tapsensetech/mixpanel-react-native",
   "version": "1.0.1",
-  "description": "## Getting started",
+  "description": "Mixpanel tracking library for react-native",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,17 +9,22 @@
   "keywords": [
     "react-native"
   ],
-  "author": "Tap Sense",
-  "license": "ISC",
+  "author": "Mixpanel",
+  "license": "Apache-2.0",
   "peerDependencies": {
     "react-native": "^0.41.2"
   },
   "repository": {
+    "TODO": "Change the git URL before publishing on npm",
     "type": "git",
     "url": "git+https://gitlab.com/tapsense/mixpanel-react-native.git"
   },
   "bugs": {
     "url": "https://gitlab.com/tapsense/mixpanel-react-native/issues"
   },
-  "homepage": "https://gitlab.com/tapsense/mixpanel-react-native#readme"
+  "TODO": "Change the git URL before publishing on npm",
+  "homepage": "https://gitlab.com/tapsense/mixpanel-react-native#readme",
+  "metadata":{
+    "mp_lib": "react-native"
+  }
 }

@@ -3,9 +3,7 @@
  
  class MixpanelTypeHandler {
     static func ToMixpanelType(_ object: Any) -> MixpanelType? {
-        
-        switch object
-        {
+        switch object {
         case let value as String:
             return value as MixpanelType
             
@@ -52,14 +50,17 @@
         for (key,value) in properties ?? [:] {
             mpProperties[key] = ToMixpanelType(value)
         }
-        if(includeLibInfo){
-            mpProperties["mp_lib"] = "react-native";
-            mpProperties["$lib_version"] = "1.0.0";
+        if (includeLibInfo) {
+            mpProperties.merge(dict: AutomaticProperties.peopleProperties)
         }
         return mpProperties
     }
-    
  }
  
- 
-
+ extension Dictionary {
+    mutating func merge(dict: [Key: Value]){
+        for (k, v) in dict {
+            updateValue(v, forKey: k)
+        }
+    }
+ }

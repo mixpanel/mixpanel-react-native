@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		6E70D81022E0884D007B9F01 /* MixpanelTypeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E70D80F22E0884D007B9F01 /* MixpanelTypeHandler.swift */; };
+		6EA1B12622F313BB001F950D /* AutomaticProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA1B12522F313BB001F950D /* AutomaticProperties.swift */; };
 		6EF8684022DD967700CA0877 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF8683F22DD967700CA0877 /* Constants.swift */; };
-		A65C992F22EEBD6100EBDFD0 /* Mixpanel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A65C992E22EEBD6100EBDFD0 /* Mixpanel.framework */; };
 		A684A1AD22D4B0870060663F /* MixpanelReactNative.swift in Sources */ = {isa = PBXBuildFile; fileRef = A684A1AC22D4B0870060663F /* MixpanelReactNative.swift */; };
 		B3E7B58A1CC2AC0600A0062D /* MixpanelReactNative.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* MixpanelReactNative.m */; };
 /* End PBXBuildFile section */
@@ -29,8 +29,8 @@
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libMixpanelReactNative.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMixpanelReactNative.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E70D80F22E0884D007B9F01 /* MixpanelTypeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixpanelTypeHandler.swift; sourceTree = "<group>"; };
+		6EA1B12522F313BB001F950D /* AutomaticProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomaticProperties.swift; sourceTree = "<group>"; };
 		6EF8683F22DD967700CA0877 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		A65C992E22EEBD6100EBDFD0 /* Mixpanel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mixpanel.framework; sourceTree = "<group>"; };
 		A684A1AB22D4B0870060663F /* MixpanelReactNative-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MixpanelReactNative-Bridging-Header.h"; sourceTree = "<group>"; };
 		A684A1AC22D4B0870060663F /* MixpanelReactNative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixpanelReactNative.swift; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* MixpanelReactNative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MixpanelReactNative.m; sourceTree = "<group>"; };
@@ -41,7 +41,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A65C992F22EEBD6100EBDFD0 /* Mixpanel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,37 +59,21 @@
 			isa = PBXGroup;
 			children = (
 				6E70D80E22E087B6007B9F01 /* Utilities */,
-				6E63AC5D22D60015008D1A17 /* Libraries */,
 				A684A1AC22D4B0870060663F /* MixpanelReactNative.swift */,
 				B3E7B5891CC2AC0600A0062D /* MixpanelReactNative.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
 				A684A1AB22D4B0870060663F /* MixpanelReactNative-Bridging-Header.h */,
-				6EF8687822DD970300CA0877 /* Frameworks */,
 			);
-			sourceTree = "<group>";
-		};
-		6E63AC5D22D60015008D1A17 /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Libraries;
 			sourceTree = "<group>";
 		};
 		6E70D80E22E087B6007B9F01 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				6EA1B12522F313BB001F950D /* AutomaticProperties.swift */,
 				6EF8683F22DD967700CA0877 /* Constants.swift */,
 				6E70D80F22E0884D007B9F01 /* MixpanelTypeHandler.swift */,
 			);
 			name = Utilities;
-			sourceTree = "<group>";
-		};
-		6EF8687822DD970300CA0877 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				A65C992E22EEBD6100EBDFD0 /* Mixpanel.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -154,6 +137,7 @@
 				A684A1AD22D4B0870060663F /* MixpanelReactNative.swift in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* MixpanelReactNative.m in Sources */,
 				6E70D81022E0884D007B9F01 /* MixpanelTypeHandler.swift in Sources */,
+				6EA1B12622F313BB001F950D /* AutomaticProperties.swift in Sources */,
 				6EF8684022DD967700CA0877 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

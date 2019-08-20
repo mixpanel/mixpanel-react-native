@@ -298,6 +298,13 @@ export class People {
         properties = properties || {};
         return MixpanelReactNative.remove(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), properties);
     }
+    
+    /**
+      Adds values to a list-valued property only if they are not already present in the list.  
+     */
+    union(name, properties) {
+        return MixpanelReactNative.union(name, properties);
+    }
 
     /**
       Remove a list of properties and their values from the current user's profile

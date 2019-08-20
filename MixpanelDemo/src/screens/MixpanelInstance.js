@@ -1,23 +1,35 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import mixpanel from 'mixpanel-react-native';
+import Mixpanel from 'mixpanel-react-native';
 
 class MixpanelInstance extends React.Component {
   constructor(props) {
     super(props);
     this.state = { TextInput_Id: '' }
   }
+
+  componentDidMount(){
+    // Toggle the state every second
+    setInterval(() => (
+      this.setState(previousState => (
+        {  
+          mixpanel: new Mixpanel("bb71c6d97ef1bde11ffe83037a388b57")
+        }
+      ))
+    ), 1000);
+  }
+
   /**
        * Identify the user uniquely by providing the user distinct id
    */
   identify = () => {
-    mixpanel.people.identify(this.state.TextInput_Id);
+    this.state.mixpanel.people.identify(this.state.TextInput_Id);
   }
   /**
        * Use this method to opt-in an already opted-out user from tracking.
   */
   optIn = () => {
-    mixpanel.optInTracking(this.state.TextInput_Id);
+    this.state.mixpanel.optInTracking(this.state.TextInput_Id);
   }
   /**
        * Use to accept user entered properties in the format of key-value pair.
@@ -34,27 +46,27 @@ class MixpanelInstance extends React.Component {
   */
   track = () => {
     var properties = this.takeProperty();
-    mixpanel.track(this.state.TextInput_EventName, properties);
+    this.state.mixpanel.track(this.state.TextInput_EventName, properties);
   }
   /**
      * registerSuperProperties will store a new superProperty and possibly overwriting any existing superProperty with the same name.
   */
   registerSuperProperty = () => {
     var properties = this.takeProperty();
-    mixpanel.registerSuperProperties(properties);
+    this.state.mixpanel.registerSuperProperties(properties);
   }
   /**
      * Erase all currently registered superProperties.
   */
   clearSuperProperty = () => {
     var properties = this.takeProperty();
-    mixpanel.clearSuperProperties(properties);
+    this.state.mixpanel.clearSuperProperties(properties);
   }
   /**
      * Returns a json object of the user's current super properties
   */
   getSuperProperty = () => {
-    mixpanel.getSuperProperties().then(t => {
+    this.state.mixpanel.getSuperProperties().then(t => {
       alert(JSON.stringify(t));
     });
   }

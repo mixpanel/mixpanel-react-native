@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^10.0.3",
-    "@tapsensetech/mixpanel-react-native": "file:../tapsensetech-mixpanel-react-native-1.0.1.tgz",
     "bootstrap": "^4.3.1",
     "expo": "^34.0.1",
     "mixpanel-react-native": "file:../mixpanel-react-native-1.0.0.tgz",

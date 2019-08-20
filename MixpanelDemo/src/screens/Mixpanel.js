@@ -1,8 +1,21 @@
 import React, { Component } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput } from 'react-native';
-import mixpanel from "mixpanel-react-native";
+import Mixpanel from "mixpanel-react-native";
 
-export default class Mixpanel extends React.Component {
+export default class Mixpanel1 extends React.Component {
+  
+  
+  componentDidMount(){
+    // Toggle the state every second
+    setInterval(() => (
+      this.setState(previousState => (
+        {  
+          mixpanel: new Mixpanel("bb71c6d97ef1bde11ffe83037a388b57")
+        }
+      ))
+    ), 1000);
+  }
+
   /**
      * Set a collection of properties on the identified user.
   */
@@ -11,7 +24,7 @@ export default class Mixpanel extends React.Component {
     var value = this.state.TextInput_Value;
     var properties = {};
     properties[key] = value;
-    mixpanel.people.set(properties);
+    this.state.mixpanel.people.set(properties);
   }
   /**
      * Track a revenue transaction for the identified people profile.
@@ -19,13 +32,13 @@ export default class Mixpanel extends React.Component {
   */
   trackCharge = () => {
     var chargeInDouble = parseFloat(this.state.TextInput_Charge)
-    mixpanel.people.trackCharge(chargeInDouble);
+    this.state.mixpanel.people.trackCharge(chargeInDouble);
   }
   /**
      * Push all queued Mixpanel events and People Analytics changes to Mixpanel servers.
   */
   flush = () => {
-    mixpanel.flush();
+    this.state.mixpanel.flush();
   }
   render() {
     return (

@@ -6,7 +6,7 @@
 
 RCT_EXTERN_METHOD(initialize: (NSString *)token optOutTrackingByDefault: (BOOL)optOutTrackingByDefault properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(getInstance: (NSString *)apiToken optOutTrackingByDefault: (BOOL)optOutTrackingByDefault resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(getInstance: (NSString *)token optOutTrackingByDefault: (BOOL)optOutTrackingByDefault resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
 // MARK: - Opting Users Out of Tracking
 
@@ -80,7 +80,7 @@ RCT_EXTERN_METHOD(deleteUser: (NSString *)token resolve: (RCTPromiseResolveBlock
 
 RCT_EXTERN_METHOD(setPushRegistrationId: (NSString *)token deviceToken: (NSString *)deviceToken resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(clearPushRegistrationId: (NSString *)token deviceToken: (NSData *)deviceToken resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(clearPushRegistrationId: (NSString *)token deviceToken: (NSString *)deviceToken resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(clearAllPushRegistrationId: (NSString *)token resolve: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 

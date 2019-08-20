@@ -17,7 +17,8 @@ var KEY = {
     ALIAS: "Alias",
     EVENT_NAME: "Event name",
     PROPERTIES: "Properties",
-    PROPERTY_NAME: "Property name"
+    PROPERTY_NAME: "Property name",
+    DEVICE_TOKEN: "Device token"
 };
 
 var ERROR_MESSAGE = {
@@ -185,7 +186,7 @@ export default class Mixpanel {
       Uploads queued data to the Mixpanel server.
      */
     flush() {
-        return MixpanelReactNative.flush();
+        return MixpanelReactNative.flush(this.token);
     }
 
     /**
@@ -304,7 +305,7 @@ export class People {
       Adds values to a list-valued property only if they are not already present in the list.  
      */
     union(name, properties) {
-        return MixpanelReactNative.union(name, properties);
+        return MixpanelReactNative.union(this.token, name, properties);
     }
 
     /**
@@ -319,7 +320,7 @@ export class People {
       Register the given device to receive push notifications.
      */
     setPushRegistrationId(deviceToken) {
-        return MixpanelReactNative.setPushRegistrationId(this.token, deviceToken);
+        return MixpanelReactNative.setPushRegistrationId(this.token, Helper.getValidString(deviceToken, KEY.DEVICE_TOKEN));
     }
 
     /**
@@ -333,7 +334,7 @@ export class People {
       Clears all currently set super properties.
      */
     clearPushRegistrationId(deviceToken) {
-        return MixpanelReactNative.clearPushRegistrationId(this.token, deviceToken);
+        return MixpanelReactNative.clearPushRegistrationId(this.token, Helper.getValidString(deviceToken, KEY.DEVICE_TOKEN));
     }
 }
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput } from 'react-native';
 import mixpanel from "mixpanel-react-native";
+import PushNotificationHandler from '../PushNotificationHandler'
 
 export default class Mixpanel extends React.Component {
     setPushRegistrationId = () => {
@@ -28,6 +29,7 @@ export default class Mixpanel extends React.Component {
                 <TouchableOpacity style={styles.button1} onPress={this.getPushRegistrationId}>
                     <Text style={styles.buttonText}>Get Push RegistrationId</Text>
                 </TouchableOpacity>
+                <PushNotificationHandler/>
             </View>
         );
     }

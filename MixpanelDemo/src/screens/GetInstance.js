@@ -7,7 +7,8 @@ export default class GetInstance extends React.Component {
          * Get the instance of MixpanelAPI with providing token
     */
     getInstance = () => {
-        mixpanel.getInstance(this.state.TextInput_Token);
+       // mixpanel.getInstance(this.state.TextInput_Token);
+       mixpanel.getInstance("bb71c6d97ef1bde11ffe83037a388b57");
     }
     render() {
         return (

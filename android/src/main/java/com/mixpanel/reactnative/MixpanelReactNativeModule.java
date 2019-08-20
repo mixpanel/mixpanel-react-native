@@ -324,6 +324,27 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     /**
+     * Adds values to a list-valued property only if they are not already present in the list.
+     * If the property does not currently exist,
+     * it will be created with the given list as it's value.
+     * If the property exists and is not list-valued, the union will be ignored.
+     */
+    @ReactMethod
+    public void union(final String token, String name, ReadableArray value, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
+        synchronized (instance)
+        {
+            if(instance == null) {
+                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
+            } else {
+                JSONArray propertyValue = ReactNativeHelper.reactToJSON(value);
+                instance.getPeople().union(name, propertyValue);
+                promise.resolve(null);
+            }
+        }
+    }
+
+    /**
      * Returns a json object of the user's current super properties
      * SuperProperties are a collection of properties that will be sent with every event to Mixpanel,
      * and persist beyond the lifetime of your application.

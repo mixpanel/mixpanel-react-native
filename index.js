@@ -36,8 +36,8 @@ export default class Mixpanel {
 
     constructor(token, optOutTrackingDefault = DEFAULT_OPT_OUT) {   
         packageJson.metadata["$lib_version"] = packageJson.version;
-        let initialized = await MixpanelReactNative.initialize(token, optOutTrackingDefault, packageJson.metadata);
-        this.initialized = initialized;
+        MixpanelReactNative.initialize(token, optOutTrackingDefault, packageJson.metadata);
+        this.initialized = true;
         this.token = token;
         this.people = new People(this.token, this.initialized);
     }
@@ -64,6 +64,7 @@ export default class Mixpanel {
             properties = distinct_id;
             distinct_id = null;
         }
+        alert( JSON.stringify({token: this.token, distinct_id, properties}));
         return MixpanelReactNative.optInTracking(this.token, distinct_id, properties);
     }
 
@@ -340,4 +341,3 @@ class Helper {
     return str;
    }
 }
-

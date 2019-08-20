@@ -18,16 +18,18 @@ class MixpanelReactNative: NSObject {
                      optOutTrackingByDefault: Bool = false,
                      resolver resolve: RCTPromiseResolveBlock,
                      rejecter reject: RCTPromiseRejectBlock) -> Void {
-        initialize(apiToken: token, optOutTrackingByDefault: optOutTrackingByDefault, resolver: resolve, rejecter: reject)
+        initialize(token, optOutTrackingByDefault: optOutTrackingByDefault, properties: [:], resolver: resolve, rejecter: reject)
     }
     
     @objc
-    func initialize(token: String,
+    func initialize(_ token: String,
                     optOutTrackingByDefault: Bool = false,
+                    properties: [String: Any],
                     resolver resolve: RCTPromiseResolveBlock,
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
+        AutomaticProperties.setAutomaticProperties(properties)
         
-        var instance = Mixpanel.initialize(token: token, launchOptions: nil, flushInterval: Constants.DEFAULT_FLUSH_INTERVAL, instanceName: token, automaticPushTracking: Constants.AUTOMATIC_PUSH_TRACKING, optOutTrackingByDefault: optOutTrackingByDefault)
+        let instance = Mixpanel.initialize(token: token, launchOptions: nil, flushInterval: Constants.DEFAULT_FLUSH_INTERVAL, instanceName: token, automaticPushTracking: Constants.AUTOMATIC_PUSH_TRACKING, optOutTrackingByDefault: optOutTrackingByDefault)
         if (instance == nil){
             reject(Constants.ERROR, Constants.INSTANCE_NOT_FOUND, nil)
         } else {
@@ -50,7 +52,7 @@ class MixpanelReactNative: NSObject {
         if instance == nil {
             reject(Constants.ERROR,Constants.INSTANCE_NOT_FOUND,nil)
         } else {
-            instance.optOutTracking()
+            instance?.optOutTracking()
             resolve(nil)
         }
     }
@@ -67,7 +69,7 @@ class MixpanelReactNative: NSObject {
         if instance == nil {
             reject(Constants.ERROR,Constants.INSTANCE_NOT_FOUND,nil)
         } else {
-            instance.hasOptedOutTracking()
+            instance?.hasOptedOutTracking()
             resolve(nil)
         }
     }
@@ -93,7 +95,7 @@ class MixpanelReactNative: NSObject {
             reject(Constants.ERROR,Constants.INSTANCE_NOT_FOUND,nil)
         } else {
             let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true)
-            instance.optInTracking(distinctId: distinctId, properties: mpProperties)
+            instance?.optInTracking(distinctId: distinctId, properties: mpProperties)
             resolve(nil)
         }
     }
@@ -119,7 +121,7 @@ class MixpanelReactNative: NSObject {
             reject(Constants.ERROR,Constants.INSTANCE_NOT_FOUND,nil)
         } else {
             let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true)
-            instance.track(event: event, properties: mpProperties)
+            instance?.track(event: event, properties: mpProperties)
             resolve(nil)
         }
     }
@@ -727,15 +729,15 @@ class MixpanelReactNative: NSObject {
     }
     
     // MARK: - Private methods
-    @objc
-    func getMixpanelInstance(token: String) throws -> Mixpanel.MixpanelInstance? {
-        if token.isEmpty {
-            throw NSError("MixpanelReactNative", code: -1, userInfo: [NSLocalizedDescriptionKey: Constants.INVALID_TOKEN])
-        }
-        let instance = Mixpanel.getInstance(name: token)
-        if instance == nil {
-            throw NSError("MixpanelReactNative", code: -1, userInfo: [NSLocalizedDescriptionKey: Constants.INSTANCE_NOT_FOUND])
-        }
-        return instance
-    }
+    /*@objc
+     func getMixpanelInstance(token: String) throws -> Mixpanel.MixpanelInstance? {
+     if token.isEmpty {
+     throw NSError("MixpanelReactNative", code: -1, userInfo: [NSLocalizedDescriptionKey: Constants.INVALID_TOKEN])
+     }
+     let instance = Mixpanel.getInstance(name: token)
+     if instance == nil {
+     throw NSError("MixpanelReactNative", code: -1, userInfo: [NSLocalizedDescriptionKey: Constants.INSTANCE_NOT_FOUND])
+     }
+     return instance
+     }*/
 }

@@ -8,19 +8,11 @@ class MixpanelReactNative: NSObject {
     // MARK: - Mixpanel Instance
     
     /**
-     Get the instance of Mixpanel with providing your project token
-     and boolean value for opting out tracking,  default value for optOutTrackingDefault is
+     Creates Mixpanel instance by providing your project token
+     and boolean value for opting out tracking, default value for optOutTrackingDefault is
      false by setting it to true will prevent data from being collected by default
      This instance of Mixpanel you can use to send events and updates to Mixpanel.
      */
-    @objc
-    func getInstance(_ token: String,
-                     optOutTrackingByDefault: Bool = false,
-                     resolver resolve: RCTPromiseResolveBlock,
-                     rejecter reject: RCTPromiseRejectBlock) -> Void {
-        initialize(token, optOutTrackingByDefault: optOutTrackingByDefault, properties: [:], resolver: resolve, rejecter: reject)
-    }
-    
     @objc
     func initialize(_ token: String,
                     optOutTrackingByDefault: Bool = false,
@@ -725,16 +717,6 @@ class MixpanelReactNative: NSObject {
             instance?.people.removeAllPushDeviceTokens()
             resolve(nil)
         }
-    }
-    
-    /**
-     Sets metadata like `$lib_version`, `mp_lib`
-     */
-    @objc
-    func setMetadata(_ properties: [String: Any],
-                     resolver resolve: RCTPromiseResolveBlock,
-                     rejecter reject: RCTPromiseRejectBlock) -> Void {
-        AutomaticProperties.setAutomaticProperties(properties)
     }
     
     // MARK: - Test Method

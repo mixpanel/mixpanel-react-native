@@ -4,9 +4,9 @@ import Mixpanel from "mixpanel-react-native";
 
 export default class PeopleScreen extends React.Component {
   
-  constructor(){
+  componentWillMount(){
     this.mixpanel = new Mixpanel("bb71c6d97ef1bde11ffe83037a388b57");
-  }  
+  } 
 
   /**
      * Set a collection of properties on the identified user.
@@ -16,6 +16,7 @@ export default class PeopleScreen extends React.Component {
     var value = this.state.TextInput_Value;
     var properties = {};
     properties[key] = value;
+    alert(JSON.stringify(this.mixpanel));
     this.mixpanel.people.set(properties);
   }
   /**

@@ -36,9 +36,10 @@ export default class Mixpanel {
     people: ?People;
 
     constructor(token, optOutTrackingDefault = DEFAULT_OPT_OUT) {   
-        packageJson.metadata["$lib_version"] = packageJson.version;
-        let initialized = await MixpanelReactNative.initialize(token, optOutTrackingDefault, packageJson.metadata);
-        this.initialized = initialized;
+        let metadata = JSON.parse(JSON.stringify(packageJson.metadata));
+        metadata["$lib_version"] = packageJson.version;
+        MixpanelReactNative.initialize(token, optOutTrackingDefault, metadata);
+        this.initialized = true;
         this.token = token;
         this.people = new People(this.token, this.initialized);
     }

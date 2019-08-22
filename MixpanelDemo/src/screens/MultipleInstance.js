@@ -4,7 +4,7 @@ import Mixpanel from 'mixpanel-react-native';
 
 class MultipleInstance extends React.Component {
     /**
-       * Use for Track an event.
+    * Use for Track an event.
     */
     track1 = () => {
         //mixpanel.getInstance(this.state.TextInput_Token1);

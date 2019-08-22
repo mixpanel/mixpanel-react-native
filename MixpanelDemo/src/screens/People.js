@@ -29,7 +29,7 @@ export default class Mixpanel extends React.Component {
                 <TouchableOpacity style={styles.button1} onPress={this.getPushRegistrationId}>
                     <Text style={styles.buttonText}>Get Push RegistrationId</Text>
                 </TouchableOpacity>
-                <PushNotificationHandler/>
+                {/* <PushNotificationHandler/> */}
             </View>
         );
     }

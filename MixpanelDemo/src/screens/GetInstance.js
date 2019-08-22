@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput } from 'react-native';
 import Mixpanel from 'mixpanel-react-native';
-
+import Config from '../../mpConfig';
+import {token as MixpanelToken} from '../../app.json';
 export default class GetInstance extends React.Component {
     /**
          * Get the instance of MixpanelAPI with providing token
     */
     getInstance = () => {
-       // mixpanel.getInstance(this.state.TextInput_Token);            
-       const mixpanel={
-        x: new Mixpanel(this.state.TextInput_Token)
+        this.mixpanel = new Mixpanel(MixpanelToken);  
      };  
-    }
+    
     render() {
         return (
             <View>

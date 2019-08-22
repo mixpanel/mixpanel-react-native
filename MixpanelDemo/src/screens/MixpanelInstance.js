@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Mixpanel from 'mixpanel-react-native';
+import {token as MixpanelToken} from '../../app.json';
 
 class EventScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = { TextInput_Id: '' };
-    this.mixpanel = new Mixpanel("bb71c6d97ef1bde11ffe83037a388b57");
+    this.mixpanel = new Mixpanel(MixpanelToken);  
   }
 
   /**

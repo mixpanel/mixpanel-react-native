@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput } from 'react-native';
 import Mixpanel from "mixpanel-react-native";
+import {token as MixpanelToken} from '../../app.json';
 
 export default class PeopleScreen extends React.Component {
   
   componentWillMount(){
-    this.mixpanel = new Mixpanel("bb71c6d97ef1bde11ffe83037a388b57");
+    this.mixpanel = new Mixpanel(MixpanelToken);  
   } 
 
   /**

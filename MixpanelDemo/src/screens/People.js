@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput } from 'react-native';
-import mixpanel from "mixpanel-react-native";
-import PushNotificationHandler from '../PushNotificationHandler'
+import Mixpanel from "mixpanel-react-native";
+import {token as MixpanelToken} from '../../app.json';
 
 export default class Mixpanel extends React.Component {
+    componentWillMount(){
+        this.mixpanel = new Mixpanel(MixpanelToken);  
+      } 
+    
     setPushRegistrationId = () => {
         mixpanel.people.setPushRegistrationId(this.state.TextInput_Token);
     }
@@ -29,7 +33,6 @@ export default class Mixpanel extends React.Component {
                 <TouchableOpacity style={styles.button1} onPress={this.getPushRegistrationId}>
                     <Text style={styles.buttonText}>Get Push RegistrationId</Text>
                 </TouchableOpacity>
-                {/* <PushNotificationHandler/> */}
             </View>
         );
     }

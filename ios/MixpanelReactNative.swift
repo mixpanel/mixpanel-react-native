@@ -670,7 +670,7 @@ open class MixpanelReactNative: NSObject {
         if instance == nil {
             reject(Constants.ERROR,Constants.INSTANCE_NOT_FOUND,nil)
         } else {
-            instance?.people.addPushDeviceToken(deviceToken.data(using: .utf16)!)
+            instance?.people.union(properties: ["$ios_devices": [deviceToken] ])
             resolve(nil)
         }
     }

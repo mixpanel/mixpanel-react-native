@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { createAppContainer, createStackNavigator } from 'react-navigation';
 import Home from './screens/Home';
 import Welcome from './screens/Welcome';
-import MixpanelInstance from './screens/MixpanelInstance';
-import Mixpanel from './screens/Mixpanel';
+import MixpanelInstance from './screens/EventScreen';
+import Mixpanel from './screens/PeopleScreen';
 import People from './screens/People';
 import MultipleInstance from './screens/MultipleInstance';
 

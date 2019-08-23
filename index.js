@@ -23,7 +23,7 @@ var KEY = {
 };
 
 var ERROR_MESSAGE = {
-    NEED_MP_TOKEN: "The Mixpanel Client needs a Mixpanel token: `Mixpanel.init(token)`",
+    NEED_MP_TOKEN: "The Mixpanel instance must have a valid token and must call: `init()`",
     REQUIRED_PARAMETER: " is required",
     REQUIRED_OBJECT: " is required. Cannot be null or undefined",
     REQUIRED_DOUBLE: "expected parameter of type `double`"

@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, StyleSheet, View, TextInput } from 'react-nativ
 import Mixpanel from "mixpanel-react-native";
 import {token as MixpanelToken} from '../../app.json';
 
-export default class Mixpanel extends React.Component {
+export default class People extends React.Component {
     componentWillMount(){
         this.mixpanel = new Mixpanel(MixpanelToken);  
       } 

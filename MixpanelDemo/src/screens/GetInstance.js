@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput } from 'react-native';
 import Mixpanel from 'mixpanel-react-native';
-import Config from '../../mpConfig';
 import {token as MixpanelToken} from '../../app.json';
 export default class GetInstance extends React.Component {
     /**

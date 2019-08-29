@@ -20,19 +20,19 @@ The Mixpanel React-Native library for iOS and Android is an open source project,
 <a name="getting started"></a>
 # **Getting started**
 ```
- $ npm install @tapsensetech/mixpanel-react-native --save 
+ $ npm install mixpanel-react-native --save 
 ```
 <a name="installation"></a>
 # **Installation**
 ```
-$ react-native link @tapsensetech/mixpanel-react-native
+$ react-native link mixpanel-react-native
 ```
 
 #### iOS 
 
 If you're already using Cocoapods, add the following to your Podfile
 ```
-pod 'MixpanelReactNative', path: '../node_modules/@tapsensetech/mixpanel-react-native'
+pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 ```
 
 Otherwise, setup Podfile according to [react native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps), so the Podfile will look like this:
@@ -55,7 +55,7 @@ target 'YourTargetName' do
     pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
     pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-    pod 'MixpanelReactNative', path: '../node_modules/@tapsensetech/mixpanel-react-native'
+    pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 
 end
 ```
@@ -72,20 +72,19 @@ Android does not need additional setup, installing the package and linking will 
 <a name="usage"></a>
 # **Usage**
 ```
-import Mixpanel from '@tapsensetech/mixpanel-react-native';
+import Mixpanel from 'mixpanel-react-native';
 ```
 <a name="API"></a>
 # **API**
 |  **Method** | **Ios** | **Android** |
 |  ------ | :------: | :------: |
-| getInstance() | &#9989; |  &#9989; |
+| initialize() | &#9989; |  &#9989; |
 |hasOptedOutTracking() |  &#9989; |  &#9989;|
 |optInTracking() |  &#9989; |  &#9989;|
 |optOutTracking() |  &#9989; |  &#9989;|
 |identify() |  &#9989; |  &#9989;|
 |getDistinctId()|  &#10060;|  &#9989;|
 |track()|  &#9989; |  &#9989;|
-|trackMap()|  &#10060;|  &#9989;|
 |registerSuperProperties()|  &#9989; |  &#9989;|
 |registerSuperPropertiesOnce()|  &#9989; |  &#9989;|
 |unregisterSuperProperty()|  &#9989; |  &#9989;|
@@ -116,12 +115,11 @@ import Mixpanel from '@tapsensetech/mixpanel-react-native';
 |clearAllPushRegistrationId()|  &#9989; |  &#9989;|
 |union()|  &#9989; |  &#9989;|
 
-# **getInstance()**
-Get the instance of MixpanelAPI with providing token, you can use this instance of Mixpanel to send events and updates to Mixpanel.
-
+# **initialize()**
+To start tracking with library you must first initialize with your project token
 ### **Example**
 ```
-Mixpanel.getInstance();
+Mixpanel.initialize();
 ```
 
 # **hasOptedOutTracking()**
@@ -178,14 +176,6 @@ Use to Track an event with properties.
 ### **Example**
 ```
 Mixpanel.track();
-```
-
-# **trackMap()**
-Track an event.
-
-### **Example**
-```
-Mixpanel.trackMap();
 ```
 
 # **registerSuperProperties()**

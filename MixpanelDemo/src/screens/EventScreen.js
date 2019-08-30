@@ -3,12 +3,17 @@ import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-nativ
 import Mixpanel from 'mixpanel-react-native';
 import {token as MixpanelToken} from '../../app.json';
 
+
 class EventScreen extends React.Component {
+
   constructor(props) {
     super(props);
-    this.state = { TextInput_Id: '' };
-    this.mixpanel = new Mixpanel(MixpanelToken);  
+    this.configMixpanel();
   }
+
+  configMixpanel =  async () => {      
+    this.mixpanel = await Mixpanel.init(MixpanelToken);      
+  } 
 
   /**
        * Identify the user uniquely by providing the user distinct id

@@ -24,7 +24,7 @@ public class AutomaticProperties {
         }
 
         //merge automatic properties
-        for(Iterator<String> keys = sAutomaticProperties.keys(); keys.hasNext();) {
+        for (Iterator<String> keys = sAutomaticProperties.keys(); keys.hasNext();) {
             String key = keys.next();
             properties.put(key, sAutomaticProperties.get(key));
         }

@@ -5,8 +5,17 @@ import {token as MixpanelToken} from '../../app.json';
 
 export default class PeopleScreen extends React.Component {
   
-  componentWillMount(){
-    this.mixpanel = new Mixpanel(MixpanelToken);  
+  // async componentDidMount() {
+  //   const mixpanel = await Mixpanel.init(MixpanelToken);        
+  //   this.setState({mixpanel: mixpanel});
+  // } 
+  constructor(props) {
+    super(props);
+    this.configMixpanel();
+  }
+
+  configMixpanel =  async () => {      
+    this.mixpanel = await Mixpanel.init(MixpanelToken);      
   } 
 
   /**

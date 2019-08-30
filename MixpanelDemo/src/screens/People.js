@@ -4,18 +4,28 @@ import Mixpanel from "mixpanel-react-native";
 import {token as MixpanelToken} from '../../app.json';
 
 export default class People extends React.Component {
-    componentWillMount(){
-        this.mixpanel = new Mixpanel(MixpanelToken);  
-      } 
+    // async componentDidMount() {
+    //     const mixpanel = await Mixpanel.init(MixpanelToken);        
+    //     this.setState({mixpanel: mixpanel});
+    //   } 
+      
+    constructor(props) {
+        super(props);
+        this.configMixpanel();
+    }
+    
+    configMixpanel =  async () => {      
+        this.mixpanel = await Mixpanel.init(MixpanelToken);      
+    } 
     
     setPushRegistrationId = () => {
-        mixpanel.people.setPushRegistrationId(this.state.TextInput_Token);
+        this.mixpanel.people.setPushRegistrationId(this.state.TextInput_Token);
     }
     clearPushRegistrationId = () => {
-        mixpanel.people.clearPushRegistrationId();
+        this.mixpanel.people.clearPushRegistrationId();
     }
     getPushRegistrationId = () => {
-        mixpanel.people.getPushRegistrationId();
+        this.mixpanel.people.getPushRegistrationId();
     }
     render() {
         return (

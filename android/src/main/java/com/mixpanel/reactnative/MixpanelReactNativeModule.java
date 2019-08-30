@@ -2,7 +2,6 @@ package com.mixpanel.reactnative;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
-import com.facebook.common.references.SharedReference;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -31,15 +30,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     /**
-    * This method used to check whether integration of SDK with App is done or not
-    * TODO - Remove this method from final publish
-    */
-    @ReactMethod
-    public void getInformation(Promise promise) {
-        promise.resolve(Constant.LIBRARY_INVOKED);
-    }
-
-    /**
     * Set the properties present in json file.
     * @param metadata  The name of the json object containing properties to send
     */
@@ -56,45 +46,15 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
     }
 
-   /**
-    * Set the properties present in json file.
-    * @param metadata  The name of the json object containing properties to send
-    */
-    @ReactMethod
-    public void setMetadata(ReadableMap metadata) throws JSONException {
-        JSONObject sendProperties = ReactNativeHelper.reactToJSON(metadata);
-        AutomaticProperties.setAutomaticProperties(sendProperties);
-    }
-    
-    /**
-     * Get the instance of MixpanelAPI with providing your project token
-     * and boolean value for opting out tracking,  default value for optOutTrackingDefault is
-     * false by setting it to true will prevent data from being collected by default
-     * This instance of MixpanelAPI you can use to send events and updates to Mixpanel.
-     */
-    @ReactMethod
-    public void getInstance(String mpToken, boolean optOutTrackingDefault, Promise promise) {
-        MixpanelAPI mpInstance = MixpanelAPI.getInstance(this.mReactContext, mpToken, optOutTrackingDefault);
-        if (mpInstance == null) {
-            promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-        } else {
-            promise.resolve(true);
-        }
-    }
-
     /**
      * This method Will return true if the user has opted out from tracking.
      */
     @ReactMethod
     public void hasOptedOutTracking(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                promise.resolve(instance.hasOptedOutTracking());
-            }
+        synchronized (instance) {
+            instance.hasOptedOutTracking();
+            promise.resolve(instance.hasOptedOutTracking());
         }
     }
 
@@ -108,16 +68,11 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void optInTracking(final String token, final String distinctId, ReadableMap properties, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
-                AutomaticProperties.appendLibraryProperties(eventProperties);
-                instance.optInTracking(distinctId, eventProperties);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
+            AutomaticProperties.appendLibraryProperties(eventProperties);
+            instance.optInTracking(distinctId, eventProperties);
+            promise.resolve(null);
         }
     }
 
@@ -128,16 +83,12 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void optOutTracking(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.optOutTracking();
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.optOutTracking();
+            promise.resolve(null);
         }
     }
+
 
     /**
      * Identify the user uniquely by providing the user distinct id, so all the event, update ,track call
@@ -148,15 +99,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void identify(final String token, final String distinctId, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.identify(distinctId);
-                instance.getPeople().identify(distinctId);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.identify(distinctId);
+            instance.getPeople().identify(distinctId);
+            promise.resolve(null);
         }
     }
 
@@ -166,13 +112,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void getDistinctId(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                promise.resolve(instance.getDistinctId());
-            }
+        synchronized (instance) {
+            promise.resolve(instance.getDistinctId());
         }
     }
 
@@ -185,43 +126,11 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void track(final String token, final String eventName, ReadableMap properties, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
-                AutomaticProperties.appendLibraryProperties(eventProperties);
-                instance.track(eventName, eventProperties);
-                promise.resolve(null);
-            }
-        }
-    }
-
-    /**
-     * Track an event.
-     * <p>
-     * Every call to track eventually results in a data point sent to Mixpanel.
-     * These data points are what are measured, counted, and broken down to create your Mixpanel reports.
-     * Events have a string name, and an optional set of name/value pairs that describe the properties of
-     * that event.
-     *
-     * @param eventName  The name of the event to send
-     * @param properties A Map containing the key value pairs of the properties to include in this event.
-     *                   Pass null if no extra properties exist.
-     */
-    @ReactMethod
-    public void trackMap(final String token, String eventName, ReadableMap properties, Promise promise) {
-        Map eventProperties = ReactNativeHelper.toMap(properties);
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.trackMap(eventName, eventProperties);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
+            AutomaticProperties.appendLibraryProperties(eventProperties);
+            instance.track(eventName, eventProperties);
+            promise.resolve(null);
         }
     }
 
@@ -232,15 +141,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void registerSuperProperties(final String token, ReadableMap properties, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                JSONObject superProperties = ReactNativeHelper.reactToJSON(properties);
-                instance.registerSuperProperties(superProperties);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            JSONObject superProperties = ReactNativeHelper.reactToJSON(properties);
+            instance.registerSuperProperties(superProperties);
+            promise.resolve(null);
         }
     }
 
@@ -251,57 +155,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void registerSuperPropertiesOnce(final String token, ReadableMap properties, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                JSONObject superProperties = ReactNativeHelper.reactToJSON(properties);
-                instance.registerSuperPropertiesOnce(superProperties);
-                promise.resolve(null);
-            }
-        }
-    }
-
-    /**
-     * registerSuperPropertiesMap will store a new superProperty and possibly overwriting any existing superProperty with the same name.
-     * Register properties that will be sent with every subsequent call to track().
-     *
-     * @param properties A Map containing super properties to register
-     */
-    @ReactMethod
-    public void registerSuperPropertiesMap(final String token, ReadableMap properties, Promise promise) {
-        Map superProperties = ReactNativeHelper.toMap(properties);
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.registerSuperPropertiesMap(superProperties);
-                promise.resolve(null);
-            }
-        }
-    }
-
-    /**
-     * Register super properties for events, only if no other super property with the same names has already been registered.
-     * Calling registerSuperPropertiesOnce will never overwrite existing properties.
-     *
-     * @param properties A Map containing the super properties to register.
-     */
-    @ReactMethod
-    public void registerSuperPropertiesOnceMap(final String token, ReadableMap properties, Promise promise) {
-        Map superProperties = ReactNativeHelper.toMap(properties);
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.registerSuperPropertiesOnceMap(superProperties);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            JSONObject superProperties = ReactNativeHelper.reactToJSON(properties);
+            instance.registerSuperPropertiesOnce(superProperties);
+            promise.resolve(null);
         }
     }
 
@@ -312,14 +169,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void unregisterSuperProperty(final String token, String superPropertyName, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.unregisterSuperProperty(superPropertyName);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.unregisterSuperProperty(superPropertyName);
+            promise.resolve(null);
         }
     }
 
@@ -332,15 +184,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void union(final String token, String name, ReadableArray value, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if(instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                JSONArray propertyValue = ReactNativeHelper.reactToJSON(value);
-                instance.getPeople().union(name, propertyValue);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            JSONArray propertyValue = ReactNativeHelper.reactToJSON(value);
+            instance.getPeople().union(name, propertyValue);
+            promise.resolve(null);
         }
     }
 
@@ -352,13 +199,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void getSuperProperties(final String token, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                promise.resolve(ReactNativeHelper.convertJsonToMap(instance.getSuperProperties()));
-            }
+        synchronized (instance) {
+            promise.resolve(ReactNativeHelper.convertJsonToMap(instance.getSuperProperties()));
         }
     }
 
@@ -370,14 +212,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void clearSuperProperties(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.clearSuperProperties();
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.clearSuperProperties();
+            promise.resolve(null);
         }
     }
 
@@ -391,8 +228,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void setGroup(final String token, final String groupKey, ReadableMap groupID, Promise promise) throws JSONException {
         JSONObject groupValue = ReactNativeHelper.reactToJSON(groupID);
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
+        synchronized (instance) {
             if (instance == null || groupValue == null) {
                 promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
             } else {
@@ -412,8 +248,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void setGroup(final String token, String groupKey, ReadableArray groupIDs, Promise promise) throws JSONException {
         JSONArray groupValue = ReactNativeHelper.reactToJSON(groupIDs);
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
+        synchronized (instance) {
             if (instance == null || groupValue == null) {
                 promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
             } else {
@@ -433,8 +268,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void addGroup(final String token, final String groupKey, ReadableMap groupID, Promise promise) throws JSONException {
         JSONObject groupValue = ReactNativeHelper.reactToJSON(groupID);
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
+        synchronized (instance) {
             if (instance == null || groupValue == null) {
                 promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
             } else {
@@ -454,9 +288,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void removeGroup(final String token, final String groupKey, ReadableMap groupID, Promise promise) throws JSONException {
         JSONObject groupValue = ReactNativeHelper.reactToJSON(groupID);
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null || groupValue == null) {
+        synchronized (instance) {
+            if (groupValue == null) {
                 promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
             } else {
                 instance.removeGroup(groupKey, groupValue);
@@ -476,14 +309,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void alias(final String token, String alias, String original, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.alias(alias, original);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.alias(alias, original);
+            promise.resolve(null);
         }
     }
 
@@ -493,14 +321,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void reset(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.reset();
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.reset();
+            promise.resolve(null);
         }
     }
 
@@ -514,14 +337,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void flush(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.flush();
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.flush();
+            promise.resolve(null);
         }
     }
 
@@ -535,14 +353,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void timeEvent(final String token, final String eventName, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.timeEvent(eventName);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.timeEvent(eventName);
+            promise.resolve(null);
         }
     }
 
@@ -552,13 +365,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void eventElapsedTime(final String token, final String eventName, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                promise.resolve(instance.eventElapsedTime(eventName));
-            }
+        synchronized (instance) {
+            promise.resolve(instance.eventElapsedTime(eventName));
         }
     }
 
@@ -570,13 +378,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void isIdentified(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.resolve(Constant.INSTANCE_NOT_FOUND_ERROR);
-            } else {
-                promise.resolve(instance.getPeople().isIdentified());
-            }
+        synchronized (instance) {
+            promise.resolve(instance.getPeople().isIdentified());
         }
     }
 
@@ -586,16 +389,11 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void set(final String token, ReadableMap properties, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
-                AutomaticProperties.appendLibraryProperties(sendProperties);
-                instance.getPeople().set(sendProperties);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
+            AutomaticProperties.appendLibraryProperties(sendProperties);
+            instance.getPeople().set(sendProperties);
+            promise.resolve(null);
         }
     }
 
@@ -607,16 +405,11 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void setPropertyTo(final String token, String propertyName, ReadableMap properties, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
-                AutomaticProperties.appendLibraryProperties(sendProperties);
-                instance.getPeople().set(propertyName, sendProperties);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
+            AutomaticProperties.appendLibraryProperties(sendProperties);
+            instance.getPeople().set(propertyName, sendProperties);
+            promise.resolve(null);
         }
     }
 
@@ -626,14 +419,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void unset(final String token, String propertyName, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.getPeople().unset(propertyName);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.getPeople().unset(propertyName);
+            promise.resolve(null);
         }
     }
 
@@ -645,16 +433,11 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void setOnce(final String token, ReadableMap properties, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
-                AutomaticProperties.appendLibraryProperties(sendProperties);
-                instance.getPeople().setOnce(sendProperties);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
+            AutomaticProperties.appendLibraryProperties(sendProperties);
+            instance.getPeople().setOnce(sendProperties);
+            promise.resolve(null);
         }
     }
 
@@ -667,15 +450,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void trackCharge(final String token, double charge, ReadableMap properties, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                JSONObject transactionValue = ReactNativeHelper.reactToJSON(properties);
-                instance.getPeople().trackCharge(charge, transactionValue);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            JSONObject transactionValue = ReactNativeHelper.reactToJSON(properties);
+            instance.getPeople().trackCharge(charge, transactionValue);
+            promise.resolve(null);
         }
     }
 
@@ -685,14 +463,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void clearCharges(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.getPeople().clearCharges();
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.getPeople().clearCharges();
+            promise.resolve(null);
         }
     }
 
@@ -704,14 +477,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void incrementPropertyBy(final String token, String name, double incrementValue, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.resolve(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.getPeople().increment(name, incrementValue);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.getPeople().increment(name, incrementValue);
+            promise.resolve(null);
         }
     }
 
@@ -728,14 +496,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void increment(final String token, ReadableMap properties, Promise promise) {
         Map incrementProperties = ReactNativeHelper.toMap(properties);
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.getPeople().increment(incrementProperties);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.getPeople().increment(incrementProperties);
+            promise.resolve(null);
         }
     }
 
@@ -746,15 +509,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void append(final String token, String name, ReadableArray properties, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                JSONArray sendProperties = ReactNativeHelper.reactToJSON(properties);
-                instance.getPeople().append(name, sendProperties);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            JSONArray sendProperties = ReactNativeHelper.reactToJSON(properties);
+            instance.getPeople().append(name, sendProperties);
+            promise.resolve(null);
         }
     }
 
@@ -766,14 +524,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void deleteUser(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.getPeople().deleteUser();
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.getPeople().deleteUser();
+            promise.resolve(null);
         }
     }
 
@@ -785,15 +538,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void merge(final String token, String propertyName, ReadableMap updates, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                JSONObject properties = ReactNativeHelper.reactToJSON(updates);
-                instance.getPeople().merge(propertyName, properties);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            JSONObject properties = ReactNativeHelper.reactToJSON(updates);
+            instance.getPeople().merge(propertyName, properties);
+            promise.resolve(null);
         }
     }
 
@@ -805,15 +553,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void remove(final String token, String name, ReadableArray properties, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                JSONArray sendProperties = ReactNativeHelper.reactToJSON(properties);
-                instance.getPeople().remove(name, sendProperties);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            JSONArray sendProperties = ReactNativeHelper.reactToJSON(properties);
+            instance.getPeople().remove(name, sendProperties);
+            promise.resolve(null);
         }
     }
 
@@ -826,14 +569,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void setPushRegistrationId(final String token, String deviceToken, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.getPeople().setPushRegistrationId(deviceToken);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.getPeople().setPushRegistrationId(deviceToken);
+            promise.resolve(null);
         }
     }
 
@@ -844,13 +582,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void getPushRegistrationId(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                promise.resolve(instance.getPeople().getPushRegistrationId());
-            }
+        synchronized (instance) {
+            promise.resolve(instance.getPeople().getPushRegistrationId());
         }
     }
 
@@ -861,14 +594,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void clearPushRegistrationId(final String token, String registrationId, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.getPeople().clearPushRegistrationId(registrationId);
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.getPeople().clearPushRegistrationId(registrationId);
+            promise.resolve(null);
         }
     }
 
@@ -879,14 +607,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void clearAllPushRegistrationId(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance)
-        {
-            if (instance == null) {
-                promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
-            } else {
-                instance.getPeople().clearPushRegistrationId();
-                promise.resolve(null);
-            }
+        synchronized (instance) {
+            instance.getPeople().clearPushRegistrationId();
+            promise.resolve(null);
         }
     }
 }

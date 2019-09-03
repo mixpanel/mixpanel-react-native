@@ -94,7 +94,10 @@ Remember to replace *YourTargetName* with your actual target name.
 Next, run ```pod install```.
 
 #### iOS (above 0.60)
-No need to take care of additional setup of POD files as pod files are already present above 0.60.
+POD files are already present above 0.60. So we only need to add MixpanelReactNative dependency
+```
+pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
+```
 
 <a name="usage"></a>
 # **Usage**

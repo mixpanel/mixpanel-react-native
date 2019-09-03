@@ -29,7 +29,7 @@ $ react-native link mixpanel-react-native
 # **Manual Linking**
 
 #### Android
-
+All steps are same for below 0.60 and above 0.60
 ### build.gradle(app level) changes:
 Add project implementation in dependencies :-
 ``` 
@@ -109,7 +109,7 @@ import Mixpanel from 'mixpanel-react-native';
 # **API**
 |  **Method** | **Ios** | **Android** |
 |  ------ | :------: | :------: |
-| getInstance() | &#9989; |  &#9989; |
+| init() | &#9989; |  &#9989; |
 |hasOptedOutTracking() |  &#9989; |  &#9989;|
 |optInTracking() |  &#9989; |  &#9989;|
 |optOutTracking() |  &#9989; |  &#9989;|
@@ -146,12 +146,12 @@ import Mixpanel from 'mixpanel-react-native';
 |clearAllPushRegistrationId()|  &#9989; |  &#9989;|
 |union()|  &#9989; |  &#9989;|
 
-# **getInstance()**
-Get the instance of MixpanelAPI with providing token, you can use this instance of Mixpanel to send events and updates to Mixpanel.
+# **init()**
+To use library we have to call first init. It will initializes all mixpanel setup.
 
 ### **Example**
 ```
-Mixpanel.getInstance();
+Mixpanel.init();
 ```
 
 # **hasOptedOutTracking()**

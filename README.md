@@ -94,7 +94,8 @@ Remember to replace *YourTargetName* with your actual target name.
 Next, run ```pod install```.
 
 #### iOS (above 0.60)
-No need to setup pod as pod file is already present.
+No need to take care of additional setup of POD files as pod files are already present above 0.60.
+
 <a name="usage"></a>
 # **Usage**
 ```

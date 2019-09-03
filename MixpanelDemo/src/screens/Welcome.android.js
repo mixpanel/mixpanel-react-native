@@ -3,7 +3,6 @@ import { createAppContainer, createBottomTabNavigator } from 'react-navigation';
 import EventScreen from './EventScreen';
 import PeopleScreen from './PeopleScreen';
 import People from './People';
-import GetInstance from './GetInstance';
 import MultipleInstance from './MultipleInstance';
 
 export default class Welcome extends React.Component {

@@ -12,8 +12,7 @@
 <a name="introduction"></a>
 # **Introduction**
 
-Welcome to the official Mixpanel React-Native Library 
-
+Welcome to the official Mixpanel React-Native Library.
 
 The Mixpanel React-Native library for iOS and Android is an open source project, and we'd love to see your contributions! 
 
@@ -28,7 +27,9 @@ The Mixpanel React-Native library for iOS and Android is an open source project,
 $ react-native link mixpanel-react-native
 ```
 # **Manual Linking**
+
 #### Android
+
 ### build.gradle(app level) changes:
 Add project implementation in dependencies :-
 ``` 
@@ -185,7 +186,6 @@ Identify the user uniquely by providing the user distinct id, so all the event, 
      method.
 
 ### **Example**
-
 ```
 Mixpanel.identify();
 ```
@@ -468,9 +468,6 @@ Mixpanel.clearAllPushRegistrationId();
 ```
  Mixpanel.union();
  ```
-
-
-
 
 You're done! You've successfully integrated the Mixpanel React-Native SDK into your app. 
 

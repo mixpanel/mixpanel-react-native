@@ -28,8 +28,7 @@ $ react-native link mixpanel-react-native
 ```
 # **Manual Linking**
 
-#### Android
-All steps are same for below 0.60 and above 0.60 version
+#### Android(below 0.60)
 ### build.gradle(app level) changes:
 Add project implementation in dependencies :-
 ``` 

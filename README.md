@@ -5,7 +5,7 @@
 # **Table of Contents**
 - [Introduction](#introduction)
 - [Getting started](#getting started)
-- [Installation](#installation)
+- [linking](#linking)
 - [Usage](#usage)
 - [ API](#API)
 
@@ -22,13 +22,42 @@ The Mixpanel React-Native library for iOS and Android is an open source project,
 ```
  $ yarn install mixpanel-react-native --save 
 ```
-<a name="installation"></a>
-# **Installation**
+<a name="linking"></a>
+# **linking**
 ```
 $ react-native link mixpanel-react-native
 ```
+# **Manual Linking**
+#### Android
+### build.gradle(app level) changes:
+Add project implementation in dependencies :-
+``` 
+implementation project(':mixpanel-react-native')
+```
 
-#### iOS 
+### setting.gradle changes:
+Include project in setting.gradle :-
+```
+include ':mixpanel-react-native'
+project(':mixpanel-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/mixpanel-react-native/android')
+```
+### MainApplication.java changes:
+import MixpanelReactNativePackage in your MainApplication file :-
+```
+import com.mixpanel.reactnative.MixpanelReactNativePackage;
+```
+Add package in getPackages method :-
+```
+@Override
+   protected List<ReactPackage> getPackages() {
+     return Arrays.<ReactPackage>asList(
+        ...
+           new MixpanelReactNativePackage(),
+           ...
+     );
+   }
+```
+#### iOS (below 0.60)
 
 If you're already using Cocoapods, add the following to your Podfile
 ```
@@ -64,11 +93,8 @@ Remember to replace *YourTargetName* with your actual target name.
 
 Next, run ```pod install```.
 
-
-#### Android
-
-Android does not need additional setup, installing the package and linking will take care rest of the setup.
-
+#### iOS (above 0.60)
+No need to setup pod as pod file is already present.
 <a name="usage"></a>
 # **Usage**
 ```

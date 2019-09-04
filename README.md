@@ -35,7 +35,7 @@ Done! mixpanel-react-native with native dependencies will be successfully linked
 
 # **Manual Linking**
 
-## **ios**
+## **iOS**
 It is an alternative to react-native-link.
 If you have been using React Native before version 0.60, please unlink native dependencies if you have any from a previous install. and then follow steps which are given below.
 
@@ -44,7 +44,7 @@ Drag this file to your project on Xcode (usually under the Libraries group on Xc
 
 2.Click on your main project file (the one that represents the .xcodeproj) select Build Phases and drag the static library from the Products folder inside the Library you are importing to Link Binary With Libraries
 
-# **Android**
+## **Android**
 
 ### build.gradle(app level) changes:
 Add project implementation in dependencies :-

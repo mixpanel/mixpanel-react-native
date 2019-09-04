@@ -25,7 +25,9 @@ Before you start using Yarn, you'll first need to install yarn on your system.
  $ yarn add mixpanel-react-native 
 ```
 <a name="linking"></a>
-# **linking(below 0.60) for iOS & Android**
+# **linking**
+
+If you have been using React Native version prior to 0.60 then for iOS & Android we have to link dependencies using react-native-link like below.
 ```
 $ react-native link mixpanel-react-native
 ```
@@ -34,14 +36,12 @@ Done! mixpanel-react-native with native dependencies will be successfully linked
 # **ios**
 
 ## **Manual Linking (below 0.60)**
+It is an alternative to react-native-link
 If you have been using React Native before version 0.60, please unlink native dependencies if you have any from a previous install.
 1.Library has an .xcodeproj file inside its folder. 
 Drag this file to your project on Xcode (usually under the Libraries group on Xcode);
 
 2.Click on your main project file (the one that represents the .xcodeproj) select Build Phases and drag the static library from the Products folder inside the Library you are importing to Link Binary With Libraries
-
-## ** Linking (above 0.60)**
-Autolinking is a replacement for react-native link. No need of any extra settings for linking.
 
 # **Android**
 
@@ -74,6 +74,9 @@ Add package in getPackages method :-
      );
    }
 ```
+## **Linking (above 0.60)**
+For iOS and Android if react-native version is above 0.60 then there is no need of linking. It will get linked automatically.
+
 # **installation**
 #### iOS (below 0.60)
 
@@ -321,7 +324,7 @@ Set a collection of properties on the identified user
 
 ### **Example**
 ```
-mixpanel.set(JSONObject Properties, to);
+mixpanel.people.set(JSONObject Properties, to);
 Ex.mixpanel.people.set(property: "Plan",to: "Premium");
 ```
 

@@ -1,13 +1,14 @@
 <p align="center">
- <img width="460" height="300" src="https://github.com/mixpanel/mixpanel-android/blob/assets/mixpanel.png?raw=true">
+  <img src="https://github.com/mixpanel/mixpanel-android/blob/assets/mixpanel.png?raw=true" alt="Mixpanel Android Library" height="150"/>
 </p>
 
 # **Table of Contents**
 - [Introduction](#introduction)
 - [Getting started](#getting started)
 - [linking](#linking)
+- [Installation](#installation)
 - [Usage](#usage)
-- [ API](#API)
+- [API](#API)
 
 <a name="introduction"></a>
 # **Introduction**
@@ -18,17 +19,33 @@ The Mixpanel React-Native library for iOS and Android is an open source project,
 
 <a name="getting started"></a>
 # **Getting started**
+Before you start using Yarn, you'll first need to install yarn on your system.
+
 ```
- $ yarn install mixpanel-react-native --save 
+ $ yarn add mixpanel-react-native 
 ```
 <a name="linking"></a>
-# **linking**
+# **linking(below 0.60) for iOS & Android**
 ```
 $ react-native link mixpanel-react-native
 ```
-# **Manual Linking**
+Done! mixpanel-react-native with native dependencies will be successfully linked to your iOS/Android project after this command.
 
-#### Android(below 0.60)
+# **ios**
+
+## **Manual Linking (below 0.60)**
+If you have been using React Native before version 0.60, please unlink native dependencies if you have any from a previous install.
+1.Library has an .xcodeproj file inside its folder. 
+Drag this file to your project on Xcode (usually under the Libraries group on Xcode);
+
+2.Click on your main project file (the one that represents the .xcodeproj) select Build Phases and drag the static library from the Products folder inside the Library you are importing to Link Binary With Libraries
+
+## ** Linking (above 0.60)**
+Autolinking is a replacement for react-native link. No need of any extra settings for linking.
+
+# **Android**
+
+## **Manual Linking (below 0.60)**
 ### build.gradle(app level) changes:
 Add project implementation in dependencies :-
 ``` 
@@ -57,6 +74,7 @@ Add package in getPackages method :-
      );
    }
 ```
+# **installation**
 #### iOS (below 0.60)
 
 If you're already using Cocoapods, add the following to your Podfile
@@ -98,7 +116,7 @@ POD files are already present above 0.60. So we only need to add MixpanelReactNa
 ```
 pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 ```
-
+Next, run ```pod install```.
 <a name="usage"></a>
 # **Usage**
 ```
@@ -113,7 +131,6 @@ import Mixpanel from 'mixpanel-react-native';
 |optInTracking() |  &#9989; |  &#9989;|
 |optOutTracking() |  &#9989; |  &#9989;|
 |identify() |  &#9989; |  &#9989;|
-|getDistinctId()|  &#10060;|  &#9989;|
 |track()|  &#9989; |  &#9989;|
 |registerSuperProperties()|  &#9989; |  &#9989;|
 |registerSuperPropertiesOnce()|  &#9989; |  &#9989;|
@@ -124,25 +141,20 @@ import Mixpanel from 'mixpanel-react-native';
 |reset()|  &#9989; |  &#9989;|
 |flush()|  &#9989; |  &#9989;|
 |timeEvent()|  &#9989; |  &#9989;|
-|clearTimedEvents()|  &#9989; |  &#10060;|
 |eventElapsedTime()|  &#9989; |  &#9989;|
 |isIdentified()|  &#10060;|  &#9989;|
 |set()|  &#9989; |  &#9989;|
-|setPropertyTo()|  &#9989; |  &#9989;|
 |unset()|  &#9989; |  &#9989;|
 |setOnce()|  &#9989; |  &#9989;|
 |trackCharge()|  &#9989; |  &#9989;|
 |clearCharges()|  &#9989; |  &#9989;|
-|incrementPropertyBy()|  &#9989; |  &#9989;|
 |increment()|  &#9989; |  &#9989;|
 |append()|  &#9989; |  &#9989;|
 |deleteUser()|  &#9989; |  &#9989;|
-|merge()|  &#10060;|  &#9989;|
 |remove()|  &#9989; |  &#9989;|
 |setPushRegistrationId()|  &#9989; |  &#9989;|
 |getPushRegistrationId()|  &#10060; |  &#9989;|
 |clearPushRegistrationId()|  &#9989; |  &#9989;|
-|clearAllPushRegistrationId()|  &#9989; |  &#9989;|
 |union()|  &#9989; |  &#9989;|
 
 # **init()**
@@ -150,7 +162,8 @@ To use library we have to call first init. It will initializes all mixpanel setu
 
 ### **Example**
 ```
-Mixpanel.init();
+import Mixpanel from "mixpanel-react-native";
+const mixpanel = await Mixpanel.init(String distinctId);
 ```
 
 # **hasOptedOutTracking()**
@@ -158,7 +171,7 @@ To check user has opted out from tracking or not.
 
 ### **Example**
 ```
-Mixpanel.hasOptedOutTracking();
+mixpanel.hasOptedOutTracking();
 ```
 
 # **optInTracking()**
@@ -167,7 +180,7 @@ Used to internally track an opt-in event, to opt in an already opted out user fr
 
 ### **Example**
 ```
-Mixpanel.optInTracking();
+mixpanel.optInTracking(String distinctId, JSONObject properties);
 ```
 
 # **optOutTracking()**
@@ -175,7 +188,7 @@ User get opted out from tracking. So all events and people request will not sent
 
 ### **Example**
 ```
-Mixpanel.optOutTracking();
+mixpanel.optOutTracking();
 ```
 
 # **identify()**
@@ -186,15 +199,7 @@ Identify the user uniquely by providing the user distinct id, so all the event, 
 
 ### **Example**
 ```
-Mixpanel.identify();
-```
-
-# **getDistinctId()**
-Returns Id to identify User uniquely.
-
-### **Example**
-```
-Mixpanel.getDistinctId()
+mixpanel.people.identify(String distinct_id);
 ```
 
 # **track()**
@@ -205,15 +210,7 @@ Use to Track an event with properties.
 
 ### **Example**
 ```
-Mixpanel.track();
-```
-
-# **trackMap()**
-Track an event.
-
-### **Example**
-```
-Mixpanel.trackMap();
+mixpanel.track(String event_name, JSONObject properties);
 ```
 
 # **registerSuperProperties()**
@@ -222,7 +219,7 @@ Super properties, once registered, are automatically sent as properties for
     
 ### **Example**
 ```
-Mixpanel.registerSuperProperties();
+mixpanel.registerSuperProperties(JSONObject properties);
 ```
 
 # **registerSuperPropertiesOnce()**
@@ -232,7 +229,7 @@ Registers super properties without overwriting ones that have already been set,
     
 ### **Example**
 ```
-Mixpanel.registerSuperPropertiesOnce();
+mixpanel.registerSuperPropertiesOnce(JSONObject superProperties);
 ```
 
 # **unregisterSuperProperty()**
@@ -244,7 +241,7 @@ Mixpanel.registerSuperPropertiesOnce();
  
 ### **Example**
 ```
- Mixpanel.unregisterSuperProperty();
+mixpanel.unregisterSuperProperty(String superPropertyName);
  ```
  
 # **getSuperProperties()**
@@ -252,7 +249,7 @@ Returns a json object of the user's current super properties.
 
 ### **Example**
 ```
-Mixpanel.getSuperProperties();
+mixpanel.getSuperProperties();
 ```
 
 # **clearSuperProperties()**
@@ -260,7 +257,7 @@ Erase all currently registered superProperties.
 
 ### **Example**
 ```
-Mixpanel.clearSuperProperties();
+mixpanel.clearSuperProperties();
 ```
 
 # **alias()**
@@ -268,7 +265,7 @@ This function creates a distinct_id alias from alias to original.
 
 ### **Example**
 ```
-Mixpanel.alias();
+mixpanel.alias(String alias, String original);
 ```
 
 # **reset()**
@@ -276,7 +273,7 @@ Clears tweaks and all distinct_ids, superProperties, and push registrations from
 
 ### **Example**
 ```
-Mixpanel.reset();
+mixpanel.reset();
 ```
 # **flush()**
 Send all queued message to server. By default, queued data is flushed to the Mixpanel servers every minute (the
@@ -286,7 +283,7 @@ Send all queued message to server. By default, queued data is flushed to the Mix
 
 ### **Example**
 ```
-Mixpanel.flush();
+mixpanel.flush();
 ```
 
 # **timeEvent()**
@@ -299,15 +296,8 @@ Starts a timer that will be stopped and added as a property when a
 
 ### **Example**
 ```
-Mixpanel.timeEvent();
-```
-
-# **clearTimedEvents()**
-Clears all current event timers.
-
-### **Example**
-```
-Mixpanel.clearTimedEvents();
+mixpanel.timeEvent(String event_name);
+ex. mixpanel.timeEvent(event: "Image Upload");
 ```
 
 # **eventElapsedTime()**
@@ -315,7 +305,7 @@ Retrieves the time elapsed for the named event since timeEvent() was called.
 
 ### **Example**
 ```
-Mixpanel.eventElapsedTime();
+mixpanel.eventElapsedTime();
 ```
 
 # **isIdentified()**
@@ -323,7 +313,7 @@ Checks profile of people is identified or not.
 
 ### **Example**
 ```
-Mixpanel.isIdentified();
+mixpanel.isIdentified();
 ```
 
 # **set()**
@@ -331,15 +321,8 @@ Set a collection of properties on the identified user
 
 ### **Example**
 ```
-Mixpanel.set();
-```
-
-# **setPropertyTo()**
-Sets a single property with the given name and value for this user.
-
-### **Example**
-```
-Mixpanel.setPropertyTo();
+mixpanel.set(JSONObject Properties, to);
+Ex.mixpanel.people.set(property: "Plan",to: "Premium");
 ```
 
 # **unset()**
@@ -347,7 +330,7 @@ Permanently removes the property with the given name from the user's profile.
 
 ### **Example**
 ```
-Mixpanel.unset();
+mixpanel.people.unset(String name);
 ```
 
 # **setOnce()**
@@ -357,15 +340,15 @@ Set properties on the current user in Mixpanel People, but doesn't overwrite if
      representing the first time something happened.
 ### **Example**
 ```
-Mixpanel.setOnce();
+mixpanel.people.setOnce(String propertyName, Object value);
 ```
 
-# **trackCharge()**
+# **trackCharge(double amount,JSONObject properties)**
 Track money spent by the current user for revenue analytics and associate
      properties with the charge. Properties is optional.
 ### **Example**
 ```
-Mixpanel.trackCharge();
+mixpanel.people.trackCharge();
 ```
 
 # **clearCharges()**
@@ -373,22 +356,14 @@ It will permanently clear the whole transaction history for the identified peopl
 
 ### **Example**
 ```
-Mixpanel.clearCharges();
-```
-
-# **incrementPropertyBy()**
-Add the given amount to an existing property on the identified user.
-
-### **Example**
-```
-Mixpanel.incrementPropertyBy();
+mixpanel.people.clearCharges();
 ```
 
 # **increment()**
   Increment the given numeric properties by the given values.Property keys must be String names of numeric properties.
 ### **Example**
 ```
-Mixpanel.increment();
+mixpanel.people.increment(String name, double increment);
 ```
 
 # **append()**
@@ -396,7 +371,7 @@ Appends a value to a list-valued property. Property keys must be String objects 
 
 ### **Example**
 ```
-Mixpanel.append();
+mixpanel.people.append(String name, Object value);
 ```
 
 # **deleteUser()**
@@ -404,23 +379,15 @@ Permanently deletes the identified user's record.
 
 ### **Example**
 ```
-Mixpanel.deleteUser();
+mixpanel.people.deleteUser();
 ```
 
-# **merge()**
- Merge a given JSONObject into the object-valued property named name.
- 
-### **Example**
-```
-Mixpanel.merge();
- ```
- 
 # **remove()**
  Remove value from a list-valued property only if they are already present in the list.
  
 ### **Example**
 ```
- Mixpanel.remove();
+ mixpanel.people.remove(String name, Object value);
  ```
  
 # **setPushRegistrationId()**
@@ -430,7 +397,7 @@ Register the given device to receive push notifications. This will associate the
 
 ### **Example**
 ```
-Mixpanel.setPushRegistrationId();
+mixpanel.people.setPushRegistrationId(String token);
 ```
 
 # **getPushRegistrationId()**
@@ -438,7 +405,7 @@ Retrieves current Firebase Cloud Messaging token.
 
 ### **Example**
 ```
-Mixpanel.getPushRegistrationId();
+mixpanel.people.getPushRegistrationId();
 ```
 
 # **clearPushRegistrationId()**
@@ -448,16 +415,7 @@ Manually clears all current Firebase Cloud Messaging tokens from Mixpanel. This 
 
 ### **Example**
 ```
-Mixpanel.clearPushRegistrationId();
-```
-
-# **clearAllPushRegistrationId()**
-   Unregister the given device to receive push notifications.
-     This will unset all of the push tokens saved to this people profile. This is useful
-     in conjunction with a call to reset, or when a user is logging out.
-### **Example**
-```
-Mixpanel.clearAllPushRegistrationId();
+mixpanel.people.clearPushRegistrationId();
 ```
 
 # **union()**
@@ -465,7 +423,7 @@ Mixpanel.clearAllPushRegistrationId();
  
 ### **Example**
 ```
- Mixpanel.union();
+ mixpanel.people.union(String name, JSONArray value);
  ```
 
 You're done! You've successfully integrated the Mixpanel React-Native SDK into your app. 

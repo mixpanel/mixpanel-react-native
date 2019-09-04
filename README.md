@@ -25,11 +25,11 @@ Before you start using Yarn, you'll first need to install yarn on your system.
  $ yarn add mixpanel-react-native 
 ```
 <a name="linking"></a>
-# **Linking**
+# **Linking (For React-Native application prior to 0.60)**
 
 ## **Auto Linking**
 
-If you have been using React Native version prior to 0.60 then for iOS & Android we have to link dependencies using react-native-link like below.
+If you have been using React Native version prior to 0.60 then we have to link dependencies using react-native-link  for iOS & Android like below.
 ```
 $ react-native link mixpanel-react-native
 ```
@@ -76,11 +76,11 @@ Add package in getPackages method :-
      );
    }
 ```
-# **Linking (above 0.60)**
+# **Linking (For latest React-Native application)**
 For iOS and Android if react-native version is above 0.60 then there is no need of linking. It will get linked automatically.
 
 # **installation**
-#### iOS (below 0.60)
+#### iOS (For React-Native application prior to 0.60)
 
 If you're already using Cocoapods, add the following to your Podfile
 ```
@@ -116,12 +116,16 @@ Remember to replace *YourTargetName* with your actual target name.
 
 Next, run ```pod install```.
 
-#### iOS (above 0.60)
+#### iOS (For latest React-Native application)
 POD files are already present above 0.60. So we only need to add MixpanelReactNative dependency
 ```
 pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 ```
 Next, run ```pod install```.
+
+#### Android 
+No need to take care of extra steps for installation in android. Linking and installing package is sufficient.
+
 <a name="usage"></a>
 # **Usage**
 ```
@@ -348,12 +352,12 @@ Set properties on the current user in Mixpanel People, but doesn't overwrite if
 mixpanel.people.setOnce(String propertyName, Object value);
 ```
 
-# **trackCharge(double amount,JSONObject properties)**
+# **trackCharge()**
 Track money spent by the current user for revenue analytics and associate
      properties with the charge. Properties is optional.
 ### **Example**
 ```
-mixpanel.people.trackCharge();
+mixpanel.people.trackCharge(double amount,JSONObject properties);
 ```
 
 # **clearCharges()**

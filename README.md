@@ -29,7 +29,7 @@ Before you start using Yarn, you'll first need to install yarn on your system.
 
 ## **Auto Linking**
 
-If you have been using React Native version prior to 0.60 then we have to link dependencies using react-native-link  for iOS & Android like below.
+If you have been using React-Native version prior to 0.60 then we have to link dependencies using react-native-link  for iOS & Android like below.
 ```
 $ react-native link mixpanel-react-native
 ```
@@ -39,7 +39,7 @@ Done! mixpanel-react-native with native dependencies will be successfully linked
 
 ### **iOS**
 It is an alternative to react-native-link.
-If you have been using React Native before version 0.60, please unlink native dependencies if you have any from a previous install. and then follow steps which are given below.
+If you have been using React-Native before version 0.60, please unlink native dependencies if you have any from a previous install. and then follow steps which are given below.
 
 1.Library has an .xcodeproj file inside its folder. 
 Drag this file to your project on Xcode (usually under the Libraries group on Xcode);
@@ -77,7 +77,7 @@ Add package in getPackages method :-
    }
 ```
 # **Linking (For latest React-Native application)**
-For iOS and Android if react-native version is above 0.60 then there is no need of linking. It will get linked automatically.
+For iOS and Android if React-Native version is above 0.60 then there is no need of linking. It will get linked automatically.
 
 # **installation**
 #### iOS (For React-Native application prior to 0.60)
@@ -122,7 +122,12 @@ POD files are already present above 0.60. So we only need to add MixpanelReactNa
 pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 ```
 Next, run ```pod install```.
-
+```
+Mandatory:Static libraries with Swift are only supported in Xcode 9 and later.
+In order for the Xcode project to build when you use Swift in the iOS static library you include in the module, your main app project must 
+contain Swift code and a bridging header itself. 
+If your app project does not contain any Swift code, a workaround can be a single empty .swift file and an empty bridging header.
+```
 #### Android 
 No need of extra installation in Android.
 
@@ -320,10 +325,10 @@ mixpanel.eventElapsedTime();
 ```
 
 # **identify()**
-      Identify a user with a unique ID instead of a Mixpanel
-      randomly generated distinct_id. If the method is never called,
-      then unique visitors will be identified by a UUID generated
-      the first time they visit the site.
+Identify the user uniquely by providing the user distinct id, so all the event, update ,track call
+     will manipulate the data only for identified users profile.
+     This call does not identify the user for People Analytics to do that you have to call
+     method.
 
 ### **Example**
 ```
@@ -465,3 +470,4 @@ mixpanel.people.clearPushRegistrationId();
 You're done! You've successfully integrated the Mixpanel React-Native SDK into your app. 
 
 Have any questions? Reach out to [support@mixpanel.com](mailto:support@mixpanel.com) to speak to someone smart, quickly.
+

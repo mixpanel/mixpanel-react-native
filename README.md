@@ -124,7 +124,7 @@ pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 Next, run ```pod install```.
 
 #### Android 
-No need to take care of extra steps for installation in android. Linking and installing package is sufficient.
+No need of extra installation in Android.
 
 <a name="usage"></a>
 # **Usage**

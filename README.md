@@ -27,6 +27,8 @@ Before you start using Yarn, you'll first need to install yarn on your system.
 <a name="linking"></a>
 # **Linking**
 
+## **Auto Linking**
+
 If you have been using React Native version prior to 0.60 then for iOS & Android we have to link dependencies using react-native-link like below.
 ```
 $ react-native link mixpanel-react-native

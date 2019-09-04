@@ -133,6 +133,8 @@ import Mixpanel from 'mixpanel-react-native';
 ```
 <a name="API"></a>
 # **API**
+Following methods are from all classes.
+
 |  **Method** | **Ios** | **Android** |
 |  ------ | :------: | :------: |
 | init() | &#9989; |  &#9989; |
@@ -166,8 +168,18 @@ import Mixpanel from 'mixpanel-react-native';
 |clearPushRegistrationId()|  &#9989; |  &#9989;|
 |union()|  &#9989; |  &#9989;|
 
+# **All classes**
+- [Mixpanel](#Mixpanel)
+- [Mixpanel.People](#Mixpanel.People)
+
+```
+NOTE: To call any method from both classes first we have to call init method from Mixpanel class.
+```
+
+<a name="Mixpanel"></a>
+# **Mixpanel**
 # **init()**
-To use library we have to call first init. It will initializes all mixpanel setup.
+To use library first we have to call init. It will initializes all mixpanel setup.
 
 ### **Example**
 ```
@@ -200,17 +212,6 @@ User get opted out from tracking. So all events and people request will not sent
 mixpanel.optOutTracking();
 ```
 
-# **identify()**
-Identify the user uniquely by providing the user distinct id, so all the event, update ,track call
-     will manipulate the data only for identified users profile.
-     This call does not identify the user for People Analytics to do that you have to call
-     method.
-
-### **Example**
-```
-mixpanel.people.identify(String distinct_id);
-```
-
 # **track()**
 Use to Track an event with properties.
      Properties are optional and can be added only if needed.
@@ -221,6 +222,7 @@ Use to Track an event with properties.
 ```
 mixpanel.track(String event_name, JSONObject properties);
 ```
+
 
 # **registerSuperProperties()**
 Super properties, once registered, are automatically sent as properties for
@@ -317,12 +319,37 @@ Retrieves the time elapsed for the named event since timeEvent() was called.
 mixpanel.eventElapsedTime();
 ```
 
+# **identify()**
+      Identify a user with a unique ID instead of a Mixpanel
+      randomly generated distinct_id. If the method is never called,
+      then unique visitors will be identified by a UUID generated
+      the first time they visit the site.
+
+### **Example**
+```
+mixpanel.identify(String distinct_id);
+```
+
 # **isIdentified()**
 Checks profile of people is identified or not.
 
 ### **Example**
 ```
 mixpanel.isIdentified();
+```
+
+<a name="Mixpanel.People"></a>
+# **Mixpanel.People**
+
+# **identify()**
+Identify the user uniquely by providing the user distinct id, so all the event, update ,track call
+     will manipulate the data only for identified users profile.
+     This call does not identify the user for People Analytics to do that you have to call
+     method.
+
+### **Example**
+```
+mixpanel.people.identify(String distinct_id);
 ```
 
 # **set()**

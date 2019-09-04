@@ -1,6 +1,6 @@
-<p align="center" style="text-align: center !important;">
+<div align="center">
   <img src="https://github.com/mixpanel/mixpanel-android/blob/assets/mixpanel.png?raw=true" alt="Mixpanel Android Library" height="150"/>
-</p>
+</div>
 
 # **Table of Contents**
 - [Introduction](#introduction)

@@ -5,7 +5,7 @@
 # **Table of Contents**
 - [Introduction](#introduction)
 - [Getting started](#getting started)
-- [linking](#linking)
+- [Linking](#linking)
 - [Installation](#installation)
 - [Usage](#usage)
 - [API](#API)
@@ -15,7 +15,7 @@
 
 Welcome to the official Mixpanel React-Native Library.
 
-The Mixpanel React-Native library for iOS and Android is an open source project, and we'd love to see your contributions! 
+The Mixpanel React-Native library is an open source project, and we'd love to see your contributions! 
 
 <a name="getting started"></a>
 # **Getting started**
@@ -25,7 +25,7 @@ Before you start using Yarn, you'll first need to install yarn on your system.
  $ yarn add mixpanel-react-native 
 ```
 <a name="linking"></a>
-# **linking**
+# **Linking**
 
 If you have been using React Native version prior to 0.60 then for iOS & Android we have to link dependencies using react-native-link like below.
 ```
@@ -33,9 +33,9 @@ $ react-native link mixpanel-react-native
 ```
 Done! mixpanel-react-native with native dependencies will be successfully linked to your iOS/Android project after this command.
 
-# **Manual Linking**
+## **Manual Linking**
 
-## **iOS**
+### **iOS**
 It is an alternative to react-native-link.
 If you have been using React Native before version 0.60, please unlink native dependencies if you have any from a previous install. and then follow steps which are given below.
 
@@ -44,21 +44,21 @@ Drag this file to your project on Xcode (usually under the Libraries group on Xc
 
 2.Click on your main project file (the one that represents the .xcodeproj) select Build Phases and drag the static library from the Products folder inside the Library you are importing to Link Binary With Libraries
 
-## **Android**
+### **Android**
 
-### build.gradle(app level) changes:
+#### build.gradle(app level) changes:
 Add project implementation in dependencies :-
 ``` 
 implementation project(':mixpanel-react-native')
 ```
 
-### setting.gradle changes:
+#### setting.gradle changes:
 Include project in setting.gradle :-
 ```
 include ':mixpanel-react-native'
 project(':mixpanel-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/mixpanel-react-native/android')
 ```
-### MainApplication.java changes:
+#### MainApplication.java changes:
 import MixpanelReactNativePackage in your MainApplication file :-
 ```
 import com.mixpanel.reactnative.MixpanelReactNativePackage;
@@ -74,7 +74,7 @@ Add package in getPackages method :-
      );
    }
 ```
-## **Linking (above 0.60)**
+# **Linking (above 0.60)**
 For iOS and Android if react-native version is above 0.60 then there is no need of linking. It will get linked automatically.
 
 # **installation**

@@ -5,7 +5,7 @@ class AutomaticProperties {
     static var peopleProperties: Dictionary<String, MixpanelType> = [:];
     
     /**
-     Set automatic Properties
+     Set automatic properties
      */
     static func setAutomaticProperties(_ properties: [String: Any]) {
         for (key,value) in properties {

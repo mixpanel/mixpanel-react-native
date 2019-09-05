@@ -187,7 +187,7 @@ To use library first you have to call init. It will initializes all mixpanel set
 ### **Example**
 ```
 import Mixpanel from "mixpanel-react-native";
-const mixpanel = await Mixpanel.init(String distinctId);
+const mixpanel = await Mixpanel.init(String token);
 ```
 
 # **hasOptedOutTracking()**

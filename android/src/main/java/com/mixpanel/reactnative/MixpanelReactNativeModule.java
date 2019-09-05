@@ -37,7 +37,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void initialize(String token, boolean optOutTrackingDefault, ReadableMap metadata, Promise promise) throws JSONException {
         JSONObject sendProperties = ReactNativeHelper.reactToJSON(metadata);
         AutomaticProperties.setAutomaticProperties(sendProperties);
-
         MixpanelAPI mpInstance = MixpanelAPI.getInstance(this.mReactContext, token, optOutTrackingDefault);
         if (mpInstance == null) {
             promise.reject(new Throwable(Constant.INSTANCE_NOT_FOUND_ERROR));
@@ -47,21 +46,17 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     /**
-     * This method Will return true if the user has opted out from tracking.
+     * This method will return true if the user has opted out from tracking.
      */
     @ReactMethod
     public void hasOptedOutTracking(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance) {
             instance.hasOptedOutTracking();
             promise.resolve(instance.hasOptedOutTracking());
-        }
     }
 
     /**
      * Use this method to opt-in an already opted-out user from tracking.
-     * String to use as the distinct ID for events. This will call identify(String).
-     * Optional JSONObject that could be passed to add properties to the opt-in event that is sent to Mixpanel.
      * People updates and track calls will be sent to Mixpanel after using this method.
      * This method will internally track an opt-in event to your project.
      */
@@ -77,8 +72,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     /**
-     * By calling this method user opted out from tracking and before calling this method
-     * call flush() if you want to send all the events or updates to Mixpanel otherwise it will be deleted.
+     * By calling this method user opted out from tracking.
+     * Events and people updates that haven't been flushed yet will be deleted.
+     * Use flush() before calling this method if you want to send all the queues to Mixpanel before.
+     * This method will also remove any user-related information from the device.
      */
     @ReactMethod
     public void optOutTracking(final String token, Promise promise) {
@@ -89,12 +86,11 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
     }
 
-
     /**
-     * Identify the user uniquely by providing the user distinct id, so all the event, update ,track call
-     * will manipulate the data only for identified users profile.
-     * This call does not identify the user for People Analytics to do that you have to call
-     * MixpanelAPI.People.identify(String) method.
+     * Identify the user uniquely by providing the user distinct id.
+     * Associate all future calls to track(String, JSONObject), set(JSONObject), increment(Map),
+     * append(String, Object), etc... with the user identified by the given distinct id.
+     * The user identification will persist across restarts of your application.
      */
     @ReactMethod
     public void identify(final String token, final String distinctId, Promise promise) {
@@ -118,7 +114,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     /**
-     * Use for Track an event.
+     * To track an event.
      * Every call to track eventually results in a data point sent to Mixpanel.
      * These data points are what are measured, counted, and broken down to create your Mixpanel reports.
      * Events have a string name, and an optional set of name/value pairs that describe the properties of that event.
@@ -257,10 +253,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void flush(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance) {
             instance.flush();
             promise.resolve(null);
-        }
     }
 
     /**
@@ -293,7 +287,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     /**
      * Checks if the people profile is identified or not.
      *
-     * @return boolean value Whether the current user is identified or not.
+     * @return boolean value whether the current user is identified or not.
      */
     @ReactMethod
     public void isIdentified(final String token, Promise promise) {

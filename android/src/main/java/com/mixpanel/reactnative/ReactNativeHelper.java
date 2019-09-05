@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.google.gson.Gson;
-
 public class ReactNativeHelper {
 
     /**
@@ -217,12 +215,5 @@ public class ReactNativeHelper {
             }
         }
         return propertyList;
-    }
-
-    /**
-     * This method will convert the input of type Object into the Json object.
-     */
-    public static JSONObject toJsonObject(Object value) throws JSONException {
-        return (new JSONObject((new Gson()).toJson(value)));
     }
 }

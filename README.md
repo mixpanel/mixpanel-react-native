@@ -13,13 +13,13 @@
 <a name="introduction"></a>
 # **Introduction**
 
-Welcome to the official Mixpanel React-Native Library.
+Welcome to the official Mixpanel React-Native library.
 
 The Mixpanel React-Native library is an open source project, and we'd love to see your contributions! 
 
 <a name="getting started"></a>
 # **Getting started**
-Before you start using Yarn, you'll first need to install yarn on your system.
+Before you start using yarn, if yarn is not installed, you'll first need to install yarn on your system.
 
 ```
  $ yarn add mixpanel-react-native 
@@ -29,7 +29,7 @@ Before you start using Yarn, you'll first need to install yarn on your system.
 
 ## **Auto Linking**
 
-If you have been using React-Native version prior to 0.60 then we have to link dependencies using react-native-link  for iOS & Android like below.
+If you have been using React-Native version prior to 0.60 then you have to link dependencies using react-native-link  for iOS & Android like below.
 ```
 $ react-native link mixpanel-react-native
 ```
@@ -39,11 +39,12 @@ Done! mixpanel-react-native with native dependencies will be successfully linked
 
 ### **iOS**
 It is an alternative to react-native-link.
-If you have been using React-Native version prior to 0.60, please unlink native dependencies if you have any from a previous install. and then follow steps which are given below.
-
-You can follow manual linking part of [react native linking](https://facebook.github.io/react-native/docs/linking-libraries-ios) document.
+If you have been using React-Native version prior to 0.60, please unlink native dependencies if you have any from a previous install.
+And then follow steps which are given
+ in manual linking part of [iOS manual-linking](https://facebook.github.io/react-native/docs/linking-libraries-ios) document.
 
 ### **Android**
+For manual linking you have to make following changes in respective pages.
 
 #### build.gradle(app level) changes:
 Add project implementation in dependencies :-
@@ -175,13 +176,13 @@ Following methods are from all classes.
 - [Mixpanel.People](#Mixpanel.People)
 
 ```
-NOTE: To call any method from both classes first we have to call init method from Mixpanel class.
+NOTE: To call any method from both classes first you have to call init method from Mixpanel class.
 ```
 
 <a name="Mixpanel"></a>
 # **Mixpanel**
 # **init()**
-To use library first we have to call init. It will initializes all mixpanel setup.
+To use library first you have to call init. It will initializes all mixpanel setup.
 
 ### **Example**
 ```
@@ -222,7 +223,7 @@ Use to Track an event with properties.
 
 ### **Example**
 ```
-mixpanel.track(String event_name, JSONObject properties);
+mixpanel.track(String eventName, JSONObject properties);
 ```
 
 
@@ -309,7 +310,7 @@ Starts a timer that will be stopped and added as a property when a
 
 ### **Example**
 ```
-mixpanel.timeEvent(String event_name);
+mixpanel.timeEvent(String eventName);
 ex. mixpanel.timeEvent(event: "Image Upload");
 ```
 
@@ -318,7 +319,7 @@ Retrieves the time elapsed for the named event since timeEvent() was called.
 
 ### **Example**
 ```
-mixpanel.eventElapsedTime();
+mixpanel.eventElapsedTime(String eventName);
 ```
 
 # **identify()**
@@ -329,7 +330,7 @@ Identify the user uniquely by providing the user distinct id, so all the event, 
 
 ### **Example**
 ```
-mixpanel.identify(String distinct_id);
+mixpanel.identify(String distinctId);
 ```
 
 # **isIdentified()**
@@ -351,7 +352,7 @@ Identify the user uniquely by providing the user distinct id, so all the event, 
 
 ### **Example**
 ```
-mixpanel.people.identify(String distinct_id);
+mixpanel.people.identify(String distinctId);
 ```
 
 # **set()**
@@ -359,7 +360,7 @@ Set a collection of properties on the identified user
 
 ### **Example**
 ```
-mixpanel.people.set(JSONObject Properties, to);
+mixpanel.people.set(JSONObject properties, to);
 Ex.mixpanel.people.set(property: "Plan",to: "Premium");
 ```
 
@@ -368,7 +369,7 @@ Permanently removes the property with the given name from the user's profile.
 
 ### **Example**
 ```
-mixpanel.people.unset(String name);
+mixpanel.people.unset(String propertyName);
 ```
 
 # **setOnce()**
@@ -401,7 +402,7 @@ mixpanel.people.clearCharges();
   Increment the given numeric properties by the given values.Property keys must be String names of numeric properties.
 ### **Example**
 ```
-mixpanel.people.increment(String name, double increment);
+mixpanel.people.increment(String propertyName, double increment);
 ```
 
 # **append()**
@@ -409,7 +410,7 @@ Appends a value to a list-valued property. Property keys must be String objects 
 
 ### **Example**
 ```
-mixpanel.people.append(String name, Object value);
+mixpanel.people.append(String propertyName, Object value);
 ```
 
 # **deleteUser()**
@@ -425,7 +426,7 @@ mixpanel.people.deleteUser();
  
 ### **Example**
 ```
- mixpanel.people.remove(String name, Object value);
+ mixpanel.people.remove(String propertyName, Object value);
  ```
  
 # **setPushRegistrationId()**
@@ -435,7 +436,7 @@ Register the given device to receive push notifications. This will associate the
 
 ### **Example**
 ```
-mixpanel.people.setPushRegistrationId(String token);
+mixpanel.people.setPushRegistrationId(String deviceToken);
 ```
 
 # **getPushRegistrationId()**
@@ -453,7 +454,7 @@ Manually clears all current Firebase Cloud Messaging tokens from Mixpanel. This 
 
 ### **Example**
 ```
-mixpanel.people.clearPushRegistrationId();
+mixpanel.people.clearPushRegistrationId(String deviceToken);
 ```
 
 # **union()**
@@ -461,10 +462,10 @@ mixpanel.people.clearPushRegistrationId();
  
 ### **Example**
 ```
- mixpanel.people.union(String name, JSONArray value);
+ mixpanel.people.union(String properties, JSONArray value);
  ```
 
-You're done! You've successfully integrated the Mixpanel React-Native SDK into your app. 
+You're done! You've successfully integrated the Mixpanel React-Native library into your app. 
 
 Have any questions? Reach out to [support@mixpanel.com](mailto:support@mixpanel.com) to speak to someone smart, quickly.
 

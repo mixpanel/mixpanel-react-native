@@ -9,8 +9,8 @@ open class MixpanelReactNative: NSObject {
     
     /**
      Creates Mixpanel instance by providing your project token
-     and boolean value for opting out tracking, default value for optOutTrackingDefault is
-     false by setting it to true will prevent data from being collected by default
+     and boolean value for opting out tracking. Default value of optOutTrackingDefault is
+     false, by setting it to true will prevent data from being collected by default.
      This instance of Mixpanel you can use to send events and updates to Mixpanel.
      */
     @objc
@@ -34,7 +34,7 @@ open class MixpanelReactNative: NSObject {
      to be sent back to the Mixpanel server.
      */
     @objc
-    func optOutTracking(_ token: String, resolve: RCTPromiseResolveBlock,
+    func optOutTracking(_ token: String, resolver resolve: RCTPromiseResolveBlock,
                         rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         if instance == nil {
@@ -51,7 +51,7 @@ open class MixpanelReactNative: NSObject {
      - returns: the current super opted out tracking status
      */
     @objc
-    func hasOptedOutTracking(_ token: String, resolve: RCTPromiseResolveBlock,
+    func hasOptedOutTracking(_ token: String, resolver resolve: RCTPromiseResolveBlock,
                              rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         if instance == nil {
@@ -153,7 +153,7 @@ open class MixpanelReactNative: NSObject {
      Clears all current event timers.
      */
     @objc
-    func clearTimedEvents(_ token: String, resolve: RCTPromiseResolveBlock,
+    func clearTimedEvents(_ token: String, resolver resolve: RCTPromiseResolveBlock,
                           rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         if instance == nil {
@@ -250,7 +250,7 @@ open class MixpanelReactNative: NSObject {
      method manually if you want to force a flush at a particular moment.
      */
     @objc
-    func flush(_ token: String, resolve: RCTPromiseResolveBlock,
+    func flush(_ token: String, resolver resolve: RCTPromiseResolveBlock,
                rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         if instance == nil {
@@ -266,7 +266,7 @@ open class MixpanelReactNative: NSObject {
      Useful if your app's user logs out.
      */
     @objc
-    func reset(_ token: String, resolve: RCTPromiseResolveBlock,
+    func reset(_ token: String, resolver resolve: RCTPromiseResolveBlock,
                rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         if instance == nil {
@@ -333,7 +333,7 @@ open class MixpanelReactNative: NSObject {
      - returns: the current super properties
      */
     @objc
-    func getSuperProperties(_ token: String, resolve: RCTPromiseResolveBlock,
+    func getSuperProperties(_ token: String, resolver resolve: RCTPromiseResolveBlock,
                             rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         if instance == nil {
@@ -373,7 +373,7 @@ open class MixpanelReactNative: NSObject {
      Clears all currently set super properties.
      */
     @objc
-    func clearSuperProperties(_ token: String, resolve: RCTPromiseResolveBlock,
+    func clearSuperProperties(_ token: String, resolver resolve: RCTPromiseResolveBlock,
                               rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         if instance == nil {
@@ -623,7 +623,7 @@ open class MixpanelReactNative: NSObject {
      Delete current user's revenue history.
      */
     @objc
-    func clearCharges(_ token: String, resolve: RCTPromiseResolveBlock,
+    func clearCharges(_ token: String, resolver resolve: RCTPromiseResolveBlock,
                       rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         if instance == nil {
@@ -638,7 +638,7 @@ open class MixpanelReactNative: NSObject {
      Delete current user's record from Mixpanel People.
      */
     @objc
-    func deleteUser(_ token: String, resolve: RCTPromiseResolveBlock,
+    func deleteUser(_ token: String, resolver resolve: RCTPromiseResolveBlock,
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         if instance == nil {
@@ -720,7 +720,7 @@ open class MixpanelReactNative: NSObject {
      in conjunction with a call to `reset`, or when a user is logging out.
      */
     @objc
-    func clearAllPushRegistrationId(_ token: String, resolve: RCTPromiseResolveBlock,
+    func clearAllPushRegistrationId(_ token: String, resolver resolve: RCTPromiseResolveBlock,
                                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         if instance == nil {
@@ -748,7 +748,7 @@ open class MixpanelReactNative: NSObject {
      TODO: Remove this method in the final release
      */
     @objc
-    func getInformation(_ resolve: RCTPromiseResolveBlock,
+    func getInformation(resolver resolve: RCTPromiseResolveBlock
                         rejecter reject: RCTPromiseRejectBlock) -> Void {
         resolve(Constants.LIBRARY_INVOKED)
     }

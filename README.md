@@ -39,12 +39,9 @@ Done! mixpanel-react-native with native dependencies will be successfully linked
 
 ### **iOS**
 It is an alternative to react-native-link.
-If you have been using React-Native before version 0.60, please unlink native dependencies if you have any from a previous install. and then follow steps which are given below.
+If you have been using React-Native version prior to 0.60, please unlink native dependencies if you have any from a previous install. and then follow steps which are given below.
 
-1.Library has an .xcodeproj file inside its folder. 
-Drag this file to your project on Xcode (usually under the Libraries group on Xcode);
-
-2.Click on your main project file (the one that represents the .xcodeproj) select Build Phases and drag the static library from the Products folder inside the Library you are importing to Link Binary With Libraries
+You can follow manual linking part of [react native linking](https://facebook.github.io/react-native/docs/linking-libraries-ios) document.
 
 ### **Android**
 
@@ -123,7 +120,7 @@ pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 ```
 Next, run ```pod install```.
 ```
-Mandatory:Static libraries with Swift are only supported in Xcode 9 and later.
+Mandatory:Our library with Swift is only supported in Xcode 9 and later.
 In order for the Xcode project to build when you use Swift in the iOS static library you include in the module, your main app project must 
 contain Swift code and a bridging header itself. 
 If your app project does not contain any Swift code, a workaround can be a single empty .swift file and an empty bridging header.

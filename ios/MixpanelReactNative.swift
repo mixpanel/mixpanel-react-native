@@ -748,7 +748,7 @@ open class MixpanelReactNative: NSObject {
      TODO: Remove this method in the final release
      */
     @objc
-    func getInformation(resolver resolve: RCTPromiseResolveBlock
+    func getInformation(resolver resolve: RCTPromiseResolveBlock,
                         rejecter reject: RCTPromiseRejectBlock) -> Void {
         resolve(Constants.LIBRARY_INVOKED)
     }

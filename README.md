@@ -19,7 +19,15 @@ The Mixpanel React-Native library is an open source project, and we'd love to se
 
 <a name="getting started"></a>
 # **Getting started**
+Using npm:
+
+```
+npm install mixpanel-react-native --save
+```
+Using yarn:
+
 Before you start using yarn, if yarn is not installed, you'll first need to install yarn on your system.
+[Installation of yarn](https://yarnpkg.com/lang/en/docs/install/#mac-stable)
 
 ```
  $ yarn add mixpanel-react-native 
@@ -77,8 +85,8 @@ Add package in getPackages method :-
 # **Linking (For latest React-Native application)**
 For iOS and Android if React-Native version is above 0.60 then there is no need of linking. It will get linked automatically.
 
-# **installation**
-#### iOS (For React-Native application prior to 0.60)
+# **Installation**
+#### iOS (RN >= 0.60)
 
 If you're already using Cocoapods, add the following to your Podfile
 ```
@@ -114,14 +122,14 @@ Remember to replace *YourTargetName* with your actual target name.
 
 Next, run ```pod install```.
 
-#### iOS (For latest React-Native application)
-POD files are already present above 0.60. So we only need to add MixpanelReactNative dependency
+#### iOS (React-Native >= 0.60)
+POD file is already present above 0.60. So we only need to add MixpanelReactNative dependency
 ```
 pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 ```
 Next, run ```pod install```.
 ```
-Mandatory:Our library with Swift is only supported in Xcode 9 and later.
+Mandatory: Our library with Swift is only supported in Xcode 9 and later.
 In order for the Xcode project to build when you use Swift in the iOS static library you include in the module, your main app project must 
 contain Swift code and a bridging header itself. 
 If your app project does not contain any Swift code, a workaround can be a single empty .swift file and an empty bridging header.
@@ -176,7 +184,7 @@ Following methods are from all classes.
 - [Mixpanel.People](#Mixpanel.People)
 
 ```
-NOTE: To call any method from both classes first you have to call init method from Mixpanel class.
+Note: To call any method from both classes first you have to call init method from Mixpanel class.
 ```
 
 <a name="Mixpanel"></a>
@@ -186,7 +194,7 @@ To use library first you have to call init. It will initializes all mixpanel set
 
 ### **Example**
 ```
-import Mixpanel from "mixpanel-react-native";
+import Mixpanel from 'mixpanel-react-native';
 const mixpanel = Mixpanel.init(String token);
 ```
 
@@ -199,7 +207,7 @@ mixpanel.hasOptedOutTracking();
 ```
 
 # **optInTracking()**
-Used to internally track an opt-in event, to opt in an already opted out user from tracking. People updates and track calls will be
+To internally track an opt-in event, to opt in an already opted out user from tracking. People updates and track calls will be
      sent to Mixpanel after using this method.
 
 ### **Example**
@@ -208,7 +216,7 @@ mixpanel.optInTracking(String distinctId, JSONObject properties);
 ```
 
 # **optOutTracking()**
-User get opted out from tracking. So all events and people request will not sent back to the Mixpanel server.
+To opt-out user from tracking. So all events and people request will not sent back to the Mixpanel server.
 
 ### **Example**
 ```
@@ -216,7 +224,7 @@ mixpanel.optOutTracking();
 ```
 
 # **track()**
-Use to Track an event with properties.
+To Track an event with properties.
      Properties are optional and can be added only if needed.
      Properties will allow you to segment your events in your Mixpanel reports.
      If the event is being timed, the timer will stop and be added as a property.
@@ -228,7 +236,7 @@ mixpanel.track(String eventName, JSONObject properties);
 
 
 # **registerSuperProperties()**
-Super properties, once registered, are automatically sent as properties for
+To register super properties, once registered, are automatically sent as properties for
      all event tracking calls. 
     
 ### **Example**
@@ -237,8 +245,8 @@ mixpanel.registerSuperProperties(JSONObject properties);
 ```
 
 # **registerSuperPropertiesOnce()**
-Registers super properties without overwriting ones that have already been set,
-     unless the existing value is equal to defaultValue. defaultValue is optional.
+To register super properties without overwriting ones that have already been set,
+     unless the existing value is equal to defaultValue. DefaultValue is optional.
      Property keys must be String objects and the supported value types need to conform to MixpanelType.
     
 ### **Example**
@@ -247,7 +255,7 @@ mixpanel.registerSuperPropertiesOnce(JSONObject superProperties);
 ```
 
 # **unregisterSuperProperty()**
- Removes a previously registered super property.
+ To remove a previously registered super property.
      As an alternative to clearing all properties, unregistering specific super
      properties prevents them from being recorded on future events. This operation
      does not affect the value of other super properties. Any property name that is
@@ -259,7 +267,7 @@ mixpanel.unregisterSuperProperty(String superPropertyName);
  ```
  
 # **getSuperProperties()**
-Returns a json object of the user's current super properties.
+To return a json object of the user's current super properties.
 
 ### **Example**
 ```
@@ -267,7 +275,7 @@ mixpanel.getSuperProperties();
 ```
 
 # **clearSuperProperties()**
-Erase all currently registered superProperties.
+To erase all currently registered superProperties.
 
 ### **Example**
 ```
@@ -275,7 +283,7 @@ mixpanel.clearSuperProperties();
 ```
 
 # **alias()**
-This function creates a distinct_id alias from alias to original.
+To create a distinct_id alias from alias to original.
 
 ### **Example**
 ```
@@ -283,16 +291,14 @@ mixpanel.alias(String alias, String original);
 ```
 
 # **reset()**
-Clears tweaks and all distinct_ids, superProperties, and push registrations from persistent storage.
+To clear tweaks and all distinct_ids, superProperties, and push registrations from persistent storage.
 
 ### **Example**
 ```
 mixpanel.reset();
 ```
 # **flush()**
-Send all queued message to server. By default, queued data is flushed to the Mixpanel servers every minute (the
-     default for flushInterval), and on background (since
-     flushOnBackground is on by default). You only need to call this
+To send all queued message to server. By default, queued data is flushed to the Mixpanel servers every minute. You only need to call this
      method manually if you want to force a flush at a particular moment.
 
 ### **Example**
@@ -301,10 +307,10 @@ mixpanel.flush();
 ```
 
 # **timeEvent()**
-Starts a timer that will be stopped and added as a property when a
+To start a timer that will be stopped and added as a property when a
      corresponding event is tracked.
-     For **Example**, if a developer were to track an "Image Upload" event
-     she might want to also know how long the upload took. Calling this method
+     For **Example**, if a developer wants to track an "Image Upload" event
+     and he want to also know how long the upload took. Calling this method
      before the upload code would implicitly cause the track
      call to record its duration.
 
@@ -315,7 +321,7 @@ ex. mixpanel.timeEvent(event: "Image Upload");
 ```
 
 # **eventElapsedTime()**
-Retrieves the time elapsed for the named event since timeEvent() was called.
+To retrieve the time elapsed for the named event since timeEvent() was called.
 
 ### **Example**
 ```
@@ -323,9 +329,8 @@ mixpanel.eventElapsedTime(String eventName);
 ```
 
 # **identify()**
-Identify the user uniquely by providing the user distinct id, so all the event, update ,track call
-     will manipulate the data only for identified users profile.
-     This call does not identify the user for People Analytics to do that you have to call
+To identify the user uniquely by providing the user distinct id. After calling track all the events, updates will manipulate the data only for identified users profile.
+     This call does not identify the user for People Analytics, to do that you have to call
      method.
 
 ### **Example**
@@ -334,7 +339,7 @@ mixpanel.identify(String distinctId);
 ```
 
 # **isIdentified()**
-Checks profile of people is identified or not.
+To check profile of people is identified or not.
 
 ### **Example**
 ```
@@ -345,7 +350,7 @@ mixpanel.isIdentified();
 # **Mixpanel.People**
 
 # **identify()**
-Identify the user uniquely by providing the user distinct id, so all the event, update ,track call
+To identify the user uniquely by providing the user distinct id, so all the event, update ,track call
      will manipulate the data only for identified users profile.
      This call does not identify the user for People Analytics to do that you have to call
      method.
@@ -356,7 +361,7 @@ mixpanel.people.identify(String distinctId);
 ```
 
 # **set()**
-Set a collection of properties on the identified user
+To set a collection of properties on the identified user
 
 ### **Example**
 ```
@@ -365,7 +370,7 @@ Ex.mixpanel.people.set(property: "Plan",to: "Premium");
 ```
 
 # **unset()**
-Permanently removes the property with the given name from the user's profile.
+To remove property permanently with the given name from the user's profile.
 
 ### **Example**
 ```
@@ -373,7 +378,7 @@ mixpanel.people.unset(String propertyName);
 ```
 
 # **setOnce()**
-Set properties on the current user in Mixpanel People, but doesn't overwrite if
+To set properties on the current user in Mixpanel People, but doesn't overwrite if
      there is an existing value. It is particularly useful for collecting
      data about the user's initial experience and source, as well as dates
      representing the first time something happened.
@@ -383,7 +388,7 @@ mixpanel.people.setOnce(String propertyName, Object value);
 ```
 
 # **trackCharge()**
-Track money spent by the current user for revenue analytics and associate
+To track money spent by the current user for revenue analytics and associate
      properties with the charge. Properties is optional.
 ### **Example**
 ```
@@ -391,7 +396,7 @@ mixpanel.people.trackCharge(double amount,JSONObject properties);
 ```
 
 # **clearCharges()**
-It will permanently clear the whole transaction history for the identified people profile.
+To clear the whole transaction history permanently for the identified people profile.
 
 ### **Example**
 ```
@@ -399,14 +404,14 @@ mixpanel.people.clearCharges();
 ```
 
 # **increment()**
-  Increment the given numeric properties by the given values.Property keys must be String names of numeric properties.
+ To increment the given numeric properties by the given values.Property keys must be String names of numeric properties.
 ### **Example**
 ```
 mixpanel.people.increment(String propertyName, double increment);
 ```
 
 # **append()**
-Appends a value to a list-valued property. Property keys must be String objects and the supported value types need to conform to MixpanelType.
+To append a value to a list-valued property. Property keys must be String objects and the supported value types need to conform to MixpanelType.
 
 ### **Example**
 ```
@@ -414,7 +419,7 @@ mixpanel.people.append(String propertyName, Object value);
 ```
 
 # **deleteUser()**
-Permanently deletes the identified user's record.
+To delete permanently the identified user's record.
 
 ### **Example**
 ```
@@ -422,7 +427,7 @@ mixpanel.people.deleteUser();
 ```
 
 # **remove()**
- Remove value from a list-valued property only if they are already present in the list.
+ To remove value from a list-valued property only if they are already present in the list.
  
 ### **Example**
 ```
@@ -430,9 +435,8 @@ mixpanel.people.deleteUser();
  ```
  
 # **setPushRegistrationId()**
-Register the given device to receive push notifications. This will associate the device token with the current user in Mixpanel People,
-     which will allows you to send push notifications to the user from the Mixpanel
-     People web interface.
+To register the given device to receive push notifications. This will associate the device token with the current user in people profile,
+     which will allows you to send push notifications to the user.
 
 ### **Example**
 ```
@@ -440,7 +444,7 @@ mixpanel.people.setPushRegistrationId(String deviceToken);
 ```
 
 # **getPushRegistrationId()**
-Retrieves current Firebase Cloud Messaging token.
+To retrieve current Firebase Cloud Messaging token.
 
 ### **Example**
 ```
@@ -448,9 +452,7 @@ mixpanel.people.getPushRegistrationId();
 ```
 
 # **clearPushRegistrationId()**
-Manually clears all current Firebase Cloud Messaging tokens from Mixpanel. This will associate the device token with the current user in Mixpanel People,
-     which will allow you to send push notifications to the user from the Mixpanel
-     People web interface.
+ To clear all current Firebase Cloud Messaging tokens manually from Mixpanel.
 
 ### **Example**
 ```

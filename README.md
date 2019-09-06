@@ -23,14 +23,14 @@ Using npm:
 
 Before you start using npm, if npm is not installed, you'll first need to install npm on your system.
 
-```
+```js
 npm install mixpanel-react-native --save
 ```
 Or using yarn:
 
 Before you start using yarn, if yarn is not installed, you'll first need to install yarn on your system.
 
-```
+```js
  $ yarn add mixpanel-react-native 
 ```
 <a name="linking"></a>
@@ -39,7 +39,7 @@ Before you start using yarn, if yarn is not installed, you'll first need to inst
 ## **Auto Linking**
 
 If you have been using React-Native version prior to 0.60 then you have to link dependencies using react-native-link for iOS & Android like below.
-```
+```js
 $ react-native link mixpanel-react-native
 ```
 Done! mixpanel-react-native with native dependencies will be successfully linked to your iOS/Android project after this command.
@@ -57,23 +57,23 @@ For manual linking you have to make following changes in respective pages.
 
 #### build.gradle(app level) changes:
 Add project implementation in dependencies :-
-``` 
+```js
 implementation project(':mixpanel-react-native')
 ```
 
 #### setting.gradle changes:
 Include project in setting.gradle :-
-```
+```js
 include ':mixpanel-react-native'
 project(':mixpanel-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/mixpanel-react-native/android')
 ```
 #### MainApplication.java changes:
 Import MixpanelReactNativePackage in your MainApplication file :-
-```
+```js
 import com.mixpanel.reactnative.MixpanelReactNativePackage;
 ```
 Add package in getPackages method :-
-```
+```js
 @Override
    protected List<ReactPackage> getPackages() {
      return Arrays.<ReactPackage>asList(
@@ -90,12 +90,12 @@ For iOS and Android if React-Native version is above 0.60 then there is no need 
 #### iOS (RN < 0.60)
 
 If you're already using Cocoapods, add the following to your Podfile
-```
+```js
 pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 ```
 
 Otherwise, setup Podfile according to [react native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps), so the Podfile will look like this:
-```
+```js
 source 'https://github.com/CocoaPods/Specs.git'
 
 target 'YourTargetName' do
@@ -125,7 +125,7 @@ Next, run ```pod install```.
 
 #### iOS (RN >= 0.60)
 Podfile is already present above 0.60. So we only need to add MixpanelReactNative dependency
-```
+```js
 pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 ```
 Next, run ```pod install```.

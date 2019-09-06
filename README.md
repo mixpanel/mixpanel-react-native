@@ -231,7 +231,7 @@ mixpanel.optInTracking('1234', {'Name': 'ABC'});
 ```
 <a name="optOutTracking"></a>
 # **optOutTracking()**
-To opt-out user from tracking. So all events and people request will not sent back to the Mixpanel server.
+To opt-out user from tracking. So all events and people request will not sent back to the mixpanel server.
 
 ### **Example**
 ```js
@@ -470,7 +470,7 @@ mixpanel.people.getPushRegistrationId();
 ```
 <a name="clearPushRegistrationId"></a>
 # **clearPushRegistrationId(deviceToken)**
- To clear all current Firebase Cloud Messaging tokens manually from Mixpanel.
+ To clear current Firebase Cloud Messaging token manually from mixpanel.
 
 ### **Example**
 ```js
@@ -478,7 +478,7 @@ mixpanel.people.clearPushRegistrationId('Your deviceToken');
 ```
 <a name="union"></a>
 # **union(name, properties)**
- Adds values to a list-valued property only if they are not already present in the list. If the property does not currently exist, it will be created with the given list as it's value. If the property exists and is not list-valued, the union will be ignored.
+ To add values to a list-valued property only if they are not already present in the list. If the property does not currently exist, it will be created with the given list as it's value. If the property exists and is not list-valued, the union will be ignored.
 
 ### **Example**
 ```js

@@ -12,7 +12,6 @@
 
 <a name="introduction"></a>
 # **Introduction**
-
 Welcome to the official Mixpanel React-Native library.
 
 The Mixpanel React-Native library is an open source project, and we'd love to see your contributions! 
@@ -22,39 +21,31 @@ The Mixpanel React-Native library is an open source project, and we'd love to se
 Using npm:
 
 Before you start using npm, if npm is not installed, you'll first need to install npm on your system.
-
 ```js
 npm install mixpanel-react-native --save
 ```
 Or using yarn:
 
 Before you start using yarn, if yarn is not installed, you'll first need to install yarn on your system.
-
 ```js
- $ yarn add mixpanel-react-native 
+yarn add mixpanel-react-native 
 ```
 <a name="linking"></a>
 # **Linking (RN < 0.60)**
-
 ## **Auto Linking**
-
-If you have been using React-Native version prior to 0.60 then you have to link dependencies using react-native-link for iOS & Android like below.
+If you have been using React-Native version prior to 0.60, then you have to link dependencies using react-native-link for iOS & Android like below.
 ```js
-$ react-native link mixpanel-react-native
+react-native link mixpanel-react-native
 ```
 Done! mixpanel-react-native with native dependencies will be successfully linked to your iOS/Android project after this command.
 
 ## **Manual Linking**
-
 ### **iOS**
 It is an alternative to auto-linking.
 If you have been using React-Native version prior to 0.60, please unlink native dependencies if you have any from a previous install.
-And then follow steps which are given
- in manual linking part of [iOS manual-linking](https://facebook.github.io/react-native/docs/linking-libraries-ios) document.
-
+And then follow steps which are given in manual linking part of [iOS manual-linking](https://facebook.github.io/react-native/docs/linking-libraries-ios) document.
 ### **Android**
 For manual linking you have to make following changes in respective pages.
-
 #### build.gradle(app level) changes:
 Add project implementation in dependencies :-
 ```js
@@ -145,7 +136,7 @@ import Mixpanel from 'mixpanel-react-native';
 ```
 <a name="API"></a>
 # **API**
-Following methods are from all classes.
+Following methods are from Mixpanel and People class.
 
 |  **Method** | **Ios** | **Android** |
 |  ------ | :------: | :------: |
@@ -192,7 +183,7 @@ Note: To call any method from both classes first you have to call init method fr
 # **Mixpanel**
 <a name="init"></a>
 # **init( mixpanelToken, optOutTrackingDefault)**
-To use library first you have to call init. It will initialize all mixpanel setup. **optOutTrackingDefault** is by default set to false.
+To use library first you have to call init. It will initialize all Mixpanel setup. **optOutTrackingDefault** is by default set to false.
 
 ### **Example**
 ```js
@@ -231,7 +222,7 @@ mixpanel.optInTracking('1234', {'Name': 'ABC'});
 ```
 <a name="optOutTracking"></a>
 # **optOutTracking()**
-To opt-out user from tracking. So all events and people request will not sent back to the mixpanel server.
+To opt-out user from tracking. So all events and people request will not sent back to the Mixpanel server.
 
 ### **Example**
 ```js
@@ -241,7 +232,7 @@ mixpanel.optOutTracking();
 # **track(eventName, properties)**
 To Track an event with properties.
      Properties are optional and can be added only if needed.
-     Properties will allow you to segment your events in your mixpanel reports.
+     Properties will allow you to segment your events in your Mixpanel reports.
      If the event is being timed, the timer will stop and be added as a property.
 
 ### **Example**
@@ -308,7 +299,7 @@ mixpanel.alias('Test123','Test456');
 ```
 <a name="reset"></a>
 # **reset()**
-To clear tweaks and all distinct_ids, superProperties, and push registrations from persistent storage.
+To clear tweaks and all distinctIds, superProperties, and push registrations from persistent storage.
 
 ### **Example**
 ```js
@@ -317,7 +308,7 @@ mixpanel.reset();
 <a name="flush"></a>
 # **flush()**
 To send all queued message to server. By default, queued data is flushed to the Mixpanel servers every minute. If you want to force a flush at a particular moment
- you only need to call this method manually 
+ you only need to call this method manually. 
 ### **Example**
 ```js
 mixpanel.flush();

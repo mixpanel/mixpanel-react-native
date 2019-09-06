@@ -47,7 +47,7 @@ Done! mixpanel-react-native with native dependencies will be successfully linked
 ## **Manual Linking**
 
 ### **iOS**
-It is an alternative to react-native-link.
+It is an alternative to auto-linking.
 If you have been using React-Native version prior to 0.60, please unlink native dependencies if you have any from a previous install.
 And then follow steps which are given
  in manual linking part of [iOS manual-linking](https://facebook.github.io/react-native/docs/linking-libraries-ios) document.

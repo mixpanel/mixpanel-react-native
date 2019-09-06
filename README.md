@@ -21,23 +21,24 @@ The Mixpanel React-Native library is an open source project, and we'd love to se
 # **Getting started**
 Using npm:
 
+Before you start using npm, if npm is not installed, you'll first need to install npm on your system.
+
 ```
 npm install mixpanel-react-native --save
 ```
 Using yarn:
 
 Before you start using yarn, if yarn is not installed, you'll first need to install yarn on your system.
-[Installation of yarn](https://yarnpkg.com/lang/en/docs/install/#mac-stable)
 
 ```
  $ yarn add mixpanel-react-native 
 ```
 <a name="linking"></a>
-# **Linking (For React-Native application prior to 0.60)**
+# **Linking (RN < 0.60)**
 
 ## **Auto Linking**
 
-If you have been using React-Native version prior to 0.60 then you have to link dependencies using react-native-link  for iOS & Android like below.
+If you have been using React-Native version prior to 0.60 then you have to link dependencies using react-native-link for iOS & Android like below.
 ```
 $ react-native link mixpanel-react-native
 ```
@@ -67,7 +68,7 @@ include ':mixpanel-react-native'
 project(':mixpanel-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/mixpanel-react-native/android')
 ```
 #### MainApplication.java changes:
-import MixpanelReactNativePackage in your MainApplication file :-
+Import MixpanelReactNativePackage in your MainApplication file :-
 ```
 import com.mixpanel.reactnative.MixpanelReactNativePackage;
 ```
@@ -148,36 +149,36 @@ Following methods are from all classes.
 
 |  **Method** | **Ios** | **Android** |
 |  ------ | :------: | :------: |
-| init() | &#9989; |  &#9989; |
-|hasOptedOutTracking() |  &#9989; |  &#9989;|
-|optInTracking() |  &#9989; |  &#9989;|
-|optOutTracking() |  &#9989; |  &#9989;|
-|identify() |  &#9989; |  &#9989;|
-|track()|  &#9989; |  &#9989;|
-|registerSuperProperties()|  &#9989; |  &#9989;|
-|registerSuperPropertiesOnce()|  &#9989; |  &#9989;|
-|unregisterSuperProperty()|  &#9989; |  &#9989;|
-|getSuperProperties()|  &#9989; |  &#9989;|
-|clearSuperProperties|  &#9989; |  &#9989;|
-|alias()|  &#9989; |  &#9989;|
-|reset()|  &#9989; |  &#9989;|
-|flush()|  &#9989; |  &#9989;|
-|timeEvent()|  &#9989; |  &#9989;|
-|eventElapsedTime()|  &#9989; |  &#9989;|
-|isIdentified()|  &#10060;|  &#9989;|
-|set()|  &#9989; |  &#9989;|
-|unset()|  &#9989; |  &#9989;|
-|setOnce()|  &#9989; |  &#9989;|
-|trackCharge()|  &#9989; |  &#9989;|
-|clearCharges()|  &#9989; |  &#9989;|
-|increment()|  &#9989; |  &#9989;|
-|append()|  &#9989; |  &#9989;|
-|deleteUser()|  &#9989; |  &#9989;|
-|remove()|  &#9989; |  &#9989;|
-|setPushRegistrationId()|  &#9989; |  &#9989;|
-|getPushRegistrationId()|  &#10060; |  &#9989;|
-|clearPushRegistrationId()|  &#9989; |  &#9989;|
-|union()|  &#9989; |  &#9989;|
+|[init()](#init()) | &#9989; |  &#9989; |
+|[hasOptedOutTracking()](#hasOptedOutTracking) |  &#9989; |  &#9989;|
+|[optInTracking()](#optInTracking) |  &#9989; |  &#9989;|
+|[optOutTracking()](#optOutTracking) |  &#9989; |  &#9989;|
+|[identify()](#identify) |  &#9989; |  &#9989;|
+|[track()](#track)|  &#9989; |  &#9989;|
+|[registerSuperProperties()](#registerSuperProperties)|  &#9989; |  &#9989;|
+|[registerSuperPropertiesOnce()](#registerSuperPropertiesOnce)|  &#9989; |  &#9989;|
+|[unregisterSuperProperty()](#unregisterSuperProperty)|  &#9989; |  &#9989;|
+|[getSuperProperties()](#getSuperProperties)|  &#9989; |  &#9989;|
+|[clearSuperProperties()](#clearSuperProperties)|  &#9989; |  &#9989;|
+|[alias()](#alias)|  &#9989; |  &#9989;|
+|[reset()](#reset)|  &#9989; |  &#9989;|
+|[flush()](#flush)|  &#9989; |  &#9989;|
+|[timeEvent()](#timeEvent)|  &#9989; |  &#9989;|
+|[eventElapsedTime()](#eventElapsedTime)|  &#9989; |  &#9989;|
+|[isIdentified()](#isIdentified)|  &#10060;|  &#9989;|
+|[set()](#set)|  &#9989; |  &#9989;|
+|[unset()](#unset)|  &#9989; |  &#9989;|
+|[setOnce()](#setOnce)|  &#9989; |  &#9989;|
+|[trackCharge()](#trackCharge)|  &#9989; |  &#9989;|
+|[clearCharges()](#clearCharges)|  &#9989; |  &#9989;|
+|[increment()](#increment)|  &#9989; |  &#9989;|
+|[append()](#append)|  &#9989; |  &#9989;|
+|[deleteUser()](#deleteUser)|  &#9989; |  &#9989;|
+|[remove()](#remove)|  &#9989; |  &#9989;|
+|[setPushRegistrationId()](#setPushRegistrationId)|  &#9989; |  &#9989;|
+|[getPushRegistrationId()](#getPushRegistrationId)|  &#10060; |  &#9989;|
+|[clearPushRegistrationId()](#clearPushRegistrationId)|  &#9989; |  &#9989;|
+|[union()](#union)|  &#9989; |  &#9989;|
 
 # **All classes**
 - [Mixpanel](#Mixpanel)

@@ -83,7 +83,7 @@ Add package in getPackages method :-
      );
    }
 ```
-# **Linking (For latest React-Native application)**
+# **Linking (RN >= 0.60)**
 For iOS and Android if React-Native version is above 0.60 then there is no need of linking. It will get linked automatically.
 
 # **Installation**
@@ -123,7 +123,7 @@ Remember to replace *YourTargetName* with your actual target name.
 
 Next, run ```pod install```.
 
-#### iOS (React-Native >= 0.60)
+#### iOS (RN >= 0.60)
 POD file is already present above 0.60. So we only need to add MixpanelReactNative dependency
 ```
 pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'

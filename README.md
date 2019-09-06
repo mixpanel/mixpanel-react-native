@@ -227,7 +227,7 @@ To Track an event with properties.
 ### **Example**
 ```js
 // Track with event-name
-mixpanel.track({'TrackEvent'});
+mixpanel.track('TrackEvent');
 
 //Track with event-name and property
 mixpanel.track('TrackEvent', {'Status': 'Pending'})
@@ -434,7 +434,7 @@ mixpanel.people.clearPushRegistrationId('Your deviceToken');
 ```
 <a name="union"></a>
 # **union(propertyName, properties)**
- To add values to a list-valued property only if they are not already present in the list. If the property does not currently exist, it will be created with the given list as it's value. If the property exists and is not list-valued, the union will be ignored.
+ To add values to a list-valued property only if, they are not already present in the list. If the property does not currently exist, it will be created with the given list as it's value. If the property exists and is not list-valued, the union will be ignored.
 ### **Example**
 ```js
  mixpanel.people.union('Days', ['Sunday', 'Monday', 'Tuesday']);

@@ -16,17 +16,19 @@ public class AutomaticProperties {
     }
     
     /**
-     * This method will append library properties to the default properties
+     * This method will append library properties to the default properties.
      */
     public static void appendLibraryProperties(JSONObject properties) throws JSONException {
         if (properties == null) {
             properties = new JSONObject();
         }
 
-        //merge automatic properties
-        for (Iterator<String> keys = sAutomaticProperties.keys(); keys.hasNext();) {
-            String key = keys.next();
-            properties.put(key, sAutomaticProperties.get(key));
+        if (sAutomaticProperties != null) {
+            //merge automatic properties
+            for (Iterator<String> keys = sAutomaticProperties.keys(); keys.hasNext();) {
+                String key = keys.next();
+                properties.put(key, sAutomaticProperties.get(key));
+            }
         }
     }
 }

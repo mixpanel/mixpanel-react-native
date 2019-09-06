@@ -19,6 +19,7 @@ import java.util.Map;
 
 public class ReactNativeHelper {
 
+    private static final String UNSUPPORTED_TYPE = "Unsupported data type";
     /**
      * This method will convert the input of type ReadableMap into the Json object.
      */
@@ -50,7 +51,7 @@ public class ReactNativeHelper {
                     properties.put(key, reactToJSON(value.getArray(key)));
                     break;
                 default:
-                    throw new IllegalArgumentException(Constant.UNSUPPORTED_TYPE + valueType);
+                    throw new IllegalArgumentException(UNSUPPORTED_TYPE + valueType);
             }
         }
         return properties;
@@ -85,7 +86,7 @@ public class ReactNativeHelper {
                     properties.put(reactToJSON(value.getArray(i)));
                     break;
                 default:
-                    throw new IllegalArgumentException(Constant.UNSUPPORTED_TYPE + valueType);
+                    throw new IllegalArgumentException(UNSUPPORTED_TYPE + valueType);
             }
         }
         return properties;

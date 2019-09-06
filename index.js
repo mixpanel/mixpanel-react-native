@@ -26,6 +26,7 @@ var ERROR_MESSAGE = {
     NEED_MP_TOKEN: "The Mixpanel instance must have a valid token and must call: `init()`",
     REQUIRED_PARAMETER: " is required",
     REQUIRED_OBJECT: " is required. Cannot be null or undefined",
+    INVALID_OBJECT: " is not a valid json object",
     REQUIRED_DOUBLE: "expected parameter of type `double`"
 };
 
@@ -71,6 +72,7 @@ export default class Mixpanel {
             properties = distinct_id;
             distinct_id = null;
         }
+        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
         return MixpanelReactNative.optInTracking(this.token, distinct_id, properties);
     }
 
@@ -104,15 +106,11 @@ export default class Mixpanel {
       Track an event. 
      */
     track(event_name, properties) {
-        if (arguments.length === 0) {
+        event_name = Helper.getValidString(event_name, KEY.EVENT_NAME);
+        if (properties === undefined) {
             properties = {};
-        } else if (typeof event_name === "string") {
-            event_name = Helper.getValidString(event_name, KEY.EVENT_NAME);
-            properties = properties || {};
-        } else if (typeof event_name === "object") {
-            properties = event_name;
-            event_name = null;
-        }
+        } 
+        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
         return MixpanelReactNative.track(this.token, event_name, properties);
     }
 
@@ -122,6 +120,7 @@ export default class Mixpanel {
      */
     registerSuperProperties(properties) {
         properties = properties || {};
+        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
         return MixpanelReactNative.registerSuperProperties(this.token, properties);
     }
 
@@ -131,6 +130,7 @@ export default class Mixpanel {
      */
     registerSuperPropertiesOnce(properties) {
         properties = properties || {};
+        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
         return MixpanelReactNative.registerSuperPropertiesOnce(this.token, properties);
     }
 
@@ -229,6 +229,7 @@ export class People {
      */
     setOnce(properties) {
         properties = properties || {};
+        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
         return MixpanelReactNative.setOnce(this.token, properties);
     }
 
@@ -240,6 +241,7 @@ export class People {
             throw new Error(ERROR_MESSAGE.REQUIRED_DOUBLE )
         }
         properties = properties || {};
+        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
         return MixpanelReactNative.trackCharge(this.token, charge, properties);
     }
 
@@ -275,6 +277,7 @@ export class People {
      */
     append(name, properties) {
         properties = properties || {};
+        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
         return MixpanelReactNative.append(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), properties);
     }
 
@@ -297,6 +300,7 @@ export class People {
       Adds values to a list-valued property only if they are not already present in the list.  
      */
     union(name, properties) {
+        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
         return MixpanelReactNative.union(this.token, name, properties);
     }
 
@@ -304,8 +308,8 @@ export class People {
       Remove a list of properties and their values from the current user's profile
       in Mixpanel People.
      */
-    unset(property_name) {
-        return MixpanelReactNative.unset(this.token, property_name);
+    unset(propertyName) {
+        return MixpanelReactNative.unset(this.token, Helper.getValidString(propertyName, KEY.PROPERTY_NAME));
     }
 
     /**
@@ -340,6 +344,16 @@ class Helper {
             throw new Error(parameter_name + ERROR_MESSAGE.REQUIRED_PARAMETER );
         }
         return str;
+    }
+
+    /**
+     * Gets valid object 
+     */
+    static getValidObject(obj, parameter_name) {
+        if (typeof obj !== "object") {
+            throw new Error(parameter_name + ERROR_MESSAGE.INVALID_OBJECT);
+        }
+        return obj;
     }
     
     /**

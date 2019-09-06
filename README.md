@@ -195,7 +195,7 @@ let hasOptedOut = mixpanel.hasOptedOutTracking();
 ```
 <a name="optInTracking"></a>
 # **optInTracking(distinctId, properties)**
-To internally track an opt-in event, to opt in an already opted out user from tracking. People updates and track calls will be
+To internally track an opt-in event, to opt in an already opted out user from tracking. User updates and track calls will be
      sent to Mixpanel after using this method.
 ### **Example**
 ```js
@@ -213,7 +213,7 @@ mixpanel.optInTracking('1234', {'Name': 'ABC'});
 ```
 <a name="optOutTracking"></a>
 # **optOutTracking()**
-To opt-out user from tracking. So all events and people request will not sent back to the Mixpanel server.
+To opt-out user from tracking. So all events and user request will not sent back to the Mixpanel server.
 ### **Example**
 ```js
 mixpanel.optOutTracking();
@@ -223,7 +223,7 @@ mixpanel.optOutTracking();
 To Track an event with properties.
      Properties are optional and can be added only if needed.
      Properties will allow you to segment your events in your Mixpanel reports.
-     If the event is being timed, the timer will stop and be added as a property.
+     If the event is being timed, the timer will stop and added as a property.
 ### **Example**
 ```js
 // Track with event-name
@@ -252,7 +252,7 @@ mixpanel.registerSuperPropertiesOnce(['Role': 'Admin']);
 # **unregisterSuperProperty(superProperty)**
  To remove a previously registered super property.
      As an alternative to clearing all properties, unregistering specific super
-     properties prevents them from being recorded on future events. This operation
+     property prevents them from being recorded on future events. This operation
      does not affect the value of other super properties. Any property name that is
      not registered is ignored.
 ### **Example**
@@ -297,12 +297,10 @@ mixpanel.flush();
 ```
 <a name="timeEvent"></a>
 # **timeEvent(eventName)**
-To start a timer that will be stopped and added as a property when a
+To start a timer, that will be stopped and added as a property when a
      corresponding event is tracked.
      For **Example**, if a developer wants to track an "Image Upload" event
-     and he want to also know how long the upload took. Calling this method
-     before the upload code would implicitly cause the track
-     call to record its duration.
+     and he wants to also know how long the upload took, he has to call this method.
 ### **Example**
 ```js
 mixpanel.timeEvent('Image Upload');
@@ -316,36 +314,34 @@ mixpanel.eventElapsedTime('Image Upload');
 ```
 <a name="identify"></a>
 # **identify(distinctId)**
-To identify the user uniquely by providing the user distinct id. After calling track all the events, updates will manipulate the data only for identified users profile.
-     This call does not identify the user for People Analytics, to do that you have to call
-     method.
+To identify the user uniquely by providing the user distinctId. After calling track all the events, updates will manipulate the data only for identified user's profile.
+     This call does not identify the user for People Analytics, to do that you have to call method.
 ### **Example**
 ```js
 mixpanel.identify('1234');
 ```
 <a name="isIdentified"></a>
 # **isIdentified()**
-To check profile of people is identified or not.
+To check profile of user is identified or not.
 ### **Example**
 ```js
 mixpanel.isIdentified();
 ```
-
 <a name="Mixpanel.People"></a>
 # **Mixpanel.People**
 <a name="identify"></a>
 # **identify(eventName)**
 To identify the user uniquely by providing the user distinct id, so all the event, update ,track call
-     will manipulate the data only for identified users profile.
-     This call does not identify the user for People Analytics to do that you have to call
+     will manipulate the data only for identified user's profile.
+     This call does not identify the user for People Analytics, to do that you have to call
      method.
 ### **Example**
 ```js
 mixpanel.people.identify('1234');
 ```
 <a name="set"></a>
-# **set(property, to)**
-To set properties on an user record 
+# **set(propertyName, to)**
+To set properties on an user record.
 ### **Example**
 ```js
 //Set with parameters property and to
@@ -374,20 +370,20 @@ mixpanel.people.setOnce('PaperCount','20');
 <a name="trackCharge"></a>
 # **trackCharge(amount,properties)**
 To track money spent by the current user for revenue analytics and associate
-     properties with the charge. Properties is optional.
+     properties with the charge. Properties are optional.
 ### **Example**
 ```js
 mixpanel.people.trackCharge('500','Revenue');
 ```
 <a name="clearCharges"></a>
 # **clearCharges()**
-To clear the whole transaction history permanently for the identified people profile.
+To clear the whole transaction history permanently for the identified user profile.
 ### **Example**
 ```js
 mixpanel.people.clearCharges();
 ```
 <a name="increment"></a>
-# **increment()**
+# **increment(propertyName, by)**
  To increment the given numeric properties by the given values.Property keys must be String names of numeric properties.
 ### **Example**
 ```js

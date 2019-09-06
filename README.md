@@ -26,7 +26,7 @@ Before you start using npm, if npm is not installed, you'll first need to instal
 ```
 npm install mixpanel-react-native --save
 ```
-Using yarn:
+Or using yarn:
 
 Before you start using yarn, if yarn is not installed, you'll first need to install yarn on your system.
 
@@ -87,7 +87,7 @@ Add package in getPackages method :-
 For iOS and Android if React-Native version is above 0.60 then there is no need of linking. It will get linked automatically.
 
 # **Installation**
-#### iOS (RN >= 0.60)
+#### iOS (RN < 0.60)
 
 If you're already using Cocoapods, add the following to your Podfile
 ```
@@ -124,7 +124,7 @@ Remember to replace *YourTargetName* with your actual target name.
 Next, run ```pod install```.
 
 #### iOS (RN >= 0.60)
-POD file is already present above 0.60. So we only need to add MixpanelReactNative dependency
+Podfile is already present above 0.60. So we only need to add MixpanelReactNative dependency
 ```
 pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 ```
@@ -140,7 +140,7 @@ No need of extra installation in Android.
 
 <a name="usage"></a>
 # **Usage**
-```
+```js
 import Mixpanel from 'mixpanel-react-native';
 ```
 <a name="API"></a>
@@ -149,7 +149,7 @@ Following methods are from all classes.
 
 |  **Method** | **Ios** | **Android** |
 |  ------ | :------: | :------: |
-|[init()](#init()) | &#9989; |  &#9989; |
+|[init()](#init) | &#9989; |  &#9989; |
 |[hasOptedOutTracking()](#hasOptedOutTracking) |  &#9989; |  &#9989;|
 |[optInTracking()](#optInTracking) |  &#9989; |  &#9989;|
 |[optOutTracking()](#optOutTracking) |  &#9989; |  &#9989;|
@@ -190,72 +190,88 @@ Note: To call any method from both classes first you have to call init method fr
 
 <a name="Mixpanel"></a>
 # **Mixpanel**
-# **init()**
-To use library first you have to call init. It will initializes all mixpanel setup.
+<a name="init"></a>
+# **init( mixpanelToken, optOutTrackingDefault)**
+To use library first you have to call init. It will initialize all mixpanel setup. **optOutTrackingDefault** is by default set to false.
 
 ### **Example**
-```
+```js
 import Mixpanel from 'mixpanel-react-native';
-const mixpanel = Mixpanel.init(String token);
-```
 
+const mixpanel = await Mixpanel.init('Your mixpanel token'); // optOutTrackingDefault is false by default
+
+const mixpanelInstance = await Mixpanel.init('Your mixpanel token', true);
+```
+<a name="hasOptedOutTracking"></a>
 # **hasOptedOutTracking()**
-To check user has opted out from tracking or not.
+To check whether user has opted out from tracking or not.
 
 ### **Example**
+```js
+let hasOptedOut = mixpanel.hasOptedOutTracking();
 ```
-mixpanel.hasOptedOutTracking();
-```
-
-# **optInTracking()**
+<a name="optInTracking"></a>
+# **optInTracking(distinctId, properties)**
 To internally track an opt-in event, to opt in an already opted out user from tracking. People updates and track calls will be
      sent to Mixpanel after using this method.
 
 ### **Example**
-```
-mixpanel.optInTracking(String distinctId, JSONObject properties);
-```
+```js
+// Opt-in without any parameters
+mixpanel.optInTracking();
 
+// Opt-in with a distinctId
+mixpanel.optInTracking('1234');
+
+// Opt-in with properties
+mixpanel.optInTracking({'Name': 'ABC'});
+
+// Opt-in with distinctId and properties
+mixpanel.optInTracking('1234', {'Name': 'ABC'});
+```
+<a name="optOutTracking"></a>
 # **optOutTracking()**
 To opt-out user from tracking. So all events and people request will not sent back to the Mixpanel server.
 
 ### **Example**
-```
+```js
 mixpanel.optOutTracking();
 ```
-
-# **track()**
+<a name="track"></a>
+# **track(eventName, properties)**
 To Track an event with properties.
      Properties are optional and can be added only if needed.
-     Properties will allow you to segment your events in your Mixpanel reports.
+     Properties will allow you to segment your events in your mixpanel reports.
      If the event is being timed, the timer will stop and be added as a property.
 
 ### **Example**
-```
-mixpanel.track(String eventName, JSONObject properties);
-```
+```js
+// Track with event-name
+mixpanel.track({'TestEvent'});
 
-
-# **registerSuperProperties()**
+//Track with event-name and property
+mixpanel.track('TrackEvent', {'Status': 'Pending'})
+```
+<a name="registerSuperProperties"></a>
+# **registerSuperProperties(superProperties)**
 To register super properties, once registered, are automatically sent as properties for
      all event tracking calls. 
     
 ### **Example**
+```js
+mixpanel.registerSuperProperties(['Plan': 'Mega','Cost': '2000']);
 ```
-mixpanel.registerSuperProperties(JSONObject properties);
-```
-
-# **registerSuperPropertiesOnce()**
-To register super properties without overwriting ones that have already been set,
-     unless the existing value is equal to defaultValue. DefaultValue is optional.
-     Property keys must be String objects and the supported value types need to conform to MixpanelType.
+<a name="registerSuperPropertiesOnce"></a>
+# **registerSuperPropertiesOnce(superProperties)**
+To register super properties without overwriting ones that have already been set.
+Property keys must be String objects and the supported value types need to conform to MixpanelType.
     
 ### **Example**
+```js
+mixpanel.registerSuperPropertiesOnce(['Role': 'Admin']);
 ```
-mixpanel.registerSuperPropertiesOnce(JSONObject superProperties);
-```
-
-# **unregisterSuperProperty()**
+<a name="unregisterSuperProperty"></a>
+# **unregisterSuperProperty(superProperty)**
  To remove a previously registered super property.
      As an alternative to clearing all properties, unregistering specific super
      properties prevents them from being recorded on future events. This operation
@@ -263,51 +279,51 @@ mixpanel.registerSuperPropertiesOnce(JSONObject superProperties);
      not registered is ignored.
  
 ### **Example**
-```
-mixpanel.unregisterSuperProperty(String superPropertyName);
+```js
+mixpanel.unregisterSuperProperty(['Plan': 'Mega']);
  ```
- 
+<a name="getSuperProperties"></a>
 # **getSuperProperties()**
 To return a json object of the user's current super properties.
 
 ### **Example**
-```
+```js
 mixpanel.getSuperProperties();
 ```
-
+<a name="clearSuperProperties"></a>
 # **clearSuperProperties()**
 To erase all currently registered superProperties.
 
 ### **Example**
-```
+```js
 mixpanel.clearSuperProperties();
 ```
-
-# **alias()**
-To create a distinct_id alias from alias to original.
+<a name="alias"></a>
+# **alias(alias, distinct_id)**
+To create a distinctId alias from alias to the current id. It is used to map an identifier called an alias to the existing distinctId of Mixpanel.
 
 ### **Example**
+```js
+mixpanel.alias('Test123','Test456');
 ```
-mixpanel.alias(String alias, String original);
-```
-
+<a name="reset"></a>
 # **reset()**
 To clear tweaks and all distinct_ids, superProperties, and push registrations from persistent storage.
 
 ### **Example**
-```
+```js
 mixpanel.reset();
 ```
+<a name="flush"></a>
 # **flush()**
-To send all queued message to server. By default, queued data is flushed to the Mixpanel servers every minute. You only need to call this
-     method manually if you want to force a flush at a particular moment.
-
+To send all queued message to server. By default, queued data is flushed to the Mixpanel servers every minute. If you want to force a flush at a particular moment
+ you only need to call this method manually 
 ### **Example**
-```
+```js
 mixpanel.flush();
 ```
-
-# **timeEvent()**
+<a name="timeEvent"></a>
+# **timeEvent(eventName)**
 To start a timer that will be stopped and added as a property when a
      corresponding event is tracked.
      For **Example**, if a developer wants to track an "Image Upload" event
@@ -316,159 +332,159 @@ To start a timer that will be stopped and added as a property when a
      call to record its duration.
 
 ### **Example**
+```js
+mixpanel.timeEvent('Image Upload');
 ```
-mixpanel.timeEvent(String eventName);
-ex. mixpanel.timeEvent(event: "Image Upload");
-```
-
-# **eventElapsedTime()**
+<a name="eventElapsedTime"></a>
+# **eventElapsedTime(eventName)**
 To retrieve the time elapsed for the named event since timeEvent() was called.
 
 ### **Example**
+```js
+mixpanel.eventElapsedTime('Image Upload');
 ```
-mixpanel.eventElapsedTime(String eventName);
-```
-
-# **identify()**
+<a name="identify"></a>
+# **identify(distinctId)**
 To identify the user uniquely by providing the user distinct id. After calling track all the events, updates will manipulate the data only for identified users profile.
      This call does not identify the user for People Analytics, to do that you have to call
      method.
 
 ### **Example**
+```js
+mixpanel.identify('1234');
 ```
-mixpanel.identify(String distinctId);
-```
-
+<a name="isIdentified"></a>
 # **isIdentified()**
 To check profile of people is identified or not.
 
 ### **Example**
-```
+```js
 mixpanel.isIdentified();
 ```
 
 <a name="Mixpanel.People"></a>
 # **Mixpanel.People**
-
-# **identify()**
+<a name="identify"></a>
+# **identify(eventName)**
 To identify the user uniquely by providing the user distinct id, so all the event, update ,track call
      will manipulate the data only for identified users profile.
      This call does not identify the user for People Analytics to do that you have to call
      method.
 
 ### **Example**
+```js
+mixpanel.people.identify('1234');
 ```
-mixpanel.people.identify(String distinctId);
-```
-
-# **set()**
-To set a collection of properties on the identified user
-
+<a name="set"></a>
+# **set(property, to)**
+To set properties on an user record 
 ### **Example**
-```
-mixpanel.people.set(JSONObject properties, to);
-Ex.mixpanel.people.set(property: "Plan",to: "Premium");
-```
+```js
+//Set with parameters property and to
+mixpanel.people.set({property: 'Plan',to: 'Premium'});
 
-# **unset()**
+//Set with parameter property only
+mixpanel.people.set({'Name': 'ABC'});
+```
+<a name="unset"></a>
+# **unset(propertyName)**
 To remove property permanently with the given name from the user's profile.
 
 ### **Example**
+```js
+mixpanel.people.unset('Plan');
 ```
-mixpanel.people.unset(String propertyName);
-```
-
-# **setOnce()**
-To set properties on the current user in Mixpanel People, but doesn't overwrite if
+<a name="setOnce"></a>
+# **setOnce(propertyName, value)**
+To set properties on the current user record, but doesn't overwrite if
      there is an existing value. It is particularly useful for collecting
      data about the user's initial experience and source, as well as dates
      representing the first time something happened.
 ### **Example**
+```js
+mixpanel.people.setOnce('PaperCount','20');
 ```
-mixpanel.people.setOnce(String propertyName, Object value);
-```
-
-# **trackCharge()**
+<a name="trackCharge"></a>
+# **trackCharge(amount,properties)**
 To track money spent by the current user for revenue analytics and associate
      properties with the charge. Properties is optional.
 ### **Example**
+```js
+mixpanel.people.trackCharge('500','Revenue');
 ```
-mixpanel.people.trackCharge(double amount,JSONObject properties);
-```
-
+<a name="clearCharges"></a>
 # **clearCharges()**
 To clear the whole transaction history permanently for the identified people profile.
 
 ### **Example**
-```
+```js
 mixpanel.people.clearCharges();
 ```
-
+<a name="increment"></a>
 # **increment()**
  To increment the given numeric properties by the given values.Property keys must be String names of numeric properties.
 ### **Example**
+```js
+mixpanel.people.increment('Salary', '2000');
 ```
-mixpanel.people.increment(String propertyName, double increment);
-```
-
-# **append()**
+<a name="append"></a>
+# **append(property, value)**
 To append a value to a list-valued property. Property keys must be String objects and the supported value types need to conform to MixpanelType.
 
 ### **Example**
+```js
+mixpanel.people.append('PointCount', '500');
 ```
-mixpanel.people.append(String propertyName, Object value);
-```
-
+<a name="deleteUser"></a>
 # **deleteUser()**
-To delete permanently the identified user's record.
+To delete the identified user's record permanently.
 
 ### **Example**
-```
+```js
 mixpanel.people.deleteUser();
 ```
-
-# **remove()**
+<a name="remove"></a>
+# **remove(name, value)**
  To remove value from a list-valued property only if they are already present in the list.
  
 ### **Example**
-```
- mixpanel.people.remove(String propertyName, Object value);
+```js
+mixpanel.people.remove('PaperCount','20');
  ```
- 
-# **setPushRegistrationId()**
+ <a name="setPushRegistrationId"></a>
+# **setPushRegistrationId(deviceToken)**
 To register the given device to receive push notifications. This will associate the device token with the current user in people profile,
-     which will allows you to send push notifications to the user.
+     which will allow you to send push notifications to the user.
 
 ### **Example**
+```js
+mixpanel.people.setPushRegistrationId('Your deviceToken');
 ```
-mixpanel.people.setPushRegistrationId(String deviceToken);
-```
-
+<a name="getPushRegistrationId"></a>
 # **getPushRegistrationId()**
 To retrieve current Firebase Cloud Messaging token.
 
 ### **Example**
-```
+```js
 mixpanel.people.getPushRegistrationId();
 ```
-
-# **clearPushRegistrationId()**
+<a name="clearPushRegistrationId"></a>
+# **clearPushRegistrationId(deviceToken)**
  To clear all current Firebase Cloud Messaging tokens manually from Mixpanel.
 
 ### **Example**
+```js
+mixpanel.people.clearPushRegistrationId('Your deviceToken');
 ```
-mixpanel.people.clearPushRegistrationId(String deviceToken);
-```
+<a name="union"></a>
+# **union(name, properties)**
+ Adds values to a list-valued property only if they are not already present in the list. If the property does not currently exist, it will be created with the given list as it's value. If the property exists and is not list-valued, the union will be ignored.
 
-# **union()**
- Union list properties. Property values must be array objects.
- 
 ### **Example**
-```
- mixpanel.people.union(String properties, JSONArray value);
+```js
+ mixpanel.people.union('Hobbies','Singing');
  ```
 
 You're done! You've successfully integrated the Mixpanel React-Native library into your app. 
 
 Have any questions? Reach out to [support@mixpanel.com](mailto:support@mixpanel.com) to speak to someone smart, quickly.
-

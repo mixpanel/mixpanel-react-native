@@ -390,7 +390,7 @@ mixpanel.people.clearCharges();
 mixpanel.people.increment('Salary', '2000');
 ```
 <a name="append"></a>
-# **append(property, value)**
+# **append(propertyName, value)**
 To append a value to a list-valued property. Property keys must be String objects and the supported value types need to conform to MixpanelType.
 ### **Example**
 ```js
@@ -404,7 +404,7 @@ To delete the identified user's record permanently.
 mixpanel.people.deleteUser();
 ```
 <a name="remove"></a>
-# **remove(name, value)**
+# **remove(propertyName, value)**
  To remove value from a list-valued property only if they are already present in the list.
 ### **Example**
 ```js

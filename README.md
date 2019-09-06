@@ -72,7 +72,7 @@ Add package in getPackages method :-
    }
 ```
 # **Linking (RN >= 0.60)**
-For iOS and Android if React-Native version is above 0.60 then there is no need of linking. It will get linked automatically.
+For iOS and Android if React-Native version is above 0.60, then there is no need of linking. It will get linked automatically.
 
 # **Installation**
 #### iOS (RN < 0.60)
@@ -170,7 +170,7 @@ Following methods are from Mixpanel and People class.
 - [Mixpanel.People](#Mixpanel.People)
 
 ```
-Note: To call any method from both classes first you have to call init method from Mixpanel class.
+Note: To call any method from both classes, first you have to call init method from Mixpanel class.
 ```
 
 <a name="Mixpanel"></a>
@@ -322,7 +322,7 @@ mixpanel.identify('1234');
 ```
 <a name="isIdentified"></a>
 # **isIdentified()**
-To check profile of user is identified or not.
+To check whether profile of user is identified or not.
 ### **Example**
 ```js
 mixpanel.isIdentified();

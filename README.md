@@ -247,7 +247,7 @@ To Track an event with properties.
 ### **Example**
 ```js
 // Track with event-name
-mixpanel.track({'TestEvent'});
+mixpanel.track({'TrackEvent'});
 
 //Track with event-name and property
 mixpanel.track('TrackEvent', {'Status': 'Pending'})

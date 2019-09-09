@@ -27,7 +27,8 @@ var ERROR_MESSAGE = {
     REQUIRED_PARAMETER: " is required",
     REQUIRED_OBJECT: " is required. Cannot be null or undefined",
     INVALID_OBJECT: " is not a valid json object",
-    REQUIRED_DOUBLE: "expected parameter of type `double`"
+    REQUIRED_DOUBLE: "expected parameter of type `double`",
+    REQUIRED_NON_OBJECT: "expected parameter of type `string`, `number`, or `boolean`"
 };
 
 var DEFAULT_OPT_OUT = false;
@@ -216,12 +217,14 @@ export class People {
       Set properties on an user record in engage
      */
     set(prop, to) {
+        let properties = {}; 
         if (typeof prop === "object") {
             prop = prop || {};
-            return MixpanelReactNative.set(this.token, prop);
-        } 
-        to = to || {};
-        return MixpanelReactNative.setPropertyTo(this.token, Helper.getValidString(prop, KEY.PROPERTY_NAME), to);
+            properties = JSON.parse(JSON.stringify(prop));
+        } else {
+            properties[Helper.getValidObject(prop, KEY.PROPERTY_NAME)] = to;
+        }
+        return MixpanelReactNative.set(this.token, properties);
     }
 
     /**
@@ -234,11 +237,11 @@ export class People {
     }
 
     /**
-      Append a value to a list-valued people analytics property.
+      Track a revenue transaction for the identified people profile.
      */
     trackCharge(charge, properties) {
         if (isNaN(parseFloat(charge))) {
-            throw new Error(ERROR_MESSAGE.REQUIRED_DOUBLE )
+            throw new Error(ERROR_MESSAGE.REQUIRED_DOUBLE)
         }
         properties = properties || {};
         properties = Helper.getValidObject(properties, KEY.PROPERTIES);
@@ -256,29 +259,37 @@ export class People {
       Increment/Decrement properties on an user record in engage
      */
     increment(prop, by) {
-        if (typeof prop === "object") {
-            var add = {};
+        var add = {};
+        if (typeof prop === "object") {            
             Object.keys(prop).forEach(function(key) {
                 var val = prop[key];
                 if (isNaN(parseFloat(val))) {
                     throw new Error(ERROR_MESSAGE.REQUIRED_DOUBLE )
                 }
              add[key] = val;
-            });
-            return MixpanelReactNative.increment(this.token, add);
-        } else if (typeof by === "number" || !by) {
+            });            
+        } else {
             by = by || 1; 
+            if (isNaN(parseFloat(by))) {
+                throw new Error(ERROR_MESSAGE.REQUIRED_DOUBLE )
+            }            
+            add[Helper.getValidString(prop, KEY.PROPERTY_NAME)] = by;
         }
-        return MixpanelReactNative.incrementPropertyBy(this.token, Helper.getValidString(prop, KEY.PROPERTY_NAME), by);
+        return MixpanelReactNative.increment(this.token, add);        
     }
 
     /**
       Append a value to a list-valued people analytics property.
      */
-    append(name, properties) {
-        properties = properties || {};
-        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
-        return MixpanelReactNative.append(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), properties);
+    append(name, value) {
+        let appendProp = {};
+        name = Helper.getValidString(name, KEY.PROPERTY_NAME);
+        if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
+            throw new Error(ERROR_MESSAGE.REQUIRED_NON_OBJECT);
+        } else {
+            appendProp[name] = value;
+        }
+        return MixpanelReactNative.append(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), appendProp);
     }
 
     /**

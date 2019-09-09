@@ -110,7 +110,7 @@ Remember to replace *YourTargetName* with your actual target name.
 
 Next, run ```pod install```.
 #### iOS (RN >= 0.60)
-Podfile is already present above 0.60. So we only need to add MixpanelReactNative dependency
+Podfile is already present above 0.60. So we only need to add MixpanelReactNative dependency.
 ```js
 pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
 ```
@@ -331,7 +331,7 @@ mixpanel.isIdentified();
 # **Mixpanel.People**
 <a name="identify"></a>
 # **identify(eventName)**
-To identify the user uniquely by providing the user distinct id, so all the event, update ,track call
+To identify the user uniquely by providing the user distinct id, so all the events, updates, track call
      will manipulate the data only for identified user's profile.
      This call does not identify the user for People Analytics, to do that you have to call
      method.
@@ -384,7 +384,7 @@ mixpanel.people.clearCharges();
 ```
 <a name="increment"></a>
 # **increment(propertyName, by)**
- To increment the given numeric properties by the given values.Property keys must be String names of numeric properties.
+ To increment the given numeric properties by the given values. Property keys must be String names of numeric properties.
 ### **Example**
 ```js
 mixpanel.people.increment('Salary', '2000');
@@ -427,7 +427,7 @@ mixpanel.people.getPushRegistrationId();
 ```
 <a name="clearPushRegistrationId"></a>
 # **clearPushRegistrationId(deviceToken)**
- To clear current Firebase Cloud Messaging token manually from Mixpanel.
+ Unregister a specific device token from the ability to receive push notifications. This will remove the provided push token saved to this user profile.
 ### **Example**
 ```js
 mixpanel.people.clearPushRegistrationId('Your deviceToken');

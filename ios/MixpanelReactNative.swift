@@ -30,7 +30,7 @@ open class MixpanelReactNative: NSObject {
     /**
      Opt out tracking.
      
-     This method is used to opt out tracking. This causes all events and people request no longer
+     This method is used to opt out from tracking. This causes all events and people request no longer
      to be sent back to the Mixpanel server.
      */
     @objc

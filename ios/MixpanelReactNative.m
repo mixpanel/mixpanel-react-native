@@ -82,7 +82,4 @@ RCT_EXTERN_METHOD(clearPushRegistrationId: (NSString *)token deviceToken: (NSStr
 
 RCT_EXTERN_METHOD(clearAllPushRegistrationId: (NSString *)token resolve: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-// MARK: - Test Method
-
-RCT_EXTERN_METHOD(getInformation: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 @end

@@ -667,7 +667,6 @@ open class MixpanelReactNative: NSObject {
     func setPushRegistrationId(_ token: String, deviceToken: String,
                                resolver resolve: RCTPromiseResolveBlock,
                                rejecter reject: RCTPromiseRejectBlock) -> Void {
-        //let instance = MixpanelReactNative.getMixpanelInstance(token)
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         if instance == nil {
             reject(Constants.ERROR,Constants.INSTANCE_NOT_FOUND,nil)

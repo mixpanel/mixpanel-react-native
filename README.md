@@ -78,7 +78,7 @@ For iOS and Android if React-Native version is above 0.60, then there is no need
 #### iOS (RN < 0.60)
 If you're already using Cocoapods, add the following to your Podfile
 ```js
-pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
+pod 'MixpanelReactNative', :path => '../node_modules/mixpanel-react-native'
 ```
 
 Otherwise, setup Podfile according to [react native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps), so the Podfile will look like this:
@@ -112,7 +112,7 @@ Next, run ```pod install```.
 #### iOS (RN >= 0.60)
 Podfile is already present above 0.60. So we only need to add MixpanelReactNative dependency.
 ```js
-pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
+pod 'MixpanelReactNative', :path => '../node_modules/mixpanel-react-native'
 ```
 Next, run ```pod install```.
 ```

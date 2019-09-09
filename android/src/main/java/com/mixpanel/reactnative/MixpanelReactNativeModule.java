@@ -311,22 +311,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     /**
-     * Set a single property with the given name and value for this user.
-     * The given name and value will be assigned to the user in Mixpanel People Analytics,
-     * possibly overwriting an existing property with the same name.
-     */
-    @ReactMethod
-    public void setPropertyTo(final String token, String propertyName, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance) {
-            JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
-            AutomaticProperties.appendLibraryProperties(sendProperties);
-            instance.getPeople().set(propertyName, sendProperties);
-            promise.resolve(null);
-        }
-    }
-
-    /**
      * Permanently removes the property with the given name from the user's profile
      */
     @ReactMethod
@@ -379,20 +363,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
             instance.getPeople().clearCharges();
-            promise.resolve(null);
-        }
-    }
-
-    /**
-     * Add the given amount to an existing property on the identified user. If the user does not already
-     * have the associated property, the amount will be added to zero. To reduce a property,
-     * provide a negative number for the value.
-     */
-    @ReactMethod
-    public void incrementPropertyBy(final String token, String name, double incrementValue, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance) {
-            instance.getPeople().increment(name, incrementValue);
             promise.resolve(null);
         }
     }

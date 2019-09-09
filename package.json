@@ -25,6 +25,7 @@
   "TODO": "Change the git URL before publishing on npm",
   "homepage": "https://gitlab.com/tapsense/mixpanel-react-native#readme",
   "metadata":{
-    "mp_lib": "react-native"
-  }
+    "mp_lib": "react-native",
+    "$android_lib_version": ""
+	}
 }

@@ -8,9 +8,10 @@ Pod::Spec.new do |s|
   s.summary = package['description']
   s.description = package['description']
   s.license = package['license']
-  s.author = package['author']
+  s.author = { 'Mixpanel, Inc' => 'support@mixpanel.com' }  
   s.homepage = package['homepage']
   s.platform = :ios, "8.0"
+  s.swift_version = '5.0'
   s.source = { :git => "https://github.com/mixpanel/mixpanel-react-native.git", :tag => s.version }
   s.source_files = "ios/*.{swift,h,m}"
   s.requires_arc = true

@@ -12,7 +12,7 @@ if (!MixpanelReactNative) {
     If none of these fix the issue, please open an issue on the Github repository: https://github.com/mixpanel/mixpanel-react-native`);
 }
 
-var KEY = {
+const KEY = {
     DISTINCT_ID: "Distinct id",
     ALIAS: "Alias",
     EVENT_NAME: "Event name",
@@ -22,8 +22,8 @@ var KEY = {
     TOKEN: "Token"
 };
 
-var ERROR_MESSAGE = {
-    NEED_MP_TOKEN: "The Mixpanel instance must have a valid token and must call: `init()`",
+const ERROR_MESSAGE = {
+    NEED_MP_TOKEN: "The Mixpanel instance must have a valid token and must call: `const mixpanel = await Mixpanel.init('<Your Mixpanel Token>')`",
     REQUIRED_PARAMETER: " is required",
     REQUIRED_OBJECT: " is required. Cannot be null or undefined",
     INVALID_OBJECT: " is not a valid json object",
@@ -31,19 +31,18 @@ var ERROR_MESSAGE = {
     REQUIRED_NON_OBJECT: "expected parameter of type `string`, `number`, or `boolean`"
 };
 
-var DEFAULT_OPT_OUT = false;
+const DEFAULT_OPT_OUT = false;
 
 export default class Mixpanel {
     token: ?string;
     people: ?People;
     constructor(token) {   
-        token = Helper.getValidString(token, KEY.Token);
-        this.token = token;
+        this.token = Helper.getValidString(token, KEY.Token);
         this.people = new People(this.token);
     }
 
     /**
-      Initialize mixpanel setup
+      Initialize mixpanel setup.
      */
     static async init (token, optOutTrackingDefault = DEFAULT_OPT_OUT) {
         let metadata = Helper.getMetaData();
@@ -52,34 +51,32 @@ export default class Mixpanel {
     }
 
     /**
-      Returns if the current user has opted out tracking.
+      Check whether the current user has opted out tracking or not.
      */
     hasOptedOutTracking() {
         return MixpanelReactNative.hasOptedOutTracking(this.token);        
     }
 
     /**
-      Opt in tracking.
-      Use this method to opt in an already opted out user from tracking. People updates and track calls will be
+      This method is used to opt in an already opted out user from tracking. People updates and track calls will be
       sent to Mixpanel after using this method.
      */
-    optInTracking(distinct_id, properties) {
+    optInTracking(distinctId, properties) {
         if (arguments.length === 0) {
             properties = {};
-        } else if (typeof distinct_id === "string") {
-            distinct_id = Helper.getValidString(distinct_id, KEY.DISTINCT_ID);
+        } else if (typeof distinctId === "string") {
+            distinctId = Helper.getValidString(distinctId, KEY.DISTINCT_ID);
             properties = properties || {};
-        } else if (typeof distinct_id === "object") {
-            properties = distinct_id;
-            distinct_id = null;
+        } else if (typeof distinctId === "object") {
+            properties = distinctId;
+            distinctId = null;
         }
         properties = Helper.getValidObject(properties, KEY.PROPERTIES);
-        return MixpanelReactNative.optInTracking(this.token, distinct_id, properties);
+        return MixpanelReactNative.optInTracking(this.token, distinctId, properties);
     }
 
     /**
-      Opt out tracking.
-      This method is used to opt out tracking. This causes all events and people request no longer
+      This method is used to opt out from tracking. This causes all events and people request no longer
       to be sent back to the Mixpanel server.
      */
     optOutTracking() {
@@ -88,31 +85,28 @@ export default class Mixpanel {
 
     /**
       Identify a user with a unique ID instead of a Mixpanel
-      randomly generated distinct_id. If the method is never called,
+      randomly generated distinctId. If the method is never called,
       then unique visitors will be identified by a UUID generated
       the first time they visit the site.
      */
-    identify(distinct_id) {
-        return MixpanelReactNative.identify(this.token, Helper.getValidString(distinct_id, KEY.DISTINCT_ID));
+    identify(distinctId) {
+        return MixpanelReactNative.identify(this.token, Helper.getValidString(distinctId, KEY.DISTINCT_ID));
     }
 
     /** 
-      This function creates an alias for distinct_id
+      This function creates an alias for distinctId
      */
-    alias(alias, distinct_id) {
-        return MixpanelReactNative.alias(this.token, Helper.getValidString(alias, KEY.ALIAS), Helper.getValidString(distinct_id, KEY.DISTINCT_ID));
+    alias(alias, distinctId) {
+        return MixpanelReactNative.alias(this.token, Helper.getValidString(alias, KEY.ALIAS), Helper.getValidString(distinctId, KEY.DISTINCT_ID));
     }
 
     /**
       Track an event. 
      */
-    track(event_name, properties) {
-        event_name = Helper.getValidString(event_name, KEY.EVENT_NAME);
-        if (properties === undefined) {
-            properties = {};
-        } 
-        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
-        return MixpanelReactNative.track(this.token, event_name, properties);
+    track(eventName, properties) {
+        eventName = Helper.getValidString(eventName, KEY.EVENT_NAME);
+        properties = Helper.getValidObject(properties || {}, KEY.PROPERTIES);
+        return MixpanelReactNative.track(this.token, eventName, properties);
     }
 
     /**
@@ -138,43 +132,43 @@ export default class Mixpanel {
     /**
       Delete a super property stored with the current user.
      */
-    unregisterSuperProperty(property_name) {
-        return MixpanelReactNative.unregisterSuperProperty(this.token, Helper.getValidString(property_name,KEY.PROPERTY_NAME));
+    unregisterSuperProperty(propertyName) {
+        return MixpanelReactNative.unregisterSuperProperty(this.token, Helper.getValidString(propertyName, KEY.PROPERTY_NAME));
     }
 
     /**
-      Gets current user super property.
       For Android only
+      Get current user super property.
      */
     getSuperProperties() {
         return MixpanelReactNative.getSuperProperties(this.token);
     }
 
     /**
-     Clears all currently set super properties.
+     Clear all currently set super properties.
      */
     clearSuperProperties() {
         return MixpanelReactNative.clearSuperProperties(this.token);
     }
 
     /**
-      Time an event by including the time between this call and a
+      Use to calculate time required for an event by including the time between this call and a
       later 'track' call for the same event in the properties sent
       with the event.
      */
-    timeEvent(event_name) {
-        return MixpanelReactNative.timeEvent(this.token, Helper.getValidString(event_name, KEY.EVENT_NAME));
+    timeEvent(eventName) {
+        return MixpanelReactNative.timeEvent(this.token, Helper.getValidString(eventName, KEY.EVENT_NAME));
     }
 
     /**
-      Retrieves the time elapsed for the named event since time(event:) was called.
+      Retrieve the time elapsed for the named event since time(event:) was called.
      */
-    eventElapsedTime(event_name) {
-        return MixpanelReactNative.eventElapsedTime(this.token, Helper.getValidString(event_name, KEY.EVENT_NAME));
+    eventElapsedTime(eventName) {
+        return MixpanelReactNative.eventElapsedTime(this.token, Helper.getValidString(eventName, KEY.EVENT_NAME));
     } 
 
     /**
-      Clears super properties and generates a new random distinct_id for this instance.
+      Clear super properties and generates a new random distinctId for this instance.
       Useful for clearing data when a user logs out.
      */
     reset() {
@@ -183,13 +177,14 @@ export default class Mixpanel {
 
     /**
       For Android only
+      Use to check whether user is identified or not.
      */
     isIdentified() {
         return MixpanelReactNative.isIdentified(this.token);
     }
      
     /**
-      Uploads queued data to the Mixpanel server.
+      Upload queued data to the Mixpanel server.
      */
     flush() {
         return MixpanelReactNative.flush(this.token);
@@ -205,16 +200,16 @@ export class People {
 
     /**
       Identify a user with a unique ID instead of a Mixpanel
-      randomly generated distinct_id. If the method is never called,
+      randomly generated distinctId. If the method is never called,
       then unique visitors will be identified by a UUID generated
       the first time they visit the site.
      */
-    identify(distinct_id) {
-        return MixpanelReactNative.identify(this.token, Helper.getValidString(distinct_id, KEY.DISTINCT_ID));
+    identify(distinctId) {
+        return MixpanelReactNative.identify(this.token, Helper.getValidString(distinctId, KEY.DISTINCT_ID));
     }
 
     /**
-      Set properties on an user record in engage
+      Set properties on an user record in engage.
      */
     set(prop, to) {
         let properties = {}; 
@@ -256,13 +251,13 @@ export class People {
     }
  
     /**
-      Increment/Decrement properties on an user record in engage
+      Increment/Decrement properties on an user record in engage.
      */
-    increment(prop, by) {
+    increment(propertyName, by) {
         var add = {};
-        if (typeof prop === "object") {            
-            Object.keys(prop).forEach(function(key) {
-                var val = prop[key];
+        if (typeof propertyName === "object") {            
+            Object.keys(propertyName).forEach(function(key) {
+                var val = propertyName[key];
                 if (isNaN(parseFloat(val))) {
                     throw new Error(ERROR_MESSAGE.REQUIRED_DOUBLE )
                 }
@@ -273,7 +268,7 @@ export class People {
             if (isNaN(parseFloat(by))) {
                 throw new Error(ERROR_MESSAGE.REQUIRED_DOUBLE )
             }            
-            add[Helper.getValidString(prop, KEY.PROPERTY_NAME)] = by;
+            add[Helper.getValidString(propertyName, KEY.PROPERTY_NAME)] = by;
         }
         return MixpanelReactNative.increment(this.token, add);        
     }
@@ -293,14 +288,14 @@ export class People {
     }
 
     /**
-      Delete an user record in engage
+      Delete an user record in engage.
      */
     deleteUser() {
         return MixpanelReactNative.deleteUser(this.token);
     }
 
     /**
-      Removes list properties.
+      Remove list properties.
      */
     remove(name, properties) {
         properties = properties || {};
@@ -308,7 +303,7 @@ export class People {
     }
     
     /**
-      Adds values to a list-valued property only if they are not already present in the list.  
+      Add values to a list-valued property only if they are not already present in the list.  
      */
     union(name, properties) {
         properties = Helper.getValidObject(properties, KEY.PROPERTIES);
@@ -332,13 +327,14 @@ export class People {
 
     /**
       For Android only
+      Retrieve current Firebase Cloud Messaging token.
      */
     getPushRegistrationId() {
         return MixpanelReactNative.getPushRegistrationId(this.token);
     }
 
     /**
-      Clears all currently set super properties.
+      Unregister specific device token from the ability to receive push notifications. This will remove the provided push token saved to user profile.
      */
     clearPushRegistrationId(deviceToken) {
         return MixpanelReactNative.clearPushRegistrationId(this.token, Helper.getValidString(deviceToken, KEY.DEVICE_TOKEN));
@@ -348,27 +344,27 @@ export class People {
 class Helper {
     
     /**
-     * Gets valid string 
+      Get valid string. 
      */
-    static getValidString(str, parameter_name) {
+    static getValidString(str, parameterName) {
         if (!str || str === "" ) {
-            throw new Error(parameter_name + ERROR_MESSAGE.REQUIRED_PARAMETER );
+            throw new Error(parameterName + ERROR_MESSAGE.REQUIRED_PARAMETER );
         }
         return str;
     }
 
     /**
-     * Gets valid object 
+      Get valid object. 
      */
-    static getValidObject(obj, parameter_name) {
+    static getValidObject(obj, parameterName) {
         if (typeof obj !== "object") {
-            throw new Error(parameter_name + ERROR_MESSAGE.INVALID_OBJECT);
+            throw new Error(parameterName + ERROR_MESSAGE.INVALID_OBJECT);
         }
         return obj;
     }
     
     /**
-     * Gets the library data from package.json file. 
+      Get the library data from package.json file. 
      */
     static getMetaData() {
         let metadata = JSON.parse(JSON.stringify(packageJson.metadata));

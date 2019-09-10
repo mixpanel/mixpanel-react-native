@@ -201,6 +201,16 @@ export class People {
     }
 
     /**
+      Identify a user with a unique ID instead of a Mixpanel
+      randomly generated distinctId. If the method is never called,
+      then unique visitors will be identified by a UUID generated
+      the first time they visit the site.
+     */
+    identify(distinctId) {
+        return MixpanelReactNative.identify(this.token, Helper.getValidString(distinctId, KEY.DISTINCT_ID));
+    }
+
+    /**
       Set properties on an user record in engage.
      */
     set(prop, to) {

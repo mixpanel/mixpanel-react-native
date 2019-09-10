@@ -43,6 +43,8 @@ export default class PeopleScreen extends React.Component {
   */
   flush = () => {
     this.mixpanel.people.append("Hobies", "Singing");
+    this.mixpanel.people.union("Hobies", ["Dancing", "Travelling"]);
+    this.mixpanel.people.union("Hobies", { "Hobies": ["Playing"]});
     this.mixpanel.flush();
   }
   render() {

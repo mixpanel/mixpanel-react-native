@@ -19,7 +19,7 @@ class EventScreen extends React.Component {
        * Identify the user uniquely by providing the user distinct id
    */
   identify = () => {
-    this.mixpanel.people.identify(this.state.TextInput_Id);
+    this.mixpanel.identify(this.state.TextInput_Id);
   }
   /**
        * Use this method to opt-in an already opted-out user from tracking.

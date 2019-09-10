@@ -19,7 +19,8 @@ const KEY = {
     PROPERTIES: "Properties",
     PROPERTY_NAME: "Property name",
     DEVICE_TOKEN: "Device token",
-    TOKEN: "Token"
+    TOKEN: "Token",
+    VALUES: "Values"
 };
 
 const ERROR_MESSAGE = {
@@ -27,6 +28,7 @@ const ERROR_MESSAGE = {
     REQUIRED_PARAMETER: " is required",
     REQUIRED_OBJECT: " is required. Cannot be null or undefined",
     INVALID_OBJECT: " is not a valid json object",
+    INVALID_ARRAY: " is not a valid array",
     REQUIRED_DOUBLE: "expected parameter of type `double`",
     REQUIRED_NON_OBJECT: "expected parameter of type `string`, `number`, or `boolean`"
 };
@@ -320,9 +322,9 @@ export class People {
     union(name, values) {
         name = Helper.getValidString(name, KEY.PROPERTY_NAME);
         if (!Array.isArray(values)) {
-            throw new Error("values is not an array");
+            throw new Error(KEY.VALUES + ERROR_MESSAGE.INVALID_ARRAY);
         }
-        
+
         if (Platform.OS === 'ios') {
             return MixpanelReactNative.union(this.token, {name: values});
         } else {

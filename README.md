@@ -345,7 +345,7 @@ To set properties on an user record.
 ### **Example**
 ```js
 //Set with parameters property and to
-mixpanel.people.set({property: 'Plan',to: 'Premium'});
+mixpanel.people.set({property: 'Plan', to: 'Premium'});
 
 //Set with parameter property only
 mixpanel.people.set({'Name': 'ABC'});
@@ -365,7 +365,11 @@ To set properties on the current user record, but doesn't overwrite if
      representing the first time something happened.
 ### **Example**
 ```js
-mixpanel.people.setOnce('PaperCount','20');
+//SetOnce with parameters property and to
+mixpanel.people.setOnce({property: 'PaperCount', to: '20'});
+
+//SetOnce with parameter property only
+mixpanel.people.setOnce({property: 'PaperCount'});
 ```
 <a name="trackCharge"></a>
 # **trackCharge(amount,properties)**
@@ -373,7 +377,7 @@ To track money spent by the current user for revenue analytics and associate
      properties with the charge. Properties are optional.
 ### **Example**
 ```js
-mixpanel.people.trackCharge('500','Revenue');
+mixpanel.people.trackCharge('500', 'Revenue');
 ```
 <a name="clearCharges"></a>
 # **clearCharges()**

@@ -32,7 +32,7 @@ RCT_EXTERN_METHOD(eventElapsedTime: (NSString *)token event: (NSString *)event r
 
 RCT_EXTERN_METHOD(identify: (NSString *)token distinctId: (NSString *)distinctId resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(alias: (NSString *)token alias(NSString *)alias distinctId: (NSString *)distinctId usePeople: (BOOL)usePeople resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(alias: (NSString *)token alias: (NSString *)alias distinctId: (NSString *)distinctId resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(flush: (NSString *)token resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
@@ -46,7 +46,7 @@ RCT_EXTERN_METHOD(registerSuperPropertiesOnce: (NSString *)token properties: (NS
 
 RCT_EXTERN_METHOD(getSuperProperties: (NSString *)token resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(unregisterSuperProperty: (NSString *)token propertyName: (NSString *)propertyName properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(unregisterSuperProperty: (NSString *)token propertyName: (NSString *)propertyName resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(clearSuperProperties: (NSString *)token resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
@@ -54,21 +54,17 @@ RCT_EXTERN_METHOD(clearSuperProperties: (NSString *)token resolver: (RCTPromiseR
 
 RCT_EXTERN_METHOD(set: (NSString *)token properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(setPropertyTo: (NSString *)token property: (NSString *)property to: (id)to resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
-
 RCT_EXTERN_METHOD(setOnce: (NSString *)token properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(unset: (NSString *)token properties: (NSArray *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(increment: (NSString *)token properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(incrementPropertyBy: (NSString *)token property: (NSString *)property by: (double)by resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
-
 RCT_EXTERN_METHOD(append: (NSString *)token properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(remove: (NSString *)token propertyName: (NSString *)propertyName properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(remove: (NSString *)token properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(union: (NSString *)token propertyName: (NSString *)propertyName properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(union: (NSString *)token properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(trackCharge: (NSString *)token amount: (double)amount properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
@@ -81,5 +77,4 @@ RCT_EXTERN_METHOD(setPushRegistrationId: (NSString *)token deviceToken: (NSStrin
 RCT_EXTERN_METHOD(clearPushRegistrationId: (NSString *)token deviceToken: (NSString *)deviceToken resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(clearAllPushRegistrationId: (NSString *)token resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
-
 @end

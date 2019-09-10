@@ -305,15 +305,29 @@ export class People {
         } else {
             removeProp[name] = value;
         }
-        return MixpanelReactNative.remove(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), removeProp);
+
+        if (Platform.OS === 'ios') {
+            return MixpanelReactNative.remove(this.token, removeProp);
+        } else {
+            return MixpanelReactNative.remove(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), removeProp);
+        }
+        
     }
   
     /**
       Add values to a list-valued property only if they are not already present in the list.  
      */
-    union(name, properties) {
-        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
-        return MixpanelReactNative.union(this.token, name, properties);
+    union(name, values) {
+        name = Helper.getValidString(name, KEY.PROPERTY_NAME);
+        if (!Array.isArray(values)) {
+            throw new Error("values is not an array");
+        }
+        
+        if (Platform.OS === 'ios') {
+            return MixpanelReactNative.union(this.token, {name: values});
+        } else {
+            return MixpanelReactNative.union(this.token, name, values);
+        }
     }
 
     /**

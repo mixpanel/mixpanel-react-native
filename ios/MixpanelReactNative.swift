@@ -10,7 +10,6 @@ open class MixpanelReactNative: NSObject {
      Create Mixpanel instance by providing your project token
      and boolean value for opting out tracking. Default value of optOutTrackingDefault is
      false, by setting it to true will prevent data from being collected by default.
-     This instance of Mixpanel you can use to send events and updates to Mixpanel.
      */
     @objc
     func initialize(_ token: String,
@@ -27,8 +26,6 @@ open class MixpanelReactNative: NSObject {
     // MARK: - Opting Users Out of Tracking
     
     /**
-     Opt out tracking.
-     
      This method is used to opt out from tracking. This causes all events and people request no longer
      to be sent back to the Mixpanel server.
      */
@@ -59,8 +56,6 @@ open class MixpanelReactNative: NSObject {
     }
     
     /**
-     Opt in tracking.
-     
      Use this method to opt in an already opted out user from tracking. People updates and track calls will be
      sent to Mixpanel after using this method.
      
@@ -87,7 +82,6 @@ open class MixpanelReactNative: NSObject {
      Track an event with properties.
      Properties are optional and can be added only if needed.
      Properties will allow you to segment your events in your Mixpanel reports.
-     If the event is being timed, the timer will stop and be added as a property.
      */
     @objc
     func track(_ token: String, event: String?,
@@ -111,10 +105,7 @@ open class MixpanelReactNative: NSObject {
      corresponding event is tracked.
      
      This method is intended to be used in advance of events that have
-     a duration. For example, if a developer were to track an "Image Upload" event
-     she might want to also know how long the upload took. Calling this method
-     before the upload code would implicitly cause the `track`
-     call to record its duration.
+     a duration.
      */
     @objc
     func timeEvent(_ token: String, event: String,
@@ -162,7 +153,7 @@ open class MixpanelReactNative: NSObject {
     // MARK: - Managing User Identity
     
     /**
-     Identify the user uniquely by providing the user distinct id, so all the event, update, track call
+     Identify the user uniquely by providing the user's distinctId, so all the event, update, track call
      will manipulate the data only for identified user's profile.
      */
     @objc
@@ -183,13 +174,7 @@ open class MixpanelReactNative: NSObject {
      
      This method is used to map an identifier called an alias to the existing Mixpanel
      distinctId. This causes all events and people requests sent with the alias to be
-     mapped back to the original distinctId. The recommended usage pattern is to call
-     createAlias: and then identify: (with their new user ID)
-     when they log in the next time. This will keep your signup funnels working
-     correctly.
-     This makes the current id and 'Alias' interchangeable distinct ids.
-     Mixpanel.
-     mixpanelInstance.createAlias("Alias", mixpanelInstance.distinctId)
+     mapped back to the original distinctId.
      */
     @objc
     func alias(_ token: String, alias: String,
@@ -215,7 +200,7 @@ open class MixpanelReactNative: NSObject {
      */
     @objc
     func flush(_ token: String, resolver resolve: RCTPromiseResolveBlock,
-               rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
+               rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         if instance == nil {
             reject(Constants.ERROR, Constants.INSTANCE_NOT_FOUND, nil)
@@ -227,7 +212,6 @@ open class MixpanelReactNative: NSObject {
     
     /**
      Clear all stored properties including the distinctId.
-     Useful if your app's user logs out.
      */
     @objc
     func reset(_ token: String, resolver resolve: RCTPromiseResolveBlock,
@@ -366,33 +350,11 @@ open class MixpanelReactNative: NSObject {
     }
     
     /**
-     Convenience method for setting a single property in Mixpanel People.
-     
-     Property keys must be String objects and the supported value types need to conform to MixpanelType.
-     MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType], [String: MixpanelType], Date, URL, or NSNull.
-     */
-    @objc
-    func setPropertyTo(_ token: String, property: String,
-                       to: Any,
-                       resolver resolve: RCTPromiseResolveBlock,
-                       rejecter reject: RCTPromiseRejectBlock) -> Void {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-        if instance == nil {
-            reject(Constants.ERROR, Constants.INSTANCE_NOT_FOUND, nil)
-        } else {
-            instance?.people.set(property: property, to: MixpanelTypeHandler.ToMixpanelType(to as Any)!)
-            resolve(nil)
-        }
-    }
-    
-    /**
      Set properties on the current user in Mixpanel People, but doesn't overwrite if
      there is an existing value.
      
      This method is identical to `set:` except it will only set
-     properties that are not already set. It is particularly useful for collecting
-     data about the user's initial experience and source, as well as dates
-     representing the first time something happened.
+     properties that are not already set.
      */
     @objc
     func setOnce(_ token: String, properties: [String: Any],
@@ -412,7 +374,7 @@ open class MixpanelReactNative: NSObject {
      in Mixpanel People.
      
      The properties array must contain String names of properties. There will be no effect on properties
-     which doesn't exist.
+     which do not exist.
      */
     @objc
     func unset(_ token: String, properties: [String],
@@ -448,25 +410,7 @@ open class MixpanelReactNative: NSObject {
     }
     
     /**
-     Convenience method for incrementing a single numeric property by the specified
-     amount.
-     */
-    @objc
-    func incrementPropertyBy(_ token: String, property: String,
-                             by: Double,
-                             resolver resolve: RCTPromiseResolveBlock,
-                             rejecter reject: RCTPromiseRejectBlock) -> Void {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-        if instance == nil {
-            reject(Constants.ERROR, Constants.INSTANCE_NOT_FOUND, nil)
-        } else {
-            instance?.people.increment(property: property, by: by)
-            resolve(nil)
-        }
-    }
-    
-    /**
-     Append values to list properties.
+     Append value to list-valued properties.
      
      Property keys must be String objects and the supported value types need to conform to MixpanelType.
      MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType], [String: MixpanelType], Date, URL, or NSNull.
@@ -485,14 +429,13 @@ open class MixpanelReactNative: NSObject {
     }
     
     /**
-     Remove list properties.
+     Remove a value from a list-valued property.
      
-     Property keys must be String objects and the supported value types need to conform to MixpanelType.
+     Property key must be String objects and the supported value types need to conform to MixpanelType.
      MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType], [String: MixpanelType], Date, URL, or NSNull.
      */
     @objc
-    func remove(_ token: String, propertyName: String,
-                properties: [String: Any],
+    func remove(_ token: String, properties: [String: Any],
                 resolver resolve: RCTPromiseResolveBlock,
                 rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
@@ -505,15 +448,14 @@ open class MixpanelReactNative: NSObject {
     }
     
     /**
-     Add values to a list-valued property only if, they are not already present in the list. 
-     If the property does not currently exist, it will be created with the given list as it's value. 
+     Add values to a list-valued property only if, they are not already present in the list.
+     If the property does not currently exist, it will be created with the given list as it's value.
      If the property exists and is not list-valued, the union will be ignored.
      
      Property values must be array objects.
      */
     @objc
-    func union(_ token: String, propertyName: String,
-               properties: [String: Any],
+    func union(_ token: String, properties: [String: Any],
                resolver resolve: RCTPromiseResolveBlock,
                rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
@@ -528,9 +470,7 @@ open class MixpanelReactNative: NSObject {
     /**
      Track money spent by the current user for revenue analytics and associate
      properties with the charge. Properties are optional.
-     Charge properties allow you to segment on types of revenue. For instance, you
-     could record a product ID with each charge so that you could segement on it in
-     revenue analytics to see which products are generating the most revenue.
+     Charge properties allow you to segment on types of revenue.
      */
     @objc
     func trackCharge(_ token: String, amount: Double,

@@ -27,7 +27,7 @@ export default class PeopleScreen extends React.Component {
     var properties = {};
     properties[key] = value;
     alert(JSON.stringify(this.mixpanel));
-    this.mixpanel.people.set(properties);
+    this.mixpanel.people.set(properties).then(t => alert("success"));
   }
   /**
      * Track a revenue transaction for the identified people profile.
@@ -35,12 +35,14 @@ export default class PeopleScreen extends React.Component {
   */
   trackCharge = () => {
     var chargeInDouble = parseFloat(this.state.TextInput_Charge)
-    this.mixpanel.people.trackCharge(chargeInDouble);
+    this.mixpanel.people.trackCharge(chargeInDouble).then(t => t.alert("success"));
+    alert(JSON.stringify(this.mixpanel));
   }
   /**
      * Push all queued Mixpanel events and People Analytics changes to Mixpanel servers.
   */
   flush = () => {
+    this.mixpanel.people.append("Hobies", "Singing");
     this.mixpanel.flush();
   }
   render() {

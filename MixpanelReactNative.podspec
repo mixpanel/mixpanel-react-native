@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.summary = package['description']
   s.description = package['description']
   s.license = package['license']
-  s.author = { 'Mixpanel, Inc' => 'support@mixpanel.com' }  
+  s.author = { 'Mixpanel, Inc' => 'support@mixpanel.com' }
   s.homepage = package['homepage']
   s.platform = :ios, "8.0"
   s.swift_version = '5.0'
@@ -16,6 +16,7 @@ Pod::Spec.new do |s|
   s.source_files = "ios/*.{swift,h,m}"
   s.requires_arc = true
   s.preserve_paths = 'LICENSE', 'README.md', 'package.json', 'index.js'
+
   s.dependency "React"
   s.dependency "Mixpanel-swift"
 end

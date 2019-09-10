@@ -260,8 +260,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      * Begin timing of an event. Calling timeEvent("EventName") will not send an event, but
      * when you eventually call track("EventName"), your tracked event will be sent with a
      * "$duration" property, representing the number of seconds between your calls.
-     *
-     * @param eventName the name of the event to track with timing.
      */
     @ReactMethod
     public void timeEvent(final String token, final String eventName, Promise promise) {
@@ -340,10 +338,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
     /**
      * Track a revenue transaction for the identified people profile.
-     *
-     * @param charge - the amount of money exchanged. Positive amounts represent purchases or income from the customer,
-     *                     negative amounts represent refunds or payments to the customer.
-     * @param properties - an optional collection of properties to associate with this transaction.
      */
     @ReactMethod
     public void trackCharge(final String token, double charge, ReadableMap properties, Promise promise) throws JSONException {
@@ -371,9 +365,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      * Change the existing values of multiple People Analytics properties at once.
      * If the user does not already have the associated property, the amount will
      * be added to zero. To reduce a property, provide a negative number for the value.
-     *
-     * @param properties A map of String properties names to Long amounts. Each
-     *                   property associated with a name in the map will have its value changed by the given amount.
      */
     @ReactMethod
     public void increment(final String token, ReadableMap properties, Promise promise) {
@@ -409,21 +400,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
             instance.getPeople().deleteUser();
-            promise.resolve(null);
-        }
-    }
-
-    /**
-     * Merge a given Object into the object-valued property named propertyName.
-     * If the user does not already have the associated property, an new property will be created with the value of the given updates.
-     * If the user already has a value for the given property, the updates will be merged into the existing value.
-     */
-    @ReactMethod
-    public void merge(final String token, String propertyName, ReadableMap updates, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance) {
-            JSONObject properties = ReactNativeHelper.reactToJSON(updates);
-            instance.getPeople().merge(propertyName, properties);
             promise.resolve(null);
         }
     }

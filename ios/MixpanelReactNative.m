@@ -64,7 +64,7 @@ RCT_EXTERN_METHOD(increment: (NSString *)token properties: (NSDictionary *)prope
 
 RCT_EXTERN_METHOD(incrementPropertyBy: (NSString *)token property: (NSString *)property by: (double)by resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(append: (NSString *)token propertyName: (NSString *)propertyName properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(append: (NSString *)token properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(remove: (NSString *)token propertyName: (NSString *)propertyName properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 

@@ -1,6 +1,6 @@
 "use strict";
 
-import { NativeModules } from 'react-native';
+import { Platform, NativeModules } from 'react-native';
 import packageJson from "./package.json";
 const { MixpanelReactNative } = NativeModules;
 
@@ -289,7 +289,12 @@ export class People {
         } else {
             appendProp[name] = value;
         }
-        return MixpanelReactNative.append(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), appendProp);
+
+        if (Platform.OS === 'ios') {
+            return MixpanelReactNative.append(this.token, appendProp);
+        } else {
+            return MixpanelReactNative.append(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), appendProp);
+        }        
     }
 
     /**

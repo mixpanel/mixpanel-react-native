@@ -472,8 +472,7 @@ open class MixpanelReactNative: NSObject {
      MixpanelType can be either String, Int, UInt, Double, Float, Bool, [MixpanelType], [String: MixpanelType], Date, URL, or NSNull.
      */
     @objc
-    func append(_ token: String, propertyName: String,
-                properties: [String: Any],
+    func append(_ token: String, properties: [String: Any],
                 resolver resolve: RCTPromiseResolveBlock,
                 rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)

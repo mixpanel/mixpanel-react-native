@@ -176,7 +176,7 @@ Note: To call any method from both classes, first you have to call init method f
 <a name="Mixpanel"></a>
 # **Mixpanel**
 <a name="init"></a>
-# **init( mixpanelToken, optOutTrackingDefault)**
+# **init()**
 To use library first you have to call init. It will initialize all Mixpanel setup. **optOutTrackingDefault** is by default set to false.
 ### **Example**
 ```js
@@ -191,10 +191,10 @@ const mixpanelInstance = await Mixpanel.init('Your mixpanel token', true);
 To check whether user has opted out from tracking or not.
 ### **Example**
 ```js
-let hasOptedOut = mixpanel.hasOptedOutTracking();
+let hasOptedOut = await mixpanel.hasOptedOutTracking();
 ```
 <a name="optInTracking"></a>
-# **optInTracking(distinctId, properties)**
+# **optInTracking()**
 To internally track an opt-in event, to opt in an already opted out user from tracking. User updates and track calls will be
      sent to Mixpanel after using this method.
 ### **Example**
@@ -219,7 +219,7 @@ To opt-out user from tracking. So all events and user request will not sent back
 mixpanel.optOutTracking();
 ```
 <a name="track"></a>
-# **track(eventName, properties)**
+# **track()**
 To Track an event with properties.
      Properties are optional and can be added only if needed.
      Properties will allow you to segment your events in your Mixpanel reports.
@@ -233,15 +233,15 @@ mixpanel.track('TrackEvent');
 mixpanel.track('TrackEvent', {'Status': 'Pending'})
 ```
 <a name="registerSuperProperties"></a>
-# **registerSuperProperties(superProperties)**
+# **registerSuperProperties()**
 To register super properties, once registered, are automatically sent as properties for
      all event tracking calls. 
 ### **Example**
 ```js
-mixpanel.registerSuperProperties({'Plan': 'Mega','Cost': '2000'});
+mixpanel.registerSuperProperties({'Plan': 'Mega', 'Cost': '2000'});
 ```
 <a name="registerSuperPropertiesOnce"></a>
-# **registerSuperPropertiesOnce(superProperties)**
+# **registerSuperPropertiesOnce()**
 To register super properties without overwriting ones that have already been set.
 Property keys must be String objects and the supported value types need to conform to MixpanelType.
 ### **Example**
@@ -249,7 +249,7 @@ Property keys must be String objects and the supported value types need to confo
 mixpanel.registerSuperPropertiesOnce({'Role': 'Admin'});
 ```
 <a name="unregisterSuperProperty"></a>
-# **unregisterSuperProperty(superProperty)**
+# **unregisterSuperProperty()**
  To remove a previously registered super property.
      As an alternative to clearing all properties, unregistering specific super
      property prevents them from being recorded on future events. This operation
@@ -264,7 +264,7 @@ mixpanel.unregisterSuperProperty('propertyName');
 To return a json object of the user's current super properties.
 ### **Example**
 ```js
-mixpanel.getSuperProperties();
+let superProperties = await mixpanel.getSuperProperties();
 ```
 <a name="clearSuperProperties"></a>
 # **clearSuperProperties()**
@@ -274,11 +274,11 @@ To erase all currently registered superProperties.
 mixpanel.clearSuperProperties();
 ```
 <a name="alias"></a>
-# **alias(alias, distinct_id)**
+# **alias()**
 To create a distinctId alias from alias to the current id. It is used to map an identifier called an alias to the existing distinctId of Mixpanel.
 ### **Example**
 ```js
-mixpanel.alias('Test123','Test456');
+mixpanel.alias('Test123', 'Test456');
 ```
 <a name="reset"></a>
 # **reset()**
@@ -289,14 +289,14 @@ mixpanel.reset();
 ```
 <a name="flush"></a>
 # **flush()**
-To send all queued message to server. By default, queued data is flushed to the Mixpanel servers every minute. If you want to force a flush at a particular moment
+To send all queued messages to server. By default, queued data is flushed to the Mixpanel servers every minute. If you want to force a flush at a particular moment
  you only need to call this method manually. 
 ### **Example**
 ```js
 mixpanel.flush();
 ```
 <a name="timeEvent"></a>
-# **timeEvent(eventName)**
+# **timeEvent()**
 To start a timer, that will be stopped and added as a property when a
      corresponding event is tracked.
      For **Example**, if a developer wants to track an "Image Upload" event
@@ -306,16 +306,15 @@ To start a timer, that will be stopped and added as a property when a
 mixpanel.timeEvent('Image Upload');
 ```
 <a name="eventElapsedTime"></a>
-# **eventElapsedTime(eventName)**
+# **eventElapsedTime()**
 To retrieve the time elapsed for the named event since timeEvent() was called.
 ### **Example**
 ```js
-mixpanel.eventElapsedTime('Image Upload');
+let elapsedTime = await mixpanel.eventElapsedTime('Image Upload');
 ```
 <a name="identify"></a>
-# **identify(distinctId)**
+# **identify()**
 To identify the user uniquely by providing the user distinctId. After calling track all the events, updates will manipulate the data only for identified user's profile.
-     This call does not identify the user for People Analytics, to do that you have to call method.
 ### **Example**
 ```js
 mixpanel.identify('1234');
@@ -325,59 +324,49 @@ mixpanel.identify('1234');
 To check whether profile of user is identified or not.
 ### **Example**
 ```js
-mixpanel.isIdentified();
+let isIdentified = await mixpanel.isIdentified();
 ```
 <a name="Mixpanel.People"></a>
 # **Mixpanel.People**
-<a name="identify"></a>
-# **identify(eventName)**
-To identify the user uniquely by providing the user distinct id, so all the events, updates, track call
-     will manipulate the data only for identified user's profile.
-     This call does not identify the user for People Analytics, to do that you have to call
-     method.
-### **Example**
-```js
-mixpanel.people.identify('1234');
-```
 <a name="set"></a>
-# **set(propertyName, to)**
-To set properties on an user record.
+# **set()**
+To set properties on user's profile.
 ### **Example**
 ```js
-//Set with parameters property and to
-mixpanel.people.set({property: 'Plan', to: 'Premium'});
+//Set with property name and value
+mixpanel.people.set('Plan', 'Premium');
 
-//Set with parameter property only
-mixpanel.people.set({'Name': 'ABC'});
+//Set with json object
+mixpanel.people.set({'$name': 'ABC'});
 ```
 <a name="unset"></a>
-# **unset(propertyName)**
-To remove property permanently with the given name from the user's profile.
+# **unset()**
+To remove a property permanently with the given name from the user's profile.
 ### **Example**
 ```js
 mixpanel.people.unset('Plan');
 ```
 <a name="setOnce"></a>
-# **setOnce(propertyName, value)**
+# **setOnce()**
 To set properties on the current user record, but doesn't overwrite if
      there is an existing value. It is particularly useful for collecting
      data about the user's initial experience and source, as well as dates
      representing the first time something happened.
 ### **Example**
 ```js
-//SetOnce with parameters property and to
-mixpanel.people.setOnce({property: 'PaperCount', to: '20'});
+//SetOnce with property name and value
+mixpanel.people.setOnce('Plan', 'Premium');
 
-//SetOnce with parameter property only
-mixpanel.people.setOnce({property: 'PaperCount'});
+//SetOnce with json object
+mixpanel.people.setOnce({'$name': 'ABC'});
 ```
 <a name="trackCharge"></a>
-# **trackCharge(amount,properties)**
+# **trackCharge()**
 To track money spent by the current user for revenue analytics and associate
      properties with the charge. Properties are optional.
 ### **Example**
 ```js
-mixpanel.people.trackCharge('500', 'Revenue');
+mixpanel.people.trackCharge(500);
 ```
 <a name="clearCharges"></a>
 # **clearCharges()**
@@ -387,18 +376,32 @@ To clear the whole transaction history permanently for the identified user profi
 mixpanel.people.clearCharges();
 ```
 <a name="increment"></a>
-# **increment(propertyName, by)**
+# **increment()**
  To increment the given numeric properties by the given values. Property keys must be String names of numeric properties.
 ### **Example**
 ```js
-mixpanel.people.increment('Salary', '2000');
+//Increment counter property by 1
+mixpanel.people.increment('Counter');
+
+//Increment counter property by 2000
+mixpanel.people.increment('Counter', 2000);
+
+//Increment counter property by 100
+mixpanel.people.increment({'Counter': 100});
 ```
 <a name="append"></a>
-# **append(propertyName, value)**
-To append a value to a list-valued property. Property keys must be String objects and the supported value types need to conform to MixpanelType.
+# **append()**
+To append a value to a list-valued property. Property key must be a String name and the supported value types need to be String|Number|Boolean.
 ### **Example**
 ```js
-mixpanel.people.append('PointCount', '500');
+//append a number to list-valued property 'PointCount'
+mixpanel.people.append('PointCount', 500);
+
+//append a string to list-valued property 'PointCount'
+mixpanel.people.append('PointCount', 'Unlimited');
+
+//append a boolean value to list-valued property 'PointCount'
+mixpanel.people.append('PointCount', true);
 ```
 <a name="deleteUser"></a>
 # **deleteUser()**
@@ -408,36 +411,43 @@ To delete the identified user's record permanently.
 mixpanel.people.deleteUser();
 ```
 <a name="remove"></a>
-# **remove(propertyName, value)**
- To remove value from a list-valued property only if they are already present in the list.
+# **remove()**
+ To remove a value from a list-valued property only if they are already present in the list.
 ### **Example**
 ```js
-mixpanel.people.remove('PaperCount','20');
+//remove a number from list-valued property 'PointCount'
+mixpanel.people.remove('PointCount', 500);
+
+//remove a string from list-valued property 'PointCount'
+mixpanel.people.remove('PointCount', 'Unlimited');
+
+//remove a boolean value from list-valued property 'PointCount'
+mixpanel.people.remove('PointCount', true);
  ```
  <a name="setPushRegistrationId"></a>
-# **setPushRegistrationId(deviceToken)**
+# **setPushRegistrationId()**
 To register the given device to receive push notifications. This will associate the device token with the current user in people profile,
      which will allow you to send push notifications to the user.
 ### **Example**
 ```js
-mixpanel.people.setPushRegistrationId('Your deviceToken');
+mixpanel.people.setPushRegistrationId('Your Device Token');
 ```
 <a name="getPushRegistrationId"></a>
 # **getPushRegistrationId()**
 To retrieve current Firebase Cloud Messaging token.
 ### **Example**
 ```js
-mixpanel.people.getPushRegistrationId();
+let pushRegistrationId = await mixpanel.people.getPushRegistrationId();
 ```
 <a name="clearPushRegistrationId"></a>
-# **clearPushRegistrationId(deviceToken)**
+# **clearPushRegistrationId()**
  Unregister a specific device token from the ability to receive push notifications. This will remove the provided push token saved to this user profile.
 ### **Example**
 ```js
-mixpanel.people.clearPushRegistrationId('Your deviceToken');
+mixpanel.people.clearPushRegistrationId('Your Device Token');
 ```
 <a name="union"></a>
-# **union(propertyName, properties)**
+# **union()**
  To add values to a list-valued property only if, they are not already present in the list. If the property does not currently exist, it will be created with the given list as it's value. If the property exists and is not list-valued, the union will be ignored.
 ### **Example**
 ```js

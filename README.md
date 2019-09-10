@@ -238,7 +238,7 @@ To register super properties, once registered, are automatically sent as propert
      all event tracking calls. 
 ### **Example**
 ```js
-mixpanel.registerSuperProperties(['Plan': 'Mega','Cost': '2000']);
+mixpanel.registerSuperProperties({'Plan': 'Mega','Cost': '2000'});
 ```
 <a name="registerSuperPropertiesOnce"></a>
 # **registerSuperPropertiesOnce(superProperties)**
@@ -246,7 +246,7 @@ To register super properties without overwriting ones that have already been set
 Property keys must be String objects and the supported value types need to conform to MixpanelType.
 ### **Example**
 ```js
-mixpanel.registerSuperPropertiesOnce(['Role': 'Admin']);
+mixpanel.registerSuperPropertiesOnce({'Role': 'Admin'});
 ```
 <a name="unregisterSuperProperty"></a>
 # **unregisterSuperProperty(superProperty)**
@@ -257,7 +257,7 @@ mixpanel.registerSuperPropertiesOnce(['Role': 'Admin']);
      not registered is ignored.
 ### **Example**
 ```js
-mixpanel.unregisterSuperProperty(['Plan': 'Mega']);
+mixpanel.unregisterSuperProperty('propertyName');
  ```
 <a name="getSuperProperties"></a>
 # **getSuperProperties()**

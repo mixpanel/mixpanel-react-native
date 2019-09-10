@@ -225,9 +225,14 @@ export class People {
     /**
       The same as people.set but This method allows you to set a user attribute, only if it is not currently set.
      */
-    setOnce(properties) {
-        properties = properties || {};
-        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
+    setOnce(prop, to) {
+        let properties = {}; 
+        if (typeof prop === "object") {
+            prop = prop || {};
+            properties = JSON.parse(JSON.stringify(prop));
+        } else {
+            properties[Helper.getValidObject(prop, KEY.PROPERTY_NAME)] = to;
+        }
         return MixpanelReactNative.setOnce(this.token, properties);
     }
 
@@ -297,11 +302,17 @@ export class People {
     /**
       Remove list properties.
      */
-    remove(name, properties) {
-        properties = properties || {};
-        return MixpanelReactNative.remove(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), properties);
+    remove(name, value) {
+        let removeProp = {};
+        name = Helper.getValidString(name, KEY.PROPERTY_NAME);
+        if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
+            throw new Error(ERROR_MESSAGE.REQUIRED_NON_OBJECT);
+        } else {
+            removeProp[name] = value;
+        }
+        return MixpanelReactNative.remove(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), removeProp);
     }
-    
+  
     /**
       Add values to a list-valued property only if they are not already present in the list.  
      */

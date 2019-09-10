@@ -390,11 +390,11 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      * If the property does exist and doesn't currently have a list value, the append will be ignored.
      */
     @ReactMethod
-    public void append(final String token, String name, ReadableArray properties, Promise promise) throws JSONException {
+    public void append(final String token, String name, ReadableMap value, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
-            JSONArray sendProperties = ReactNativeHelper.reactToJSON(properties);
-            instance.getPeople().append(name, sendProperties);
+            JSONObject sendProperties = ReactNativeHelper.reactToJSON(value);
+            instance.getPeople().append(name, sendProperties.get(name));
             promise.resolve(null);
         }
     }
@@ -434,11 +434,11 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
      * If the property exists and is not list-valued, the remove will be ignored.
      */
     @ReactMethod
-    public void remove(final String token, String name, ReadableArray value, Promise promise) throws JSONException {
+    public void remove(final String token, String name, ReadableMap value, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
-            JSONArray sendProperties = ReactNativeHelper.reactToJSON(value);
-            instance.getPeople().remove(name, sendProperties);
+            JSONObject sendProperties = ReactNativeHelper.reactToJSON(value);
+            instance.getPeople().remove(name, sendProperties.get(name));
             promise.resolve(null);
         }
     }

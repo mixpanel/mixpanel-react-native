@@ -21,12 +21,14 @@ class EventScreen extends React.Component {
   identify = () => {
     this.mixpanel.identify(this.state.TextInput_Id);
   }
+
   /**
        * Use this method to opt-in an already opted-out user from tracking.
   */
   optIn = () => {
     this.mixpanel.optInTracking(this.state.TextInput_Id);
   }
+
   /**
        * Use to accept user entered properties in the format of key-value pair.
   */
@@ -37,6 +39,7 @@ class EventScreen extends React.Component {
     properties[key] = value;
     return properties;
   }
+
   /**
      * Use for Track an event.
   */
@@ -44,6 +47,7 @@ class EventScreen extends React.Component {
     var properties = this.takeProperty();
     this.mixpanel.track(this.state.TextInput_EventName, properties);
   }
+
   /**
      * registerSuperProperties will store a new superProperty and possibly overwriting any existing superProperty with the same name.
   */
@@ -51,6 +55,7 @@ class EventScreen extends React.Component {
     var properties = this.takeProperty();
     this.mixpanel.registerSuperProperties(properties);
   }
+
   /**
      * Erase all currently registered superProperties.
   */
@@ -58,6 +63,7 @@ class EventScreen extends React.Component {
     var properties = this.takeProperty();
     this.mixpanel.clearSuperProperties(properties);
   }
+
   /**
      * Returns a json object of the user's current super properties
   */
@@ -66,6 +72,7 @@ class EventScreen extends React.Component {
       alert(JSON.stringify(t));
     });
   }
+
   render() {
     return (
       <View>
@@ -112,7 +119,6 @@ class EventScreen extends React.Component {
           </TouchableOpacity>
         </View>
       </View>
-
     );
   }
 }

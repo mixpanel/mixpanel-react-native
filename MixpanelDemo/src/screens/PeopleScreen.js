@@ -5,10 +5,6 @@ import {token as MixpanelToken} from '../../app.json';
 
 export default class PeopleScreen extends React.Component {
   
-  // async componentDidMount() {
-  //   const mixpanel = await Mixpanel.init(MixpanelToken);        
-  //   this.setState({mixpanel: mixpanel});
-  // } 
   constructor(props) {
     super(props);
     this.configMixpanel();
@@ -26,25 +22,21 @@ export default class PeopleScreen extends React.Component {
     var value = this.state.TextInput_Value;
     var properties = {};
     properties[key] = value;
-    alert(JSON.stringify(this.mixpanel));
     this.mixpanel.people.set(properties).then(t => alert("success"));
   }
+  
   /**
      * Track a revenue transaction for the identified people profile.
      * @param charge-the amount of money exchanged.
   */
   trackCharge = () => {
     var chargeInDouble = parseFloat(this.state.TextInput_Charge)
-    this.mixpanel.people.trackCharge(chargeInDouble).then(t => t.alert("success"));
-    alert(JSON.stringify(this.mixpanel));
+    this.mixpanel.people.trackCharge(chargeInDouble).then(t => alert("success"));
   }
   /**
      * Push all queued Mixpanel events and People Analytics changes to Mixpanel servers.
   */
   flush = () => {
-    this.mixpanel.people.append("Hobies", "Singing");
-    this.mixpanel.people.union("Hobies", ["Dancing", "Travelling"]);
-    this.mixpanel.people.union("Hobies", { "Hobies": ["Playing"]});
     this.mixpanel.flush();
   }
   render() {

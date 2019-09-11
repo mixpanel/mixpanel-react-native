@@ -1,22 +1,22 @@
-<div align="center">
+<div align="center" style="text-align: center">
   <img src="https://github.com/mixpanel/mixpanel-android/blob/assets/mixpanel.png?raw=true" alt="Mixpanel Android Library" height="150"/>
 </div>
 
-# **Table of Contents**
+# Table of Contents
 - [Introduction](#introduction)
-- [Getting started](#getting started)
-- [Linking](#linking)
 - [Installation](#installation)
+- [Linking](#linking)
 - [Usage](#usage)
 - [API](#API)
 
 <a name="introduction"></a>
-# **Introduction**
+# Introduction
 Welcome to the official Mixpanel React-Native library.
 
 The Mixpanel React-Native library is an open source project, and we'd love to see your contributions! 
-<a name="getting started"></a>
-# **Getting started**
+
+<a name="installation"></a>
+# Installation
 Using npm:
 
 Before you start using npm, if npm is not installed, you'll first need to install npm on your system.
@@ -29,59 +29,8 @@ Before you start using yarn, if yarn is not installed, you'll first need to inst
 ```js
 yarn add mixpanel-react-native 
 ```
-<a name="linking"></a>
-# **Linking (RN < 0.60)**
-## **Auto Linking**
-If you have been using React-Native version prior to 0.60, then you have to link dependencies using react-native-link for iOS & Android like below.
-```js
-react-native link mixpanel-react-native
-```
-Done! mixpanel-react-native with native dependencies will be successfully linked to your iOS/Android project after this command.
-## **Manual Linking**
-### **iOS**
-It is an alternative to auto-linking.
-If you have been using React-Native version prior to 0.60, please unlink native dependencies if you have any from a previous install.
-And then follow steps which are given in manual linking part of [iOS manual-linking](https://facebook.github.io/react-native/docs/linking-libraries-ios) document.
-### **Android**
-For manual linking you have to make following changes in respective pages.
-#### build.gradle(app level) changes:
-Add project implementation in dependencies :-
-```js
-implementation project(':mixpanel-react-native')
-```
-#### setting.gradle changes:
-Include project in setting.gradle :-
-```js
-include ':mixpanel-react-native'
-project(':mixpanel-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/mixpanel-react-native/android')
-```
-#### MainApplication.java changes:
-Import MixpanelReactNativePackage in your MainApplication file :-
-```js
-import com.mixpanel.reactnative.MixpanelReactNativePackage;
-```
-Add package in getPackages method :-
-```js
-@Override
-   protected List<ReactPackage> getPackages() {
-     return Arrays.<ReactPackage>asList(
-        ...
-           new MixpanelReactNativePackage(),
-           ...
-     );
-   }
-```
-# **Linking (RN >= 0.60)**
-For iOS and Android if React-Native version is above 0.60, then there is no need of linking. It will get linked automatically.
-
-# **Installation**
-#### iOS (RN < 0.60)
-If you're already using Cocoapods, add the following to your Podfile
-```js
-pod 'MixpanelReactNative', :path => '../node_modules/mixpanel-react-native'
-```
-
-Otherwise, setup Podfile according to [react native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps), so the Podfile will look like this:
+### iOS
+iOS module must have a Podfile. In case Podfile is not present, set up it according to [react native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps), so the Podfile will look like this:
 ```js
 source 'https://github.com/CocoaPods/Specs.git'
 
@@ -101,35 +50,42 @@ target 'YourTargetName' do
     pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
     pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-    pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
-
 end
 ```
+**Note:** Remember to replace *YourTargetName* with your actual target name.
 
-Remember to replace *YourTargetName* with your actual target name.
+<a name="linking"></a>
+# Linking
+Following steps are necessary to link mixpanel-react-native native dependencies to your application.
+### RN >= 0.60
+For iOS and Android, if React-Native version is 0.60 or above, then there is no need of linking. It will get linked automatically.
+However, iOS module must run:`pod install`
 
-Next, run ```pod install```.
-#### iOS (RN >= 0.60)
-Podfile is already present above 0.60 and due to autolinking below statement will also get added in the Podfile.
+### RN < 0.60
+Applications using React-Native version prior to 0.60 need to run following command to link mixpanel-react-native with native dependencies: 
 ```js
-pod 'MixpanelReactNative', :path => '../node_modules/mixpanel-react-native'
+react-native link mixpanel-react-native
 ```
-Next, run ```pod install```.
-```
+#### iOS
+iOS module needs to perform additional steps to integrate the SDK:
+1. Run ```pod install``` under your application's iOS folder.
+2. Drag and drop mixpanel-react-native's Xcode project from node_modules/mixpanel-react-native/ios folder under your Xcode application's "Libraries" group.
+3. Click on your main project file (the one that represents the .xcodeproj) select Build Phases and add libMixpanelReactNative.a to
+Link Binary With Libraries.
+
+`
 Mandatory: Our library with Swift is only supported in Xcode 9 and later.
 In order for the Xcode project to build when you use Swift in the iOS static library you include in the module, your main app project must 
 contain Swift code and a bridging header itself. 
 If your app project does not contain any Swift code, a workaround can be a single empty .swift file and an empty bridging header.
-```
-#### Android 
-No need of extra installation in Android.
+`
 <a name="usage"></a>
-# **Usage**
+# Usage
 ```js
 import Mixpanel from 'mixpanel-react-native';
 ```
 <a name="API"></a>
-# **API**
+# API
 Following methods are from Mixpanel and People class.
 
 |  **Method** | **Ios** | **Android** |
@@ -165,7 +121,7 @@ Following methods are from Mixpanel and People class.
 |[clearPushRegistrationId()](#clearPushRegistrationId)|  &#9989; |  &#9989;|
 |[union()](#union)|  &#9989; |  &#9989;|
 
-# **All classes**
+# All classes
 - [Mixpanel](#Mixpanel)
 - [Mixpanel.People](#Mixpanel.People)
 
@@ -174,11 +130,11 @@ Note: To call any method from both classes, first you have to call init method f
 ```
 
 <a name="Mixpanel"></a>
-# **Mixpanel**
+# Mixpanel
 <a name="init"></a>
-# **init()**
+# init()
 To use library first you have to call init. It will initialize all Mixpanel setup. **optOutTrackingDefault** is by default set to false.
-### **Example**
+### Example
 ```js
 import Mixpanel from 'mixpanel-react-native';
 
@@ -187,17 +143,17 @@ const mixpanel = await Mixpanel.init('Your mixpanel token'); // optOutTrackingDe
 const mixpanelInstance = await Mixpanel.init('Your mixpanel token', true);
 ```
 <a name="hasOptedOutTracking"></a>
-# **hasOptedOutTracking()**
+# hasOptedOutTracking()
 To check whether user has opted out from tracking or not.
-### **Example**
+### Example
 ```js
 let hasOptedOut = await mixpanel.hasOptedOutTracking();
 ```
 <a name="optInTracking"></a>
-# **optInTracking()**
+# optInTracking()
 To internally track an opt-in event, to opt in an already opted out user from tracking. User updates and track calls will be
      sent to Mixpanel after using this method.
-### **Example**
+### Example
 ```js
 // Opt-in without any parameters
 mixpanel.optInTracking();
@@ -212,19 +168,19 @@ mixpanel.optInTracking({'Name': 'ABC'});
 mixpanel.optInTracking('1234', {'Name': 'ABC'});
 ```
 <a name="optOutTracking"></a>
-# **optOutTracking()**
+# optOutTracking()
 To opt-out user from tracking. So all events and user request will not sent back to the Mixpanel server.
-### **Example**
+### Example
 ```js
 mixpanel.optOutTracking();
 ```
 <a name="track"></a>
-# **track()**
+# track()
 To Track an event with properties.
      Properties are optional and can be added only if needed.
      Properties will allow you to segment your events in your Mixpanel reports.
      If the event is being timed, the timer will stop and added as a property.
-### **Example**
+### Example
 ```js
 // Track with event-name
 mixpanel.track('TrackEvent');
@@ -233,105 +189,105 @@ mixpanel.track('TrackEvent');
 mixpanel.track('TrackEvent', {'Status': 'Pending'})
 ```
 <a name="registerSuperProperties"></a>
-# **registerSuperProperties()**
+# registerSuperProperties()
 To register super properties, once registered, are automatically sent as properties for
      all event tracking calls. 
-### **Example**
+### Example
 ```js
 mixpanel.registerSuperProperties({'Plan': 'Mega', 'Cost': '2000'});
 ```
 <a name="registerSuperPropertiesOnce"></a>
-# **registerSuperPropertiesOnce()**
+# registerSuperPropertiesOnce()
 To register super properties without overwriting ones that have already been set.
 Property keys must be String objects and the supported value types need to conform to MixpanelType.
-### **Example**
+### Example
 ```js
 mixpanel.registerSuperPropertiesOnce({'Role': 'Admin'});
 ```
 <a name="unregisterSuperProperty"></a>
-# **unregisterSuperProperty()**
+# unregisterSuperProperty()
  To remove a previously registered super property.
      As an alternative to clearing all properties, unregistering specific super
      property prevents them from being recorded on future events. This operation
      does not affect the value of other super properties. Any property name that is
      not registered is ignored.
-### **Example**
+### Example
 ```js
 mixpanel.unregisterSuperProperty('propertyName');
  ```
 <a name="getSuperProperties"></a>
-# **getSuperProperties()**
+# getSuperProperties()
 To return a json object of the user's current super properties.
-### **Example**
+### Example
 ```js
 let superProperties = await mixpanel.getSuperProperties();
 ```
 <a name="clearSuperProperties"></a>
-# **clearSuperProperties()**
+# clearSuperProperties()
 To erase all currently registered superProperties.
-### **Example**
+### Example
 ```js
 mixpanel.clearSuperProperties();
 ```
 <a name="alias"></a>
-# **alias()**
+# alias()
 To create a distinctId alias from alias to the current id. It is used to map an identifier called an alias to the existing distinctId of Mixpanel.
-### **Example**
+### Example
 ```js
 mixpanel.alias('Test123', 'Test456');
 ```
 <a name="reset"></a>
-# **reset()**
+# reset()
 To clear tweaks and all distinctIds, superProperties, and push registrations from persistent storage.
-### **Example**
+### Example
 ```js
 mixpanel.reset();
 ```
 <a name="flush"></a>
-# **flush()**
+# flush()
 To send all queued messages to server. By default, queued data is flushed to the Mixpanel servers every minute. If you want to force a flush at a particular moment
  you only need to call this method manually. 
-### **Example**
+### Example
 ```js
 mixpanel.flush();
 ```
 <a name="timeEvent"></a>
-# **timeEvent()**
+# timeEvent()
 To start a timer, that will be stopped and added as a property when a
      corresponding event is tracked.
-     For **Example**, if a developer wants to track an "Image Upload" event
+     For Example, if a developer wants to track an "Image Upload" event
      and he wants to also know how long the upload took, he has to call this method.
-### **Example**
+### Example
 ```js
 mixpanel.timeEvent('Image Upload');
 ```
 <a name="eventElapsedTime"></a>
 # **eventElapsedTime()**
 To retrieve the time elapsed for the named event since timeEvent() was called.
-### **Example**
+### Example
 ```js
 let elapsedTime = await mixpanel.eventElapsedTime('Image Upload');
 ```
 <a name="identify"></a>
-# **identify()**
+# identify()
 To identify the user uniquely by providing the user distinctId. After calling track all the events, updates will manipulate the data only for identified user's profile.
-### **Example**
+### Example
 ```js
 mixpanel.identify('1234');
 ```
 <a name="isIdentified"></a>
-# **isIdentified()**
+# isIdentified()
 To check whether profile of user is identified or not.
-### **Example**
+### Example
 ```js
 let isIdentified = await mixpanel.isIdentified();
 ```
 <a name="Mixpanel.People"></a>
 # **Mixpanel.People**
 <a name="set"></a>
-# **set()**
+# set()
 To set properties on user's profile.
-### **Example**
+### Example
 ```js
 //Set with property name and value
 mixpanel.people.set('Plan', 'Premium');
@@ -340,19 +296,19 @@ mixpanel.people.set('Plan', 'Premium');
 mixpanel.people.set({'$name': 'ABC'});
 ```
 <a name="unset"></a>
-# **unset()**
+# unset()
 To remove a property permanently with the given name from the user's profile.
-### **Example**
+### Example
 ```js
 mixpanel.people.unset('Plan');
 ```
 <a name="setOnce"></a>
-# **setOnce()**
+# setOnce()
 To set properties on the current user record, but doesn't overwrite if
      there is an existing value. It is particularly useful for collecting
      data about the user's initial experience and source, as well as dates
      representing the first time something happened.
-### **Example**
+### Example
 ```js
 //SetOnce with property name and value
 mixpanel.people.setOnce('Plan', 'Premium');
@@ -361,24 +317,24 @@ mixpanel.people.setOnce('Plan', 'Premium');
 mixpanel.people.setOnce({'$name': 'ABC'});
 ```
 <a name="trackCharge"></a>
-# **trackCharge()**
+# trackCharge()
 To track money spent by the current user for revenue analytics and associate
      properties with the charge. Properties are optional.
-### **Example**
+### Example
 ```js
 mixpanel.people.trackCharge(500);
 ```
 <a name="clearCharges"></a>
-# **clearCharges()**
+# clearCharges()
 To clear the whole transaction history permanently for the identified user profile.
-### **Example**
+### Example
 ```js
 mixpanel.people.clearCharges();
 ```
 <a name="increment"></a>
-# **increment()**
+# increment()
  To increment the given numeric properties by the given values. Property keys must be String names of numeric properties.
-### **Example**
+### Example
 ```js
 //Increment counter property by 1
 mixpanel.people.increment('Counter');
@@ -390,9 +346,9 @@ mixpanel.people.increment('Counter', 2000);
 mixpanel.people.increment({'Counter': 100});
 ```
 <a name="append"></a>
-# **append()**
+# append()
 To append a value to a list-valued property. Property key must be a String name and the supported value types need to be String|Number|Boolean.
-### **Example**
+### Example
 ```js
 //append a number to list-valued property 'PointCount'
 mixpanel.people.append('PointCount', 500);
@@ -404,16 +360,16 @@ mixpanel.people.append('PointCount', 'Unlimited');
 mixpanel.people.append('PointCount', true);
 ```
 <a name="deleteUser"></a>
-# **deleteUser()**
+# deleteUser()
 To delete the identified user's record permanently.
-### **Example**
+### Example
 ```js
 mixpanel.people.deleteUser();
 ```
 <a name="remove"></a>
-# **remove()**
+# remove()
  To remove a value from a list-valued property only if they are already present in the list.
-### **Example**
+### Example
 ```js
 //remove a number from list-valued property 'PointCount'
 mixpanel.people.remove('PointCount', 500);
@@ -425,31 +381,31 @@ mixpanel.people.remove('PointCount', 'Unlimited');
 mixpanel.people.remove('PointCount', true);
  ```
  <a name="setPushRegistrationId"></a>
-# **setPushRegistrationId()**
+# setPushRegistrationId()
 To register the given device to receive push notifications. This will associate the device token with the current user in people profile,
      which will allow you to send push notifications to the user.
-### **Example**
+### Example
 ```js
 mixpanel.people.setPushRegistrationId('Your Device Token');
 ```
 <a name="getPushRegistrationId"></a>
-# **getPushRegistrationId()**
+# getPushRegistrationId()
 To retrieve current Firebase Cloud Messaging token.
-### **Example**
+### Example
 ```js
 let pushRegistrationId = await mixpanel.people.getPushRegistrationId();
 ```
 <a name="clearPushRegistrationId"></a>
-# **clearPushRegistrationId()**
+# clearPushRegistrationId()
  Unregister a specific device token from the ability to receive push notifications. This will remove the provided push token saved to this user profile.
-### **Example**
+### Example
 ```js
 mixpanel.people.clearPushRegistrationId('Your Device Token');
 ```
 <a name="union"></a>
-# **union()**
+# union()
  To add values to a list-valued property only if, they are not already present in the list. If the property does not currently exist, it will be created with the given list as it's value. If the property exists and is not list-valued, the union will be ignored.
-### **Example**
+### Example
 ```js
  mixpanel.people.union('Days', ['Sunday', 'Monday', 'Tuesday']);
  ```

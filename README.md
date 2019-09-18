@@ -102,7 +102,7 @@ mixpanel.track('TrackEvent', {'Status': 'Pending'})
 # API
 Following methods are from Mixpanel and People class.
 
-|  **Method** | **Ios** | **Android** |
+|  **Method** | **iOS** | **Android** |
 |  ------ | :------: | :------: |
 |[init()](#init) | &#9989; |  &#9989; |
 |[hasOptedOutTracking()](#hasOptedOutTracking) |  &#9989; |  &#9989;|

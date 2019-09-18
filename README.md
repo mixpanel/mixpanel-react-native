@@ -87,11 +87,13 @@ If your app project does not contain any Swift code, a workaround can be a singl
 ```js
 //import our library in app
 import Mixpanel from 'mixpanel-react-native';
+
 //create an instance
 const mixpanel = await Mixpanel.init('Your mixpanel token');
 
 //Track on instance with only event-name
 mixpanel.track('TrackEvent');
+
 //Track with event-name and property
 mixpanel.track('TrackEvent', {'Status': 'Pending'})
 ```

@@ -14,8 +14,8 @@ export default class Welcome extends React.Component {
 }
 /* Botton Tab Navigator: To navigate between Screens*/ 
 const tabBar = createBottomTabNavigator({
-  Screen1: PeopleScreen,
-  Screen2: EventScreen,
+  People: PeopleScreen,
+  Event: EventScreen,
   Screen3: People,
   Screen4: MultipleInstance
 });

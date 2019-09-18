@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput } from 'react-native';
 import Mixpanel from "mixpanel-react-native";
 import {token as MixpanelToken} from '../../app.json';
@@ -13,9 +13,8 @@ export default class PeopleScreen extends React.Component {
   configMixpanel =  async () => {      
     this.mixpanel = await Mixpanel.init(MixpanelToken);      
   } 
-
   /**
-     * Set a collection of properties on the identified user.
+    Set a collection of properties on the identified user.
   */
   set = () => {
     var key = this.state.TextInput_Key;
@@ -26,15 +25,15 @@ export default class PeopleScreen extends React.Component {
   }
   
   /**
-     * Track a revenue transaction for the identified people profile.
-     * @param charge-the amount of money exchanged.
+    Track a revenue transaction for the identified people profile.
+    @param charge-the amount of money exchanged.
   */
   trackCharge = () => {
     var chargeInDouble = parseFloat(this.state.TextInput_Charge)
     this.mixpanel.people.trackCharge(chargeInDouble).then(t => alert("success"));
   }
   /**
-     * Push all queued Mixpanel events and People Analytics changes to Mixpanel servers.
+    Push all queued Mixpanel events and People Analytics changes to Mixpanel servers.
   */
   flush = () => {
     this.mixpanel.flush();

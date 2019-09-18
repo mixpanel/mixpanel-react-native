@@ -11,9 +11,6 @@
   ],
   "author": "Mixpanel",
   "license": "Apache-2.0",
-  "peerDependencies": {
-    "react-native": "^0.41.2"
-  },
   "repository": {
     "TODO": "Change the git URL before publishing on npm",
     "type": "git",
@@ -24,7 +21,7 @@
   },
   "TODO": "Change the git URL before publishing on npm",
   "homepage": "https://gitlab.com/tapsense/mixpanel-react-native#readme",
-  "metadata":{
+  "metadata": {
     "mp_lib": "react-native"
   }
 }

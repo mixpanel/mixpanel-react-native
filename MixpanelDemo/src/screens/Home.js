@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import Logo from './logo'
 
 class HomeScreen extends React.Component {
   /**
-     * Navigate screen to Welcome page
+    Navigate screen to Welcome page
   */
   navigate = () => {
     this.props.navigation.navigate('Welcome');

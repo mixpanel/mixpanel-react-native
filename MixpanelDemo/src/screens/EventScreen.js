@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import Mixpanel from 'mixpanel-react-native';
-import {token as MixpanelToken} from '../../app.json';
-
+import { token as MixpanelToken } from '../../app.json';
 
 class EventScreen extends React.Component {
 
@@ -11,26 +10,24 @@ class EventScreen extends React.Component {
     this.configMixpanel();
   }
 
-  configMixpanel =  async () => {      
-    this.mixpanel = await Mixpanel.init(MixpanelToken);      
-  } 
-
+  configMixpanel = async () => {
+    this.mixpanel = await Mixpanel.init(MixpanelToken);
+  }
   /**
-       * Identify the user uniquely by providing the user distinct id
+    Identify the user uniquely by providing the user distinct id
    */
   identify = () => {
     this.mixpanel.identify(this.state.TextInput_Id);
-  }
-
+    }
   /**
-       * Use this method to opt-in an already opted-out user from tracking.
+    Use this method to opt-in an already opted-out user from tracking.
   */
   optIn = () => {
     this.mixpanel.optInTracking(this.state.TextInput_Id);
+    
   }
-
   /**
-       * Use to accept user entered properties in the format of key-value pair.
+    Use to accept user entered properties in the format of key-value pair.
   */
   takeProperty = () => {
     var key = this.state.TextInput_Key;
@@ -39,33 +36,29 @@ class EventScreen extends React.Component {
     properties[key] = value;
     return properties;
   }
-
   /**
-     * Use for Track an event.
+    Use for Track an event.
   */
   track = () => {
     var properties = this.takeProperty();
     this.mixpanel.track(this.state.TextInput_EventName, properties);
   }
-
   /**
-     * registerSuperProperties will store a new superProperty and possibly overwriting any existing superProperty with the same name.
+    registerSuperProperties will store a new superProperty and possibly overwriting any existing superProperty with the same name.
   */
   registerSuperProperty = () => {
     var properties = this.takeProperty();
     this.mixpanel.registerSuperProperties(properties);
   }
-
   /**
-     * Erase all currently registered superProperties.
+    Erase all currently registered superProperties.
   */
   clearSuperProperty = () => {
     var properties = this.takeProperty();
     this.mixpanel.clearSuperProperties(properties);
   }
-
   /**
-     * Returns a json object of the user's current super properties
+    Returns a json object of the user's current super properties
   */
   getSuperProperty = () => {
     this.mixpanel.getSuperProperties().then(t => {
@@ -119,6 +112,7 @@ class EventScreen extends React.Component {
           </TouchableOpacity>
         </View>
       </View>
+
     );
   }
 }

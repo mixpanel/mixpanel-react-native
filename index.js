@@ -24,9 +24,7 @@ const KEY = {
 };
 
 const ERROR_MESSAGE = {
-    NEED_MP_TOKEN: "The Mixpanel instance must have a valid token and must call: `const mixpanel = await Mixpanel.init('<Your Mixpanel Token>')`",
     REQUIRED_PARAMETER: " is required",
-    REQUIRED_OBJECT: " is required. Cannot be null or undefined",
     INVALID_OBJECT: " is not a valid json object",
     INVALID_ARRAY: " is not a valid array",
     REQUIRED_DOUBLE: "expected parameter of type `double`",
@@ -38,6 +36,7 @@ const DEFAULT_OPT_OUT = false;
 export default class Mixpanel {
     token: ?string;
     people: ?People;
+ 
     constructor(token) {   
         this.token = Helper.getValidString(token, KEY.Token);
         this.people = new People(this.token);
@@ -46,7 +45,7 @@ export default class Mixpanel {
     /**
       Initialize mixpanel setup.
      */
-    static async init (token, optOutTrackingDefault = DEFAULT_OPT_OUT) {
+    static async init(token, optOutTrackingDefault = DEFAULT_OPT_OUT) {
         let metadata = Helper.getMetaData();
         await MixpanelReactNative.initialize(token, optOutTrackingDefault, metadata);
         return new Mixpanel(token);
@@ -139,7 +138,6 @@ export default class Mixpanel {
     }
 
     /**
-      For Android only
       Get current user super property.
      */
     getSuperProperties() {
@@ -147,7 +145,7 @@ export default class Mixpanel {
     }
 
     /**
-     Clear all currently set super properties.
+      Clear all currently set super properties.
      */
     clearSuperProperties() {
         return MixpanelReactNative.clearSuperProperties(this.token);
@@ -163,7 +161,7 @@ export default class Mixpanel {
     }
 
     /**
-      Retrieve the time elapsed for the named event since time(event:) was called.
+      Retrieve the time elapsed for the named event since timeEvent was called.
      */
     eventElapsedTime(eventName) {
         return MixpanelReactNative.eventElapsedTime(this.token, Helper.getValidString(eventName, KEY.EVENT_NAME));
@@ -194,7 +192,7 @@ export default class Mixpanel {
 }
 
 export class People {
-    token: ?string;
+    token: ?string; 
     
     constructor(token) {   
         this.token = token;
@@ -219,7 +217,7 @@ export class People {
             prop = prop || {};
             properties = JSON.parse(JSON.stringify(prop));
         } else {
-            properties[Helper.getValidObject(prop, KEY.PROPERTY_NAME)] = to;
+            properties[Helper.getValidString(prop, KEY.PROPERTY_NAME)] = to;
         }
         return MixpanelReactNative.set(this.token, properties);
     }
@@ -233,7 +231,7 @@ export class People {
             prop = prop || {};
             properties = JSON.parse(JSON.stringify(prop));
         } else {
-            properties[Helper.getValidObject(prop, KEY.PROPERTY_NAME)] = to;
+            properties[Helper.getValidString(prop, KEY.PROPERTY_NAME)] = to;
         }
         return MixpanelReactNative.setOnce(this.token, properties);
     }
@@ -292,7 +290,7 @@ export class People {
             appendProp[name] = value;
         }
 
-        if (Platform.OS === 'ios') {
+        if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
             return MixpanelReactNative.append(this.token, appendProp);
         } else {
             return MixpanelReactNative.append(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), appendProp);
@@ -318,7 +316,7 @@ export class People {
             removeProp[name] = value;
         }
 
-        if (Platform.OS === 'ios') {
+        if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
             return MixpanelReactNative.remove(this.token, removeProp);
         } else {
             return MixpanelReactNative.remove(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), removeProp);
@@ -335,7 +333,7 @@ export class People {
             throw new Error(KEY.VALUES + ERROR_MESSAGE.INVALID_ARRAY);
         }
 
-        if (Platform.OS === 'ios') {
+        if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
             return MixpanelReactNative.union(this.token, {name: values});
         } else {
             return MixpanelReactNative.union(this.token, name, values);
@@ -373,6 +371,12 @@ export class People {
     }
 }
 
+const DevicePlatform = {
+    Unknown: "Unknown", 
+    Android: "Android", 
+    iOS: "ios"
+};
+
 class Helper {
     
     /**
@@ -402,5 +406,16 @@ class Helper {
         let metadata = JSON.parse(JSON.stringify(packageJson.metadata));
         metadata["$lib_version"] = packageJson.version;
         return metadata;
+    }
+
+    static getDevicePlatform() {
+        switch (Platform.OS) {
+            case "Android": 
+                return DevicePlatform.Android;
+            case "ios":
+                return DevicePlatform.iOS;
+            default: 
+                return DevicePlatform.Unknown;
+        }
     }
 }

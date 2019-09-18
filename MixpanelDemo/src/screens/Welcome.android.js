@@ -16,7 +16,6 @@ export default class Welcome extends React.Component {
 const tabBar = createBottomTabNavigator({
   People: PeopleScreen,
   Event: EventScreen,
-  Screen3: People,
-  Screen4: MultipleInstance
+  PushNotification: People
 });
 const Tab = createAppContainer(tabBar)

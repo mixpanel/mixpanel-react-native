@@ -136,7 +136,7 @@ open class MixpanelReactNative: NSObject {
     }
     
     /**
-     Retrieve the time elapsed for the named event since timeEvent was called.
+     Retrieve the time elapsed for the named event since timeEvent(event) was called.
      */
     @objc
     func eventElapsedTime(_ token: String, event: String,

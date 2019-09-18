@@ -161,7 +161,7 @@ export default class Mixpanel {
     }
 
     /**
-      Retrieve the time elapsed for the named event since timeEvent was called.
+      Retrieve the time elapsed for the named event since timeEvent(eventName) was called.
      */
     eventElapsedTime(eventName) {
         return MixpanelReactNative.eventElapsedTime(this.token, Helper.getValidString(eventName, KEY.EVENT_NAME));

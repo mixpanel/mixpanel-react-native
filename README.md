@@ -4,6 +4,7 @@
 
 # Table of Contents
 - [Introduction](#introduction)
+- [Prerequisites for iOS](#Prerequisites for iOS)
 - [Installation](#installation)
 - [Linking](#linking)
 - [Usage](#usage)
@@ -15,23 +16,10 @@ Welcome to the official Mixpanel React-Native library.
 
 The Mixpanel React-Native library is an open source project, and we'd love to see your contributions! 
 
-<a name="installation"></a>
-# Installation
-Using npm:
+<a name="Prerequisites for iOS"></a>
+## Prerequisites for iOS
 
-Before you start using npm, if npm is not installed, you'll first need to install npm on your system.
-```js
-npm install mixpanel-react-native --save
-```
-Or using yarn:
-
-Before you start using yarn, if yarn is not installed, you'll first need to install yarn on your system.
-```js
-yarn add mixpanel-react-native 
-```
-
-### iOS
-iOS module must have a Podfile. In case Podfile is not present, set up it according to [react native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps), so the Podfile will look like this:
+1. iOS module must have a Podfile. In case Podfile is not present, set up it according to [react native documentation](https://facebook.github.io/react-native/docs/integration-with-existing-apps), so the Podfile will look like this:
 ```
 source 'https://github.com/CocoaPods/Specs.git'
 
@@ -53,8 +41,19 @@ target 'YourTargetName' do
 
 end
 ```
-
 **Note:** Remember to replace *YourTargetName* with your actual target name.
+
+2. Our library with Swift is only supported in Xcode 9 and later.
+In order for the Xcode project to build when you use Swift in the iOS static library you include in the module, your main app project must 
+contain Swift code and a bridging header itself. 
+If your app project does not contain any Swift code, a workaround can be a single empty .swift file and an empty bridging header.
+
+<a name="installation"></a>
+# Installation
+Before you start installation using yarn, if yarn is not installed, you'll first need to install yarn on your system.
+```js
+yarn add mixpanel-react-native 
+```
 
 <a name="linking"></a>
 # Linking
@@ -71,17 +70,11 @@ react-native link mixpanel-react-native
 
 #### iOS
 iOS module needs to perform additional steps to integrate the SDK:
-1. Run ```pod install``` under your application's iOS folder.
+1. Run pod install under your application's iOS folder.
 2. Drag and drop mixpanel-react-native's Xcode project from node_modules/mixpanel-react-native/ios folder under your Xcode application's "Libraries" group.
 3. Click on your main project file (the one that represents the .xcodeproj) select Build Phases and add libMixpanelReactNative.a to
 Link Binary With Libraries.
 
-`
-Mandatory: Our library with Swift is only supported in Xcode 9 and later.
-In order for the Xcode project to build when you use Swift in the iOS static library you include in the module, your main app project must 
-contain Swift code and a bridging header itself. 
-If your app project does not contain any Swift code, a workaround can be a single empty .swift file and an empty bridging header.
-`
 <a name="usage"></a>
 # Usage
 ```js
@@ -109,6 +102,7 @@ Following methods are from Mixpanel and People class.
 |[optInTracking()](#optInTracking) |  &#9989; |  &#9989;|
 |[optOutTracking()](#optOutTracking) |  &#9989; |  &#9989;|
 |[identify()](#identify) |  &#9989; |  &#9989;|
+|[isIdentified()](#isIdentified)|  &#10060; |  &#9989;|
 |[track()](#track)|  &#9989; |  &#9989;|
 |[registerSuperProperties()](#registerSuperProperties)|  &#9989; |  &#9989;|
 |[registerSuperPropertiesOnce()](#registerSuperPropertiesOnce)|  &#9989; |  &#9989;|
@@ -120,7 +114,6 @@ Following methods are from Mixpanel and People class.
 |[flush()](#flush)|  &#9989; |  &#9989;|
 |[timeEvent()](#timeEvent)|  &#9989; |  &#9989;|
 |[eventElapsedTime()](#eventElapsedTime)|  &#9989; |  &#9989;|
-|[isIdentified()](#isIdentified)|  &#10060;|  &#9989;|
 |[set()](#set)|  &#9989; |  &#9989;|
 |[unset()](#unset)|  &#9989; |  &#9989;|
 |[setOnce()](#setOnce)|  &#9989; |  &#9989;|
@@ -176,13 +169,13 @@ To internally track an opt-in event, to opt in an already opted out user from tr
 mixpanel.optInTracking();
 
 // Opt-in with a distinctId
-mixpanel.optInTracking('1234');
+mixpanel.optInTracking({ distinctId: '1234' });
 
 // Opt-in with properties
-mixpanel.optInTracking({'Name': 'ABC'});
+mixpanel.optInTracking({ properties: {'Name': 'ABC'} });
 
 // Opt-in with distinctId and properties
-mixpanel.optInTracking('1234', {'Name': 'ABC'});
+mixpanel.optInTracking({ distinctId: '1234', properties: {'Name': 'ABC'} });
 ```
 
 <a name="optOutTracking"></a>
@@ -305,7 +298,6 @@ To identify the user uniquely by providing the user distinctId. After calling tr
 ```js
 mixpanel.identify('1234');
 ```
-
 <a name="isIdentified"></a>
 # isIdentified()
 To check whether profile of user is identified or not.

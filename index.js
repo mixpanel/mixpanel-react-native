@@ -12,6 +12,12 @@ if (!MixpanelReactNative) {
     If none of these fix the issue, please open an issue on the Github repository: https://github.com/mixpanel/mixpanel-react-native`);
 }
 
+const DevicePlatform = {
+    Unknown: "Unknown", 
+    Android: "Android", 
+    iOS: "ios"
+}
+
 const ERROR_MESSAGE = {
     INVALID_OBJECT: " is not a valid json object",
     REQUIRED_DOUBLE: " is not a valid number",
@@ -39,6 +45,7 @@ const DEFAULT_OPT_OUT = false;
 export default class Mixpanel {
     token: ?string;
     people: ?People;
+
     constructor(token) {   
         if (!StringHelper.isValid(token)) {
             StringHelper.raiseError(PARAMS.TOKEN);
@@ -70,7 +77,6 @@ export default class Mixpanel {
       options = {
           distinctId: string
           properties: {
-
           }
       }
      */
@@ -109,7 +115,7 @@ export default class Mixpanel {
     }
 
     /** 
-      This function creates an alias for distinctId
+      This function creates an alias for distinctId.
      */
     alias(alias, distinctId) {
         if (!StringHelper.isValid(alias)) {
@@ -423,14 +429,7 @@ export class People {
     }
 }
 
-const DevicePlatform = {
-    Unknown: "Unknown", 
-    Android: "Android", 
-    iOS: "ios"
-};
-
-class Helper {
-    
+class Helper {    
     /**
       Get the library data from package.json file. 
      */
@@ -440,6 +439,9 @@ class Helper {
         return metadata;
     }
 
+    /**
+      Get current device platform.
+     */    
     static getDevicePlatform() {
         switch (Platform.OS) {
             case "Android": 
@@ -452,31 +454,47 @@ class Helper {
     }
 }
 
-class StringHelper {
-    
+class StringHelper {    
+    /**
+      Check whether the parameter is not a blank string.
+     */
     static isValid(str) {
         return typeof str === "string" && !(/^\s*$/).test(str);
     }
 
+    /**
+      Check whether the parameter is undefined or not a blank string.
+     */
     static isValidOrUndefined(str) {
         return str === undefined || StringHelper.isValid(str);
     }
 
+    /**
+      Raise a string validation error.
+     */
     static raiseError(paramName){
         throw new Error(`${paramName}${ERROR_MESSAGE.INVALID_STRING}`);
     }
 }
 
-class ObjectHelper {
-    
+class ObjectHelper {    
+    /**
+      Check whether the parameter is an object.
+     */
     static isValid(obj) {
         return typeof obj === "object";
     }
 
+    /**
+      Check whether the parameter is undefined or an object.
+     */
     static isValidOrUndefined(obj) {
         return obj === undefined || ObjectHelper.isValid(obj);
     }
     
+    /**
+      Raise an object validation error.
+     */
     static raiseError(paramName){
         throw new Error(`${paramName}${ERROR_MESSAGE.INVALID_OBJECT}`);
     }

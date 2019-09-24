@@ -12,33 +12,38 @@ if (!MixpanelReactNative) {
     If none of these fix the issue, please open an issue on the Github repository: https://github.com/mixpanel/mixpanel-react-native`);
 }
 
-const KEY = {
-    DISTINCT_ID: "Distinct id",
-    ALIAS: "Alias",
-    EVENT_NAME: "Event name",
-    PROPERTIES: "Properties",
-    PROPERTY_NAME: "Property name",
-    DEVICE_TOKEN: "Device token",
-    TOKEN: "Token",
-    VALUES: "Values"
-};
-
 const ERROR_MESSAGE = {
-    REQUIRED_PARAMETER: " is required",
     INVALID_OBJECT: " is not a valid json object",
-    INVALID_ARRAY: " is not a valid array",
-    REQUIRED_DOUBLE: "expected parameter of type `double`",
-    REQUIRED_NON_OBJECT: "expected parameter of type `string`, `number`, or `boolean`"
-};
+    REQUIRED_DOUBLE: " is not a valid number",
+    ONLY_FOR_ANDROID: " This method is only applicable for android platform"
+}
+
+const PARAMS = {
+    TOKEN: "token",
+    DISTINCT_ID_IN_OPTIONS: "distinctId in the options parameter",
+    PROPERTIES_IN_OPTIONS: "properties in the options parameter",
+    DISTINCT_ID: "distinctId",
+    ALIAS: "alias",
+    EVENT_NAME: "eventName",
+    PROPERTIES: "properties",
+    PROPERTY_NAME: "propertyName",
+    PROP: "prop",
+    NAME: "name",
+    DEVICE_TOKEN: "deviceToken",
+    CHARGE: "charge",
+    PROPERTY_VALUE: "property value"
+}
 
 const DEFAULT_OPT_OUT = false;
 
 export default class Mixpanel {
     token: ?string;
     people: ?People;
- 
     constructor(token) {   
-        this.token = Helper.getValidString(token, KEY.Token);
+        if (!StringHelper.isValid(token)) {
+            StringHelper.raiseError(PARAMS.TOKEN);
+        }
+        this.token = token;
         this.people = new People(this.token);
     }
 
@@ -61,19 +66,25 @@ export default class Mixpanel {
     /**
       This method is used to opt in an already opted out user from tracking. People updates and track calls will be
       sent to Mixpanel after using this method.
+      
+      options = {
+          distinctId: string
+          properties: {
+
+          }
+      }
      */
-    optInTracking(distinctId, properties) {
-        if (arguments.length === 0) {
-            properties = {};
-        } else if (typeof distinctId === "string") {
-            distinctId = Helper.getValidString(distinctId, KEY.DISTINCT_ID);
-            properties = properties || {};
-        } else if (typeof distinctId === "object") {
-            properties = distinctId;
-            distinctId = null;
+    optInTracking(options) {
+        options = options || { distinctId: null, properties: {} };
+        
+        if (!StringHelper.isValidOrUndefined(options.distinctId)) {
+            StringHelper.raiseError(PARAMS.DISTINCT_ID_IN_OPTIONS);
         }
-        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
-        return MixpanelReactNative.optInTracking(this.token, distinctId, properties);
+        
+        if (!ObjectHelper.isValidOrUndefined(options.properties)) {
+            ObjectHelper.raiseError(PARAMS.PROPERTIES_IN_OPTIONS);            
+        }
+        return MixpanelReactNative.optInTracking(this.token, options.distinctId, options.properties || {});        
     }
 
     /**
@@ -91,23 +102,38 @@ export default class Mixpanel {
       the first time they visit the site.
      */
     identify(distinctId) {
-        return MixpanelReactNative.identify(this.token, Helper.getValidString(distinctId, KEY.DISTINCT_ID));
+        if (!StringHelper.isValid(distinctId)) {
+            StringHelper.raiseError(PARAMS.DISTINCT_ID);
+        }
+        return MixpanelReactNative.identify(this.token, distinctId);
     }
 
     /** 
       This function creates an alias for distinctId
      */
     alias(alias, distinctId) {
-        return MixpanelReactNative.alias(this.token, Helper.getValidString(alias, KEY.ALIAS), Helper.getValidString(distinctId, KEY.DISTINCT_ID));
+        if (!StringHelper.isValid(alias)) {
+            StringHelper.raiseError(PARAMS.ALIAS);
+        }
+
+        if (!StringHelper.isValid(distinctId)) {
+            StringHelper.raiseError(PARAMS.DISTINCT_ID);
+        }
+        return MixpanelReactNative.alias(this.token, alias, distinctId);
     }
 
     /**
       Track an event. 
      */
     track(eventName, properties) {
-        eventName = Helper.getValidString(eventName, KEY.EVENT_NAME);
-        properties = Helper.getValidObject(properties || {}, KEY.PROPERTIES);
-        return MixpanelReactNative.track(this.token, eventName, properties);
+        if (!StringHelper.isValid(eventName)) {
+            StringHelper.raiseError(PARAMS.EVENT_NAME);
+        }
+        
+        if (!ObjectHelper.isValidOrUndefined(properties)) {            
+            ObjectHelper.raiseError(PARAMS.PROPERTIES);
+        }
+        return MixpanelReactNative.track(this.token, eventName, properties || {});
     }
 
     /**
@@ -115,9 +141,10 @@ export default class Mixpanel {
       events. This will overwrite previous super property values.
      */
     registerSuperProperties(properties) {
-        properties = properties || {};
-        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
-        return MixpanelReactNative.registerSuperProperties(this.token, properties);
+        if (!ObjectHelper.isValidOrUndefined(properties)) {
+            ObjectHelper.raiseError(PARAMS.PROPERTIES);
+        }
+        return MixpanelReactNative.registerSuperProperties(this.token, properties || {});
     }
 
     /**
@@ -125,16 +152,20 @@ export default class Mixpanel {
       overwrite previous super property values, unlike register().
      */
     registerSuperPropertiesOnce(properties) {
-        properties = properties || {};
-        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
-        return MixpanelReactNative.registerSuperPropertiesOnce(this.token, properties);
+        if (!ObjectHelper.isValidOrUndefined(properties)) {
+            ObjectHelper.raiseError(PARAMS.PROPERTIES);
+        }
+        return MixpanelReactNative.registerSuperPropertiesOnce(this.token, properties || {});
     }
 
     /**
       Delete a super property stored with the current user.
      */
     unregisterSuperProperty(propertyName) {
-        return MixpanelReactNative.unregisterSuperProperty(this.token, Helper.getValidString(propertyName, KEY.PROPERTY_NAME));
+        if (!StringHelper.isValid(propertyName)) {            
+            StringHelper.raiseError(PARAMS.PROPERTY_NAME);
+        }
+        return MixpanelReactNative.unregisterSuperProperty(this.token, propertyName);
     }
 
     /**
@@ -145,7 +176,7 @@ export default class Mixpanel {
     }
 
     /**
-      Clear all currently set super properties.
+     Clear all currently set super properties.
      */
     clearSuperProperties() {
         return MixpanelReactNative.clearSuperProperties(this.token);
@@ -157,14 +188,20 @@ export default class Mixpanel {
       with the event.
      */
     timeEvent(eventName) {
-        return MixpanelReactNative.timeEvent(this.token, Helper.getValidString(eventName, KEY.EVENT_NAME));
+        if (!StringHelper.isValid(eventName)) {
+            StringHelper.raiseError(PARAMS.EVENT_NAME);
+        }
+        return MixpanelReactNative.timeEvent(this.token, eventName);
     }
 
     /**
       Retrieve the time elapsed for the named event since timeEvent(eventName) was called.
      */
     eventElapsedTime(eventName) {
-        return MixpanelReactNative.eventElapsedTime(this.token, Helper.getValidString(eventName, KEY.EVENT_NAME));
+        if (!StringHelper.isValid(eventName)) {
+            StringHelper.raiseError(PARAMS.EVENT_NAME);
+        }
+        return MixpanelReactNative.eventElapsedTime(this.token, eventName);
     } 
 
     /**
@@ -180,9 +217,12 @@ export default class Mixpanel {
       Use to check whether user is identified or not.
      */
     isIdentified() {
+        if (Helper.getDevicePlatform() !== DevicePlatform.Android) {
+            throw new Error(ERROR_MESSAGE.ONLY_FOR_ANDROID);
+        }   
         return MixpanelReactNative.isIdentified(this.token);
     }
-     
+
     /**
       Upload queued data to the Mixpanel server.
      */
@@ -192,32 +232,24 @@ export default class Mixpanel {
 }
 
 export class People {
-    token: ?string; 
+    token: ?string;
     
     constructor(token) {   
         this.token = token;
     }
-
-    /**
-      Identify a user with a unique ID instead of a Mixpanel
-      randomly generated distinctId. If the method is never called,
-      then unique visitors will be identified by a UUID generated
-      the first time they visit the site.
-     */
-    identify(distinctId) {
-        return MixpanelReactNative.identify(this.token, Helper.getValidString(distinctId, KEY.DISTINCT_ID));
-    }
-
+    
     /**
       Set properties on an user record in engage.
      */
     set(prop, to) {
         let properties = {}; 
-        if (typeof prop === "object") {
-            prop = prop || {};
-            properties = JSON.parse(JSON.stringify(prop));
+        if (ObjectHelper.isValid(prop)) {            
+            properties = JSON.parse(JSON.stringify(prop || {}));
         } else {
-            properties[Helper.getValidString(prop, KEY.PROPERTY_NAME)] = to;
+            if(!StringHelper.isValid(prop)) { 
+                StringHelper.raiseError(PARAMS.PROP);
+            }
+            properties[prop] = to;
         }
         return MixpanelReactNative.set(this.token, properties);
     }
@@ -227,11 +259,14 @@ export class People {
      */
     setOnce(prop, to) {
         let properties = {}; 
-        if (typeof prop === "object") {
+        if (ObjectHelper.isValid(prop)) {
             prop = prop || {};
             properties = JSON.parse(JSON.stringify(prop));
         } else {
-            properties[Helper.getValidString(prop, KEY.PROPERTY_NAME)] = to;
+            if(!StringHelper.isValid(prop)) { 
+                StringHelper.raiseError(PARAMS.PROP);
+            }            
+            properties[prop] = to;
         }
         return MixpanelReactNative.setOnce(this.token, properties);
     }
@@ -241,11 +276,13 @@ export class People {
      */
     trackCharge(charge, properties) {
         if (isNaN(parseFloat(charge))) {
-            throw new Error(ERROR_MESSAGE.REQUIRED_DOUBLE)
+            throw new Error(`${PARAMS.CHARGE}${ERROR_MESSAGE.REQUIRED_DOUBLE}`)
         }
-        properties = properties || {};
-        properties = Helper.getValidObject(properties, KEY.PROPERTIES);
-        return MixpanelReactNative.trackCharge(this.token, charge, properties);
+        
+        if (!ObjectHelper.isValidOrUndefined(properties)) {
+            ObjectHelper.raiseError(PARAMS.PROPERTIES);
+        }
+        return MixpanelReactNative.trackCharge(this.token, charge, properties || {});
     }
 
     /**
@@ -258,22 +295,27 @@ export class People {
     /**
       Increment/Decrement properties on an user record in engage.
      */
-    increment(propertyName, by) {
+    increment(prop, by) {
         var add = {};
-        if (typeof propertyName === "object") {            
-            Object.keys(propertyName).forEach(function(key) {
-                var val = propertyName[key];
+        if (ObjectHelper.isValid(prop)) {            
+            Object.keys(prop).forEach(function(key) {
+                var val = prop[key];
                 if (isNaN(parseFloat(val))) {
-                    throw new Error(ERROR_MESSAGE.REQUIRED_DOUBLE )
+                    throw new Error(`${PARAMS.PROPERTY_VALUE}${ERROR_MESSAGE.REQUIRED_DOUBLE}`);
                 }
-             add[key] = val;
-            });            
+                add[key] = val;
+            });
         } else {
             by = by || 1; 
             if (isNaN(parseFloat(by))) {
-                throw new Error(ERROR_MESSAGE.REQUIRED_DOUBLE )
-            }            
-            add[Helper.getValidString(propertyName, KEY.PROPERTY_NAME)] = by;
+                throw new Error(`${PARAMS.PROPERTY_VALUE}${ERROR_MESSAGE.REQUIRED_DOUBLE}`);
+            }
+
+            if(!StringHelper.isValid(prop)) {
+                StringHelper.raiseError(PARAMS.NAME);
+            }
+
+            add[prop] = by;
         }
         return MixpanelReactNative.increment(this.token, add);        
     }
@@ -283,9 +325,8 @@ export class People {
      */
     append(name, value) {
         let appendProp = {};
-        name = Helper.getValidString(name, KEY.PROPERTY_NAME);
-        if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
-            throw new Error(ERROR_MESSAGE.REQUIRED_NON_OBJECT);
+        if(!StringHelper.isValid(name)) {
+            StringHelper.raiseError(PARAMS.NAME);
         } else {
             appendProp[name] = value;
         }
@@ -293,7 +334,7 @@ export class People {
         if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
             return MixpanelReactNative.append(this.token, appendProp);
         } else {
-            return MixpanelReactNative.append(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), appendProp);
+            return MixpanelReactNative.append(this.token, name, appendProp);
         }        
     }
 
@@ -309,9 +350,8 @@ export class People {
      */
     remove(name, value) {
         let removeProp = {};
-        name = Helper.getValidString(name, KEY.PROPERTY_NAME);
-        if (typeof value !== "string" && typeof value !== "number" && typeof value !== "boolean") {
-            throw new Error(ERROR_MESSAGE.REQUIRED_NON_OBJECT);
+        if(!StringHelper.isValid(name)) {
+            StringHelper.raiseError(PARAMS.NAME);
         } else {
             removeProp[name] = value;
         }
@@ -319,20 +359,20 @@ export class People {
         if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
             return MixpanelReactNative.remove(this.token, removeProp);
         } else {
-            return MixpanelReactNative.remove(this.token, Helper.getValidString(name, KEY.PROPERTY_NAME), removeProp);
+            return MixpanelReactNative.remove(this.token, name, removeProp);
         }
-        
     }
   
     /**
       Add values to a list-valued property only if they are not already present in the list.  
      */
     union(name, values) {
-        name = Helper.getValidString(name, KEY.PROPERTY_NAME);
-        if (!Array.isArray(values)) {
-            throw new Error(KEY.VALUES + ERROR_MESSAGE.INVALID_ARRAY);
-        }
+        if(!StringHelper.isValid(name)) {
+            StringHelper.raiseError(PARAMS.NAME);
+        } 
 
+        values = Array.isArray(values) ? values: [values];
+        
         if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
             return MixpanelReactNative.union(this.token, {name: values});
         } else {
@@ -345,14 +385,20 @@ export class People {
       in Mixpanel People.
      */
     unset(propertyName) {
-        return MixpanelReactNative.unset(this.token, Helper.getValidString(propertyName, KEY.PROPERTY_NAME));
+        if (!StringHelper.isValid(propertyName)) {
+            StringHelper.raiseError(PARAMS.PROPERTY_NAME);
+        }
+        return MixpanelReactNative.unset(this.token, propertyName);
     }
 
     /**
       Register the given device to receive push notifications.
      */
     setPushRegistrationId(deviceToken) {
-        return MixpanelReactNative.setPushRegistrationId(this.token, Helper.getValidString(deviceToken, KEY.DEVICE_TOKEN));
+        if (!StringHelper.isValid(deviceToken)) {
+            StringHelper.raiseError(PARAMS.DEVICE_TOKEN);
+        }
+        return MixpanelReactNative.setPushRegistrationId(this.token, deviceToken);
     }
 
     /**
@@ -360,6 +406,9 @@ export class People {
       Retrieve current Firebase Cloud Messaging token.
      */
     getPushRegistrationId() {
+        if (Helper.getDevicePlatform() !== DevicePlatform.Android) {
+            throw new Error(ERROR_MESSAGE.ONLY_FOR_ANDROID);
+        }        
         return MixpanelReactNative.getPushRegistrationId(this.token);
     }
 
@@ -367,7 +416,10 @@ export class People {
       Unregister specific device token from the ability to receive push notifications. This will remove the provided push token saved to user profile.
      */
     clearPushRegistrationId(deviceToken) {
-        return MixpanelReactNative.clearPushRegistrationId(this.token, Helper.getValidString(deviceToken, KEY.DEVICE_TOKEN));
+        if (!StringHelper.isValid(deviceToken)) {
+            StringHelper.raiseError(PARAMS.DEVICE_TOKEN);
+        }
+        return MixpanelReactNative.clearPushRegistrationId(this.token, deviceToken);
     }
 }
 
@@ -378,26 +430,6 @@ const DevicePlatform = {
 };
 
 class Helper {
-    
-    /**
-      Get valid string. 
-     */
-    static getValidString(str, parameterName) {
-        if (!str || str === "" ) {
-            throw new Error(parameterName + ERROR_MESSAGE.REQUIRED_PARAMETER );
-        }
-        return str;
-    }
-
-    /**
-      Get valid object. 
-     */
-    static getValidObject(obj, parameterName) {
-        if (typeof obj !== "object") {
-            throw new Error(parameterName + ERROR_MESSAGE.INVALID_OBJECT);
-        }
-        return obj;
-    }
     
     /**
       Get the library data from package.json file. 
@@ -417,5 +449,35 @@ class Helper {
             default: 
                 return DevicePlatform.Unknown;
         }
+    }
+}
+
+class StringHelper {
+    
+    static isValid(str) {
+        return typeof str === "string" && !(/^\s*$/).test(str);
+    }
+
+    static isValidOrUndefined(str) {
+        return str === undefined || StringHelper.isValid(str);
+    }
+
+    static raiseError(paramName){
+        throw new Error(`${paramName}${ERROR_MESSAGE.INVALID_STRING}`);
+    }
+}
+
+class ObjectHelper {
+    
+    static isValid(obj) {
+        return typeof obj === "object";
+    }
+
+    static isValidOrUndefined(obj) {
+        return obj === undefined || ObjectHelper.isValid(obj);
+    }
+    
+    static raiseError(paramName){
+        throw new Error(`${paramName}${ERROR_MESSAGE.INVALID_OBJECT}`);
     }
 }

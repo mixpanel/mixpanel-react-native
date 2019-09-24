@@ -301,6 +301,8 @@ mixpanel.identify('1234');
 <a name="isIdentified"></a>
 # isIdentified()
 To check whether profile of user is identified or not.
+
+**Note:** This method is available in only android platform.
 ### Example
 ```js
 let isIdentified = await mixpanel.isIdentified();
@@ -425,6 +427,8 @@ mixpanel.people.setPushRegistrationId('Your Device Token');
 <a name="getPushRegistrationId"></a>
 # getPushRegistrationId()
 To retrieve current Firebase Cloud Messaging token.
+
+**Note:** This method is available in only android platform.
 ### Example
 ```js
 let pushRegistrationId = await mixpanel.people.getPushRegistrationId();

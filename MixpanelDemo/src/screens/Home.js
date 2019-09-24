@@ -8,7 +8,8 @@ class HomeScreen extends React.Component {
   */
   navigate = () => {
     this.props.navigation.navigate('Welcome');
-  };
+  }
+
   render() {
     return (
       <View >
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 46,
     fontWeight: 'bold',
-    color: '#000000',
+    color: '#000000'
   },
   button: {
     marginTop: 150

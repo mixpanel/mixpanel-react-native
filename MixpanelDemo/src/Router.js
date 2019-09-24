@@ -1,9 +1,10 @@
 import { createAppContainer, createStackNavigator } from 'react-navigation';
 import Home from './screens/Home';
 import Welcome from './screens/Welcome';
-import MixpanelInstance from './screens/EventScreen';
-import Mixpanel from './screens/PeopleScreen';
-import People from './screens/People';
+import EventScreen from './screens/EventScreen';
+import PeopleScreen from './screens/PeopleScreen';
+import PushNotification from './screens/PushNotification';
+import MultiInstance from './screens/MultiInstance';
 
 const Router = createStackNavigator({
   Home:
@@ -14,18 +15,22 @@ const Router = createStackNavigator({
     {
       screen: Welcome
     },
-  MixpanelInstance:
+    EventScreen:
     {
-      screen: MixpanelInstance
+      screen: EventScreen
     },
-  Mixpanel:
+    PeopleScreen:
     {
-      screen: Mixpanel
+      screen: PeopleScreen
     },
-  People:
+    PushNotification:
     {
-      screen: People
+      screen: PushNotification
     },
+  MultiInstance:
+    {
+      screen: MultiInstance
+    }
 });
 const AppContainer = createAppContainer(Router);
 

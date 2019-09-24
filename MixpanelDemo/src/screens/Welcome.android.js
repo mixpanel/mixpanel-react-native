@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { createAppContainer, createBottomTabNavigator } from 'react-navigation';
 import EventScreen from './EventScreen';
 import PeopleScreen from './PeopleScreen';
-import People from './People';
-import MultipleInstance from './MultipleInstance';
+import PushNotification from './PushNotification';
+import MultiInstance from './MultiInstance';
 
 export default class Welcome extends React.Component {
   render() {
@@ -12,10 +12,12 @@ export default class Welcome extends React.Component {
     )
   }
 }
-/* Botton Tab Navigator: To navigate between Screens*/ 
+
+/* Bottom Tab Navigator: To navigate between screens*/ 
 const tabBar = createBottomTabNavigator({
   People: PeopleScreen,
   Event: EventScreen,
-  PushNotification: People
+  PushNotification: PushNotification,
+  MultiInstance: MultiInstance
 });
 const Tab = createAppContainer(tabBar)

@@ -23,10 +23,8 @@ export default class PeopleScreen extends React.Component {
     properties[key] = value;
     this.mixpanel.people.set(properties).then(t => alert("success"));
   }
-  
   /**
     Track a revenue transaction for the identified people profile.
-    @param charge-the amount of money exchanged.
   */
   trackCharge = () => {
     var chargeInDouble = parseFloat(this.state.TextInput_Charge)
@@ -38,6 +36,7 @@ export default class PeopleScreen extends React.Component {
   flush = () => {
     this.mixpanel.flush();
   }
+
   render() {
     return (
       <View>
@@ -49,7 +48,7 @@ export default class PeopleScreen extends React.Component {
           placeholder="Property Value"
           onChangeText={data => this.setState({ TextInput_Value: data })}
           placeholderTextColor="#fffffff" />
-        <TouchableOpacity style={styles.button1} onPress={this.set}>
+        <TouchableOpacity style={styles.touchableOpacity} onPress={this.set}>
           <Text style={styles.buttonText}>Set</Text>
         </TouchableOpacity>
         <TextInput style={styles.inputBox}
@@ -74,13 +73,13 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#1E90FF',
     borderRadius: 25,
-    width: 200,
+    width: '48%',
     alignItems: 'center',
     marginVertical: 10,
     paddingVertical: 10,
   },
   inputBox: {
-    width: 410,
+    width: '100%',
     backgroundColor: '#F0FFFF',
     borderRadius: 25,
     paddingHorizontal: 16,
@@ -95,10 +94,10 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     textAlign: "center"
   },
-  button1: {
+  touchableOpacity: {
     backgroundColor: '#1E90FF',
     borderRadius: 25,
-    width: 410,
+    width: '100%',
     alignItems: 'center',
     marginVertical: 10,
     paddingVertical: 10,

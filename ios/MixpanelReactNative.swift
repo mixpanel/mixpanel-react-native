@@ -1,13 +1,9 @@
 import Foundation
 import Mixpanel
 import UIKit
-import RCTBridge
 
 @objc(MixpanelReactNative)
 open class MixpanelReactNative: NSObject {
-    
-    @objc
-    var bridge: RCTBridge!
     
     // MARK: - Mixpanel Instance
     

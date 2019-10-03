@@ -7,20 +7,20 @@ import PushNotificationHandler from '../PushNotificationHandler';
 import MultiInstance from './MultiInstance';
 
 export default class Welcome extends React.Component {
-  render() {
-    return ( 
-      <Tab>
-        <PushNotificationHandler/>
-      </Tab>
-    )
-  }
+    render() {
+        return (
+            <Tab>
+                <PushNotificationHandler />
+            </Tab>
+        )
+    }
 }
 
-/* Bottom Tab Navigator: To navigate between screens*/ 
+/* Bottom Tab Navigator: To navigate between screens*/
 const tabBar = createBottomTabNavigator({
-  People: PeopleScreen,
-  Event: EventScreen,
-  PushNotification: PushNotification,
-  MultiInstance: MultiInstance
+    People: PeopleScreen,
+    Event: EventScreen,
+    PushNotification: PushNotification,
+    MultiInstance: MultiInstance
 });
 const Tab = createAppContainer(tabBar)

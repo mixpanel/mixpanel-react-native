@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, TextInput } from 'react-native';
 import Mixpanel from "mixpanel-react-native";
-import {token as MixpanelToken} from '../../app.json';
+import { token as MixpanelToken } from '../../app.json';
 
 export default class People extends React.Component {
 
@@ -9,19 +9,19 @@ export default class People extends React.Component {
         super(props);
         this.configMixpanel();
     }
-    
+
     configMixpanel = async () => {
         this.mixpanel = await Mixpanel.init(MixpanelToken);
-      }
+    }
     /**
-      Register the given device to receive push notifications. 
-    */ 
+      Register the given device to receive push notifications.
+    */
     setPushRegistrationId = () => {
         this.mixpanel.people.setPushRegistrationId(this.state.TextInput_Token);
     }
     /**
-      Unregister specific device token from the ability to receive push notifications. This will remove the provided push token saved to user profile. 
-    */ 
+      Unregister specific device token from the ability to receive push notifications. This will remove the provided push token saved to user profile.
+    */
     clearPushRegistrationId = () => {
         this.mixpanel.people.clearPushRegistrationId();
     }

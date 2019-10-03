@@ -7,29 +7,29 @@ import PushNotification from './screens/PushNotification';
 import MultiInstance from './screens/MultiInstance';
 
 const Router = createStackNavigator({
-  Home:
+    Home:
     {
-      screen: Home
+        screen: Home
     },
-  Welcome:
+    Welcome:
     {
-      screen: Welcome
+        screen: Welcome
     },
     EventScreen:
     {
-      screen: EventScreen
+        screen: EventScreen
     },
     PeopleScreen:
     {
-      screen: PeopleScreen
+        screen: PeopleScreen
     },
     PushNotification:
     {
-      screen: PushNotification
+        screen: PushNotification
     },
-  MultiInstance:
+    MultiInstance:
     {
-      screen: MultiInstance
+        screen: MultiInstance
     }
 });
 const AppContainer = createAppContainer(Router);

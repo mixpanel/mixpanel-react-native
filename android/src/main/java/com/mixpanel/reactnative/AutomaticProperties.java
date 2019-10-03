@@ -14,7 +14,7 @@ public class AutomaticProperties {
     public static void setAutomaticProperties(JSONObject properties) {
         sAutomaticProperties = properties;
     }
-    
+
     /**
      * This method will append library properties to the default properties.
      */
@@ -24,7 +24,7 @@ public class AutomaticProperties {
         }
 
         if (sAutomaticProperties != null) {
-            //merge automatic properties
+            // merge automatic properties
             for (Iterator<String> keys = sAutomaticProperties.keys(); keys.hasNext();) {
                 String key = keys.next();
                 properties.put(key, sAutomaticProperties.get(key));

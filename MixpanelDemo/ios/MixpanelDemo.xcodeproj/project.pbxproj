@@ -13,7 +13,6 @@
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* MixpanelDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MixpanelDemoTests.m */; };
-		04B934178A7E4E5A81838A4E /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EEE1705F88D1463AB1D2755C /* Foundation.ttf */; };
 		11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
@@ -23,7 +22,6 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
-		23754BFA17C42075D81E9446 /* Pods_MixpanelDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67683CBBF47223B02E7C6B68 /* Pods_MixpanelDemo.framework */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -37,33 +35,19 @@
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* MixpanelDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MixpanelDemoTests.m */; };
 		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
-		3949AAC435F14324A1CEEB4A /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E28939940F0E4386855175FC /* FontAwesome.ttf */; };
-		3E5AC663EE2847659DB317B6 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3226D3A8D5D14617B721FDAD /* FontAwesome5_Brands.ttf */; };
-		4ABA7A03B1A1438D8497B887 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 83801D4D84DA403585B56D9D /* FontAwesome5_Solid.ttf */; };
-		5459E565AC8C4B839B8487ED /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A6811328FF5A45A5892995CB /* MaterialIcons.ttf */; };
-		65869DF673A44116B4D8D6DB /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 07DA118D559A49BA950AE61C /* AntDesign.ttf */; };
+		32B31B76DE432601A76A5AD4 /* libPods-MixpanelDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B6C9D46836049512FB9C993 /* libPods-MixpanelDemo.a */; };
 		6E4E24A722F82CD60085D8DD /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E4E24A422F82CAE0085D8DD /* libRNGestureHandler.a */; };
 		6E595E2C22F805C0003DE566 /* MixpanelDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E595E2B22F805C0003DE566 /* MixpanelDemo.swift */; };
 		6E595E3D22F8075B003DE566 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
 		6E595E6922F809DC003DE566 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		6E779681230BC8C3006B0289 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E779663230BC8A5006B0289 /* libRCTPushNotification.a */; };
-		7591AF0D6EE24B888B9732FE /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A51F28587EE84D1FA753E9C0 /* Octicons.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		8665957CF76CDEDF3A2D29DE /* Pods_MixpanelDemo_tvOSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E99DFCB8CB11A06B32B37E4 /* Pods_MixpanelDemo_tvOSTests.framework */; };
-		9FB0C6A02C314BDEB9C9F3F9 /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E411213BDC7E4A369B384553 /* Fontisto.ttf */; };
-		A2954A02B39F43ACB0F31891 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F1AE2293A0304610AB3E1DE7 /* Entypo.ttf */; };
-		A69D1D2B233A349A0029FDC7 /* libMixpanelReactNative.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A69D1D2A233A34840029FDC7 /* libMixpanelReactNative.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
-		C1AFCA89F9D94078A780AD1A /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FC1310A5150E4FF58542BBFC /* Feather.ttf */; };
-		C3B374C523804A44995897F0 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10A2E58700B449E8999BCDDB /* Zocial.ttf */; };
-		E0EC5DC0945E44329BAECDD1 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F4F87CC47CCD4A3D9C52D4BD /* FontAwesome5_Regular.ttf */; };
-		E46ECD3E8DAF42CE89363EC8 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0BEE0D93F2EA4977ABC49C73 /* SimpleLineIcons.ttf */; };
 		E4C99D3CF146D00E94C931F1 /* Pods_MixpanelDemo_tvOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 813C921A3B9941B825690B11 /* Pods_MixpanelDemo_tvOS.framework */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
 		ED2971652150620600B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED2971642150620600B7C4FE /* JavaScriptCore.framework */; };
 		ED87537475A04944BF6CE1EA /* libInteractable.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9785D17A144045F2AA31A6C5 /* libInteractable.a */; };
-		F0095140553B46D7B31CC51B /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 44C28D132ADC4FABAF4CFA52 /* MaterialCommunityIcons.ttf */; };
-		FA4C1778F73E498F9B742571 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 216644D5C4E042CAAFB16CA7 /* EvilIcons.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -368,13 +352,6 @@
 			remoteGlobalIDString = 58B5119B1A9E6C1200147676;
 			remoteInfo = RCTText;
 		};
-		A69D1D29233A34840029FDC7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A69D1D25233A34840029FDC7 /* MixpanelReactNative.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = MixpanelReactNative;
-		};
 		ADBDB9261DFEBF0700ED6528 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */;
@@ -415,8 +392,8 @@
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3226D3A8D5D14617B721FDAD /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		44C28D132ADC4FABAF4CFA52 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
+		4B6C9D46836049512FB9C993 /* libPods-MixpanelDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MixpanelDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
-		67683CBBF47223B02E7C6B68 /* Pods_MixpanelDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MixpanelDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E4E247722F82CAE0085D8DD /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNGestureHandler.xcodeproj; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; };
 		6E595E2A22F805C0003DE566 /* MixpanelDemo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MixpanelDemo-Bridging-Header.h"; sourceTree = "<group>"; };
 		6E595E2B22F805C0003DE566 /* MixpanelDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixpanelDemo.swift; sourceTree = "<group>"; };
@@ -434,7 +411,6 @@
 		9785D17A144045F2AA31A6C5 /* libInteractable.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libInteractable.a; sourceTree = "<group>"; };
 		A51F28587EE84D1FA753E9C0 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		A6811328FF5A45A5892995CB /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
-		A69D1D25233A34840029FDC7 /* MixpanelReactNative.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MixpanelReactNative.xcodeproj; path = "../node_modules/mixpanel-react-native/ios/MixpanelReactNative.xcodeproj"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		AE31EF3F95504F75C383B3F9 /* Pods-MixpanelDemo-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MixpanelDemo-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-MixpanelDemo-tvOSTests/Pods-MixpanelDemo-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E28939940F0E4386855175FC /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
@@ -462,7 +438,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A69D1D2B233A349A0029FDC7 /* libMixpanelReactNative.a in Frameworks */,
 				6E779681230BC8C3006B0289 /* libRCTPushNotification.a in Frameworks */,
 				6E4E24A722F82CD60085D8DD /* libRNGestureHandler.a in Frameworks */,
 				6E595E6922F809DC003DE566 /* libReact.a in Frameworks */,
@@ -479,7 +454,7 @@
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				ED87537475A04944BF6CE1EA /* libInteractable.a in Frameworks */,
-				23754BFA17C42075D81E9446 /* Pods_MixpanelDemo.framework in Frameworks */,
+				32B31B76DE432601A76A5AD4 /* libPods-MixpanelDemo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -650,9 +625,9 @@
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
-				67683CBBF47223B02E7C6B68 /* Pods_MixpanelDemo.framework */,
 				813C921A3B9941B825690B11 /* Pods_MixpanelDemo_tvOS.framework */,
 				8E99DFCB8CB11A06B32B37E4 /* Pods_MixpanelDemo_tvOSTests.framework */,
+				4B6C9D46836049512FB9C993 /* libPods-MixpanelDemo.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -712,7 +687,6 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				A69D1D25233A34840029FDC7 /* MixpanelReactNative.xcodeproj */,
 				6E77964F230BC8A5006B0289 /* RCTPushNotification.xcodeproj */,
 				6E4E247722F82CAE0085D8DD /* RNGestureHandler.xcodeproj */,
 				5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */,
@@ -765,14 +739,6 @@
 				00E356EE1AD99517003FC87E /* MixpanelDemoTests.xctest */,
 				2D02E47B1E0B4A5D006451C7 /* MixpanelDemo-tvOS.app */,
 				2D02E4901E0B4A5D006451C7 /* MixpanelDemo-tvOSTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		A69D1D26233A34840029FDC7 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A69D1D2A233A34840029FDC7 /* libMixpanelReactNative.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -839,7 +805,7 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				F2414F2F24A0587C3AB2CFC6 /* [CP] Embed Pods Frameworks */,
+				BF5B0396C9DBBAFC406E9D19 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -944,10 +910,6 @@
 				{
 					ProductGroup = 6E4E246422F829720085D8DD /* Products */;
 					ProjectRef = 8B3D2432BE9C4942BDC63D16 /* Interactable.xcodeproj */;
-				},
-				{
-					ProductGroup = A69D1D26233A34840029FDC7 /* Products */;
-					ProjectRef = A69D1D25233A34840029FDC7 /* MixpanelReactNative.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
@@ -1304,13 +1266,6 @@
 			remoteRef = 832341B41AAA6A8300B99B32 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A69D1D2A233A34840029FDC7 /* libMixpanelReactNative.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libMixpanelReactNative.a;
-			remoteRef = A69D1D29233A34840029FDC7 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1334,21 +1289,6 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				65869DF673A44116B4D8D6DB /* AntDesign.ttf in Resources */,
-				A2954A02B39F43ACB0F31891 /* Entypo.ttf in Resources */,
-				FA4C1778F73E498F9B742571 /* EvilIcons.ttf in Resources */,
-				C1AFCA89F9D94078A780AD1A /* Feather.ttf in Resources */,
-				3949AAC435F14324A1CEEB4A /* FontAwesome.ttf in Resources */,
-				3E5AC663EE2847659DB317B6 /* FontAwesome5_Brands.ttf in Resources */,
-				E0EC5DC0945E44329BAECDD1 /* FontAwesome5_Regular.ttf in Resources */,
-				4ABA7A03B1A1438D8497B887 /* FontAwesome5_Solid.ttf in Resources */,
-				9FB0C6A02C314BDEB9C9F3F9 /* Fontisto.ttf in Resources */,
-				04B934178A7E4E5A81838A4E /* Foundation.ttf in Resources */,
-				F0095140553B46D7B31CC51B /* MaterialCommunityIcons.ttf in Resources */,
-				5459E565AC8C4B839B8487ED /* MaterialIcons.ttf in Resources */,
-				7591AF0D6EE24B888B9732FE /* Octicons.ttf in Resources */,
-				E46ECD3E8DAF42CE89363EC8 /* SimpleLineIcons.ttf in Resources */,
-				C3B374C523804A44995897F0 /* Zocial.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1464,38 +1404,68 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F2414F2F24A0587C3AB2CFC6 /* [CP] Embed Pods Frameworks */ = {
+		BF5B0396C9DBBAFC406E9D19 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-MixpanelDemo/Pods-MixpanelDemo-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/DoubleConversion/DoubleConversion.framework",
-				"${BUILT_PRODUCTS_DIR}/Folly/folly.framework",
-				"${BUILT_PRODUCTS_DIR}/Mixpanel-swift/Mixpanel.framework",
-				"${BUILT_PRODUCTS_DIR}/MixpanelReactNative/MixpanelReactNative.framework",
-				"${BUILT_PRODUCTS_DIR}/RNGestureHandler/RNGestureHandler.framework",
-				"${BUILT_PRODUCTS_DIR}/RNVectorIcons/RNVectorIcons.framework",
-				"${BUILT_PRODUCTS_DIR}/React/React.framework",
-				"${BUILT_PRODUCTS_DIR}/glog/glog.framework",
-				"${BUILT_PRODUCTS_DIR}/yoga/yoga.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-MixpanelDemo/Pods-MixpanelDemo-resources.sh",
+				"${PODS_ROOT}/Mixpanel-swift/Mixpanel/MiniNotificationViewController.xib",
+				"${PODS_ROOT}/Mixpanel-swift/Mixpanel/MPCloseButton.png",
+				"${PODS_ROOT}/Mixpanel-swift/Mixpanel/MPCloseButton@2x.png",
+				"${PODS_ROOT}/Mixpanel-swift/Mixpanel/MPCloseButton@3x.png",
+				"${PODS_ROOT}/Mixpanel-swift/Mixpanel/placeholder-image.png",
+				"${PODS_ROOT}/Mixpanel-swift/Mixpanel/TakeoverNotificationViewController~ipad.xib",
+				"${PODS_ROOT}/Mixpanel-swift/Mixpanel/TakeoverNotificationViewController~iphonelandscape.xib",
+				"${PODS_ROOT}/Mixpanel-swift/Mixpanel/TakeoverNotificationViewController~iphoneportrait.xib",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Feather.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Foundation.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Octicons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf",
+				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Zocial.ttf",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/DoubleConversion.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/folly.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mixpanel.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MixpanelReactNative.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RNGestureHandler.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RNVectorIcons.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/glog.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/yoga.framework",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MiniNotificationViewController.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPCloseButton.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPCloseButton@2x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MPCloseButton@3x.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/placeholder-image.png",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TakeoverNotificationViewController~ipad.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TakeoverNotificationViewController~iphonelandscape.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TakeoverNotificationViewController~iphoneportrait.nib",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Feather.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Brands.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Regular.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FontAwesome5_Solid.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Fontisto.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Foundation.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Ionicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialCommunityIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MaterialIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Octicons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SimpleLineIcons.ttf",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Zocial.ttf",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MixpanelDemo/Pods-MixpanelDemo-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MixpanelDemo/Pods-MixpanelDemo-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

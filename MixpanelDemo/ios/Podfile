@@ -17,7 +17,7 @@ target 'MixpanelDemo' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'MixpanelReactNative', path: '../node_modules/mixpanel-react-native'
+  pod 'MixpanelReactNative', path: '../../../mixpanel-react-native'
   pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 end

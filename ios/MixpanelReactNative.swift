@@ -181,7 +181,18 @@ open class MixpanelReactNative: NSObject {
         instance?.reset()
         resolve(nil)
     }
-    
+
+    /**
+     Returns the string id currently being used to uniquely identify the user associated
+     with events.
+     */
+    @objc
+    func getDistinctId(_ token: String, resolver resolve: RCTPromiseResolveBlock,
+                       rejecter reject: RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        resolve(instance?.distinctId)
+    }
+
     // MARK: - Super Properties
     
     /**
@@ -259,7 +270,7 @@ open class MixpanelReactNative: NSObject {
         instance?.clearSuperProperties()
         resolve(nil)
     }
-    
+
     // MARK: - People
     
     /**

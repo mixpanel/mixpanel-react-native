@@ -18,8 +18,7 @@ RCT_EXTERN_METHOD(optInTracking: (NSString *)token distinctId: (NSString *)disti
 
 RCT_EXTERN_METHOD(track: (NSString *)token event: (NSString *)event properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-// MARK: - Automatically Track Events
-// MARK: - Sending Events
+
 // MARK: - Timing Events
 
 RCT_EXTERN_METHOD(timeEvent: (NSString *)token event: (NSString *)event resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
@@ -37,6 +36,8 @@ RCT_EXTERN_METHOD(alias: (NSString *)token alias: (NSString *)alias distinctId: 
 RCT_EXTERN_METHOD(flush: (NSString *)token resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(reset: (NSString *)token resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getDistinctId: (NSString *)token resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
 // MARK: - Super Properties
 

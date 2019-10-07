@@ -228,6 +228,14 @@ export default class Mixpanel {
     }
 
     /**
+     Returns the string id currently being used to uniquely identify the user associated
+     with events.
+    */
+    getDistinctId() {
+        return MixpanelReactNative.getDistinctId(this.token);
+    }
+
+    /**
       Upload queued data to the Mixpanel server.
      */
     flush() {

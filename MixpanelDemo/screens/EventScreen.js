@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Mixpanel from 'mixpanel-react-native';
-import { token as MixpanelToken } from '../../app.json';
+import { token as MixpanelToken } from '../app.json';
 
 class EventScreen extends React.Component {
 
@@ -12,12 +12,6 @@ class EventScreen extends React.Component {
 
     configMixpanel = async () => {
         this.mixpanel = await Mixpanel.init(MixpanelToken);
-    }
-    /**
-      Identify the user uniquely by providing the user distinctId.
-     */
-    identify = () => {
-        this.mixpanel.identify(this.state.TextInput_Id);
     }
     /**
       Use this method to opt-in an already opted-out user from tracking.
@@ -67,51 +61,63 @@ class EventScreen extends React.Component {
 
     render() {
         return (
-            <View>
-                <TextInput style={styles.inputBox}
-                    placeholder="Distinct Id"
-                    onChangeText={data => this.setState({ TextInput_Id: data })}
-                    placeholderTextColor="#fffffff" />
+            <ScrollView>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <TouchableOpacity style={styles.button} onPress={this.identify}>
-                        <Text style={styles.buttonText}>Identify User</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={this.optIn}>
-                        <Text style={styles.buttonText}>Opt In</Text>
-                    </TouchableOpacity>
-                </View>
-                <TextInput style={styles.inputBox}
-                    placeholder="Event Name"
-                    onChangeText={data => this.setState({ TextInput_EventName: data })}
-                    placeholderTextColor="#fffffff" />
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TextInput style={styles.textInput}
-                        placeholder="Property Key"
-                        onChangeText={data => this.setState({ TextInput_Key: data })}
-                        placeholderTextColor="#fffffff" />
-                    <TextInput style={styles.textInput}
-                        placeholder="Property Value"
-                        onChangeText={data => this.setState({ TextInput_Value: data })}
-                        placeholderTextColor="#fffffff" />
-                </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.track}>
-                        <Text style={styles.buttonText}>Track</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={this.registerSuperProperties}>
-                        <Text style={styles.buttonText}>Register Super Property</Text>
+                        <Text style={styles.buttonText}>Track w/o Properties</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.clearSuperProperties}>
-                        <Text style={styles.buttonText}>Clear Super Property</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={this.getSuperProperties}>
-                        <Text style={styles.buttonText}>Get Super Property</Text>
+                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                        <Text style={styles.buttonText}>Track w Properties</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
-
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                        <Text style={styles.buttonText}>Time Event 5secs</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                        <Text style={styles.buttonText}>Clear Timed Events</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                        <Text style={styles.buttonText}>Get Current SuperProperties</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                        <Text style={styles.buttonText}>Clear SuperProperties</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                        <Text style={styles.buttonText}>Register SuperProperties</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                        <Text style={styles.buttonText}>Register SuperProperties Once</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                        <Text style={styles.buttonText}>Register SP Once w Default Value</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                        <Text style={styles.buttonText}>Unregister SuperProperty</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                        <Text style={styles.buttonText}>Flush</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
         );
     }
 }
@@ -144,8 +150,7 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: '#1E90FF',
-        borderRadius: 25,
-        width: '48%',
+        width: '100%',
         alignItems: 'center',
         marginVertical: 10,
         paddingVertical: 12,

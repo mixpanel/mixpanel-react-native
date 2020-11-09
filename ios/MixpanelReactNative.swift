@@ -5,6 +5,10 @@ import UIKit
 @objc(MixpanelReactNative)
 open class MixpanelReactNative: NSObject {
     
+    @objc static func requiresMainQueueSetup() -> Bool {
+        return false
+    }
+    
     // MARK: - Mixpanel Instance
     
     /**

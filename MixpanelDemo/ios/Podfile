@@ -1,34 +1,33 @@
-# Uncomment the next line to define a global platform for your project
-platform :ios, '9.0'
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+platform :ios, '10.0'
 
 target 'MixpanelDemo' do
-  pod 'React', :path => '../node_modules/react-native', :subspecs => [
-        'Core',
-        'CxxBridge', # Include this for RN >= 0.47
-        'DevSupport', # Include this to enable In-App Devmenu if RN >= 0.43
-        'RCTText',
-        'RCTNetwork',
-        'RCTWebSocket', # Needed for debugging
-        'RCTAnimation', # Needed for FlatList and animations running on native UI thread
-        ], :modular_headers => true
-    # Explicitly include Yoga if you are using RN >= 0.42.0
-  pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
-  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
-  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
-  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+  config = use_native_modules!
 
-  pod 'MixpanelReactNative', path: '../../../mixpanel-react-native'
-  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
-  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  use_react_native!(:path => config["reactNativePath"])
+
+  target 'MixpanelDemoTests' do
+    inherit! :complete
+    # Pods for testing
+  end
+
+  # Enables Flipper.
+  #
+  # Note that if you have use_frameworks! enabled, Flipper will not work and
+  # you should disable these next few lines.
+  use_flipper!
+  post_install do |installer|
+    flipper_post_install(installer)
+  end
 end
 
 target 'MixpanelDemo-tvOS' do
-  # Comment the next line if you don't want to use dynamic frameworks
-  use_frameworks!
+  # Pods for MixpanelDemo-tvOS
 
   target 'MixpanelDemo-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end
-
 end

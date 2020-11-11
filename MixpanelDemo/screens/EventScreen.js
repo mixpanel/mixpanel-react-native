@@ -34,10 +34,6 @@ class EventScreen extends React.Component {
         }, 2000);
     }
 
-    clearTimeEvent = () => {
-        this.mixpanel.clearTimedEvents();
-    }
-
     trackWProperties = () => {
         const properties = {"Cool Property": "Property Value"};
         this.mixpanel.track("Track event with property");
@@ -75,10 +71,6 @@ class EventScreen extends React.Component {
         this.mixpanel.registerSuperPropertiesOnce({"super property": "super property value1"});
     }
 
-    registerSuperPropertiesOnceWithDefaultValue = () => {
-      this.mixpanel.registerSuperPropertiesOnce({"super property": "super property value2"}, "super property value");
-    }
-
     flush = () => {
       this.mixpanel.flush();
     }
@@ -102,11 +94,6 @@ class EventScreen extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.clearTimeEvent}>
-                        <Text style={styles.buttonText}>Clear Timed Events</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <TouchableOpacity style={styles.button} onPress={this.getSuperProperties}>
                         <Text style={styles.buttonText}>Get Current SuperProperties</Text>
                     </TouchableOpacity>
@@ -124,11 +111,6 @@ class EventScreen extends React.Component {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <TouchableOpacity style={styles.button} onPress={this.registerSuperPropertiesOnce}>
                         <Text style={styles.buttonText}>Register SuperProperties Once</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.registerSuperPropertiesOnceWithDefaultValue}>
-                        <Text style={styles.buttonText}>Register SP Once w Default Value</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

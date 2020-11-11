@@ -37,7 +37,7 @@ export default class ProfileScreen extends React.Component {
     }
 
     setOneProperty = () => {
-        this.mixpanel.people.set("g", "yo").then(t => alert("success"));
+        this.mixpanel.people.set("d", "yo").then(t => alert("success"));
     }
 
     setOnePropertyOnce = () => {
@@ -61,7 +61,7 @@ export default class ProfileScreen extends React.Component {
     }
 
     unionProperties = () => {
-        this.mixpanel.people.union({"c": ["goodbye", "hi"], "d": ["hello"]});
+        this.mixpanel.people.union({"a": ["goodbye", "hi"], "c": ["hello"]});
     }
 
     trackChargeWithoutProperties = () => {

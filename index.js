@@ -154,13 +154,12 @@ export default class Mixpanel {
     /**
       Register a set of super properties only once. This will not
       overwrite previous super property values, unlike register().
-      defaultValue: Optional. overwrite existing properties that have this value
      */
-    registerSuperPropertiesOnce(properties, defaultValue) {
+    registerSuperPropertiesOnce(properties) {
         if (!ObjectHelper.isValidOrUndefined(properties)) {
             ObjectHelper.raiseError(PARAMS.PROPERTIES);
         }
-        return MixpanelReactNative.registerSuperPropertiesOnce(this.token, properties || {}, defaultValue);
+        return MixpanelReactNative.registerSuperPropertiesOnce(this.token, properties || {});
     }
 
     /**

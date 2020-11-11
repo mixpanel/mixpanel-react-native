@@ -14,8 +14,8 @@ class HomeScreen extends React.Component {
         this.props.navigation.navigate('Event');
     }
 
-    navigatePeople = () => {
-      this.props.navigation.navigate('People');
+    navigateProfile = () => {
+      this.props.navigation.navigate('Profile');
     }
 
     navigateGDPR = () => {
@@ -29,7 +29,7 @@ class HomeScreen extends React.Component {
                 <Separator />
                 <Button onPress={this.navigateEvent} title='Event' />
                 <Separator />
-                <Button onPress={this.navigatePeople} title='Profile' />
+                <Button onPress={this.navigateProfile} title='Profile' />
                 <Separator />
                 <Button onPress={this.navigateGDPR} title='GDPR' />
                 <Separator />

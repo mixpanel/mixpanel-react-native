@@ -321,11 +321,11 @@ open class MixpanelReactNative: NSObject {
      which do not exist.
      */
     @objc
-    func unset(_ token: String, properties: [String],
+    func unset(_ token: String, propertyName: String,
                resolver resolve: RCTPromiseResolveBlock,
                rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
-        instance?.people.unset(properties: properties)
+        instance?.people.unset(properties: [propertyName])
         resolve(nil)
     }
     

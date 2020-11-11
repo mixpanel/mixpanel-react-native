@@ -16,46 +16,24 @@ export default class GDPRScreen extends React.Component {
     /**
       Identify the user uniquely by providing the user distinctId.
      */
-    identify = () => {
-      this.mixpanel.identify(this.state.TextInput_Id);
+    optIn = () => {
+        this.mixpanel.optInTracking(this.mixpanel.getDistinctId());
     }
-    reset = () => {
-      this.mixpanel.reset();
-    }
-   /**
-      Set a collection of properties on the identified user.
-    */
-    set = () => {
-        var key = this.state.TextInput_Key;
-        var value = this.state.TextInput_Value;
-        var properties = {};
-        properties[key] = value;
-        this.mixpanel.people.set(properties).then(t => alert("success"));
-    }
-    /**
-      Track a revenue transaction for the identified people profile.
-    */
-    trackCharge = () => {
-        var chargeInDouble = parseFloat(this.state.TextInput_Charge)
-        this.mixpanel.people.trackCharge(chargeInDouble).then(t => alert("success"));
-    }
-    /**
-      Push all queued Mixpanel events and People Analytics changes to Mixpanel servers.
-    */
-    flush = () => {
-        this.mixpanel.flush();
+
+    optOut = () => {
+        this.mixpanel.optOutTracking();
     }
 
     render() {
         return (
             <ScrollView>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.optIn}>
                         <Text style={styles.buttonText}>Opt In</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.optOut}>
                         <Text style={styles.buttonText}>Opt Out</Text>
                     </TouchableOpacity>
                 </View>

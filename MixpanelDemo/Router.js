@@ -3,8 +3,8 @@ import { createAppContainer } from "react-navigation";
 
 import Home from './screens/Home';
 import Event from './screens/EventScreen';
-import People from './screens/PeopleScreen';
-import GDPR from './screens/GDPRScreen'
+import Profile from './screens/ProfileScreen';
+import GDPR from './screens/GDPRScreen';
 
 
 const Router = createStackNavigator({
@@ -16,9 +16,9 @@ const Router = createStackNavigator({
     {
         screen: Event
     },
-    People:
+    Profile:
     {
-        screen: People
+        screen: Profile
     },
     GDPR:
     {

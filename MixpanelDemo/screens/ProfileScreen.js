@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text, TouchableOpacity, StyleSheet, View, TextInput, ScrollView } from 'react-native';
+import { Text, TouchableOpacity, StyleSheet, View, ScrollView } from 'react-native';
 import Mixpanel from "mixpanel-react-native";
 import { token as MixpanelToken } from '../app.json';
 
-export default class PeopleScreen extends React.Component {
+export default class ProfileScreen extends React.Component {
 
     constructor(props) {
         super(props);
@@ -17,28 +17,69 @@ export default class PeopleScreen extends React.Component {
       Identify the user uniquely by providing the user distinctId.
      */
     identify = () => {
-      this.mixpanel.identify(this.state.TextInput_Id);
+        this.mixpanel.identify("testDistinctId");
     }
+    
+    createAlias = () => {
+        this.mixpanel.alias("New Alias", "testDistinctId");
+    }
+
     reset = () => {
-      this.mixpanel.reset();
+        this.mixpanel.reset();
     }
-   /**
-      Set a collection of properties on the identified user.
-    */
-    set = () => {
-        var key = this.state.TextInput_Key;
-        var value = this.state.TextInput_Value;
-        var properties = {};
-        properties[key] = value;
-        this.mixpanel.people.set(properties).then(t => alert("success"));
+
+    setProperty = () => {
+        this.mixpanel.people.set({
+          "a": 1,
+          "b": 2.3,
+          "c": ["4", 5],
+        }).then(t => alert("success"));
     }
-    /**
-      Track a revenue transaction for the identified people profile.
-    */
+
+    setOneProperty = () => {
+        this.mixpanel.people.set("g", "yo").then(t => alert("success"));
+    }
+
+    setOnePropertyOnce = () => {
+        this.mixpanel.people.setOnce("c", "just once").then(t => alert("success"));
+    }
+
+    unsetProperties = () => {
+        this.mixpanel.people.unset("a");
+    }
+
+    incrementProperties = () => {
+        this.mixpanel.people.increment({"a": 1.2, "b": 3});
+    }
+
+    incrementProperty = () => {
+        this.mixpanel.people.increment("a", 1.2);
+    }
+    
+    appendProperties = () => {
+        this.mixpanel.people.append("e", "Hello");
+    }
+
+    unionProperties = () => {
+        this.mixpanel.people.union({"c": ["goodbye", "hi"], "d": ["hello"]});
+    }
+
+    trackChargeWithoutProperties = () => {
+      this.mixpanel.people.trackCharge(22.8).then(t => alert("success"));
+    }
+
     trackCharge = () => {
-        var chargeInDouble = parseFloat(this.state.TextInput_Charge)
-        this.mixpanel.people.trackCharge(chargeInDouble).then(t => alert("success"));
+        this.mixpanel.people.trackCharge(12.8, {"sandwich": 1}).then(t => alert("success"));
     }
+
+    clearCharges = () => {
+        this.mixpanel.people.clearCharges();
+    }
+
+    deleteUser = () => {
+        this.mixpanel.people.deleteUser();
+    }
+
     /**
       Push all queued Mixpanel events and People Analytics changes to Mixpanel servers.
     */
@@ -55,47 +96,47 @@ export default class PeopleScreen extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.createAlias}>
                         <Text style={styles.buttonText}>Create Alias</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.reset}>
                         <Text style={styles.buttonText}>Reset</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.setProperty}>
                         <Text style={styles.buttonText}>Set Properties</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.setOneProperty}>
                         <Text style={styles.buttonText}>Set One Property</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.setOnePropertyOnce}>
                         <Text style={styles.buttonText}>Set Properties Once</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.unsetProperties}>
                         <Text style={styles.buttonText}>Unset Properties</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.incrementProperties}>
                         <Text style={styles.buttonText}>Increment Properties</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.incrementProperty}>
                         <Text style={styles.buttonText}>Increment Property</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.appendProperties}>
                         <Text style={styles.buttonText}>Append Properties</Text>
                     </TouchableOpacity>
                 </View>
@@ -105,27 +146,27 @@ export default class PeopleScreen extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.trackChargeWithoutProperties}>
                         <Text style={styles.buttonText}>Track Charge w/o Properties</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.trackCharge}>
                         <Text style={styles.buttonText}>Track Charge w Properties</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.clearCharges}>
                         <Text style={styles.buttonText}>Clear Charges</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.deleteUser}>
                         <Text style={styles.buttonText}>Delete User</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.flush}>
                         <Text style={styles.buttonText}>Flush</Text>
                     </TouchableOpacity>
                 </View>
@@ -141,16 +182,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginVertical: 10,
         paddingVertical: 10,
-    },
-    inputBox: {
-        width: '100%',
-        backgroundColor: '#F0FFFF',
-        borderRadius: 25,
-        paddingHorizontal: 16,
-        fontSize: 16,
-        borderWidth: 2,
-        borderColor: "#1E90FF",
-        marginVertical: 10,
     },
     buttonText: {
         fontSize: 16,

@@ -154,12 +154,13 @@ export default class Mixpanel {
     /**
       Register a set of super properties only once. This will not
       overwrite previous super property values, unlike register().
+      defaultValue: Optional. overwrite existing properties that have this value
      */
-    registerSuperPropertiesOnce(properties) {
+    registerSuperPropertiesOnce(properties, defaultValue) {
         if (!ObjectHelper.isValidOrUndefined(properties)) {
             ObjectHelper.raiseError(PARAMS.PROPERTIES);
         }
-        return MixpanelReactNative.registerSuperPropertiesOnce(this.token, properties || {});
+        return MixpanelReactNative.registerSuperPropertiesOnce(this.token, properties || {}, defaultValue);
     }
 
     /**
@@ -196,6 +197,13 @@ export default class Mixpanel {
             StringHelper.raiseError(PARAMS.EVENT_NAME);
         }
         return MixpanelReactNative.timeEvent(this.token, eventName);
+    }
+
+    /**
+     Clears all current event timers.
+     */
+    clearTimedEvents() {
+        return MixpanelReactNative.clearTimedEvents(this.token);  
     }
 
     /**

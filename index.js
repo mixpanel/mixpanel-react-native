@@ -140,6 +140,17 @@ export default class Mixpanel {
         return MixpanelReactNative.track(this.token, eventName, properties || {});
     }
 
+    trackWithGroups(eventName, properties, groups) {
+        if (!StringHelper.isValid(eventName)) {
+            StringHelper.raiseError(PARAMS.EVENT_NAME);
+        }
+
+        if (!ObjectHelper.isValidOrUndefined(properties)) {
+            ObjectHelper.raiseError(PARAMS.PROPERTIES);
+        }
+        return MixpanelReactNative.trackWithGroups(this.token, eventName, properties || {}, groups);
+    }
+
     /**
       Register a set of super properties, which are included with all
       events. This will overwrite previous super property values.

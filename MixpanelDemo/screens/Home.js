@@ -22,6 +22,10 @@ class HomeScreen extends React.Component {
       this.props.navigation.navigate('GDPR');
     }
 
+    navigateGroup = () => {
+      this.props.navigation.navigate('Group');
+    }
+
     render() {
         return (
           <SafeAreaView>
@@ -32,6 +36,8 @@ class HomeScreen extends React.Component {
                 <Button onPress={this.navigateProfile} title='Profile' />
                 <Separator />
                 <Button onPress={this.navigateGDPR} title='GDPR' />
+                <Separator />
+                <Button onPress={this.navigateGroup} title='Group' />
                 <Separator />
             </ScrollView>
           </SafeAreaView>

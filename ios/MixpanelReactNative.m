@@ -18,7 +18,6 @@ RCT_EXTERN_METHOD(optInTracking: (NSString *)token distinctId: (NSString *)disti
 
 RCT_EXTERN_METHOD(track: (NSString *)token event: (NSString *)event properties: (NSDictionary *)properties resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
-
 // MARK: - Timing Events
 
 RCT_EXTERN_METHOD(timeEvent: (NSString *)token event: (NSString *)event resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
@@ -78,4 +77,8 @@ RCT_EXTERN_METHOD(setPushRegistrationId: (NSString *)token deviceToken: (NSStrin
 RCT_EXTERN_METHOD(clearPushRegistrationId: (NSString *)token deviceToken: (NSString *)deviceToken resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(clearAllPushRegistrationId: (NSString *)token resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
+
+// MARK: - Group
+RCT_EXTERN_METHOD(trackWithGroups: (NSString *)token event: (NSString *)event properties: (NSDictionary *)properties groups: (NSDictionary *)groups resolver: (RCTPromiseResolveBlock)resolve rejecter: (RCTPromiseRejectBlock)reject)
+
 @end

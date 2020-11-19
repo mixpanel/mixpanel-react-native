@@ -427,6 +427,22 @@ open class MixpanelReactNative: NSObject {
         instance?.people.deleteUser()
         resolve(nil)
     }
+
+    // MARK: - Group
+    @objc
+    func trackWithGroups(_ token: String, event: String, properties: [String: Any]? = nil,
+                         groups: [String: Any]? = nil,
+                         resolver resolve: RCTPromiseResolveBlock,
+                         rejecter reject: RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true)
+        var mpGroups = Dictionary<String, MixpanelType>()
+        for (key,value) in groups ?? [:] {
+            mpGroups[key] = MixpanelTypeHandler.ToMixpanelType(value)
+        }
+        instance?.trackWithGroups(event: event, properties: mpProperties, groups: mpGroups)
+        resolve(nil)
+    }
     
     // MARK: - Registering for Push Notifications
     
@@ -444,7 +460,7 @@ open class MixpanelReactNative: NSObject {
         instance?.people.union(properties: ["$ios_devices": [deviceToken] ])
         resolve(nil)
     }
-    
+
     /**
      Register the given device to receive push notifications.
      */
@@ -491,4 +507,5 @@ open class MixpanelReactNative: NSObject {
         }
         return instance
     }
+
 }

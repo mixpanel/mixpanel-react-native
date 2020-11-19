@@ -42,6 +42,17 @@
     "react-test-renderer": "16.13.1"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "testMatch": [
+      "<rootDir>/__tests__/**/*.js?(x)"
+    ],
+    "verbose": true,
+    "setupFiles": ["./node_modules/react-native-gesture-handler/jestSetup.js"],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(...|...|...))"
+    ],
+    "moduleDirectories": [
+      "node_modules"
+    ]
   }
 }

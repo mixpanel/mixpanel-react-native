@@ -471,4 +471,15 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(null);
         }
     }
+
+    @ReactMethod
+    public void trackWithGroups(final String token, String eventName, ReadableMap properties, ReadableMap groups, Promise promise) {
+      MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
+      synchronized (instance) {
+          Map eventProperties = ReactNativeHelper.toMap(properties);
+          Map eventGroups = ReactNativeHelper.toMap(groups);
+          instance.trackWithGroups(eventName, eventProperties, eventGroups)
+          promise.resolve(null);
+      }
+    }
 }

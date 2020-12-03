@@ -92,8 +92,6 @@ export default class Mixpanel {
             properties: {}
           }
         distinctId: Optional string to use as the distinct ID for events.
-     *  This will call {@link #identify(String)}. If you use people profiles make sure you manually call
-     *  People.identify(String) after this method.
      * 
      *  properties: Optional could be passed to add properties to the opt-in event that is sent to Mixpanel.
      *
@@ -125,11 +123,6 @@ export default class Mixpanel {
     /**
      * Associate all future calls to track() with the user identified by
      * the given distinct id.
-     *
-     * <p>This call does not identify the user for People Analytics;
-     * to do that, see People.identify(). Mixpanel recommends using
-     * the same distinct_id for both calls, and using a distinct_id that is easy
-     * to associate with the given user, for example, a server-side account identifier.
      *
      * <p>Calls to track() made before corresponding calls to identify
      * will use an anonymous locally generated distinct id, which means it is best to call identify
@@ -356,17 +349,6 @@ export default class Mixpanel {
      */
     reset() {
         return MixpanelReactNative.reset(this.token);
-    }
-
-    /**
-      For Android only
-      Use to check whether user is identified or not.
-     */
-    isIdentified() {
-        if (Helper.getDevicePlatform() !== DevicePlatform.Android) {
-            throw new Error(ERROR_MESSAGE.ONLY_FOR_ANDROID);
-        }
-        return MixpanelReactNative.isIdentified(this.token);
     }
 
     /**

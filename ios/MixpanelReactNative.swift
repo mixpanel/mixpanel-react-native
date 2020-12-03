@@ -172,7 +172,7 @@ open class MixpanelReactNative: NSObject {
     }
     
     // MARK: - People
-    
+
     @objc
     func set(_ token: String, properties: [String: Any],
              resolver resolve: RCTPromiseResolveBlock,

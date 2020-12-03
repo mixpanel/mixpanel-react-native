@@ -21,6 +21,10 @@ class EventScreen extends React.Component {
         this.mixpanel.track("Track Event!");
     }
 
+    identify = () => {
+        this.mixpanel.identify("testDistinctId");
+    }
+
     timeEvent = () => {
         const eventName = "Timed Event";
         this.mixpanel.timeEvent(eventName);
@@ -81,6 +85,11 @@ class EventScreen extends React.Component {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <TouchableOpacity style={styles.button} onPress={this.trackWProperties}>
                         <Text style={styles.buttonText}>Track w Properties</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                        <Text style={styles.buttonText}>Identify</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

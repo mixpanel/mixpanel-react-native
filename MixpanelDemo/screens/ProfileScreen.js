@@ -13,12 +13,6 @@ export default class ProfileScreen extends React.Component {
     configMixpanel = async () => {
         this.mixpanel = await Mixpanel.init(MixpanelToken);
     }
-    /**
-      Identify the user uniquely by providing the user distinctId.
-     */
-    identify = () => {
-        this.mixpanel.identify("testDistinctId");
-    }
     
     createAlias = () => {
         this.mixpanel.alias("New Alias", "testDistinctId");
@@ -94,11 +88,6 @@ export default class ProfileScreen extends React.Component {
     render() {
         return (
             <ScrollView>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
-                        <Text style={styles.buttonText}>Identify</Text>
-                    </TouchableOpacity>
-                </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <TouchableOpacity style={styles.button} onPress={this.createAlias}>
                         <Text style={styles.buttonText}>Create Alias</Text>

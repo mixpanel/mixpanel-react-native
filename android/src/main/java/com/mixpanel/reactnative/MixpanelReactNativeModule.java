@@ -198,14 +198,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void isIdentified(final String token, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance) {
-            promise.resolve(instance.getPeople().isIdentified());
-        }
-    }
-
-    @ReactMethod
     public void set(final String token, ReadableMap properties, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {

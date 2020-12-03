@@ -56,6 +56,10 @@ export default class ProfileScreen extends React.Component {
         this.mixpanel.people.increment("a", 1.2);
     }
     
+    removePropertyValue = () => {
+        this.mixpanel.people.remove("c", 5);
+    }
+
     appendProperties = () => {
         this.mixpanel.people.append("e", "Hello");
     }
@@ -65,7 +69,7 @@ export default class ProfileScreen extends React.Component {
     }
 
     trackChargeWithoutProperties = () => {
-      this.mixpanel.people.trackCharge(22.8).then(t => alert("success"));
+        this.mixpanel.people.trackCharge(22.8).then(t => alert("success"));
     }
 
     trackCharge = () => {
@@ -133,6 +137,11 @@ export default class ProfileScreen extends React.Component {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <TouchableOpacity style={styles.button} onPress={this.incrementProperty}>
                         <Text style={styles.buttonText}>Increment Property</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <TouchableOpacity style={styles.button} onPress={this.removePropertyValue}>
+                        <Text style={styles.buttonText}>Remove Property Value</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

@@ -13,12 +13,7 @@ class EventScreen extends React.Component {
     configMixpanel = async () => {
         this.mixpanel = await Mixpanel.init(MixpanelToken);
     }
-    /**
-      Use this method to opt-in an already opted-out user from tracking.
-    */
-    optIn = () => {
-        this.mixpanel.optInTracking(this.state.TextInput_Id);
-    }
+
     /**
       Use for Track an event.
     */
@@ -68,7 +63,7 @@ class EventScreen extends React.Component {
     }
 
     registerSuperPropertiesOnce = () => {
-        this.mixpanel.registerSuperPropertiesOnce({"super property": "super property value1"});
+        this.mixpanel.registerSuperPropertiesOnce({"super property": "super property value1"}, );
     }
 
     flush = () => {

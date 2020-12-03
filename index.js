@@ -684,7 +684,7 @@ export class MixpanelGroup {
      */
     remove(name, value) {
         if (!StringHelper.isValid(name)) {
-            StringHelper.raiseError(PARAMS.NAME);
+            StringHelper.raiseError(PARAMS.PROPERTY_NAME);
         }
 
         return MixpanelReactNative.groupRemovePropertyValue(this.token, this.groupKey, this.groupID, name, value);
@@ -700,7 +700,7 @@ export class MixpanelGroup {
      */
     union(name, value) {
         if (!StringHelper.isValid(name)) {
-            StringHelper.raiseError(PARAMS.NAME);
+            StringHelper.raiseError(PARAMS.PROPERTY_NAME);
         }
         value = Array.isArray(value) ? value : [value];
         return MixpanelReactNative.groupUnionProperty(this.token, this.groupKey, this.groupID, name, value);

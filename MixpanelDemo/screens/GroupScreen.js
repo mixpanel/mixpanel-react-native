@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, ScrollView } from 'react-native';
-import Mixpanel, { MixpanelGroup } from "mixpanel-react-native";
+import Mixpanel from "mixpanel-react-native";
 import { token as MixpanelToken } from '../app.json';
 
 export default class GroupScreen extends React.Component {
@@ -12,7 +12,7 @@ export default class GroupScreen extends React.Component {
 
     configMixpanel = async () => {
         this.mixpanel = await Mixpanel.init(MixpanelToken);
-        this.group = new MixpanelGroup(MixpanelToken, "company_id", 12345);
+        this.group = this.mixpanel.getGroup("company_id", 12345);
     }
     /**
       Identify the user uniquely by providing the user distinctId.

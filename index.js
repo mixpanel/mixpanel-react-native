@@ -193,6 +193,17 @@ export default class Mixpanel {
     }
 
     /**
+     * Returns a Mixpanel People object that can be used to set and increment
+     * People Analytics properties.
+     *
+     * @return an instance of People that you can use to update
+     *     records in Mixpanel People Analytics
+     */
+    getPeople() {
+        return this.people;
+    }
+
+    /**
      * Track an event with specific groups.
      *
      * <p>Every call to track eventually results in a data point sent to Mixpanel. These data points

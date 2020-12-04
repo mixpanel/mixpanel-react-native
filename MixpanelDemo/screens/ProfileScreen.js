@@ -23,7 +23,7 @@ export default class ProfileScreen extends React.Component {
     }
 
     setProperty = () => {
-        this.mixpanel.people.set({
+        this.mixpanel.getPeople().set({
           "a": 1,
           "b": 2.3,
           "c": ["4", 5],
@@ -31,51 +31,51 @@ export default class ProfileScreen extends React.Component {
     }
 
     setOneProperty = () => {
-        this.mixpanel.people.set("d", "yo").then(t => alert("success"));
+        this.mixpanel.getPeople().set("d", "yo").then(t => alert("success"));
     }
 
     setOnePropertyOnce = () => {
-        this.mixpanel.people.setOnce("c", "just once").then(t => alert("success"));
+        this.mixpanel.getPeople().setOnce("c", "just once").then(t => alert("success"));
     }
 
     unsetProperties = () => {
-        this.mixpanel.people.unset("a");
+        this.mixpanel.getPeople().unset("a");
     }
 
     incrementProperties = () => {
-        this.mixpanel.people.increment({"a": 1.2, "b": 3});
+        this.mixpanel.getPeople().increment({"a": 1.2, "b": 3});
     }
 
     incrementProperty = () => {
-        this.mixpanel.people.increment("a", 1.2);
+        this.mixpanel.getPeople().increment("a", 1.2);
     }
     
     removePropertyValue = () => {
-        this.mixpanel.people.remove("c", 5);
+        this.mixpanel.getPeople().remove("c", 5);
     }
 
     appendProperties = () => {
-        this.mixpanel.people.append("e", "Hello");
+        this.mixpanel.getPeople().append("e", "Hello");
     }
 
     unionProperties = () => {
-        this.mixpanel.people.union({"a": ["goodbye", "hi"], "c": ["hello"]});
+        this.mixpanel.getPeople().union({"a": ["goodbye", "hi"], "c": ["hello"]});
     }
 
     trackChargeWithoutProperties = () => {
-        this.mixpanel.people.trackCharge(22.8).then(t => alert("success"));
+        this.mixpanel.getPeople().trackCharge(22.8).then(t => alert("success"));
     }
 
     trackCharge = () => {
-        this.mixpanel.people.trackCharge(12.8, {"sandwich": 1}).then(t => alert("success"));
+        this.mixpanel.getPeople().trackCharge(12.8, {"sandwich": 1}).then(t => alert("success"));
     }
 
     clearCharges = () => {
-        this.mixpanel.people.clearCharges();
+        this.mixpanel.getPeople().clearCharges();
     }
 
     deleteUser = () => {
-        this.mixpanel.people.deleteUser();
+        this.mixpanel.getPeople().deleteUser();
     }
 
     /**

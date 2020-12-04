@@ -233,6 +233,19 @@ export default class Mixpanel {
     }
 
     /**
+     * Returns a MixpanelGroup object that can be used to set and increment
+     * Group Analytics properties.
+     *
+     * @param groupKey String identifying the type of group (must be already in use as a group key)
+     * @param groupID Object identifying the specific group
+     * @return an instance of MixpanelGroup that you can use to update
+     *     records in Mixpanel Group Analytics
+     */
+    getGroup(groupKey, groupID) {
+        return new MixpanelGroup(this.token, groupKey, groupID);
+    }
+
+    /**
      * Add a group to this user's membership for a particular group key
      *
      * @param groupKey The property name associated with this group type (must already have been set up).

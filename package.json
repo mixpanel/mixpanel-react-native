@@ -1,21 +1,27 @@
 {
     "name": "mixpanel-react-native",
     "version": "1.0.0-beta.6",
-    "description": "Mixpanel tracking library for react-native",
+    "description": "Mixpanel tracking library for React Native",
     "main": "index.js",
     "scripts": {
         "test": "jest"
     },
-    "keywords": [
-        "react-native"
-    ],
     "author": "Mixpanel",
     "license": "Apache-2.0",
     "repository": {
-        "TODO": "Change the git URL before publishing on npm",
         "type": "git",
         "url": "git+https://github.com/mixpanel/mixpanel-react-native.git"
     },
+    "keywords": [
+        "mixpanel",
+        "react",
+        "native",
+        "ios",
+        "android",
+        "analytics",
+        "tracking",
+        "sdk"
+    ],
     "bugs": {
         "url": "https://github.com/mixpanel/mixpanel-react-native/issues"
     },

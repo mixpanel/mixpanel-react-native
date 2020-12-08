@@ -9,7 +9,7 @@ import { NativeModules } from 'react-native';
 
 test(`it calls MixpanelReactNative initialize`, async () => {
   const mixpanel = await Mixpanel.init("token");
-  expect(NativeModules.MixpanelReactNative.initialize).toBeCalledWith("token", false, {"$lib_version": "1.0.0-beta.7", "mp_lib": "react-native"});
+  expect(NativeModules.MixpanelReactNative.initialize).toBeCalledWith("token", false, {"$lib_version": "1.0.0-beta.8", "mp_lib": "react-native"});
 });
 
 test(`it calls MixpanelReactNative hasOptedOutTracking`, async () => {

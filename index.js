@@ -5,23 +5,19 @@ import packageJson from "./package.json";
 const { MixpanelReactNative } = NativeModules;
 
 if (!MixpanelReactNative) {
-    throw new Error(`mixpanel-react-native: MixpanelReactNative is null. To fix this issue try these steps:
-    • Run \`react-native link mixpanel-react-native\` in the project root.
-    • Rebuild and re-run the app.
-    • If you are using CocoaPods on iOS, run \`pod install\` in the \`ios\` directory and then rebuild and re-run the app. You may also need to re-open Xcode to get the new pods.
-    If none of these fix the issue, please open an issue on the Github repository: https://github.com/mixpanel/mixpanel-react-native`);
+    throw new Error(`mixpanel-react-native: MixpanelReactNative is null. 
+    Please follow the guide on the Github repository: https://github.com/mixpanel/mixpanel-react-native.`);
 }
 
 const DevicePlatform = {
     Unknown: "Unknown",
-    Android: "Android",
+    Android: "android",
     iOS: "ios"
 }
 
 const ERROR_MESSAGE = {
     INVALID_OBJECT: " is not a valid json object",
-    REQUIRED_DOUBLE: " is not a valid number",
-    ONLY_FOR_ANDROID: " This method is only applicable for android platform"
+    REQUIRED_DOUBLE: " is not a valid number"
 }
 
 const PARAMS = {
@@ -38,7 +34,6 @@ const PARAMS = {
     PROPERTY_NAME: "propertyName",
     PROP: "prop",
     NAME: "name",
-    DEVICE_TOKEN: "deviceToken",
     CHARGE: "charge",
     PROPERTY_VALUE: "property value"
 }
@@ -86,27 +81,9 @@ export default class Mixpanel {
      * calls will be sent to Mixpanel after using this method.
      * This method will internally track an opt-in event to your project.
      *
-     * @param options Optional
-     *    options = {
-            distinctId: string
-            properties: {}
-          }
-        distinctId: Optional string to use as the distinct ID for events.
-     * 
-     *  properties: Optional could be passed to add properties to the opt-in event that is sent to Mixpanel.
-     *
      */
-    optInTracking(options) {
-        options = options || { distinctId: null, properties: {} };
-
-        if (!StringHelper.isValidOrUndefined(options.distinctId)) {
-            StringHelper.raiseError(PARAMS.DISTINCT_ID_IN_OPTIONS);
-        }
-
-        if (!ObjectHelper.isValidOrUndefined(options.properties)) {
-            ObjectHelper.raiseError(PARAMS.PROPERTIES_IN_OPTIONS);
-        }
-        return MixpanelReactNative.optInTracking(this.token, options.distinctId, options.properties || {});
+    optInTracking() {
+        return MixpanelReactNative.optInTracking(this.token);
     }
 
     /**
@@ -524,7 +501,7 @@ export class People {
         value = Array.isArray(value) ? value : [value];
 
         if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
-            return MixpanelReactNative.union(this.token, { name: value });
+            return MixpanelReactNative.union(this.token, {[name]: value});
         } else {
             return MixpanelReactNative.union(this.token, name, value);
         }
@@ -596,38 +573,6 @@ export class People {
     deleteUser() {
       return MixpanelReactNative.deleteUser(this.token);
     }
-
-    /**
-      Register the given device to receive push notifications.
-     */
-    setPushRegistrationId(deviceToken) {
-        if (!StringHelper.isValid(deviceToken)) {
-            StringHelper.raiseError(PARAMS.DEVICE_TOKEN);
-        }
-        return MixpanelReactNative.setPushRegistrationId(this.token, deviceToken);
-    }
-
-    /**
-      For Android only
-      Retrieve current Firebase Cloud Messaging token.
-     */
-    getPushRegistrationId() {
-        if (Helper.getDevicePlatform() !== DevicePlatform.Android) {
-            throw new Error(ERROR_MESSAGE.ONLY_FOR_ANDROID);
-        }
-        return MixpanelReactNative.getPushRegistrationId(this.token);
-    }
-
-    /**
-      Unregister specific device token from the ability to receive push notifications. This will remove the provided push token saved to user profile.
-     */
-    clearPushRegistrationId(deviceToken) {
-        if (!StringHelper.isValid(deviceToken)) {
-            StringHelper.raiseError(PARAMS.DEVICE_TOKEN);
-        }
-        return MixpanelReactNative.clearPushRegistrationId(this.token, deviceToken);
-    }
-
 }
 
 /**
@@ -747,7 +692,7 @@ class Helper {
      */
     static getDevicePlatform() {
         switch (Platform.OS) {
-            case "Android":
+            case "android":
                 return DevicePlatform.Android;
             case "ios":
                 return DevicePlatform.iOS;

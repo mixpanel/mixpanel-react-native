@@ -84,7 +84,7 @@ open class MixpanelReactNative: NSObject {
     }
     
     // MARK: - Managing User Identity
-    
+     
     @objc
     func identify(_ token: String, distinctId: String,
                   resolver resolve: RCTPromiseResolveBlock,

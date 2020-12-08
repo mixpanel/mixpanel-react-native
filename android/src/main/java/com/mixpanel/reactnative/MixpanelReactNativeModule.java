@@ -36,6 +36,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void initialize(String token, boolean optOutTrackingDefault, ReadableMap metadata, Promise promise) throws JSONException {
         JSONObject sendProperties = ReactNativeHelper.reactToJSON(metadata);
         AutomaticProperties.setAutomaticProperties(sendProperties);
+        AutomaticProperties.appendLibraryProperties(sendProperties);
         MixpanelAPI.getInstance(this.mReactContext, token, optOutTrackingDefault);
         promise.resolve(null);
     }
@@ -53,6 +54,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
             JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
+            AutomaticProperties.appendLibraryProperties(eventProperties);
             instance.optInTracking(distinctId, eventProperties);
             promise.resolve(null);
         }
@@ -90,6 +92,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
             JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
+            AutomaticProperties.appendLibraryProperties(eventProperties);
             instance.track(eventName, eventProperties);
             promise.resolve(null);
         }
@@ -200,6 +203,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
             JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
+            AutomaticProperties.appendLibraryProperties(sendProperties);
             instance.getPeople().set(sendProperties);
             promise.resolve(null);
         }
@@ -219,6 +223,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
             JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
+            AutomaticProperties.appendLibraryProperties(sendProperties);
             instance.getPeople().setOnce(sendProperties);
             promise.resolve(null);
         }
@@ -377,6 +382,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
             JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
+            AutomaticProperties.appendLibraryProperties(sendProperties);
             instance.getGroup(groupKey, groupID).set(sendProperties);
             promise.resolve(null);
         }
@@ -387,6 +393,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
             JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
+            AutomaticProperties.appendLibraryProperties(sendProperties);
             instance.getGroup(groupKey, groupID).setOnce(sendProperties);
             promise.resolve(null);
         }

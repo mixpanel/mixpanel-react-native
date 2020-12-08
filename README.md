@@ -2,8 +2,6 @@
   <img src="https://github.com/mixpanel/mixpanel-android/blob/assets/mixpanel.png?raw=true" alt="Mixpanel React Native Library" height="150"/>
 </div>
 
-# Latest Version 
-
 ##### 
 # Table of Contents
 

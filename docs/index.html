@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><div align="center" style="text-align: center">
+  <img src="https://github.com/mixpanel/mixpanel-android/blob/assets/mixpanel.png?raw=true" alt="Mixpanel React Native Library" height="150"/>
+</div>
+<h5></h5>
+<h1>Table of Contents</h1>
+<!-- MarkdownTOC -->
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#quick-start-guide">Quick Start Guide</a>
+<ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#integration">Integration</a></li>
+</ul>
+</li>
+<li><a href="#i-want-to-know-more">I want to know more!</a></li>
+</ul>
+<!-- /MarkdownTOC -->
+<h1>Introduction</h1>
+<p>Welcome to the official Mixpanel React Native library.
+The Mixpanel React Native library is an open-source project, and we'd love to see your contributions!
+We'd also love for you to come and work with us! Check out <strong><a href="https://mixpanel.com/jobs/#openings">Jobs</a></strong> for details</p>
+<h1>Quick Start Guide</h1>
+<p>Check out our <strong><a href="https://developer.mixpanel.com/docs/react-native">official documentation</a></strong> for more in depth information on installing and using Mixpanel on React Native.</p>
+<p><a name="installation"></a></p>
+<h2>Installation</h2>
+<h3>Prerequisite</h3>
+<ul>
+<li>React Native v0.6+</li>
+<li><a href="https://reactnative.dev/docs/environment-setup">Setup development environment for React Native</a></li>
+</ul>
+<h3>Steps</h3>
+<ol>
+<li>Install Mixpanel React Native SDK
+<code>npm install mixpanel-react-native</code></li>
+<li>Under your application's iOS folder, run
+<code>pod install</code>
+At this point, you are ready to use Mixpanel React Native SDK</li>
+</ol>
+<h2>Integration</h2>
+<h3>Initialization</h3>
+<p>To start tracking with the library you must first initialize with your project token. To initialize the library, first add <code>import Mixpanel</code> and call <code>Mixpanel.init(token)</code> with your project token as it's argument. Once you've called this method once, you can access instance throughout application.</p>
+<pre class="prettyprint source lang-js"><code>import Mixpanel from 'mixpanel-react-native';
+...
+class YourClass extends React.Component {
+    constructor(props) {
+        super(props);
+        this.configMixpanel();
+    }
+
+    configMixpanel = async () => {
+        this.mixpanel = await Mixpanel.init(MixpanelToken);
+    }
+...
+</code></pre>
+<h3>Tracking</h3>
+<p>Once you've initialized the library, Mixpanel will <a href="https://mixpanel.com/help/questions/articles/which-common-mobile-events-can-mixpanel-collect-on-my-behalf-automatically" target="_blank">automatically collect common mobile events</a>. You can enable/ disable automatic collection through your <a href="https://mixpanel.com/help/questions/articles/how-do-i-enable-common-mobile-events-if-i-have-already-implemented-mixpanel" target="_blank">project settings</a>.
+With the <code>mixpanel</code> object created in <a href="#integration">the last step</a> a call to <code>track</code> is all you need to send additional events to Mixpanel.</p>
+<pre class="prettyprint source lang-js"><code>// Track with event-name
+mixpanel.track('TrackEvent');
+// Track with event-name and property
+mixpanel.track('TrackEvent', {'Status': 'Pending'});
+</code></pre>
+<p>You're done! You've successfully integrated the Mixpanel React Native SDK into your app. To stay up to speed on important SDK releases and updates, star or watch our repository on <a href="https://github.com/mixpanel/mixpanel-react-native">Github</a>.</p>
+<p><a name="i-want-to-know-more"></a></p>
+<h1>I want to know more!</h1>
+<p>No worries, here are some links that you will find useful:</p>
+<ul>
+<li><strong><a href="https://github.com/mixpanel/mixpanel-react-native/tree/master/MixpanelDemo">Sample app</a></strong></li>
+<li><strong><a href="https://developer.mixpanel.com/docs/react-native">Full API Reference</a></strong></li>
+</ul>
+<p>Have any questions? Reach out to <a href="mailto:support@mixpanel.com">support@mixpanel.com</a> to speak to someone smart, quickly.</p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="MixpanelGroup.html">MixpanelGroup</a></li><li><a href="module.exports.html">exports</a></li><li><a href="People.html">People</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addGroup">addGroup</a></li><li><a href="global.html#alias">alias</a></li><li><a href="global.html#clearSuperProperties">clearSuperProperties</a></li><li><a href="global.html#deleteGroup">deleteGroup</a></li><li><a href="global.html#eventElapsedTime">eventElapsedTime</a></li><li><a href="global.html#flush">flush</a></li><li><a href="global.html#getDistinctId">getDistinctId</a></li><li><a href="global.html#getGroup">getGroup</a></li><li><a href="global.html#getPeople">getPeople</a></li><li><a href="global.html#getSuperProperties">getSuperProperties</a></li><li><a href="global.html#hasOptedOutTracking">hasOptedOutTracking</a></li><li><a href="global.html#identify">identify</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#optInTracking">optInTracking</a></li><li><a href="global.html#optOutTracking">optOutTracking</a></li><li><a href="global.html#registerSuperProperties">registerSuperProperties</a></li><li><a href="global.html#registerSuperPropertiesOnce">registerSuperPropertiesOnce</a></li><li><a href="global.html#removeGroup">removeGroup</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#setGroup">setGroup</a></li><li><a href="global.html#timeEvent">timeEvent</a></li><li><a href="global.html#track">track</a></li><li><a href="global.html#trackWithGroups">trackWithGroups</a></li><li><a href="global.html#unregisterSuperProperty">unregisterSuperProperty</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Dec 08 2020 12:02:49 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

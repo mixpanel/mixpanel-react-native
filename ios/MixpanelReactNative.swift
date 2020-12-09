@@ -18,7 +18,6 @@ open class MixpanelReactNative: NSObject {
                     resolver resolve: RCTPromiseResolveBlock,
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         AutomaticProperties.setAutomaticProperties(properties)
-        
         Mixpanel.initialize(token: token, launchOptions: nil, flushInterval: Constants.DEFAULT_FLUSH_INTERVAL, instanceName: token, automaticPushTracking: Constants.AUTOMATIC_PUSH_TRACKING, optOutTrackingByDefault: optOutTrackingByDefault)
         resolve(true)
     }
@@ -41,13 +40,11 @@ open class MixpanelReactNative: NSObject {
     }
     
     @objc
-    func optInTracking(_ token: String, distinctId: String?,
-                       properties: [String: Any]? = nil,
+    func optInTracking(_ token: String,
                        resolver resolve: RCTPromiseResolveBlock,
                        rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
-        let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true)
-        instance?.optInTracking(distinctId: distinctId, properties: mpProperties)
+        instance?.optInTracking()
         resolve(nil)
     }
     

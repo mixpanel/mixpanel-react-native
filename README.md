@@ -48,7 +48,7 @@ class YourClass extends React.Component {
     }
 
     configMixpanel = async () => {
-        this.mixpanel = await Mixpanel.init(MixpanelToken);
+        this.mixpanel = await Mixpanel.init("Your mixpanel token");
     }
 ...
 ```

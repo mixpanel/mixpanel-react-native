@@ -2,7 +2,7 @@
  * @format
  */
 
-import Mixpanel from 'mixpanel-react-native';
+import { Mixpanel } from 'mixpanel-react-native';
 
 import { NativeModules } from 'react-native';
 

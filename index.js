@@ -43,7 +43,7 @@ const DEFAULT_OPT_OUT = false;
 /**
  * The primary class for integrating Mixpanel with your app.
  */
-export default class Mixpanel {
+export class Mixpanel {
 
     constructor(token) {
         if (!StringHelper.isValid(token)) {
@@ -57,8 +57,8 @@ export default class Mixpanel {
      * Initializes an instance of the API with the given project token.
      * 
      *
-     * @param token your project token.
-     * @param optOutTrackingDefault Optional Whether or not Mixpanel can start tracking by default. See
+     * @param {string} token your project token.
+     * @param {boolean} Optional Whether or not Mixpanel can start tracking by default. See
      * optOutTracking()
      */
     static async init(token, optOutTrackingDefault = DEFAULT_OPT_OUT) {
@@ -70,7 +70,7 @@ export default class Mixpanel {
     /**
      * Will return true if the user has opted out from tracking.
      *
-     * @return true if user has opted out from tracking. Defaults to false.
+     * @return {boolean} true if user has opted out from tracking. Defaults to false.
      */
     hasOptedOutTracking() {
         return MixpanelReactNative.hasOptedOutTracking(this.token);
@@ -109,7 +109,7 @@ export default class Mixpanel {
      * <p>Once identify is called, the local distinct id persists across restarts of
      * your application.
      *
-     * @param distinctId a string uniquely identifying this user. Events sent to
+     * @param {string} distinctId a string uniquely identifying this user. Events sent to
      *     Mixpanel using the same disinct_id will be considered associated with the
      *     same visitor/customer for retention and funnel reporting, so be sure that the given
      *     value is globally unique for each individual user you intend to track.
@@ -132,8 +132,8 @@ export default class Mixpanel {
      * <p>This call does not identify the user after. You must still call both identify() and
      * People.identify() if you wish the new alias to be used for Events and People.
      *
-     * @param alias A unique identifier that you want to use as an identifier for this user.
-     * @param distinctId the current distinct_id that alias will be mapped to.
+     * @param {string} alias A unique identifier that you want to use as an identifier for this user.
+     * @param {string} distinctId the current distinct_id that alias will be mapped to.
      */
     alias(alias, distinctId) {
         if (!StringHelper.isValid(alias)) {
@@ -154,8 +154,8 @@ export default class Mixpanel {
      * have a string name, and an optional set of name/value pairs that describe the properties of
      * that event.
      *
-     * @param eventName The name of the event to send
-     * @param properties A Map containing the key value pairs of the properties to include in this event.
+     * @param {string} eventName The name of the event to send
+     * @param {object} properties A Map containing the key value pairs of the properties to include in this event.
      *                   Pass null if no extra properties exist.
      */
     track(eventName, properties) {
@@ -173,7 +173,7 @@ export default class Mixpanel {
      * Returns a Mixpanel People object that can be used to set and increment
      * People Analytics properties.
      *
-     * @return an instance of People that you can use to update
+     * @return {People} an instance of People that you can use to update
      *     records in Mixpanel People Analytics
      */
     getPeople() {
@@ -188,12 +188,11 @@ export default class Mixpanel {
      * have a string name, and an optional set of name/value pairs that describe the properties of
      * that event. Group key/value pairs are upserted into the property map before tracking.
      *
-     * @param eventName The name of the event to send
-     * @param properties A Map containing the key value pairs of the properties to include in this event.
+     * @param {string} eventName The name of the event to send
+     * @param {object} properties A Map containing the key value pairs of the properties to include in this event.
      *                   Pass null if no extra properties exist.
-     * @param groups A Map containing the group key value pairs for this event.
+     * @param {object} groups A Map containing the group key value pairs for this event.
      *
-     * See also {@link #track(String, org.json.JSONObject)}, {@link #trackMap(String, Map)}
      */ 
     trackWithGroups(eventName, properties, groups) {
         if (!StringHelper.isValid(eventName)) {
@@ -209,8 +208,8 @@ export default class Mixpanel {
     /**
      * Set the group this user belongs to.
      *
-     * @param groupKey The property name associated with this group type (must already have been set up).
-     * @param groupID The group the user belongs to.
+     * @param {string} groupKey The property name associated with this group type (must already have been set up).
+     * @param {object} groupID The group the user belongs to.
      */
     setGroup(groupKey, groupID) {
         if (!StringHelper.isValid(groupKey)) {
@@ -224,8 +223,8 @@ export default class Mixpanel {
      * Returns a MixpanelGroup object that can be used to set and increment
      * Group Analytics properties.
      *
-     * @param groupKey String identifying the type of group (must be already in use as a group key)
-     * @param groupID Object identifying the specific group
+     * @param {string} groupKey String identifying the type of group (must be already in use as a group key)
+     * @param {object} groupID Object identifying the specific group
      * @return an instance of MixpanelGroup that you can use to update
      *     records in Mixpanel Group Analytics
      */
@@ -236,8 +235,8 @@ export default class Mixpanel {
     /**
      * Add a group to this user's membership for a particular group key
      *
-     * @param groupKey The property name associated with this group type (must already have been set up).
-     * @param groupID The new group the user belongs to.
+     * @param {string} groupKey The property name associated with this group type (must already have been set up).
+     * @param {object} groupID The new group the user belongs to.
      */
     addGroup(groupKey, groupID) {
         if (!StringHelper.isValid(groupKey)) {
@@ -250,8 +249,8 @@ export default class Mixpanel {
     /**
      * Remove a group from this user's membership for a particular group key
      *
-     * @param groupKey The property name associated with this group type (must already have been set up).
-     * @param groupID The group value to remove.
+     * @param {string} groupKey The property name associated with this group type (must already have been set up).
+     * @param {object} groupID The group value to remove.
      */
     removeGroup(groupKey, groupID) {
         if (!StringHelper.isValid(groupKey)) {
@@ -264,8 +263,8 @@ export default class Mixpanel {
     /**
      * Permanently deletes this group's record from Group Analytics.
      *
-     * @param groupKey String identifying the type of group (must be already in use as a group key)
-     * @param groupID Object identifying the specific group
+     * @param {string} groupKey String identifying the type of group (must be already in use as a group key)
+     * @param {object} groupID Object identifying the specific group
      * <p>Calling deleteGroup deletes an entire record completely. Any future calls
      * to Group Analytics using the same group value will create and store new values.
      */
@@ -277,8 +276,19 @@ export default class Mixpanel {
     }
 
     /**
-      Register a set of super properties, which are included with all
-      events. This will overwrite previous super property values.
+     * Register properties that will be sent with every subsequent call to track().
+     *
+     * <p>SuperProperties are a collection of properties that will be sent with every event to Mixpanel,
+     * and persist beyond the lifetime of your application.
+     *
+     * <p>Setting a superProperty with registerSuperProperties will store a new superProperty,
+     * possibly overwriting any existing superProperty with the same name (to set a
+     * superProperty only if it is currently unset, use registerSuperPropertiesOnce())
+     *
+     * <p>SuperProperties will persist even if your application is taken completely out of memory.
+     * to remove a superProperty, call unregisterSuperProperty() or clearSuperProperties()
+     *
+     * @param {object} properties A Map containing super properties to register
      */
     registerSuperProperties(properties) {
         if (!ObjectHelper.isValidOrUndefined(properties)) {
@@ -288,8 +298,12 @@ export default class Mixpanel {
     }
 
     /**
-      Register a set of super properties only once. This will not
-      overwrite previous super property values, unlike register().
+     * Register super properties for events, only if no other super property with the
+     * same names has already been registered.
+     *
+     * <p>Calling registerSuperPropertiesOnce will never overwrite existing properties.
+     *
+     * @param {object} properties A Map containing the super properties to register.
      */
     registerSuperPropertiesOnce(properties) {
         if (!ObjectHelper.isValidOrUndefined(properties)) {
@@ -299,7 +313,13 @@ export default class Mixpanel {
     }
 
     /**
-      Delete a super property stored with the current user.
+     * Remove a single superProperty, so that it will not be sent with future calls to track().
+     *
+     * <p>If there is a superProperty registered with the given name, it will be permanently
+     * removed from the existing superProperties.
+     * To clear all superProperties, use clearSuperProperties()
+     *
+     * @param {string} propertyName name of the property to unregister
      */
     unregisterSuperProperty(propertyName) {
         if (!StringHelper.isValid(propertyName)) {
@@ -309,23 +329,35 @@ export default class Mixpanel {
     }
 
     /**
-      Get current user super property.
+     * Returns a json object of the user's current super properties
+     *
+     *<p>SuperProperties are a collection of properties that will be sent with every event to Mixpanel,
+     * and persist beyond the lifetime of your application.
+     *
+     * @return {object} Super properties for this Mixpanel instance.
      */
     getSuperProperties() {
         return MixpanelReactNative.getSuperProperties(this.token);
     }
 
     /**
-     Clear all currently set super properties.
+     * Erase all currently registered superProperties.
+     *
+     * <p>Future tracking calls to Mixpanel will not contain the specific
+     * superProperties registered before the clearSuperProperties method was called.
+     *
+     * <p>To remove a single superProperty, use unregisterSuperProperty()
      */
     clearSuperProperties() {
         return MixpanelReactNative.clearSuperProperties(this.token);
     }
 
     /**
-      Use to calculate time required for an event by including the time between this call and a
-      later 'track' call for the same event in the properties sent
-      with the event.
+     * Begin timing of an event. Calling timeEvent("Thing") will not send an event, but
+     * when you eventually call track("Thing"), your tracked event will be sent with a "$duration"
+     * property, representing the number of seconds between your calls.
+     *
+     * @param {string} eventName the name of the event to track with timing.
      */
     timeEvent(eventName) {
         if (!StringHelper.isValid(eventName)) {
@@ -335,7 +367,11 @@ export default class Mixpanel {
     }
 
     /**
-      Retrieve the time elapsed for the named event since timeEvent(eventName) was called.
+     * Retrieves the time elapsed for the named event since timeEvent() was called.
+     *
+     * @param {string} eventName the name of the event to be tracked that was previously called with timeEvent()
+     *
+     * @return {number} Time elapsed since timeEvent(String) was called for the given eventName.
      */
     eventElapsedTime(eventName) {
         if (!StringHelper.isValid(eventName)) {
@@ -353,15 +389,29 @@ export default class Mixpanel {
     }
 
     /**
-     Returns the string id currently being used to uniquely identify the user associated
-     with events.
-    */
+     * Returns the string id currently being used to uniquely identify the user associated
+     * with events sent using People.set() and People.increment(String, double)
+     * If no calls to People.identify(String) have been made, this method will return null.
+     *
+     * <p>The id returned by getDistinctId is independent of the distinct id used to identify
+     * any events sent with track(String, JSONObject). To read and write that identifier,
+     * use MixpanelAPI.identify(String) and MixpanelAPI#getDistinctId().
+     *
+     * @return {string} The distinct id associated with updates to People Analytics
+     *
+     */
     getDistinctId() {
         return MixpanelReactNative.getDistinctId(this.token);
     }
 
     /**
-      Upload queued data to the Mixpanel server.
+     * Push all queued Mixpanel events and People Analytics changes to Mixpanel servers.
+     *
+     * <p>Events and People messages are pushed gradually throughout
+     * the lifetime of your application. This means that to ensure that all messages
+     * are sent to Mixpanel when your application is shut down, you will
+     * need to call flush() to let the Mixpanel library know it should
+     * send all remaining messages to the server.
      */
     flush() {
         return MixpanelReactNative.flush(this.token);
@@ -393,8 +443,8 @@ export class People {
      * The given name and value will be assigned to the user in Mixpanel People Analytics,
      * possibly overwriting an existing property with the same name.
      *
-     * @param prop The name of the Mixpanel property. This must be a String, for example "Zip Code"
-     * @param to The value of the Mixpanel property. For "Zip Code", this value might be the String "90210"
+     * @param {string} prop The name of the Mixpanel property. This must be a String, for example "Zip Code"
+     * @param {string} to The value of the Mixpanel property. For "Zip Code", this value might be the String "90210"
      */
     set(prop, to) {
         let properties = {};
@@ -412,8 +462,8 @@ export class People {
     /**
      * Works just like set(), except it will not overwrite existing property values. This is useful for properties like "First login date".
      *
-     * @param prop The name of the Mixpanel property. This must be a String, for example "Zip Code"
-     * @param to The value of the Mixpanel property. For "Zip Code", this value might be the String "90210"
+     * @param {string} prop The name of the Mixpanel property. This must be a String, for example "Zip Code"
+     * @param {string} to The value of the Mixpanel property. For "Zip Code", this value might be the String "90210"
      */
     setOnce(prop, to) {
         let properties = {};
@@ -434,8 +484,8 @@ export class People {
      * have the associated property, the amount will be added to zero. To reduce a property,
      * provide a negative number for the value.
      *
-     * @param prop the People Analytics property that should have its value changed
-     * @param by the amount to be added to the current value of the named property
+     * @param {string} prop the People Analytics property that should have its value changed
+     * @param {string} by the amount to be added to the current value of the named property
      *
      */
     increment(prop, by) {
@@ -467,8 +517,8 @@ export class People {
      * Appends a value to a list-valued property. If the property does not currently exist,
      * it will be created as a list of one element. If the property does exist and doesn't
      * currently have a list value, the append will be ignored.
-     * @param name the People Analytics property that should have it's value appended to
-     * @param value the new value that will appear at the end of the property's list
+     * @param {string} name the People Analytics property that should have it's value appended to
+     * @param {string} value the new value that will appear at the end of the property's list
      */
     append(name, value) {
         let appendProp = {};
@@ -490,8 +540,8 @@ export class People {
      * If the property does not currently exist, it will be created with the given list as it's value.
      * If the property exists and is not list-valued, the union will be ignored.
      *
-     * @param name name of the list-valued property to set or modify
-     * @param value an array of values to add to the property value if not already present
+     * @param {string} name name of the list-valued property to set or modify
+     * @param {string} value an array of values to add to the property value if not already present
      */
     union(name, value) {
         if (!StringHelper.isValid(name)) {
@@ -511,8 +561,8 @@ export class People {
      * Remove value from a list-valued property only if they are already present in the list.
      * If the property does not currently exist, the remove will be ignored.
      * If the property exists and is not list-valued, the remove will be ignored.
-     * @param name the People Analytics property that should have it's value removed from
-     * @param value the value that will be removed from the property's list
+     * @param {string} name the People Analytics property that should have it's value removed from
+     * @param {string} value the value that will be removed from the property's list
      */
     remove(name, value) {
         let removeProp = {};
@@ -531,7 +581,7 @@ export class People {
 
     /**
      * permanently removes the property with the given name from the user's profile
-     * @param name name of a property to unset
+     * @param {string} name name of a property to unset
      */
     unset(name) {
         if (!StringHelper.isValid(name)) {
@@ -543,8 +593,8 @@ export class People {
     /**
      * Track a revenue transaction for the identified people profile.
      *
-     * @param charge the amount of money exchanged. Positive amounts represent purchases or income from the customer, negative amounts represent refunds or payments to the customer.
-     * @param properties an optional collection of properties to associate with this transaction.
+     * @param {number} charge the amount of money exchanged. Positive amounts represent purchases or income from the customer, negative amounts represent refunds or payments to the customer.
+     * @param {object} properties an optional collection of properties to associate with this transaction.
      */
     trackCharge(charge, properties) {
         if (isNaN(parseFloat(charge))) {
@@ -596,8 +646,8 @@ export class MixpanelGroup {
      * The given name and value will be assigned to the user in Mixpanel Group Analytics,
      * possibly overwriting an existing property with the same name.
      *
-     * @param prop The name of the Mixpanel property. This must be a String, for example "Zip Code"
-     * @param to The value to set on the given property name. For "Zip Code", this value might be the String "90210"
+     * @param {string} prop The name of the Mixpanel property. This must be a String, for example "Zip Code"
+     * @param {string} to The value to set on the given property name. For "Zip Code", this value might be the String "90210"
      */
     set(prop, to) {
         let properties = {};
@@ -615,8 +665,8 @@ export class MixpanelGroup {
     /**
      * Works just like groupSet() except it will not overwrite existing property values. This is useful for properties like "First login date".
      *
-     * @param prop The name of the Mixpanel property. This must be a String, for example "Zip Code"
-     * @param to The value to set on the given property name. For "Zip Code", this value might be the String "90210"
+     * @param {string} prop The name of the Mixpanel property. This must be a String, for example "Zip Code"
+     * @param {string} to The value to set on the given property name. For "Zip Code", this value might be the String "90210"
      */
     setOnce(prop, to) {
         let properties = {};
@@ -634,7 +684,7 @@ export class MixpanelGroup {
     /**
      * Permanently removes the property with the given name from the group's profile
      * 
-     * @param prop name of a property to unset
+     * @param {string} prop name of a property to unset
      */
     unset(prop) {
         if (!StringHelper.isValid(prop)) {
@@ -648,8 +698,8 @@ export class MixpanelGroup {
      * If the property does not currently exist, the remove will be ignored.
      * If the property exists and is not list-valued, the remove will be ignored.
      * 
-     * @param name the Group Analytics list-valued property that should have a value removed
-     * @param value the value that will be removed from the list
+     * @param {string} name the Group Analytics list-valued property that should have a value removed
+     * @param {any} value the value that will be removed from the list
      */
     remove(name, value) {
         if (!StringHelper.isValid(name)) {
@@ -664,8 +714,8 @@ export class MixpanelGroup {
      * If the property does not currently exist, it will be created with the given list as its value.
      * If the property exists and is not list-valued, the union will be ignored.
      *
-     * @param name name of the list-valued property to set or modify
-     * @param value an array of values to add to the property value if not already present
+     * @param {string} name name of the list-valued property to set or modify
+     * @param {array} value an array of values to add to the property value if not already present
      */
     union(name, value) {
         if (!StringHelper.isValid(name)) {

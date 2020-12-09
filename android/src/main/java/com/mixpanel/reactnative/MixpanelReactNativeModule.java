@@ -50,12 +50,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void optInTracking(final String token, final String distinctId, ReadableMap properties, Promise promise) throws JSONException {
+    public void optInTracking(final String token, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
-            JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
-            AutomaticProperties.appendLibraryProperties(eventProperties);
-            instance.optInTracking(distinctId, eventProperties);
+            instance.optInTracking();
             promise.resolve(null);
         }
     }

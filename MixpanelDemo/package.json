@@ -47,7 +47,9 @@
       "<rootDir>/__tests__/**/*.js?(x)"
     ],
     "verbose": true,
-    "setupFiles": ["./node_modules/react-native-gesture-handler/jestSetup.js"],
+    "setupFiles": [
+      "./node_modules/react-native-gesture-handler/jestSetup.js"
+    ],
     "transformIgnorePatterns": [
       "node_modules/(?!(...|...|...))"
     ],

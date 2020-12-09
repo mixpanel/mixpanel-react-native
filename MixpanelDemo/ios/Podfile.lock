@@ -72,7 +72,7 @@ PODS:
   - Mixpanel-swift (2.8.1):
     - Mixpanel-swift/Complete (= 2.8.1)
   - Mixpanel-swift/Complete (2.8.1)
-  - MixpanelReactNative (1.0.0-beta.9):
+  - MixpanelReactNative (1.0.0):
     - Mixpanel-swift (= 2.8.1)
     - React
   - OpenSSL-Universal (1.0.2.20):

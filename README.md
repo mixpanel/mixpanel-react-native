@@ -30,16 +30,16 @@ Check out our **[official documentation](https://developer.mixpanel.com/docs/rea
 - React Native v0.6+
 - [Setup development environment for React Native](https://reactnative.dev/docs/environment-setup)
 ### Steps
-1. Install Mixpanel React Native SDK
+1. Under your app's root directory, install Mixpanel React Native SDK
 ```npm install mixpanel-react-native```
-2. Under your application's iOS folder, run
+2. Under your application's ios folder, run
 ```pod install```
 At this point, you are ready to use Mixpanel React Native SDK
 ## Integration
 ### Initialization
-To start tracking with the library you must first initialize with your project token. To initialize the library, first add `import Mixpanel` and call `Mixpanel.init(token)` with your project token as it's argument. Once you've called this method once, you can access instance throughout application.
+To start tracking with the library you must first initialize with your project token. To initialize the library, first add `import { Mixpanel }` and call `Mixpanel.init(token)` with your project token as it's argument. 
 ```js
-import Mixpanel from 'mixpanel-react-native';
+import { Mixpanel } from 'mixpanel-react-native';
 ...
 class YourClass extends React.Component {
     constructor(props) {
@@ -52,6 +52,7 @@ class YourClass extends React.Component {
     }
 ...
 ```
+Once you've called this method once, you can access `mixpanel` throughout the rest of your application.
 ### Tracking
 Once you've initialized the library, Mixpanel will <a href="https://mixpanel.com/help/questions/articles/which-common-mobile-events-can-mixpanel-collect-on-my-behalf-automatically" target="_blank">automatically collect common mobile events</a>. You can enable/ disable automatic collection through your <a href="https://mixpanel.com/help/questions/articles/how-do-i-enable-common-mobile-events-if-i-have-already-implemented-mixpanel" target="_blank">project settings</a>.
 With the `mixpanel` object created in [the last step](#integration) a call to `track` is all you need to send additional events to Mixpanel.

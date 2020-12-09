@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, View, ScrollView } from 'react-native';
-import Mixpanel from "mixpanel-react-native";
+import { Mixpanel } from "mixpanel-react-native";
 import { token as MixpanelToken } from '../app.json';
 
 export default class ProfileScreen extends React.Component {

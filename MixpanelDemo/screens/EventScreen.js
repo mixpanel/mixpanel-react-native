@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import Mixpanel from 'mixpanel-react-native';
+import { Mixpanel } from 'mixpanel-react-native';
 import { token as MixpanelToken } from '../app.json';
 
 class EventScreen extends React.Component {

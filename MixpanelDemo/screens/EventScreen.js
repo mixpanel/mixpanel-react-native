@@ -35,7 +35,7 @@ class EventScreen extends React.Component {
 
     trackWProperties = () => {
         const properties = {"Cool Property": "Property Value"};
-        this.mixpanel.track("Track event with property");
+        this.mixpanel.track("Track event with property", properties);
     }
 
     /**

@@ -58,9 +58,9 @@ Once you've initialized the library, Mixpanel will <a href="https://mixpanel.com
 With the `mixpanel` object created in [the last step](#integration) a call to `track` is all you need to send additional events to Mixpanel.
 ```js
 // Track with event-name
-mixpanel.track('TrackEvent');
+mixpanel.track('Sent Message');
 // Track with event-name and property
-mixpanel.track('TrackEvent', {'Status': 'Pending'});
+mixpanel.track('Plan Selected', {'Plan': 'Premium'});;
 ```
 You're done! You've successfully integrated the Mixpanel React Native SDK into your app. To stay up to speed on important SDK releases and updates, star or watch our repository on [Github](https://github.com/mixpanel/mixpanel-react-native).
 
@@ -71,5 +71,4 @@ No worries, here are some links that you will find useful:
 * **[Sample app](https://github.com/mixpanel/mixpanel-react-native/tree/master/MixpanelDemo)**
 * **[Full API Reference](https://developer.mixpanel.com/docs/react-native)**
 
-Have any questions? Reach out to [support@mixpanel.com](mailto:support@mixpanel.com) to speak to someone smart, quickly.
-
+Have any questions? Reach out to Mixpanel [Support](https://help.mixpanel.com/hc/en-us/requests/new) to speak to someone smart, quickly.

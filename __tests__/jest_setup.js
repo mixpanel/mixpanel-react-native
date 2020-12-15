@@ -18,6 +18,8 @@ jest.doMock('react-native', () => {
         ...ReactNative.NativeModules,
         MixpanelReactNative: {
           initialize: jest.fn(),
+          setServerURL: jest.fn(),
+          setLoggingEnabled: jest.fn(),
           hasOptedOutTracking: jest.fn(),
           optInTracking: jest.fn(),
           optOutTracking: jest.fn(),

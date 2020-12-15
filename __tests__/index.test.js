@@ -12,6 +12,18 @@ test(`it calls MixpanelReactNative initialize`, async () => {
   expect(NativeModules.MixpanelReactNative.initialize).toBeCalledWith("token", false, {"$lib_version": "1.0.0", "mp_lib": "react-native"});
 });
 
+test(`it calls MixpanelReactNative setServerURL`, async () => {
+  const mixpanel = await Mixpanel.init("token");
+  mixpanel.setServerURL("https://api-eu.mixpanel.com");
+  expect(NativeModules.MixpanelReactNative.setServerURL).toBeCalledWith("token", "https://api-eu.mixpanel.com");
+});
+
+test(`it calls MixpanelReactNative setLoggingEnabled`, async () => {
+  const mixpanel = await Mixpanel.init("token");
+  mixpanel.setLoggingEnabled(true);
+  expect(NativeModules.MixpanelReactNative.setLoggingEnabled).toBeCalledWith("token", true);
+});
+
 test(`it calls MixpanelReactNative hasOptedOutTracking`, async () => {
   const mixpanel = await Mixpanel.init("token");
   mixpanel.hasOptedOutTracking();

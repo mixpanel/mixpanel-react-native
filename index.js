@@ -68,6 +68,38 @@ export class Mixpanel {
     }
 
     /**
+     * Set the base URL used for Mixpanel API requests.
+     * Useful if you need to proxy Mixpanel requests. Defaults to https://api.mixpanel.com.
+     * To route data to Mixpanel's EU servers, set to https://api-eu.mixpanel.com
+     * - Note: This method will only work for iOS. For android, please refer to: 
+     * https://developer.mixpanel.com/docs/android
+     *
+     * @param {string} serverURL the base URL used for Mixpanel API requests
+     * 
+     */
+    setServerURL(serverURL) {
+        if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
+            MixpanelReactNative.setServerURL(this.token, serverURL)
+        }
+    }
+
+    /**
+     * This allows enabling or disabling of all Mixpanel logs at run time.
+     * - Note: This method will only work for iOS. For android, please refer to: 
+     * https://developer.mixpanel.com/docs/android
+     * All logging is disabled by default. Usually, this is only required if
+     * you are running into issues with the SDK that you want to debug 
+     * 
+     * @param {boolean} loggingEnabled whether to enable logging
+     * 
+     */
+    setLoggingEnabled(loggingEnabled) {
+        if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
+            MixpanelReactNative.setLoggingEnabled(this.token, loggingEnabled)
+        }
+    }
+
+    /**
      * Will return true if the user has opted out from tracking.
      *
      * @return {boolean} true if user has opted out from tracking. Defaults to false.

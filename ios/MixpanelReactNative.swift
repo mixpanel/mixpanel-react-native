@@ -21,7 +21,27 @@ open class MixpanelReactNative: NSObject {
         Mixpanel.initialize(token: token, launchOptions: nil, flushInterval: Constants.DEFAULT_FLUSH_INTERVAL, instanceName: token, automaticPushTracking: Constants.AUTOMATIC_PUSH_TRACKING, optOutTrackingByDefault: optOutTrackingByDefault)
         resolve(true)
     }
+
+    @objc
+    func setServerURL(_ token: String,
+                    serverURL: String,
+                    resolver resolve: RCTPromiseResolveBlock,
+                    rejecter reject: RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        instance?.serverURL = serverURL
+        resolve(true)
+    }
     
+    @objc
+    func setLoggingEnabled(_ token: String,
+                    loggingEnabled: Bool,
+                    resolver resolve: RCTPromiseResolveBlock,
+                    rejecter reject: RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        instance?.loggingEnabled = loggingEnabled
+        resolve(true)
+    }
+
     // MARK: - Opting Users Out of Tracking
 
     @objc

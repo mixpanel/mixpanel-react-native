@@ -6,6 +6,8 @@
 // MARK: - Mixpanel Instance
 
 RCT_EXTERN_METHOD(initialize:(NSString *)token optOutTrackingByDefault:(BOOL)optOutTrackingByDefault properties:(NSDictionary *)properties resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setServerURL:(NSString *)token serverURL:(NSString *)serverURL resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(setLoggingEnabled:(NSString *)token loggingEnabled:(BOOL)loggingEnabled resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
 // MARK: - Opting Users Out of Tracking
 

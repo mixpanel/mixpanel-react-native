@@ -1,0 +1,5 @@
+rootProject.name = 'MixpanelDemo'
+include ':mixpanel-react-native'
+project(':mixpanel-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/mixpanel-react-native/android')
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include ':app'

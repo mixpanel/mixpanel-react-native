@@ -1,0 +1,60 @@
+{
+    "name": "mixpanel-react-native",
+    "version": "1.0.1",
+    "description": "Official React Native Tracking Library for Mixpanel Analytics",
+    "main": "index.js",
+    "scripts": {
+        "test": "jest"
+    },
+    "author": "Mixpanel",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mixpanel/mixpanel-react-native.git"
+    },
+    "keywords": [
+        "mixpanel",
+        "react",
+        "native",
+        "ios",
+        "android",
+        "analytics",
+        "tracking",
+        "sdk"
+    ],
+    "bugs": {
+        "url": "https://github.com/mixpanel/mixpanel-react-native/issues"
+    },
+    "TODO": "Change the git URL before publishing on npm",
+    "homepage": "https://github.com/mixpanel/mixpanel-react-native#readme",
+    "metadata": {
+        "mp_lib": "react-native"
+    },
+    "devDependencies": {
+      "@babel/core": "^7.12.3",
+      "@babel/runtime": "^7.12.1",
+      "@react-native-community/eslint-config": "^2.0.0",
+      "babel-jest": "^26.6.0",
+      "eslint": "^7.11.0",
+      "jest": "^26.6.0",
+      "metro-react-native-babel-preset": "^0.63.0",
+      "react-test-renderer": "16.13.1",
+      "react-native": "^0.63.3"
+    },
+    "jest": {
+      "modulePathIgnorePatterns": [
+        "<rootDir>/MixpanelDemo/"
+      ],
+      "testMatch": [
+        "<rootDir>/__tests__/index.test.js"
+      ],
+      "setupFiles": [
+        "<rootDir>/__tests__/jest_setup.js"
+      ],
+      "verbose": true,
+      "preset": "react-native",
+      "transform": {
+        "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js"
+      }
+    }
+}

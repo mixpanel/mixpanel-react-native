@@ -1,17 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { Mixpanel } from 'mixpanel-react-native';
-import { token as MixpanelToken } from '../app.json';
+import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
+
+import MixpanelManager from '../Analytics';
 
 class EventScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        this.configMixpanel();
-    }
-
-    configMixpanel = async () => {
-        this.mixpanel = await Mixpanel.init(MixpanelToken);
+        this.mixpanel = MixpanelManager.sharedInstance.mixpanel;
     }
 
     /**

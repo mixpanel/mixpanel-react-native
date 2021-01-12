@@ -1,18 +1,14 @@
 import React from 'react';
-import { Text, TouchableOpacity, StyleSheet, View, ScrollView } from 'react-native';
-import { Mixpanel } from "mixpanel-react-native";
-import { token as MixpanelToken } from '../app.json';
+import {Text, TouchableOpacity, StyleSheet, View, ScrollView} from 'react-native';
+import MixpanelManager from '../Analytics';
 
 export default class GDPRScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        this.configMixpanel();
+        this.mixpanel = MixpanelManager.sharedInstance.mixpanel;
     }
 
-    configMixpanel = async () => {
-        this.mixpanel = await Mixpanel.init(MixpanelToken);
-    }
     /**
       Identify the user uniquely by providing the user distinctId.
      */

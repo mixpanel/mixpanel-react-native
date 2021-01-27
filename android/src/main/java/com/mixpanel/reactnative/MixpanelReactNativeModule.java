@@ -36,7 +36,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void initialize(String token, boolean optOutTrackingDefault, ReadableMap metadata, Promise promise) throws JSONException {
         JSONObject sendProperties = ReactNativeHelper.reactToJSON(metadata);
         AutomaticProperties.setAutomaticProperties(sendProperties);
-        AutomaticProperties.appendLibraryProperties(sendProperties);
         MixpanelAPI.getInstance(this.mReactContext, token, optOutTrackingDefault);
         promise.resolve(null);
     }
@@ -260,7 +259,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void append(final String token, String name, Dynamic value, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
-            instance.getPeople().append(name, value);
+            instance.getPeople().append(name, ReactNativeHelper.dynamicToObject(value));
             promise.resolve(null);
         }
     }
@@ -278,7 +277,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void remove(final String token, String name, Dynamic value, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
-            instance.getPeople().remove(name, value);
+            instance.getPeople().remove(name, ReactNativeHelper.dynamicToObject(value));
             promise.resolve(null);
         }
     }
@@ -334,7 +333,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void setGroup(final String token, String groupKey, Dynamic groupID, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
-            instance.setGroup(groupKey, groupID);
+            instance.setGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID));
             promise.resolve(null);
         }
     }
@@ -352,7 +351,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void addGroup(final String token, String groupKey, Dynamic groupID, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
-            instance.addGroup(groupKey, groupID);
+            instance.addGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID));
             promise.resolve(null);
         }
     }
@@ -361,7 +360,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void removeGroup(final String token, String groupKey, Dynamic groupID, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
-            instance.removeGroup(groupKey, groupID);
+            instance.removeGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID));
             promise.resolve(null);
         }
     }
@@ -370,7 +369,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void deleteGroup(final String token, String groupKey, Dynamic groupID, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
-            instance.getGroup(groupKey, groupID).deleteGroup();
+            instance.getGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID)).deleteGroup();
             promise.resolve(null);
         }
     }
@@ -380,8 +379,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
             JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
-            AutomaticProperties.appendLibraryProperties(sendProperties);
-            instance.getGroup(groupKey, groupID).set(sendProperties);
+            instance.getGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID)).set(sendProperties);
             promise.resolve(null);
         }
     }
@@ -391,8 +389,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
             JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
-            AutomaticProperties.appendLibraryProperties(sendProperties);
-            instance.getGroup(groupKey, groupID).setOnce(sendProperties);
+            instance.getGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID)).setOnce(sendProperties);
             promise.resolve(null);
         }
     }
@@ -401,7 +398,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void groupUnsetProperty(final String token, String groupKey, Dynamic groupID, String propertyName, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
-            instance.getGroup(groupKey, groupID).unset(propertyName);
+            instance.getGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID)).unset(propertyName);
             promise.resolve(null);
         }
     }
@@ -410,7 +407,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void groupRemovePropertyValue(final String token, String groupKey, Dynamic groupID, String name, Dynamic value, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
-            instance.getGroup(groupKey, groupID).remove(name, value);
+            instance.getGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID)).remove(name, ReactNativeHelper.dynamicToObject(value));
             promise.resolve(null);
         }
     }
@@ -420,7 +417,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
             JSONArray arrayValues = ReactNativeHelper.reactToJSON(values);
-            instance.getGroup(groupKey, groupID).union(name, arrayValues);
+            instance.getGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID)).union(name, arrayValues);
             promise.resolve(null);
         }
     }

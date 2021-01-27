@@ -29,7 +29,7 @@ open class MixpanelReactNative: NSObject {
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         instance?.serverURL = serverURL
-        resolve(true)
+        resolve(nil)
     }
     
     @objc
@@ -39,7 +39,7 @@ open class MixpanelReactNative: NSObject {
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         instance?.loggingEnabled = loggingEnabled
-        resolve(true)
+        resolve(nil)
     }
 
     // MARK: - Opting Users Out of Tracking

@@ -1,5 +1,6 @@
 package com.mixpanel.reactnative;
 
+import com.facebook.react.bridge.Dynamic;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
@@ -92,6 +93,27 @@ public class ReactNativeHelper {
             }
         }
         return properties;
+    }
+
+    public static Object dynamicToObject(Dynamic value) {
+        ReadableType valueType = value.getType();
+
+        switch (valueType) {
+            case Null:
+                return value;
+            case Boolean:
+                return value.asBoolean();
+            case Number:
+                return value.asDouble();
+            case String:
+                return value.asString();
+            case Map:
+                return value.asMap();
+            case Array:
+                return value.asArray();
+            default:
+                return value;
+        }
     }
 
     /**

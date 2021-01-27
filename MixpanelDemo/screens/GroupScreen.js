@@ -47,7 +47,7 @@ export default class GroupScreen extends React.Component {
     }
 
     trackWithGroups = () => {
-        this.mixpanel.trackWithGroups("tracked with groups1", {"a": 1, "b": 2.3}, {"company_id": 111});
+        this.mixpanel.trackWithGroups("tracked with groups", {"a": 1, "b": 2.3}, {"company_id": "Mixpanel"});
     }
 
     flush = () => {

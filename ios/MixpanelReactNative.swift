@@ -402,40 +402,6 @@ open class MixpanelReactNative: NSObject {
         resolve(nil)
     }
     
-    // MARK: - Registering for Push Notifications
-    
-    @objc
-    func setPushRegistrationId(_ token: String, deviceToken: String,
-                               resolver resolve: RCTPromiseResolveBlock,
-                               rejecter reject: RCTPromiseRejectBlock) -> Void {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-        instance?.people.union(properties: ["$ios_devices": [deviceToken] ])
-        resolve(nil)
-    }
-    
-    @objc
-    open class func setPushRegistrationId(_ token: String, deviceToken: Data) -> Void {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-        instance?.people.addPushDeviceToken(deviceToken)
-    }
-    
-    @objc
-    func clearPushRegistrationId(_ token: String, deviceToken: String,
-                                 resolver resolve: RCTPromiseResolveBlock,
-                                 rejecter reject: RCTPromiseRejectBlock) -> Void {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-        instance?.people.removePushDeviceToken(deviceToken.data(using: .utf16)!)
-        resolve(nil)
-    }
-    
-    @objc
-    func clearAllPushRegistrationId(_ token: String, resolver resolve: RCTPromiseResolveBlock,
-                                    rejecter reject: RCTPromiseRejectBlock) -> Void {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-        instance?.people.removeAllPushDeviceTokens()
-        resolve(nil)
-    }
-    
     open class func getMixpanelInstance(_ token: String) -> MixpanelInstance? {
         if token.isEmpty {
             return nil

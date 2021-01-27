@@ -283,41 +283,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setPushRegistrationId(final String token, String deviceToken, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance) {
-            instance.getPeople().setPushRegistrationId(deviceToken);
-            promise.resolve(null);
-        }
-    }
-
-    @ReactMethod
-    public void getPushRegistrationId(final String token, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance) {
-            promise.resolve(instance.getPeople().getPushRegistrationId());
-        }
-    }
-
-    @ReactMethod
-    public void clearPushRegistrationId(final String token, String registrationId, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance) {
-            instance.getPeople().clearPushRegistrationId(registrationId);
-            promise.resolve(null);
-        }
-    }
-
-    @ReactMethod
-    public void clearAllPushRegistrationId(final String token, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
-        synchronized (instance) {
-            instance.getPeople().clearPushRegistrationId();
-            promise.resolve(null);
-        }
-    }
-
-    @ReactMethod
     public void trackWithGroups(final String token, String eventName, ReadableMap properties, ReadableMap groups, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {

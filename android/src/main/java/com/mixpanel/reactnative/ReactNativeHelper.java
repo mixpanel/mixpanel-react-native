@@ -99,8 +99,6 @@ public class ReactNativeHelper {
         ReadableType valueType = value.getType();
 
         switch (valueType) {
-            case Null:
-                return value;
             case Boolean:
                 return value.asBoolean();
             case Number:

@@ -73,12 +73,6 @@ RCT_EXTERN_METHOD(clearCharges:(NSString *)token resolver:(RCTPromiseResolveBloc
 
 RCT_EXTERN_METHOD(deleteUser:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(setPushRegistrationId:(NSString *)token deviceToken:(NSString *)deviceToken resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(clearPushRegistrationId:(NSString *)token deviceToken:(NSString *)deviceToken resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(clearAllPushRegistrationId:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-
 // MARK: - Group
 RCT_EXTERN_METHOD(trackWithGroups:(NSString *)token event:(NSString *)event properties:(NSDictionary *)properties groups:(NSDictionary *)groups resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 

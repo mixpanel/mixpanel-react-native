@@ -9,10 +9,6 @@ export default class GroupScreen extends React.Component {
         this.mixpanel = MixpanelManager.sharedInstance.mixpanel;
         this.group = this.mixpanel.getGroup("company_id", 12345);
     }
-    
-    /**
-      Identify the user uniquely by providing the user distinctId.
-     */
 
     setProperty = () => {
         this.group.set("prop_key", "prop_value");
@@ -52,6 +48,10 @@ export default class GroupScreen extends React.Component {
 
     trackWithGroups = () => {
         this.mixpanel.trackWithGroups("tracked with groups", {"a": 1, "b": 2.3}, {"company_id": "Mixpanel"});
+    }
+
+    flush = () => {
+        this.mixpanel.flush();
     }
 
     render() {
@@ -105,6 +105,11 @@ export default class GroupScreen extends React.Component {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <TouchableOpacity style={styles.button} onPress={this.trackWithGroups}>
                         <Text style={styles.buttonText}>Track with Groups</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <TouchableOpacity style={styles.button} onPress={this.flush}>
+                        <Text style={styles.buttonText}>Flush</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

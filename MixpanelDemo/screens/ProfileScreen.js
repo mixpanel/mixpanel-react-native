@@ -37,10 +37,6 @@ export default class ProfileScreen extends React.Component {
         this.mixpanel.getPeople().unset("a");
     }
 
-    incrementProperties = () => {
-        this.mixpanel.getPeople().increment({"a": 1.2, "b": 3});
-    }
-
     incrementProperty = () => {
         this.mixpanel.getPeople().increment("a", 1.2);
     }
@@ -54,7 +50,7 @@ export default class ProfileScreen extends React.Component {
     }
 
     unionProperties = () => {
-        this.mixpanel.getPeople().union({"a": ["goodbye", "hi"], "c": ["hello"]});
+        this.mixpanel.getPeople().union("a", ["goodbye", "hi"]);
     }
 
     trackChargeWithoutProperties = () => {
@@ -114,11 +110,6 @@ export default class ProfileScreen extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.incrementProperties}>
-                        <Text style={styles.buttonText}>Increment Properties</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <TouchableOpacity style={styles.button} onPress={this.incrementProperty}>
                         <Text style={styles.buttonText}>Increment Property</Text>
                     </TouchableOpacity>
@@ -134,7 +125,7 @@ export default class ProfileScreen extends React.Component {
                     </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <TouchableOpacity style={styles.button} onPress={this.identify}>
+                    <TouchableOpacity style={styles.button} onPress={this.unionProperties}>
                         <Text style={styles.buttonText}>Union Properties</Text>
                     </TouchableOpacity>
                 </View>

@@ -519,7 +519,7 @@ export class People {
      * provide a negative number for the value.
      *
      * @param {string} prop the People Analytics property that should have its value changed
-     * @param {string} by the amount to be added to the current value of the named property
+     * @param {number} by the amount to be added to the current value of the named property
      *
      */
     increment(prop, by) {
@@ -575,7 +575,7 @@ export class People {
      * If the property exists and is not list-valued, the union will be ignored.
      *
      * @param {string} name name of the list-valued property to set or modify
-     * @param {string} value an array of values to add to the property value if not already present
+     * @param {array} value an array of values to add to the property value if not already present
      */
     union(name, value) {
         if (!StringHelper.isValid(name)) {

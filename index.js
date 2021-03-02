@@ -17,19 +17,16 @@ const DevicePlatform = {
 
 const ERROR_MESSAGE = {
     INVALID_OBJECT: " is not a valid json object",
+    INVALID_STRING: " is not a valid string",
     REQUIRED_DOUBLE: " is not a valid number"
 }
 
 const PARAMS = {
     TOKEN: "token",
-    DISTINCT_ID_IN_OPTIONS: "distinctId in the options parameter",
-    PROPERTIES_IN_OPTIONS: "properties in the options parameter",
     DISTINCT_ID: "distinctId",
     ALIAS: "alias",
     EVENT_NAME: "eventName",
     GROUP_KEY: "groupKey",
-    GROUP_ID: "groupID",
-    GROUP_IDs: "groupIDs",
     PROPERTIES: "properties",
     PROPERTY_NAME: "propertyName",
     PROP: "prop",
@@ -58,8 +55,8 @@ export class Mixpanel {
      * 
      *
      * @param {string} token your project token.
-     * @param {boolean} Optional Whether or not Mixpanel can start tracking by default. See
-     * optOutTracking()
+     * @param {boolean} Optional Whether or not Mixpanel can start tracking by default. See optOutTracking()
+     * 
      */
     static async init(token, optOutTrackingDefault = DEFAULT_OPT_OUT) {
         let metadata = Helper.getMetaData();
@@ -102,7 +99,7 @@ export class Mixpanel {
     /**
      * Will return true if the user has opted out from tracking.
      *
-     * @return {boolean} true if user has opted out from tracking. Defaults to false.
+     * @return {Promise<boolean>} true if user has opted out from tracking. Defaults to false.
      */
     hasOptedOutTracking() {
         return MixpanelReactNative.hasOptedOutTracking(this.token);
@@ -115,7 +112,7 @@ export class Mixpanel {
      *
      */
     optInTracking() {
-        return MixpanelReactNative.optInTracking(this.token);
+        MixpanelReactNative.optInTracking(this.token);
     }
 
     /**
@@ -126,7 +123,7 @@ export class Mixpanel {
      * This method will also remove any user-related information from the device.
      */
     optOutTracking() {
-        return MixpanelReactNative.optOutTracking(this.token);
+        MixpanelReactNative.optOutTracking(this.token);
     }
 
     /**
@@ -151,7 +148,7 @@ export class Mixpanel {
         if (!StringHelper.isValid(distinctId)) {
             StringHelper.raiseError(PARAMS.DISTINCT_ID);
         }
-        return MixpanelReactNative.identify(this.token, distinctId);
+        MixpanelReactNative.identify(this.token, distinctId);
     }
 
     /**
@@ -171,11 +168,10 @@ export class Mixpanel {
         if (!StringHelper.isValid(alias)) {
             StringHelper.raiseError(PARAMS.ALIAS);
         }
-
         if (!StringHelper.isValid(distinctId)) {
             StringHelper.raiseError(PARAMS.DISTINCT_ID);
         }
-        return MixpanelReactNative.alias(this.token, alias, distinctId);
+        MixpanelReactNative.alias(this.token, alias, distinctId);
     }
 
     /**
@@ -194,11 +190,10 @@ export class Mixpanel {
         if (!StringHelper.isValid(eventName)) {
             StringHelper.raiseError(PARAMS.EVENT_NAME);
         }
-
         if (!ObjectHelper.isValidOrUndefined(properties)) {
             ObjectHelper.raiseError(PARAMS.PROPERTIES);
         }
-        return MixpanelReactNative.track(this.token, eventName, properties || {});
+        MixpanelReactNative.track(this.token, eventName, properties || {});
     }
 
     /**
@@ -230,11 +225,10 @@ export class Mixpanel {
         if (!StringHelper.isValid(eventName)) {
             StringHelper.raiseError(PARAMS.EVENT_NAME);
         }
-
         if (!ObjectHelper.isValidOrUndefined(properties)) {
             ObjectHelper.raiseError(PARAMS.PROPERTIES);
         }
-        return MixpanelReactNative.trackWithGroups(this.token, eventName, properties || {}, groups);
+        MixpanelReactNative.trackWithGroups(this.token, eventName, properties || {}, groups);
     }
 
     /**
@@ -247,8 +241,7 @@ export class Mixpanel {
         if (!StringHelper.isValid(groupKey)) {
             StringHelper.raiseError(PARAMS.GROUP_KEY);
         }
-
-        return MixpanelReactNative.setGroup(this.token, groupKey, groupID);
+        MixpanelReactNative.setGroup(this.token, groupKey, groupID);
     }
 
     /**
@@ -274,8 +267,7 @@ export class Mixpanel {
         if (!StringHelper.isValid(groupKey)) {
             StringHelper.raiseError(PARAMS.GROUP_KEY);
         }
-
-        return MixpanelReactNative.addGroup(this.token, groupKey, groupID);
+        MixpanelReactNative.addGroup(this.token, groupKey, groupID);
     }
 
     /**
@@ -288,8 +280,7 @@ export class Mixpanel {
         if (!StringHelper.isValid(groupKey)) {
             StringHelper.raiseError(PARAMS.GROUP_KEY);
         }
-
-        return MixpanelReactNative.removeGroup(this.token, groupKey, groupID);
+        MixpanelReactNative.removeGroup(this.token, groupKey, groupID);
     }
 
     /**
@@ -304,7 +295,7 @@ export class Mixpanel {
         if (!StringHelper.isValid(groupKey)) {
             StringHelper.raiseError(PARAMS.GROUP_KEY);
         }
-        return MixpanelReactNative.deleteGroup(this.token, groupKey, groupID);
+        MixpanelReactNative.deleteGroup(this.token, groupKey, groupID);
     }
 
     /**
@@ -326,7 +317,7 @@ export class Mixpanel {
         if (!ObjectHelper.isValidOrUndefined(properties)) {
             ObjectHelper.raiseError(PARAMS.PROPERTIES);
         }
-        return MixpanelReactNative.registerSuperProperties(this.token, properties || {});
+        MixpanelReactNative.registerSuperProperties(this.token, properties || {});
     }
 
     /**
@@ -341,7 +332,7 @@ export class Mixpanel {
         if (!ObjectHelper.isValidOrUndefined(properties)) {
             ObjectHelper.raiseError(PARAMS.PROPERTIES);
         }
-        return MixpanelReactNative.registerSuperPropertiesOnce(this.token, properties || {});
+        MixpanelReactNative.registerSuperPropertiesOnce(this.token, properties || {});
     }
 
     /**
@@ -357,7 +348,7 @@ export class Mixpanel {
         if (!StringHelper.isValid(propertyName)) {
             StringHelper.raiseError(PARAMS.PROPERTY_NAME);
         }
-        return MixpanelReactNative.unregisterSuperProperty(this.token, propertyName);
+        MixpanelReactNative.unregisterSuperProperty(this.token, propertyName);
     }
 
     /**
@@ -366,7 +357,7 @@ export class Mixpanel {
      *<p>SuperProperties are a collection of properties that will be sent with every event to Mixpanel,
      * and persist beyond the lifetime of your application.
      *
-     * @return {object} Super properties for this Mixpanel instance.
+     * @return {Promise<object>} Super properties for this Mixpanel instance.
      */
     getSuperProperties() {
         return MixpanelReactNative.getSuperProperties(this.token);
@@ -381,7 +372,7 @@ export class Mixpanel {
      * <p>To remove a single superProperty, use unregisterSuperProperty()
      */
     clearSuperProperties() {
-        return MixpanelReactNative.clearSuperProperties(this.token);
+        MixpanelReactNative.clearSuperProperties(this.token);
     }
 
     /**
@@ -395,7 +386,7 @@ export class Mixpanel {
         if (!StringHelper.isValid(eventName)) {
             StringHelper.raiseError(PARAMS.EVENT_NAME);
         }
-        return MixpanelReactNative.timeEvent(this.token, eventName);
+        MixpanelReactNative.timeEvent(this.token, eventName);
     }
 
     /**
@@ -403,7 +394,7 @@ export class Mixpanel {
      *
      * @param {string} eventName the name of the event to be tracked that was previously called with timeEvent()
      *
-     * @return {number} Time elapsed since timeEvent(String) was called for the given eventName.
+     * @return {Promise<number>} Time elapsed since timeEvent(String) was called for the given eventName.
      */
     eventElapsedTime(eventName) {
         if (!StringHelper.isValid(eventName)) {
@@ -417,7 +408,7 @@ export class Mixpanel {
       Useful for clearing data when a user logs out.
      */
     reset() {
-        return MixpanelReactNative.reset(this.token);
+        MixpanelReactNative.reset(this.token);
     }
 
     /**
@@ -448,7 +439,7 @@ export class Mixpanel {
      * send all remaining messages to the server.
      */
     flush() {
-        return MixpanelReactNative.flush(this.token);
+        MixpanelReactNative.flush(this.token);
     }
 }
 
@@ -478,7 +469,7 @@ export class People {
      * possibly overwriting an existing property with the same name.
      *
      * @param {string} prop The name of the Mixpanel property. This must be a String, for example "Zip Code"
-     * @param {string} to The value of the Mixpanel property. For "Zip Code", this value might be the String "90210"
+     * @param {object} to The value of the Mixpanel property. For "Zip Code", this value might be the String "90210"
      */
     set(prop, to) {
         let properties = {};
@@ -490,14 +481,14 @@ export class People {
             }
             properties[prop] = to;
         }
-        return MixpanelReactNative.set(this.token, properties);
+        MixpanelReactNative.set(this.token, properties);
     }
 
     /**
      * Works just like set(), except it will not overwrite existing property values. This is useful for properties like "First login date".
      *
      * @param {string} prop The name of the Mixpanel property. This must be a String, for example "Zip Code"
-     * @param {string} to The value of the Mixpanel property. For "Zip Code", this value might be the String "90210"
+     * @param {object} to The value of the Mixpanel property. For "Zip Code", this value might be the String "90210"
      */
     setOnce(prop, to) {
         let properties = {};
@@ -510,7 +501,7 @@ export class People {
             }
             properties[prop] = to;
         }
-        return MixpanelReactNative.setOnce(this.token, properties);
+        MixpanelReactNative.setOnce(this.token, properties);
     }
 
     /**
@@ -544,7 +535,7 @@ export class People {
 
             add[prop] = by;
         }
-        return MixpanelReactNative.increment(this.token, add);
+        MixpanelReactNative.increment(this.token, add);
     }
 
     /**
@@ -552,7 +543,7 @@ export class People {
      * it will be created as a list of one element. If the property does exist and doesn't
      * currently have a list value, the append will be ignored.
      * @param {string} name the People Analytics property that should have it's value appended to
-     * @param {string} value the new value that will appear at the end of the property's list
+     * @param {object} value the new value that will appear at the end of the property's list
      */
     append(name, value) {
         let appendProp = {};
@@ -563,9 +554,9 @@ export class People {
         }
 
         if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
-            return MixpanelReactNative.append(this.token, appendProp);
+            MixpanelReactNative.append(this.token, appendProp);
         } else {
-            return MixpanelReactNative.append(this.token, name, value);
+            MixpanelReactNative.append(this.token, name, value);
         }
     }
 
@@ -585,9 +576,9 @@ export class People {
         value = Array.isArray(value) ? value : [value];
 
         if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
-            return MixpanelReactNative.union(this.token, {[name]: value});
+            MixpanelReactNative.union(this.token, {[name]: value});
         } else {
-            return MixpanelReactNative.union(this.token, name, value);
+            MixpanelReactNative.union(this.token, name, value);
         }
     }
 
@@ -596,7 +587,7 @@ export class People {
      * If the property does not currently exist, the remove will be ignored.
      * If the property exists and is not list-valued, the remove will be ignored.
      * @param {string} name the People Analytics property that should have it's value removed from
-     * @param {string} value the value that will be removed from the property's list
+     * @param {object} value the value that will be removed from the property's list
      */
     remove(name, value) {
         let removeProp = {};
@@ -607,9 +598,9 @@ export class People {
         }
 
         if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
-            return MixpanelReactNative.remove(this.token, removeProp);
+            MixpanelReactNative.remove(this.token, removeProp);
         } else {
-            return MixpanelReactNative.remove(this.token, name, value);
+            MixpanelReactNative.remove(this.token, name, value);
         }
     }
 
@@ -621,7 +612,7 @@ export class People {
         if (!StringHelper.isValid(name)) {
             StringHelper.raiseError(PARAMS.PROPERTY_NAME);
         }
-        return MixpanelReactNative.unset(this.token, name);
+        MixpanelReactNative.unset(this.token, name);
     }
 
     /**
@@ -638,14 +629,14 @@ export class People {
         if (!ObjectHelper.isValidOrUndefined(properties)) {
             ObjectHelper.raiseError(PARAMS.PROPERTIES);
         }
-        return MixpanelReactNative.trackCharge(this.token, charge, properties || {});
+        MixpanelReactNative.trackCharge(this.token, charge, properties || {});
     }
 
     /**
      * Permanently clear the whole transaction history for the identified people profile.
      */
     clearCharges() {
-        return MixpanelReactNative.clearCharges(this.token);
+        MixpanelReactNative.clearCharges(this.token);
     }
 
     /**
@@ -655,7 +646,7 @@ export class People {
      * to People Analytics using the same distinct id will create and store new values.
      */
     deleteUser() {
-      return MixpanelReactNative.deleteUser(this.token);
+        MixpanelReactNative.deleteUser(this.token);
     }
 }
 
@@ -693,7 +684,7 @@ export class MixpanelGroup {
             }
             properties[prop] = to;
         }
-        return MixpanelReactNative.groupSetProperties(this.token, this.groupKey, this.groupID, properties);
+        MixpanelReactNative.groupSetProperties(this.token, this.groupKey, this.groupID, properties);
     }
 
     /**
@@ -712,7 +703,7 @@ export class MixpanelGroup {
             }
             properties[prop] = to;
         }
-        return MixpanelReactNative.groupSetPropertyOnce(this.token, this.groupKey, this.groupID, properties);
+        MixpanelReactNative.groupSetPropertyOnce(this.token, this.groupKey, this.groupID, properties);
     }
 
     /**
@@ -724,7 +715,7 @@ export class MixpanelGroup {
         if (!StringHelper.isValid(prop)) {
             StringHelper.raiseError(PARAMS.PROPERTY_NAME);
         }
-        return MixpanelReactNative.groupUnsetProperty(this.token, this.groupKey, this.groupID, prop);
+        MixpanelReactNative.groupUnsetProperty(this.token, this.groupKey, this.groupID, prop);
     }
 
     /**
@@ -740,7 +731,7 @@ export class MixpanelGroup {
             StringHelper.raiseError(PARAMS.PROPERTY_NAME);
         }
 
-        return MixpanelReactNative.groupRemovePropertyValue(this.token, this.groupKey, this.groupID, name, value);
+        MixpanelReactNative.groupRemovePropertyValue(this.token, this.groupKey, this.groupID, name, value);
     }
 
     /**
@@ -756,7 +747,7 @@ export class MixpanelGroup {
             StringHelper.raiseError(PARAMS.PROPERTY_NAME);
         }
         value = Array.isArray(value) ? value : [value];
-        return MixpanelReactNative.groupUnionProperty(this.token, this.groupKey, this.groupID, name, value);
+        MixpanelReactNative.groupUnionProperty(this.token, this.groupKey, this.groupID, name, value);
     }
 
 }

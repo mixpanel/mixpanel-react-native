@@ -9,7 +9,16 @@
         switch object {
         case let value as String:
             return value as MixpanelType
-            
+
+        case let value as NSNumber:
+            if isBoolNumber(value) {
+                return value.boolValue as MixpanelType
+            } else if isInvalidNumber(value) {
+                return String(describing: value) as MixpanelType
+            } else {
+                return value as MixpanelType
+            }
+
         case let value as Int:
             return value as MixpanelType
             
@@ -48,6 +57,18 @@
         }
     }
     
+    private static func isBoolNumber(_ num: NSNumber) -> Bool
+    {
+        let boolID = CFBooleanGetTypeID()
+        let numID = CFGetTypeID(num)
+        return numID == boolID
+    }
+
+    private static func isInvalidNumber(_ num: NSNumber) -> Bool
+    {
+        return num.doubleValue.isInfinite || num.doubleValue.isNaN
+    }
+
     /**
      Merge User added properties and Automatic properties
      */

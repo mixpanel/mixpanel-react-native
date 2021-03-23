@@ -22,7 +22,7 @@ We'd also love for you to come and work with us! Check out **[Jobs](https://mixp
 
 # Quick Start Guide
 
-Check out our **[official documentation](https://developer.mixpanel.com/docs/react-native)** for more in depth information on installing and using Mixpanel on React Native.
+Mixpanel's React Native SDK is a wrapper around Mixpanel’s native iOS and Android SDKs and it supports offline tracking. Check out our **[official documentation](https://developer.mixpanel.com/docs/react-native)** for more in depth information on installing and using Mixpanel on React Native.
 
 <a name="installation"></a>
 ## Installation

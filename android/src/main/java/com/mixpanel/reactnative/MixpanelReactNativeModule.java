@@ -41,6 +41,33 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void setServerURL(final String token, final String serverURL, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
+        synchronized (instance) {
+            instance.setServerURL(serverURL);
+            promise.resolve(null);
+        }
+    }
+
+    @ReactMethod
+    public void setUseIpAddressForGeolocation(final String token, boolean useIpAddressForGeolocation, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
+        synchronized (instance) {
+            instance.setUseIpAddressForGeolocation(useIpAddressForGeolocation);
+            promise.resolve(null);
+        }
+    }
+
+    @ReactMethod
+    public void setLoggingEnabled(final String token, boolean enableLogging, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
+        synchronized (instance) {
+            instance.setEnableLogging(enableLogging);
+            promise.resolve(null);
+        }
+    }
+
+    @ReactMethod
     public void hasOptedOutTracking(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {

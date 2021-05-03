@@ -20,6 +20,7 @@ jest.doMock('react-native', () => {
           initialize: jest.fn(),
           setServerURL: jest.fn(),
           setLoggingEnabled: jest.fn(),
+          setUseIpAddressForGeolocation: jest.fn(),
           hasOptedOutTracking: jest.fn(),
           optInTracking: jest.fn(),
           optOutTracking: jest.fn(),

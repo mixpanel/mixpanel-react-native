@@ -5,6 +5,7 @@ export class Mixpanel {
     static init(token: string, optInTracking?: boolean): Promise<Mixpanel>;
     setServerURL(serverURL: string): void;
     setLoggingEnabled(loggingEnabled: boolean): void;
+    setUseIpAddressForGeolocation(useIpAddressForGeolocation: boolean): void;
     hasOptedOutTracking(): Promise<boolean>;
     optInTracking(): void;
     optOutTracking(): void;

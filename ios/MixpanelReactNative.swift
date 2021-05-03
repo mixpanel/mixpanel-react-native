@@ -42,6 +42,16 @@ open class MixpanelReactNative: NSObject {
         resolve(nil)
     }
 
+    @objc
+    func setUseIpAddressForGeolocation(_ token: String,
+                    useIpAddressForGeolocation: Bool,
+                    resolver resolve: RCTPromiseResolveBlock,
+                    rejecter reject: RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        instance?.useIPAddressForGeoLocation = useIpAddressForGeolocation
+        resolve(nil)
+    }
+
     // MARK: - Opting Users Out of Tracking
 
     @objc

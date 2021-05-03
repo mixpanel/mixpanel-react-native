@@ -24,6 +24,12 @@ test(`it calls MixpanelReactNative setLoggingEnabled`, async () => {
   expect(NativeModules.MixpanelReactNative.setLoggingEnabled).toBeCalledWith("token", true);
 });
 
+test(`it calls MixpanelReactNative setUseIpAddressForGeolocation`, async () => {
+  const mixpanel = await Mixpanel.init("token");
+  mixpanel.setUseIpAddressForGeolocation(true);
+  expect(NativeModules.MixpanelReactNative.setUseIpAddressForGeolocation).toBeCalledWith("token", true);
+});
+
 test(`it calls MixpanelReactNative hasOptedOutTracking`, async () => {
   const mixpanel = await Mixpanel.init("token");
   mixpanel.hasOptedOutTracking();

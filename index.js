@@ -68,22 +68,16 @@ export class Mixpanel {
      * Set the base URL used for Mixpanel API requests.
      * Useful if you need to proxy Mixpanel requests. Defaults to https://api.mixpanel.com.
      * To route data to Mixpanel's EU servers, set to https://api-eu.mixpanel.com
-     * - Note: This method will only work for iOS. For android, please refer to: 
-     * https://developer.mixpanel.com/docs/android
      *
      * @param {string} serverURL the base URL used for Mixpanel API requests
      * 
      */
     setServerURL(serverURL) {
-        if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
-            MixpanelReactNative.setServerURL(this.token, serverURL)
-        }
+        MixpanelReactNative.setServerURL(this.token, serverURL);
     }
 
     /**
      * This allows enabling or disabling of all Mixpanel logs at run time.
-     * - Note: This method will only work for iOS. For android, please refer to: 
-     * https://developer.mixpanel.com/docs/android
      * All logging is disabled by default. Usually, this is only required if
      * you are running into issues with the SDK that you want to debug 
      * 
@@ -91,9 +85,20 @@ export class Mixpanel {
      * 
      */
     setLoggingEnabled(loggingEnabled) {
-        if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
-            MixpanelReactNative.setLoggingEnabled(this.token, loggingEnabled)
-        }
+        MixpanelReactNative.setLoggingEnabled(this.token, loggingEnabled);
+    }
+
+    /**
+     * This controls whether to automatically send the client IP Address as part of event tracking.
+     * With an IP address, geo-location is possible down to neighborhoods within a city, 
+     * although the Mixpanel Dashboard will just show you city level location specificity.
+     * 
+     * @param {boolean} useIpAddressForGeolocation whether to automatically send the client IP Address. 
+     * Defaults to true.
+     * 
+     */
+    setUseIpAddressForGeolocation(useIpAddressForGeolocation) {
+        MixpanelReactNative.setUseIpAddressForGeolocation(this.token, useIpAddressForGeolocation);
     }
 
     /**

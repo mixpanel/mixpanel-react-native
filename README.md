@@ -35,6 +35,8 @@ Mixpanel's React Native SDK is a wrapper around Mixpanel’s native iOS and Andr
 2. Under your application's ios folder, run
 ```pod install```
 At this point, you are ready to use Mixpanel React Native SDK
+Note: If you experience compile issues in iOS under Xcode 12.5+ and iOS 14.5+, please refer to this [workaround](https://github.com/mixpanel/mixpanel-react-native/issues/43#issuecomment-829599732).
+
 ## Integration
 ### Initialization
 To start tracking with the library you must first initialize with your project token. To initialize the library, first add `import { Mixpanel }` and call `Mixpanel.init(token)` with your project token as it's argument. 
@@ -60,7 +62,7 @@ With the `mixpanel` object created in [the last step](#integration) a call to `t
 // Track with event-name
 mixpanel.track('Sent Message');
 // Track with event-name and property
-mixpanel.track('Plan Selected', {'Plan': 'Premium'});;
+mixpanel.track('Plan Selected', {'Plan': 'Premium'});
 ```
 You're done! You've successfully integrated the Mixpanel React Native SDK into your app. To stay up to speed on important SDK releases and updates, star or watch our repository on [Github](https://github.com/mixpanel/mixpanel-react-native).
 

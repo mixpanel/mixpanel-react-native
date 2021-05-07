@@ -5200,7 +5200,7 @@ mixin-deep@^1.2.0:
     is-extendable "^1.0.1"
 
 "mixpanel-react-native@file:..":
-  version "1.2.0"
+  version "1.2.1"
 
 mkdirp@^0.5.1:
   version "0.5.5"

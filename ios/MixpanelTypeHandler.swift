@@ -5,7 +5,7 @@
     /**
      Converts given object to MixpanelType
      */
-    static func ToMixpanelType(_ object: Any) -> MixpanelType? {
+    static func mixpanelTypeValue(_ object: Any) -> MixpanelType? {
         switch object {
         case let value as String:
             return value as MixpanelType
@@ -37,19 +37,19 @@
         case let value as Date:
             return value as MixpanelType
             
-        case let value as MixpanelType:
-            return value
-            
-        case let value as [MixpanelType]:
-            return value
-            
-        case let value as [String: MixpanelType]:
-            return value
-            
         case let value as URL:
             return value
             
         case let value as NSNull:
+            return value
+            
+        case let value as [Any]:
+            return value.map { mixpanelTypeValue($0) }
+
+        case let value as [String: Any]:
+            return value
+            
+        case let value as MixpanelType:
             return value
             
         default:
@@ -75,7 +75,7 @@
     static func processProperties(properties: Dictionary<String, Any>? = nil, includeLibInfo: Bool = false) -> Dictionary<String, MixpanelType> {
         var mpProperties = Dictionary<String, MixpanelType>()
         for (key,value) in properties ?? [:] {
-            mpProperties[key] = ToMixpanelType(value)
+            mpProperties[key] = mixpanelTypeValue(value)
         }
         if (includeLibInfo) {
             mpProperties.merge(dict: AutomaticProperties.peopleProperties)

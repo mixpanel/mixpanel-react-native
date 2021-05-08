@@ -299,7 +299,7 @@ open class MixpanelReactNative: NSObject {
         let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true)
         var mpGroups = Dictionary<String, MixpanelType>()
         for (key,value) in groups ?? [:] {
-            mpGroups[key] = MixpanelTypeHandler.ToMixpanelType(value)
+            mpGroups[key] = MixpanelTypeHandler.mixpanelTypeValue(value)
         }
         instance?.trackWithGroups(event: event, properties: mpProperties, groups: mpGroups)
         resolve(nil)
@@ -310,7 +310,7 @@ open class MixpanelReactNative: NSObject {
                   resolver resolve: RCTPromiseResolveBlock,
                   rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
-        instance?.setGroup(groupKey: groupKey, groupID: MixpanelTypeHandler.ToMixpanelType(groupID)!)
+        instance?.setGroup(groupKey: groupKey, groupID: MixpanelTypeHandler.mixpanelTypeValue(groupID)!)
         resolve(nil)
     }
     
@@ -319,7 +319,7 @@ open class MixpanelReactNative: NSObject {
                   resolver resolve: RCTPromiseResolveBlock,
                   rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
-        instance?.addGroup(groupKey: groupKey, groupID: MixpanelTypeHandler.ToMixpanelType(groupID)!)
+        instance?.addGroup(groupKey: groupKey, groupID: MixpanelTypeHandler.mixpanelTypeValue(groupID)!)
         resolve(nil)
     }
     
@@ -328,7 +328,7 @@ open class MixpanelReactNative: NSObject {
                      resolver resolve: RCTPromiseResolveBlock,
                      rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
-        instance?.removeGroup(groupKey: groupKey, groupID: MixpanelTypeHandler.ToMixpanelType(groupID)!)
+        instance?.removeGroup(groupKey: groupKey, groupID: MixpanelTypeHandler.mixpanelTypeValue(groupID)!)
         resolve(nil)
     }
     
@@ -337,7 +337,7 @@ open class MixpanelReactNative: NSObject {
             return nil
         }
         
-        guard let mixpanelTypeGroupID = MixpanelTypeHandler.ToMixpanelType(groupID) else {
+        guard let mixpanelTypeGroupID = MixpanelTypeHandler.mixpanelTypeValue(groupID) else {
             return nil
         }
         
@@ -391,7 +391,7 @@ open class MixpanelReactNative: NSObject {
                                   resolver resolve: RCTPromiseResolveBlock,
                                   rejecter reject: RCTPromiseRejectBlock) -> Void {
         if let group = mixpanelGroup(token, groupKey: groupKey, groupID: groupID) {
-            guard let mixpanelTypeValue = MixpanelTypeHandler.ToMixpanelType(value) else {
+            guard let mixpanelTypeValue = MixpanelTypeHandler.mixpanelTypeValue(value) else {
                 resolve(nil)
                 return
             }
@@ -407,7 +407,7 @@ open class MixpanelReactNative: NSObject {
                             resolver resolve: RCTPromiseResolveBlock,
                             rejecter reject: RCTPromiseRejectBlock) -> Void {
         if let group = mixpanelGroup(token, groupKey: groupKey, groupID: groupID) {
-            group.union(key: name, values: values.map() { MixpanelTypeHandler.ToMixpanelType($0)! })
+            group.union(key: name, values: values.map() { MixpanelTypeHandler.mixpanelTypeValue($0)! })
         }
         resolve(nil)
     }

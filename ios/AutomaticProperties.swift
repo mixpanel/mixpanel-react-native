@@ -6,7 +6,7 @@ class AutomaticProperties {
     
     static func setAutomaticProperties(_ properties: [String: Any]) {
         for (key,value) in properties {
-            peopleProperties[key] = MixpanelTypeHandler.ToMixpanelType(value)
+            peopleProperties[key] = MixpanelTypeHandler.mixpanelTypeValue(value)
         }
     }
 }

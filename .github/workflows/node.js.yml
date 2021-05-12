@@ -16,14 +16,32 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x, 15.x]
+        node-version: [15.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
-    - run: npm test
+    - name: Test Integration - Install dependencies
+      working-directory: ./MixpanelDemo
+      run: yarn install
+    - name: Setup iOS
+      working-directory: ./MixpanelDemo/ios
+      run: pod install
+    - name: Test iOS
+      working-directory: ./MixpanelDemo
+      run: yarn ios
+    - name: Setup Android
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 21
+        working-directory: ./MixpanelDemo/android
+        script: ./gradlew connectedCheck
+    - name: Test Android
+      working-directory: ./MixpanelDemo
+      run: yarn android

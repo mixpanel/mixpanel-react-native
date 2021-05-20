@@ -35,5 +35,4 @@ repositories {
 dependencies {
     implementation 'com.facebook.react:react-native:+'
     implementation 'com.mixpanel.android:mixpanel-android:5.9.1'
-    api 'com.google.firebase:firebase-messaging:17.3.4'
 }

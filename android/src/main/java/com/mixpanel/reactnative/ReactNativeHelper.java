@@ -41,7 +41,12 @@ public class ReactNativeHelper {
                 properties.put(key, value.getBoolean(key));
                 break;
             case Number:
-                properties.put(key, value.getDouble(key));
+                double numberValue = value.getDouble(key);
+                if (!Double.isNaN(numberValue) && !Double.isInfinite(numberValue)) {
+                    properties.put(key, numberValue);
+                } else {
+                    properties.put(key, String.valueOf(numberValue));
+                }
                 break;
             case String:
                 properties.put(key, value.getString(key));
@@ -77,7 +82,10 @@ public class ReactNativeHelper {
                 properties.put(value.getBoolean(i));
                 break;
             case Number:
-                properties.put(value.getDouble(i));
+                double numberValue = value.getDouble(i);
+                if (!Double.isNaN(numberValue) && !Double.isInfinite(numberValue)) {
+                    properties.put(numberValue);
+                }
                 break;
             case String:
                 properties.put(value.getString(i));
@@ -133,7 +141,12 @@ public class ReactNativeHelper {
                 mapProperties.put(key, value.getBoolean(key));
                 break;
             case Number:
-                mapProperties.put(key, value.getDouble(key));
+                double numberValue = value.getDouble(key);
+                if (!Double.isNaN(numberValue) && !Double.isInfinite(numberValue)) {
+                    mapProperties.put(key, value.getDouble(key));
+                } else {
+                    mapProperties.put(key, String.valueOf(numberValue));
+                }
                 break;
             case String:
                 mapProperties.put(key, value.getString(key));

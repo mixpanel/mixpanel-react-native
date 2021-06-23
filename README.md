@@ -26,7 +26,7 @@ Mixpanel's React Native SDK is a wrapper around Mixpanel’s native iOS and Andr
 
 <a name="installation"></a>
 ## Installation
-### Prerequisite
+### Prerequisites
 - React Native v0.6+
 - [Setup development environment for React Native](https://reactnative.dev/docs/environment-setup)
 ### Steps
@@ -34,8 +34,9 @@ Mixpanel's React Native SDK is a wrapper around Mixpanel’s native iOS and Andr
 ```npm install mixpanel-react-native```
 2. Under your application's ios folder, run
 ```pod install```
-At this point, you are ready to use Mixpanel React Native SDK. 
-Note: If you experience compile issues in iOS under Xcode 12.5+ and iOS 14.5+, please refer to this **[workaround](https://github.com/mixpanel/mixpanel-react-native/issues/43#issuecomment-829599732)**.
+Please note: You don't need to update your Podfile to add Mixpanel manually.
+3. For Xcode 12.5+, there is a known compile issue, please refer to this **[workaround](https://github.com/mixpanel/mixpanel-react-native/issues/43#issuecomment-829599732)**.
+
 
 ## Integration
 ### Initialization

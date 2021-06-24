@@ -92,7 +92,7 @@ To preserve battery life and customer bandwidth, the Mixpanel library doesn't se
 mixpanel.flush();
 ```
 
-If your events are still not showing up after 60 seconds, check if you have opted out of tracking. You can also enable Mixpanel debugging and logging, it allows you to see the debug output from the Mixpanel library. To enable it, call  [setLoggingEnabled](https://mixpanel.github.io/mixpanel-swift/Classes/MixpanelInstance.html#/s:8Mixpanel0A8InstanceC14loggingEnabledSbvp)  to true, then run your iOS project with Xcode or android project with Android Studio. The logs should be available in the console.
+If your events are still not showing up after 60 seconds, check if you have opted out of tracking. You can also enable Mixpanel debugging and logging, it allows you to see the debug output from the Mixpanel library. To enable it, call  [setLoggingEnabled](https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html#setLoggingEnabled) with true, then run your iOS project with Xcode or android project with Android Studio. The logs should be available in the console.
 
 ```
 mixpanel.setLoggingEnabled(true);

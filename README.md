@@ -1,4 +1,5 @@
 
+
 <div align="center" style="text-align: center">
   <img src="https://github.com/mixpanel/mixpanel-android/blob/assets/mixpanel.png?raw=true" alt="Mixpanel React Native Library" height="150"/>
 </div>
@@ -9,8 +10,11 @@
 <!-- MarkdownTOC -->
 - [Introduction](#introduction)
 - [Quick Start Guide](#quick-start-guide)
-    - [Installation](#installation)
-    - [Integration](#integration)
+    - [Install Mixpanel](#install-mixpanel)
+    - [Initialize Mixpanel](#initialize-mixpanel)
+    - [Send Data](#send-data)
+    - [Check for Success](#check-for-success)
+- [FAQ](#faq)
 - [I want to know more!](#i-want-to-know-more)
 
 <!-- /MarkdownTOC -->
@@ -19,7 +23,7 @@
 ## Introduction
 Welcome to the official Mixpanel React Native library.
 The Mixpanel React Native library is an open-source project, and we'd love to see your contributions! 
-We'd also love for you to come and work with us! Check out **[Jobs](https://mixpanel.com/jobs/#openings)** for details
+We'd also love for you to come and work with us! Check out **[Jobs](https://mixpanel.com/jobs/#openings)** for details.
 
 ## Quick Start Guide
 
@@ -31,10 +35,14 @@ Mixpanel's React Native SDK is a wrapper around Mixpanel’s native iOS and Andr
 - React Native v0.6+
 - [Setup development environment for React Native](https://reactnative.dev/docs/environment-setup)
 #### Steps
-1. Under your app's root directory, install Mixpanel React Native SDK
-```npm install mixpanel-react-native```
+1. Under your app's root directory, install Mixpanel React Native SDK. 
+```
+npm install mixpanel-react-native
+```
 2. Under your application's ios folder, run
-```pod install```
+```
+pod install
+``` 
 Please note: You do not need to update your Podfile to add Mixpanel. 
 3. For Xcode 12.5+, there is a known compile issue, please refer to this **[workaround](https://github.com/mixpanel/mixpanel-react-native/issues/43#issuecomment-829599732)**.
 
@@ -57,7 +65,7 @@ class YourClass extends React.Component {
 ```
 Once you've called this method once, you can access `mixpanel` throughout the rest of your application.
 ### 3. Send Data
-Let's get started by sending event data. You can send an event from anywhere in your application. Better understand user behavior by storing details that are specific to the event (properties). After initializing the library, Mixpanel will [automatically collect common mobile events](https://mixpanel.com/help/questions/articles/which-common-mobile-events-can-mixpanel-collect-on-my-behalf-automatically). You can enable/disable automatic collection through your project settings. Also, Mixpanel automatically tracks some properties by default; [learn more](https://help.mixpanel.com/hc/en-us/articles/115004613766-Default-Properties-Collected-by-Mixpanel).
+Let's get started by sending event data. You can send an event from anywhere in your application. Better understand user behavior by storing details that are specific to the event (properties). After initializing the library, Mixpanel will [automatically collect common mobile events](https://mixpanel.com/help/questions/articles/which-common-mobile-events-can-mixpanel-collect-on-my-behalf-automatically). You can enable/disable automatic collection through your project settings. Also, Mixpanel automatically tracks some properties by default. [learn more](https://help.mixpanel.com/hc/en-us/articles/115004613766-Default-Properties-Collected-by-Mixpanel)
 ```js
 // Track with event-name
 mixpanel.track('Sent Message');
@@ -82,14 +90,12 @@ To preserve battery life and customer bandwidth, the Mixpanel library doesn't se
 
 ```
 mixpanel.flush();
-
 ```
 
 If your events are still not showing up after 60 seconds, check if you have opted out of tracking. You can also enable Mixpanel debugging and logging, it allows you to see the debug output from the Mixpanel library. To enable it, call  [setLoggingEnabled](https://mixpanel.github.io/mixpanel-swift/Classes/MixpanelInstance.html#/s:8Mixpanel0A8InstanceC14loggingEnabledSbvp)  to true, then run your iOS project with Xcode or android project with Android Studio. The logs should be available in the console.
 
 ```
 mixpanel.setLoggingEnabled(true);
-
 ```
 
 **Starting with iOS 14.5, do I need to request the user’s permission through the AppTrackingTransparency framework to use Mixpanel?**  

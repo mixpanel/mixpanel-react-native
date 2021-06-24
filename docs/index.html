@@ -47,43 +47,49 @@
   <img src="https://github.com/mixpanel/mixpanel-android/blob/assets/mixpanel.png?raw=true" alt="Mixpanel React Native Library" height="150"/>
 </div>
 <h5></h5>
-<h1>Table of Contents</h1>
+<h2>Table of Contents</h2>
 <!-- MarkdownTOC -->
 <ul>
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#quick-start-guide">Quick Start Guide</a>
 <ul>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#integration">Integration</a></li>
+<li><a href="#1-install-mixpanel">Install Mixpanel</a></li>
+<li><a href="#2-initialize-mixpanel">Initialize Mixpanel</a></li>
+<li><a href="#3-send-data">Send Data</a></li>
+<li><a href="#4-check-for-success">Check for Success</a></li>
 </ul>
 </li>
+<li><a href="#faq">FAQ</a></li>
 <li><a href="#i-want-to-know-more">I want to know more!</a></li>
 </ul>
 <!-- /MarkdownTOC -->
-<h1>Introduction</h1>
+<h2>Introduction</h2>
 <p>Welcome to the official Mixpanel React Native library.
 The Mixpanel React Native library is an open-source project, and we'd love to see your contributions!
-We'd also love for you to come and work with us! Check out <strong><a href="https://mixpanel.com/jobs/#openings">Jobs</a></strong> for details</p>
-<h1>Quick Start Guide</h1>
+We'd also love for you to come and work with us! Check out <strong><a href="https://mixpanel.com/jobs/#openings">Jobs</a></strong> for details.</p>
+<h2>Quick Start Guide</h2>
 <p>Mixpanel's React Native SDK is a wrapper around Mixpanel’s native iOS and Android SDKs and it supports offline tracking. Check out our <strong><a href="https://developer.mixpanel.com/docs/react-native">official documentation</a></strong> for more in depth information on installing and using Mixpanel on React Native.</p>
 <p><a name="installation"></a></p>
-<h2>Installation</h2>
-<h3>Prerequisite</h3>
+<h3>1. Install Mixpanel</h3>
+<h4>Prerequisites</h4>
 <ul>
 <li>React Native v0.6+</li>
 <li><a href="https://reactnative.dev/docs/environment-setup">Setup development environment for React Native</a></li>
 </ul>
-<h3>Steps</h3>
+<h4>Steps</h4>
 <ol>
-<li>Under your app's root directory, install Mixpanel React Native SDK
-<code>npm install mixpanel-react-native</code></li>
-<li>Under your application's ios folder, run
-<code>pod install</code>
-At this point, you are ready to use Mixpanel React Native SDK.
-Note: If you experience compile issues in iOS under Xcode 12.5+ and iOS 14.5+, please refer to this <strong><a href="https://github.com/mixpanel/mixpanel-react-native/issues/43#issuecomment-829599732">workaround</a></strong>.</li>
+<li>Under your app's root directory, install Mixpanel React Native SDK.</li>
 </ol>
-<h2>Integration</h2>
-<h3>Initialization</h3>
+<pre class="prettyprint source"><code>npm install mixpanel-react-native
+</code></pre>
+<ol start="2">
+<li>Under your application's ios folder, run</li>
+</ol>
+<pre class="prettyprint source"><code>pod install
+</code></pre>
+<p>Please note: You do not need to update your Podfile to add Mixpanel.
+3. For Xcode 12.5+, there is a known compile issue, please refer to this <strong><a href="https://github.com/mixpanel/mixpanel-react-native/issues/43#issuecomment-829599732">workaround</a></strong>.</p>
+<h3>2. Initialize Mixpanel</h3>
 <p>To start tracking with the library you must first initialize with your project token. To initialize the library, first add <code>import { Mixpanel }</code> and call <code>Mixpanel.init(token)</code> with your project token as it's argument.</p>
 <pre class="prettyprint source lang-js"><code>import { Mixpanel } from 'mixpanel-react-native';
 ...
@@ -99,17 +105,35 @@ class YourClass extends React.Component {
 ...
 </code></pre>
 <p>Once you've called this method once, you can access <code>mixpanel</code> throughout the rest of your application.</p>
-<h3>Tracking</h3>
-<p>Once you've initialized the library, Mixpanel will <a href="https://mixpanel.com/help/questions/articles/which-common-mobile-events-can-mixpanel-collect-on-my-behalf-automatically" target="_blank">automatically collect common mobile events</a>. You can enable/ disable automatic collection through your <a href="https://mixpanel.com/help/questions/articles/how-do-i-enable-common-mobile-events-if-i-have-already-implemented-mixpanel" target="_blank">project settings</a>.
-With the <code>mixpanel</code> object created in <a href="#integration">the last step</a> a call to <code>track</code> is all you need to send additional events to Mixpanel.</p>
+<h3>3. Send Data</h3>
+<p>Let's get started by sending event data. You can send an event from anywhere in your application. Better understand user behavior by storing details that are specific to the event (properties). After initializing the library, Mixpanel will <a href="https://mixpanel.com/help/questions/articles/which-common-mobile-events-can-mixpanel-collect-on-my-behalf-automatically">automatically collect common mobile events</a>. You can enable/disable automatic collection through your project settings. Also, Mixpanel automatically tracks some properties by default. <a href="https://help.mixpanel.com/hc/en-us/articles/115004613766-Default-Properties-Collected-by-Mixpanel">learn more</a></p>
 <pre class="prettyprint source lang-js"><code>// Track with event-name
 mixpanel.track('Sent Message');
 // Track with event-name and property
 mixpanel.track('Plan Selected', {'Plan': 'Premium'});
 </code></pre>
-<p>You're done! You've successfully integrated the Mixpanel React Native SDK into your app. To stay up to speed on important SDK releases and updates, star or watch our repository on <a href="https://github.com/mixpanel/mixpanel-react-native">Github</a>.</p>
-<p><a name="i-want-to-know-more"></a></p>
-<h1>I want to know more!</h1>
+<p>In addition to event data, you can also send <a href="https://developer.mixpanel.com/docs/react-native#storing-user-profiles">user profile data</a>. We recommend this after completing the quickstart guide.</p>
+<h3>4. Check for Success</h3>
+<p><a href="http://mixpanel.com/report/live">Open up Live View in Mixpanel</a>  to view incoming events.
+Once data hits our API, it generally takes ~60 seconds for it to be processed, stored, and queryable in your project.
+<a name="i-want-to-know-more"></a></p>
+<h2>FAQ</h2>
+<p><strong>I want to stop tracking an event/event property in Mixpanel. Is that possible?</strong><br>
+Yes, in Lexicon, you can intercept and drop incoming events or properties. Mixpanel won’t store any new data for the event or property you select to drop.  <a href="https://help.mixpanel.com/hc/en-us/articles/360001307806#dropping-events-and-properties">See this article for more information</a>.</p>
+<p><strong>I have a test user I would like to opt out of tracking. How do I do that?</strong><br>
+Mixpanel’s client-side tracking library contains the  <a href="https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html#optOutTracking">optOutTracking()</a>  method, which will set the user’s local opt-out state to “true” and will prevent data from being sent from a user’s device. More detailed instructions can be found in the section,  <a href="https://developer.mixpanel.com/docs/react-native#opting-users-out-of-tracking">Opting users out of tracking</a>.</p>
+<p><strong>Why aren't my events showing up?</strong><br>
+To preserve battery life and customer bandwidth, the Mixpanel library doesn't send the events you record immediately. Instead, it sends batches to the Mixpanel servers every 60 seconds while your application is running, as well as when the application transitions to the background. You can call  <a href="https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html#flush">flush()</a>  manually if you want to force a flush at a particular moment.</p>
+<pre class="prettyprint source"><code>mixpanel.flush();
+</code></pre>
+<p>If your events are still not showing up after 60 seconds, check if you have opted out of tracking. You can also enable Mixpanel debugging and logging, it allows you to see the debug output from the Mixpanel library. To enable it, call  <a href="https://mixpanel.github.io/mixpanel-swift/Classes/MixpanelInstance.html#/s:8Mixpanel0A8InstanceC14loggingEnabledSbvp">setLoggingEnabled</a>  to true, then run your iOS project with Xcode or android project with Android Studio. The logs should be available in the console.</p>
+<pre class="prettyprint source"><code>mixpanel.setLoggingEnabled(true);
+</code></pre>
+<p><strong>Starting with iOS 14.5, do I need to request the user’s permission through the AppTrackingTransparency framework to use Mixpanel?</strong><br>
+No, Mixpanel does not use IDFA so it does not require user permission through the AppTrackingTransparency(ATT) framework.</p>
+<p><strong>If I use Mixpanel, how do I answer app privacy questions for the App Store?</strong><br>
+Please refer to our  <a href="https://mixpanel.com/legal/app-store-privacy-details/">Apple App Developer Privacy Guidance</a></p>
+<h2>I want to know more!</h2>
 <p>No worries, here are some links that you will find useful:</p>
 <ul>
 <li><strong><a href="https://github.com/mixpanel/mixpanel-react-native/tree/master/MixpanelDemo">Sample app</a></strong></li>
@@ -132,7 +156,7 @@ mixpanel.track('Plan Selected', {'Plan': 'Premium'});
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu May 20 2021 13:57:45 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Thu Jun 24 2021 13:41:26 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

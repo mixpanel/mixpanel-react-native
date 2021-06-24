@@ -10,15 +10,56 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  test_main_code:
     runs-on: macos-latest
+    strategy:
+      matrix:
+        node-version: [15.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm test
 
+  test_android:
+    runs-on: macos-11
     strategy:
       matrix:
         node-version: [15.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - name: Test Integration - Install dependencies
+      working-directory: ./MixpanelDemo
+      run: yarn install
+    - name: Setup Android
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 21
+        working-directory: ./MixpanelDemo/android
+        script: ./gradlew connectedCheck
+    - name: Test Android
+      working-directory: ./MixpanelDemo
+      run: yarn android
+
+  test_ios:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        node-version: [15.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -36,12 +77,4 @@ jobs:
     - name: Test iOS
       working-directory: ./MixpanelDemo
       run: yarn ios
-    - name: Setup Android
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: 21
-        working-directory: ./MixpanelDemo/android
-        script: ./gradlew connectedCheck
-    - name: Test Android
-      working-directory: ./MixpanelDemo
-      run: yarn android
+

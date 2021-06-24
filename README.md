@@ -10,10 +10,10 @@
 <!-- MarkdownTOC -->
 - [Introduction](#introduction)
 - [Quick Start Guide](#quick-start-guide)
-    - [Install Mixpanel](#install-mixpanel)
-    - [Initialize Mixpanel](#initialize-mixpanel)
-    - [Send Data](#send-data)
-    - [Check for Success](#check-for-success)
+    - [Install Mixpanel](#1-install-mixpanel)
+    - [Initialize Mixpanel](#2-initialize-mixpanel)
+    - [Send Data](#3-send-data)
+    - [Check for Success](#4-check-for-success)
 - [FAQ](#faq)
 - [I want to know more!](#i-want-to-know-more)
 

@@ -109,6 +109,6 @@ Please refer to our  [Apple App Developer Privacy Guidance](https://mixpanel.com
 
 No worries, here are some links that you will find useful:
 * **[Sample app](https://github.com/mixpanel/mixpanel-react-native/tree/master/MixpanelDemo)**
-* **[Full API Reference](https://developer.mixpanel.com/docs/react-native)**
+* **[Full API Reference](https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html)**
 
 Have any questions? Reach out to Mixpanel [Support](https://help.mixpanel.com/hc/en-us/requests/new) to speak to someone smart, quickly.

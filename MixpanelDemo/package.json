@@ -12,7 +12,7 @@
   "dependencies": {
     "mixpanel-react-native": "file:..",
     "react": "17.0.1",
-    "react-native": "0.64.0",
+    "react-native": "0.64.1",
     "react-navigation": "^4.4.4",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-interactable": "^2.0.1",

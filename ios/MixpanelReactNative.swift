@@ -19,6 +19,8 @@ open class MixpanelReactNative: NSObject {
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         AutomaticProperties.setAutomaticProperties(properties)
         Mixpanel.initialize(token: token, launchOptions: nil, flushInterval: Constants.DEFAULT_FLUSH_INTERVAL, instanceName: token, automaticPushTracking: Constants.AUTOMATIC_PUSH_TRACKING, optOutTrackingByDefault: optOutTrackingByDefault)
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        instance?.trackAutomaticEventsEnabled = false
         resolve(true)
     }
 

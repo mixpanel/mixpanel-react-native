@@ -1,12 +1,12 @@
 import React from 'react';
 import {Text, TouchableOpacity, StyleSheet, View, ScrollView} from 'react-native';
-import MixpanelManager from '../Analytics';
+import {MixpanelInstance} from '../Analytics';
 
 export default class GroupScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        this.mixpanel = MixpanelManager.sharedInstance.mixpanel;
+        this.mixpanel = MixpanelInstance;
         this.group = this.mixpanel.getGroup("company_id", 12345);
     }
 
@@ -15,7 +15,7 @@ export default class GroupScreen extends React.Component {
     }
 
     setPropertyOnce = () => {
-        this.group.setOnce("prop_key", "prop_value").then(t => alert("success"));
+        this.group.setOnce("prop_key", "prop_value");
     }
 
     unsetProperty = () => {

@@ -1,12 +1,12 @@
 import React from 'react';
 import {Text, TouchableOpacity, StyleSheet, View, ScrollView} from 'react-native';
-import MixpanelManager from '../Analytics';
+import {MixpanelInstance} from '../Analytics';
 
 export default class GDPRScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        this.mixpanel = MixpanelManager.sharedInstance.mixpanel;
+        this.mixpanel = MixpanelInstance;
     }
 
     /**

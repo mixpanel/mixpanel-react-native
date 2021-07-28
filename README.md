@@ -14,6 +14,7 @@
     - [Initialize Mixpanel](#2-initialize-mixpanel)
     - [Send Data](#3-send-data)
     - [Check for Success](#4-check-for-success)
+    - [Complete Code Example](#complete-code-example)
 - [FAQ](#faq)
 - [I want to know more!](#i-want-to-know-more)
 
@@ -48,24 +49,18 @@ Please note: You do not need to update your Podfile to add Mixpanel.
 
 
 ### 2. Initialize Mixpanel
-To start tracking with the library you must first initialize with your project token. To initialize the library, first add `import { Mixpanel }` and call `Mixpanel.init(token)` with your project token as it's argument. 
+To start tracking with the library you must first initialize with your project token. You can get your project token from [project settings](https://mixpanel.com/settings/project).
+
 ```js
 import { Mixpanel } from 'mixpanel-react-native';
-...
-class YourClass extends React.Component {
-    constructor(props) {
-        super(props);
-        this.configMixpanel();
-    }
 
-    configMixpanel = async () => {
-        this.mixpanel = await Mixpanel.init("Your mixpanel token");
-    }
-...
+const mixpanel = new Mixpanel("Your Project Token");
+mixpanel.init();
+
 ```
 Once you've called this method once, you can access `mixpanel` throughout the rest of your application.
 ### 3. Send Data
-Let's get started by sending event data. You can send an event from anywhere in your application. Better understand user behavior by storing details that are specific to the event (properties). After initializing the library, Mixpanel will [automatically collect common mobile events](https://mixpanel.com/help/questions/articles/which-common-mobile-events-can-mixpanel-collect-on-my-behalf-automatically). You can enable/disable automatic collection through your project settings. Also, Mixpanel automatically tracks some properties by default. [learn more](https://help.mixpanel.com/hc/en-us/articles/115004613766-Default-Properties-Collected-by-Mixpanel)
+Let's get started by sending event data. You can send an event from anywhere in your application. Better understand user behavior by storing details that are specific to the event (properties). After initializing the library, Mixpanel will automatically track some properties by default. [learn more](https://help.mixpanel.com/hc/en-us/articles/115004613766-Default-Properties-Collected-by-Mixpanel)
 ```js
 // Track with event-name
 mixpanel.track('Sent Message');
@@ -77,6 +72,33 @@ In addition to event data, you can also send [user profile data](https://develop
 [Open up Live View in Mixpanel](http://mixpanel.com/report/live)  to view incoming events.
 Once data hits our API, it generally takes ~60 seconds for it to be processed, stored, and queryable in your project.
 <a name="i-want-to-know-more"></a>
+
+### Complete Code Example
+```js
+
+import React from 'react';
+import {Button,SafeAreaView} from "react-native";
+import {Mixpanel} from 'mixpanel-react-native';
+
+const mixpanel = new Mixpanel("Your Project Token");
+mixpanel.init();
+
+export function SampleApp() {
+  return (
+    <SafeAreaView>
+      <Button
+        title="Select Premium Plan"
+        onPress={() => mixpanel.track("Plan Selected", {"Plan": "Premium"})}
+      />
+    </SafeAreaView>
+  );
+}
+
+export default SampleApp;
+
+```
+
+
 
 ## FAQ
 **I want to stop tracking an event/event property in Mixpanel. Is that possible?**  

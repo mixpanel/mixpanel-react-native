@@ -51,8 +51,25 @@ export class Mixpanel {
     }
 
     /**
-     * Initializes an instance of the API with the given project token.
+     * Initializes Mixpanel
+     *
+     * @param {boolean} Optional Whether or not Mixpanel can start tracking by default. See optOutTracking()
+     *
+     */
+    async init(optOutTrackingDefault = DEFAULT_OPT_OUT) {
+        let metadata = Helper.getMetaData();
+        await MixpanelReactNative.initialize(this.token, optOutTrackingDefault, metadata);
+    }
+
+    /**
+     * @deprecated since version 1.3.0. To initialize Mixpanel, please use the instance method `init` instead. See the example below:
+     *
+     * <pre><code>
+     * const mixpanel = new Mixpanel('your project token');
+     * mixpanel.init();
+     * </code></pre>
      * 
+     * Initializes Mixpanel and return an instance of Mixpanel the given project token.
      *
      * @param {string} token your project token.
      * @param {boolean} Optional Whether or not Mixpanel can start tracking by default. See optOutTracking()

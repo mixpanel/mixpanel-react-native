@@ -1,13 +1,14 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 
-import MixpanelManager from '../Analytics';
+import {MixpanelInstance} from '../Analytics';
+
 
 class EventScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        this.mixpanel = MixpanelManager.sharedInstance.mixpanel;
+        this.mixpanel = MixpanelInstance;
     }
 
     /**

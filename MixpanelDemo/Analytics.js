@@ -1,14 +1,15 @@
 import {Mixpanel} from 'mixpanel-react-native';
 import {token as MixpanelToken} from './app.json';
 
-export default class MixpanelManager {
+
+export class MixpanelManager {
     static sharedInstance = MixpanelManager.sharedInstance || new MixpanelManager();
 
     constructor() {
-        this.configMixpanel();
-    }
-    
-    configMixpanel = async () => {
-        this.mixpanel = await Mixpanel.init(MixpanelToken);
+        this.mixpanel = new Mixpanel(MixpanelToken);
+        this.mixpanel.init();
+        this.mixpanel.setLoggingEnabled(true);
     }
 }
+
+export const MixpanelInstance = MixpanelManager.sharedInstance.mixpanel;

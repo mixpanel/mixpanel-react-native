@@ -1,12 +1,12 @@
 import React from 'react';
 import {Text, TouchableOpacity, StyleSheet, View, ScrollView} from 'react-native';
-import MixpanelManager from '../Analytics';
+import {MixpanelInstance} from '../Analytics';
 
 export default class ProfileScreen extends React.Component {
 
     constructor(props) {
         super(props);
-        this.mixpanel = MixpanelManager.sharedInstance.mixpanel;
+        this.mixpanel = MixpanelInstance;
     }
     
     createAlias = () => {
@@ -22,15 +22,15 @@ export default class ProfileScreen extends React.Component {
           "a": 1,
           "b": 2.3,
           "c": ["4", 5],
-        }).then(t => alert("success"));
+        });
     }
 
     setOneProperty = () => {
-        this.mixpanel.getPeople().set("d", "yo").then(t => alert("success"));
+        this.mixpanel.getPeople().set("d", "yo");
     }
 
     setOnePropertyOnce = () => {
-        this.mixpanel.getPeople().setOnce("c", "just once").then(t => alert("success"));
+        this.mixpanel.getPeople().setOnce("c", "just once");
     }
 
     unsetProperties = () => {
@@ -54,11 +54,11 @@ export default class ProfileScreen extends React.Component {
     }
 
     trackChargeWithoutProperties = () => {
-        this.mixpanel.getPeople().trackCharge(22.8).then(t => alert("success"));
+        this.mixpanel.getPeople().trackCharge(22.8);
     }
 
     trackCharge = () => {
-        this.mixpanel.getPeople().trackCharge(12.8, {"sandwich": 1}).then(t => alert("success"));
+        this.mixpanel.getPeople().trackCharge(12.8, {"sandwich": 1});
     }
 
     clearCharges = () => {

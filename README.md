@@ -77,13 +77,13 @@ Once data hits our API, it generally takes ~60 seconds for it to be processed, s
 ```js
 
 import React from 'react';
-import {Button,SafeAreaView} from "react-native";
-import {Mixpanel} from 'mixpanel-react-native';
+import { Button, SafeAreaView } from "react-native";
+import { Mixpanel } from 'mixpanel-react-native';
 
 const mixpanel = new Mixpanel("Your Project Token");
 mixpanel.init();
 
-export function SampleApp() {
+const SampleApp = () => {
   return (
     <SafeAreaView>
       <Button

@@ -1,16 +1,23 @@
-# Sample React Native Application for Mixpanel Integration
 
-This folder contains a sample application demonstrating how you
-can use Mixpanel in your React Native apps.
 
+# Sample React Native Applications for Mixpanel Integration
+
+This folder contains 3 sample applications demonstrating how you can use Mixpanel in your React Native app.
+- SimpleMixpanel: Integrate Mixpanel with a minimalist approach
+- MixpanelDemo: A full Mixpanel API demo app
+- ContextAPIMixpanel: Integrate Mixpanel with Context API
+
+# How to Run
 ## Prerequisites
 - React Native v0.6+
 - Prerequiste You need to set up the React Native development environment, follow the React Native CLI Quickstart section \
 https://reactnative.dev/docs/environment-setup
 
 ## Getting Started
-- Under the sample application's root directory, run `yarn install`
-- Under the sample application's ios directory, run `pod install`
+- Under the sample app's root directory, run `yarn install`
+- Under the sample app's ios directory, run `pod install`
+- To run the app in iOS, run `yarn ios`
+- To run the app Android, run `yarn android` 
 
 ## Add your Mixpanel Token to app.json 
 There is "token" value in app.json that you'll need to update

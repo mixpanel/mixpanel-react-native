@@ -42,16 +42,16 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install
     - name: Test Integration - Install dependencies
-      working-directory: ./MixpanelDemo
+      working-directory: ./Samples/SimpleMixpanel
       run: yarn install
     - name: Setup Android
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: 21
-        working-directory: ./MixpanelDemo/android
-        script: ./gradlew connectedCheck
+        working-directory: ./Samples/SimpleMixpanel/android
+        script: ./gradlew
     - name: Test Android
-      working-directory: ./MixpanelDemo
+      working-directory: ./Samples/SimpleMixpanel
       run: yarn android
 
   test_ios:
@@ -69,12 +69,12 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install
     - name: Test Integration - Install dependencies
-      working-directory: ./MixpanelDemo
+      working-directory: ./Samples/SimpleMixpanel
       run: yarn install
     - name: Setup iOS
-      working-directory: ./MixpanelDemo/ios
+      working-directory: ./Samples/SimpleMixpanel/ios
       run: pod install
     - name: Test iOS
-      working-directory: ./MixpanelDemo
+      working-directory: ./Samples/SimpleMixpanel
       run: yarn ios
 

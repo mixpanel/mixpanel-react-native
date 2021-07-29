@@ -1,5 +1,21 @@
 #
 
+## [v1.3.1](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.1) (2021-07-29)
+
+### Fixes
+
+- Fix the inconsistency typescript definition of init [\#78](https://github.com/mixpanel/mixpanel-react-native/pull/78)
+
+**Closed issues:**
+
+- confusion re documentation [\#77](https://github.com/mixpanel/mixpanel-react-native/issues/77)
+
+**Merged pull requests:**
+
+- Add more sample apps for integrating Mixpanel including using Context API [\#79](https://github.com/mixpanel/mixpanel-react-native/pull/79)
+
+#
+
 ## [v1.3.0](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.0) (2021-07-28)
 
 **Closed issues:**
@@ -29,6 +45,8 @@
 - Bump glob-parent from 5.1.1 to 5.1.2 [\#63](https://github.com/mixpanel/mixpanel-react-native/pull/63)
 - Add a CHANGELOG placeholder [\#62](https://github.com/mixpanel/mixpanel-react-native/pull/62)
 - Add github workflow for auto release [\#61](https://github.com/mixpanel/mixpanel-react-native/pull/61)
+
+
 
 
 

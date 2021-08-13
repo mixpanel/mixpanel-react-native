@@ -48,7 +48,7 @@ export class People {
 }
 
 export class MixpanelGroup {
-    constructor(token: string, groupKey: string, groupID: string);
+    constructor(token: string, groupKey: string, groupID: MixpanelType);
     set(prop: string, to: MixpanelType): void;
     setOnce(prop: string, to: MixpanelType): void;
     unset(prop: string): void;

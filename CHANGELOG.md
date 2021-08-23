@@ -1,5 +1,22 @@
 #
 
+## [v1.3.2](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.2) (2021-08-23)
+
+### Fixes
+
+- Add constructor method type definition [\#85](https://github.com/mixpanel/mixpanel-react-native/pull/85)
+
+**Closed issues:**
+
+- Failed resolution of: Lcom/google/firebase/iid/FirebaseInstanceId [\#75](https://github.com/mixpanel/mixpanel-react-native/issues/75)
+- It only track on Android in iOS nothing at all [\#72](https://github.com/mixpanel/mixpanel-react-native/issues/72)
+- Mixpanel React Native is null [\#71](https://github.com/mixpanel/mixpanel-react-native/issues/71)
+- Are the documented initializations correct? [\#70](https://github.com/mixpanel/mixpanel-react-native/issues/70)
+- Getting "MixpanelReactNative is null" on fresh install [\#46](https://github.com/mixpanel/mixpanel-react-native/issues/46)
+- Example using ContextAPI and functional components [\#17](https://github.com/mixpanel/mixpanel-react-native/issues/17)
+
+#
+
 ## [v1.3.1](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.1) (2021-07-29)
 
 ### Fixes
@@ -45,6 +62,8 @@
 - Bump glob-parent from 5.1.1 to 5.1.2 [\#63](https://github.com/mixpanel/mixpanel-react-native/pull/63)
 - Add a CHANGELOG placeholder [\#62](https://github.com/mixpanel/mixpanel-react-native/pull/62)
 - Add github workflow for auto release [\#61](https://github.com/mixpanel/mixpanel-react-native/pull/61)
+
+
 
 
 

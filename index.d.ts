@@ -2,6 +2,7 @@ type MixpanelType = any;
 type MixpanelProperties = { [key: string]: MixpanelType };
 
 export class Mixpanel {
+    constructor(token: string);
     static init(token: string, optOutTrackingDefault?: boolean): Promise<Mixpanel>;
     init(optOutTrackingDefault?: boolean): Promise<void>;
     setServerURL(serverURL: string): void;
@@ -33,6 +34,7 @@ export class Mixpanel {
 }
 
 export class People {
+    constructor(token: string);
     set(prop: string, to: MixpanelType): void;
     setOnce(prop: string, to: MixpanelType): void;
     increment(prop: string, by: number): void;
@@ -46,6 +48,7 @@ export class People {
 }
 
 export class MixpanelGroup {
+    constructor(token: string, groupKey: string, groupID: MixpanelType);
     set(prop: string, to: MixpanelType): void;
     setOnce(prop: string, to: MixpanelType): void;
     unset(prop: string): void;

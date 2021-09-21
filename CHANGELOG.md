@@ -1,5 +1,30 @@
 #
 
+## [v1.3.3](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.3) (2021-09-21)
+
+### Fixes
+
+- Enable automatic events in iOS [\#99](https://github.com/mixpanel/mixpanel-react-native/pull/99)
+- replace JCenter with Maven [\#95](https://github.com/mixpanel/mixpanel-react-native/pull/95)
+
+**Closed issues:**
+
+- library not found for -lMixpanelReactNative for iOS [\#96](https://github.com/mixpanel/mixpanel-react-native/issues/96)
+- mixpanel.register not supported in react-native library [\#90](https://github.com/mixpanel/mixpanel-react-native/issues/90)
+- Mixpanel.addPushDeviceToken ? [\#89](https://github.com/mixpanel/mixpanel-react-native/issues/89)
+- Are the types correct on the latest version? [\#83](https://github.com/mixpanel/mixpanel-react-native/issues/83)
+
+**Merged pull requests:**
+
+- Bump tmpl from 1.0.4 to 1.0.5 in /Samples/ContextAPIMixpanel [\#100](https://github.com/mixpanel/mixpanel-react-native/pull/100)
+- Bump tmpl from 1.0.4 to 1.0.5 [\#98](https://github.com/mixpanel/mixpanel-react-native/pull/98)
+- Bump tmpl from 1.0.4 to 1.0.5 in /Samples/MixpanelDemo [\#97](https://github.com/mixpanel/mixpanel-react-native/pull/97)
+- Bump path-parse from 1.0.6 to 1.0.7 in /Samples/MixpanelDemo [\#87](https://github.com/mixpanel/mixpanel-react-native/pull/87)
+- Bump path-parse from 1.0.6 to 1.0.7 [\#84](https://github.com/mixpanel/mixpanel-react-native/pull/84)
+- Bump react-native from 0.64.0 to 0.64.1 in /Samples/MixpanelDemo [\#80](https://github.com/mixpanel/mixpanel-react-native/pull/80)
+
+#
+
 ## [v1.3.2](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.2) (2021-08-23)
 
 ### Fixes
@@ -62,6 +87,8 @@
 - Bump glob-parent from 5.1.1 to 5.1.2 [\#63](https://github.com/mixpanel/mixpanel-react-native/pull/63)
 - Add a CHANGELOG placeholder [\#62](https://github.com/mixpanel/mixpanel-react-native/pull/62)
 - Add github workflow for auto release [\#61](https://github.com/mixpanel/mixpanel-react-native/pull/61)
+
+
 
 
 

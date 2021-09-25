@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, SafeAreaView } from "react-native";
 import { Mixpanel } from 'mixpanel-react-native';
 
-const mixpanel = new Mixpanel("Your Project Token");
+const mixpanel = new Mixpanel("5d9d3df08d1c34a272abf23d892820bf");
 mixpanel.init();
 
 // *************************************

@@ -1,5 +1,21 @@
 #
 
+## [v1.3.4](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.4) (2021-09-25)
+
+**Closed issues:**
+
+- ANDROID\_NDK\_HOME error when building Android with version 1.3.3 [\#101](https://github.com/mixpanel/mixpanel-react-native/issues/101)
+- \[Android\] Build fails after Maven migration [\#94](https://github.com/mixpanel/mixpanel-react-native/issues/94)
+- \[Android\] Mixpanel not working after upgrading React Native to 0.65.0 [\#93](https://github.com/mixpanel/mixpanel-react-native/issues/93)
+- Mixpanel.library is always displayed react-native [\#92](https://github.com/mixpanel/mixpanel-react-native/issues/92)
+- App Session events don't seem to be logged after v1.2.4 [\#91](https://github.com/mixpanel/mixpanel-react-native/issues/91)
+
+**Merged pull requests:**
+
+- Bump native SDK dependencies [\#102](https://github.com/mixpanel/mixpanel-react-native/pull/102)
+
+#
+
 ## [v1.3.3](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.3) (2021-09-21)
 
 ### Fixes
@@ -87,6 +103,8 @@
 - Bump glob-parent from 5.1.1 to 5.1.2 [\#63](https://github.com/mixpanel/mixpanel-react-native/pull/63)
 - Add a CHANGELOG placeholder [\#62](https://github.com/mixpanel/mixpanel-react-native/pull/62)
 - Add github workflow for auto release [\#61](https://github.com/mixpanel/mixpanel-react-native/pull/61)
+
+
 
 
 

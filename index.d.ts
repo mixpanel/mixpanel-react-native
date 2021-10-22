@@ -35,7 +35,7 @@ export class Mixpanel {
 
 export class People {
     constructor(token: string);
-    set(prop: string, to: MixpanelType): void;
+    set(prop: string | Record<string, string | boolean | null | number | string[] | number[]>, to: MixpanelType): void;
     setOnce(prop: string, to: MixpanelType): void;
     increment(prop: string, by: number): void;
     append(name: string, value: MixpanelType): void;

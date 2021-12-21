@@ -45,7 +45,8 @@ npm install mixpanel-react-native
 pod install
 ``` 
 Please note: You do not need to update your Podfile to add Mixpanel. 
-3. For Xcode 12.5+, there is a known compile issue, please refer to this **[workaround](https://github.com/mixpanel/mixpanel-react-native/issues/43#issuecomment-829599732)**.
+
+3. Since Xcode 12.5, there is a known swift compile issue, please refer to this **[workaround](https://github.com/mixpanel/mixpanel-react-native/issues/43#issuecomment-829599732)**. However the compile issue has been resolved in Xcode 13.2.1+, there is no extra step required as long as you upgrade to Xcode 13.2.1+.
 
 
 ### 2. Initialize Mixpanel

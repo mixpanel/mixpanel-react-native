@@ -19,6 +19,8 @@ open class MixpanelReactNative: NSObject {
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         AutomaticProperties.setAutomaticProperties(properties)
         Mixpanel.initialize(token: token, flushInterval: Constants.DEFAULT_FLUSH_INTERVAL, instanceName: token, optOutTrackingByDefault: optOutTrackingByDefault)
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        instance?.flushInterval = Constants.DEFAULT_FLUSH_INTERVAL
         resolve(true)
     }
 

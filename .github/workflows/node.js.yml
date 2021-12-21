@@ -73,7 +73,7 @@ jobs:
       run: yarn install
     - name: Setup iOS
       working-directory: ./Samples/SimpleMixpanel/ios
-      run: pod install
+      run: pod install --repo-update
     - name: Test iOS
       working-directory: ./Samples/SimpleMixpanel
       run: yarn ios

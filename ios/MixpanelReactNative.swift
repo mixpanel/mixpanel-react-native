@@ -310,7 +310,11 @@ open class MixpanelReactNative: NSObject {
                   resolver resolve: RCTPromiseResolveBlock,
                   rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
-        instance?.setGroup(groupKey: groupKey, groupID: MixpanelTypeHandler.mixpanelTypeValue(groupID)!)
+        if groupID is Array<Any> {
+            instance?.setGroup(groupKey: groupKey, groupIDs:MixpanelTypeHandler.mixpanelTypeValue(groupID)! as! [MixpanelType])
+        } else {
+            instance?.setGroup(groupKey: groupKey, groupID:MixpanelTypeHandler.mixpanelTypeValue(groupID)!)
+        }
         resolve(nil)
     }
     

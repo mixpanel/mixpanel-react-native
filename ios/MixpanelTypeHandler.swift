@@ -47,7 +47,7 @@
             return value.map { mixpanelTypeValue($0) }
 
         case let value as [String: Any]:
-            return value
+            return value.mapValues { mixpanelTypeValue($0) }
             
         case let value as MixpanelType:
             return value

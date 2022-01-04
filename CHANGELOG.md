@@ -1,5 +1,27 @@
 #
 
+## [v1.3.5](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.5) (2022-01-04)
+
+**Closed issues:**
+
+- iOS app crashes when `optOutTrackingDefault` is set - `Assertion failed: You have to call initialize\(token:\) before calling the main instance, or define a new main instance if removing the main one` [\#114](https://github.com/mixpanel/mixpanel-react-native/issues/114)
+- Cannot get users properties? [\#113](https://github.com/mixpanel/mixpanel-react-native/issues/113)
+- Users shows undefined Email of tracked user [\#112](https://github.com/mixpanel/mixpanel-react-native/issues/112)
+- FirstAppOpen event not triggered from iOS [\#111](https://github.com/mixpanel/mixpanel-react-native/issues/111)
+- Set user properties [\#107](https://github.com/mixpanel/mixpanel-react-native/issues/107)
+- Events missing on web dashboard. [\#106](https://github.com/mixpanel/mixpanel-react-native/issues/106)
+- Feature Request: functionality to get promise on mixpanel.track\(\) [\#105](https://github.com/mixpanel/mixpanel-react-native/issues/105)
+- "TS2554: Expected 1 arguments, but got 0." error when implementing Samples/ContextAPIMixpanel/Analytics.js [\#86](https://github.com/mixpanel/mixpanel-react-native/issues/86)
+
+**Merged pull requests:**
+
+- nested dictionary should be a valid type in iOS [\#119](https://github.com/mixpanel/mixpanel-react-native/pull/119)
+- fix setGroup array properties [\#118](https://github.com/mixpanel/mixpanel-react-native/pull/118)
+- bump SDk dependencies [\#116](https://github.com/mixpanel/mixpanel-react-native/pull/116)
+- Fix Expo SDK 44 build error [\#115](https://github.com/mixpanel/mixpanel-react-native/pull/115)
+
+#
+
 ## [v1.3.4](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.4) (2021-09-25)
 
 **Closed issues:**
@@ -103,6 +125,8 @@
 - Bump glob-parent from 5.1.1 to 5.1.2 [\#63](https://github.com/mixpanel/mixpanel-react-native/pull/63)
 - Add a CHANGELOG placeholder [\#62](https://github.com/mixpanel/mixpanel-react-native/pull/62)
 - Add github workflow for auto release [\#61](https://github.com/mixpanel/mixpanel-react-native/pull/61)
+
+
 
 
 

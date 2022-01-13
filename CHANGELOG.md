@@ -1,5 +1,13 @@
 #
 
+## [v1.3.6](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.6) (2022-01-13)
+
+### Fixes
+
+- Fix common mobile events not showing  'react-native'  as property value for 'Mixpanel Library' [\#122](https://github.com/mixpanel/mixpanel-react-native/pull/122)
+
+#
+
 ## [v1.3.5](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.5) (2022-01-04)
 
 **Closed issues:**
@@ -125,6 +133,8 @@
 - Bump glob-parent from 5.1.1 to 5.1.2 [\#63](https://github.com/mixpanel/mixpanel-react-native/pull/63)
 - Add a CHANGELOG placeholder [\#62](https://github.com/mixpanel/mixpanel-react-native/pull/62)
 - Add github workflow for auto release [\#61](https://github.com/mixpanel/mixpanel-react-native/pull/61)
+
+
 
 
 

@@ -34,9 +34,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void initialize(String token, boolean optOutTrackingDefault, ReadableMap metadata, Promise promise) throws JSONException {
-        JSONObject sendProperties = ReactNativeHelper.reactToJSON(metadata);
-        AutomaticProperties.setAutomaticProperties(sendProperties);
-        MixpanelAPI.getInstance(this.mReactContext, token, optOutTrackingDefault);
+        JSONObject mixpanelProperties = ReactNativeHelper.reactToJSON(metadata);
+        AutomaticProperties.setAutomaticProperties(mixpanelProperties);
+        MixpanelAPI.getInstance(this.mReactContext, token, optOutTrackingDefault, mixpanelProperties);
         promise.resolve(null);
     }
 

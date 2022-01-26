@@ -1,5 +1,9 @@
 #
 
+## [v1.3.7](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.7) (2022-01-26)
+
+#
+
 ## [v1.3.6](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.6) (2022-01-13)
 
 ### Fixes
@@ -133,6 +137,8 @@
 - Bump glob-parent from 5.1.1 to 5.1.2 [\#63](https://github.com/mixpanel/mixpanel-react-native/pull/63)
 - Add a CHANGELOG placeholder [\#62](https://github.com/mixpanel/mixpanel-react-native/pull/62)
 - Add github workflow for auto release [\#61](https://github.com/mixpanel/mixpanel-react-native/pull/61)
+
+
 
 
 

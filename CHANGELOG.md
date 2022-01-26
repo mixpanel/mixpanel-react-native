@@ -2,6 +2,10 @@
 
 ## [v1.3.7](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.7) (2022-01-26)
 
+### Fixes
+
+- Bump iOS SDK to v3.1.2 [\#125](https://github.com/mixpanel/mixpanel-react-native/pull/125)
+
 #
 
 ## [v1.3.6](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.6) (2022-01-13)

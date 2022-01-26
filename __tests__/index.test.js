@@ -9,7 +9,7 @@ import { NativeModules } from 'react-native';
 
 test(`it calls MixpanelReactNative initialize`, async () => {
   const mixpanel = await Mixpanel.init("token");
-  expect(NativeModules.MixpanelReactNative.initialize).toBeCalledWith("token", false, {"$lib_version": "1.3.6", "mp_lib": "react-native"});
+  expect(NativeModules.MixpanelReactNative.initialize).toBeCalledWith("token", false, {"$lib_version": "1.3.7", "mp_lib": "react-native"});
 });
 
 test(`it calls MixpanelReactNative setServerURL`, async () => {

@@ -9,7 +9,7 @@
 #
 
 ## [v1.3.6](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.6) (2022-01-13)
-### Caution: PLEASE DO NOT USE THIS BUILD. In this version, we have a bug in iOS that event name with `&` or `%` will be rejected by the server. We recommend you update to 1.3.7 or above.
+### Caution: Please DO NOT use this build. In this version, we have a bug in iOS that event name with `&` or `%` will be rejected by the server. We recommend you update to 1.3.7 or above.
 
 ### Fixes
 

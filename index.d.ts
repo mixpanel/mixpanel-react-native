@@ -4,7 +4,7 @@ type MixpanelProperties = { [key: string]: MixpanelType };
 export class Mixpanel {
     constructor(token: string);
     static init(token: string, optOutTrackingDefault?: boolean): Promise<Mixpanel>;
-    init(optOutTrackingDefault?: boolean): Promise<void>;
+    init(optOutTrackingDefault?: boolean, superProperties?: MixpanelProperties): Promise<void>;
     setServerURL(serverURL: string): void;
     setLoggingEnabled(loggingEnabled: boolean): void;
     setUseIpAddressForGeolocation(useIpAddressForGeolocation: boolean): void;

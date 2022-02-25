@@ -4,7 +4,7 @@ type MixpanelProperties = { [key: string]: MixpanelType };
 export class Mixpanel {
     constructor(token: string);
     static init(token: string, optOutTrackingDefault?: boolean): Promise<Mixpanel>;
-    init(optOutTrackingDefault?: boolean): Promise<void>;
+    init(optOutTrackingDefault?: boolean, superProperties?: MixpanelProperties): Promise<void>;
     setServerURL(serverURL: string): void;
     setLoggingEnabled(loggingEnabled: boolean): void;
     setUseIpAddressForGeolocation(useIpAddressForGeolocation: boolean): void;
@@ -36,8 +36,11 @@ export class Mixpanel {
 export class People {
     constructor(token: string);
     set(prop: string, to: MixpanelType): void;
+    set(properties: MixpanelProperties): void;
     setOnce(prop: string, to: MixpanelType): void;
+    setOnce(properties: MixpanelProperties): void;
     increment(prop: string, by: number): void;
+    increment(properties: MixpanelProperties): void;
     append(name: string, value: MixpanelType): void;
     union(name: string, value: Array<MixpanelType>): void;
     remove(name: string, value: MixpanelType): void;

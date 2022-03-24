@@ -4,6 +4,7 @@
 # node.js
 node_modules/
 npm-debug.log
+yarn.lock
 yarn-error.log
 package-lock.json
 *.tgz

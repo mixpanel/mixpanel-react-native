@@ -1,5 +1,13 @@
 #
 
+## [v1.3.10](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.10) (2022-03-26)
+
+### Enhancements
+
+- upgrade android targetSdkVersion to 30 [\#131](https://github.com/mixpanel/mixpanel-react-native/pull/131)
+
+#
+
 ## [v1.3.9](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.9) (2022-03-02)
 
 **Merged pull requests:**
@@ -158,6 +166,8 @@
 - Bump glob-parent from 5.1.1 to 5.1.2 [\#63](https://github.com/mixpanel/mixpanel-react-native/pull/63)
 - Add a CHANGELOG placeholder [\#62](https://github.com/mixpanel/mixpanel-react-native/pull/62)
 - Add github workflow for auto release [\#61](https://github.com/mixpanel/mixpanel-react-native/pull/61)
+
+
 
 
 

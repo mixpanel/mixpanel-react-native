@@ -43,17 +43,6 @@
 
 ## [v1.3.5](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.5) (2022-01-04)
 
-**Closed issues:**
-
-- iOS app crashes when `optOutTrackingDefault` is set - `Assertion failed: You have to call initialize\(token:\) before calling the main instance, or define a new main instance if removing the main one` [\#114](https://github.com/mixpanel/mixpanel-react-native/issues/114)
-- Cannot get users properties? [\#113](https://github.com/mixpanel/mixpanel-react-native/issues/113)
-- Users shows undefined Email of tracked user [\#112](https://github.com/mixpanel/mixpanel-react-native/issues/112)
-- FirstAppOpen event not triggered from iOS [\#111](https://github.com/mixpanel/mixpanel-react-native/issues/111)
-- Set user properties [\#107](https://github.com/mixpanel/mixpanel-react-native/issues/107)
-- Events missing on web dashboard. [\#106](https://github.com/mixpanel/mixpanel-react-native/issues/106)
-- Feature Request: functionality to get promise on mixpanel.track\(\) [\#105](https://github.com/mixpanel/mixpanel-react-native/issues/105)
-- "TS2554: Expected 1 arguments, but got 0." error when implementing Samples/ContextAPIMixpanel/Analytics.js [\#86](https://github.com/mixpanel/mixpanel-react-native/issues/86)
-
 **Merged pull requests:**
 
 - nested dictionary should be a valid type in iOS [\#119](https://github.com/mixpanel/mixpanel-react-native/pull/119)
@@ -64,14 +53,6 @@
 #
 
 ## [v1.3.4](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.4) (2021-09-25)
-
-**Closed issues:**
-
-- ANDROID\_NDK\_HOME error when building Android with version 1.3.3 [\#101](https://github.com/mixpanel/mixpanel-react-native/issues/101)
-- \[Android\] Build fails after Maven migration [\#94](https://github.com/mixpanel/mixpanel-react-native/issues/94)
-- \[Android\] Mixpanel not working after upgrading React Native to 0.65.0 [\#93](https://github.com/mixpanel/mixpanel-react-native/issues/93)
-- Mixpanel.library is always displayed react-native [\#92](https://github.com/mixpanel/mixpanel-react-native/issues/92)
-- App Session events don't seem to be logged after v1.2.4 [\#91](https://github.com/mixpanel/mixpanel-react-native/issues/91)
 
 **Merged pull requests:**
 
@@ -110,15 +91,6 @@
 
 - Add constructor method type definition [\#85](https://github.com/mixpanel/mixpanel-react-native/pull/85)
 
-**Closed issues:**
-
-- Failed resolution of: Lcom/google/firebase/iid/FirebaseInstanceId [\#75](https://github.com/mixpanel/mixpanel-react-native/issues/75)
-- It only track on Android in iOS nothing at all [\#72](https://github.com/mixpanel/mixpanel-react-native/issues/72)
-- Mixpanel React Native is null [\#71](https://github.com/mixpanel/mixpanel-react-native/issues/71)
-- Are the documented initializations correct? [\#70](https://github.com/mixpanel/mixpanel-react-native/issues/70)
-- Getting "MixpanelReactNative is null" on fresh install [\#46](https://github.com/mixpanel/mixpanel-react-native/issues/46)
-- Example using ContextAPI and functional components [\#17](https://github.com/mixpanel/mixpanel-react-native/issues/17)
-
 #
 
 ## [v1.3.1](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.1) (2021-07-29)
@@ -126,10 +98,6 @@
 ### Fixes
 
 - Fix the inconsistency typescript definition of init [\#78](https://github.com/mixpanel/mixpanel-react-native/pull/78)
-
-**Closed issues:**
-
-- confusion re documentation [\#77](https://github.com/mixpanel/mixpanel-react-native/issues/77)
 
 **Merged pull requests:**
 
@@ -139,11 +107,6 @@
 
 ## [v1.3.0](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.0) (2021-07-28)
 
-**Closed issues:**
-
-- Xcode 12.5.1 linking issue [\#68](https://github.com/mixpanel/mixpanel-react-native/issues/68)
-- It only track on iOS in Android nothing at all [\#56](https://github.com/mixpanel/mixpanel-react-native/issues/56)
-
 **Merged pull requests:**
 
 - Deprecate the class method init\(\) and improve the example [\#76](https://github.com/mixpanel/mixpanel-react-native/pull/76)
@@ -151,12 +114,6 @@
 #
 
 ## [v1.2.4](https://github.com/mixpanel/mixpanel-react-native/tree/v1.2.4) (2021-06-24)
-
-**Closed issues:**
-
-- A lot of "undefined symbol" errors happening with the latest version [\#64](https://github.com/mixpanel/mixpanel-react-native/issues/64)
-- Tracking and Identifying Oh My! [\#60](https://github.com/mixpanel/mixpanel-react-native/issues/60)
-- why is firebase-messaging listed as a dependency?  [\#55](https://github.com/mixpanel/mixpanel-react-native/issues/55)
 
 **Merged pull requests:**
 
@@ -167,20 +124,55 @@
 - Add a CHANGELOG placeholder [\#62](https://github.com/mixpanel/mixpanel-react-native/pull/62)
 - Add github workflow for auto release [\#61](https://github.com/mixpanel/mixpanel-react-native/pull/61)
 
+#
 
+## [v1.2.3](https://github.com/mixpanel/mixpanel-react-native/tree/v1.2.3) (2021-05-20)
 
+- Bump Mixpanel Andriod dependency to 5.9.1 (Migrate to Airship 12.x for the integration)
+https://github.com/mixpanel/mixpanel-react-native/pull/59
 
+#
 
+## [v1.2.2](https://github.com/mixpanel/mixpanel-react-native/tree/v1.2.2) (2021-05-08)
 
+- Fix Mixpanel type conversion for ios
+https://github.com/mixpanel/mixpanel-react-native/pull/48
+- Fix iOS compile error
+https://github.com/mixpanel/mixpanel-react-native/pull/53
 
+#
 
+## [v1.2.0](https://github.com/mixpanel/mixpanel-react-native/tree/v1.2.0) (2021-05-03)
 
+- Add new settings APIs: setUseIpAddressForGeolocation, setLoggingEnabled(add android), setServerURL(add android)
+https://github.com/mixpanel/mixpanel-react-native/pull/44
 
+#
 
+## [v1.1.1](https://github.com/mixpanel/mixpanel-react-native/tree/v1.1.1) (2021-03-17)
+- Fix the issue of passing boolean value as int in iOS
+https://github.com/mixpanel/mixpanel-react-native/pull/34
 
+#
 
+## [v1.1.0](https://github.com/mixpanel/mixpanel-react-native/tree/v1.1.0) (2021-03-03)
+- Add Typescript support
+- https://github.com/mixpanel/mixpanel-react-native/pull/31. thanks @sroy3 !
 
+#
 
+## [v1.0.2](https://github.com/mixpanel/mixpanel-react-native/tree/v1.0.2) (2021-01-27)
+- Fix dynamic type not being able to convert properly in android that causes some group apis to fail 
+PR: https://github.com/mixpanel/mixpanel-react-native/pull/23
+This is to address issue: https://github.com/mixpanel/mixpanel-react-native/issues/21
+
+#
+
+## [v1.0.0](https://github.com/mixpanel/mixpanel-react-native/tree/v1.0.0) (2020-12-08)
+- This is our first release! :tada::tada::tada: 
+Report issues or give us any feedback is appreciated!
+- integration guide: https://developer.mixpanel.com/docs/react-native
+- full API reference: https://mixpanel.github.io/mixpanel-react-native
 
 
 

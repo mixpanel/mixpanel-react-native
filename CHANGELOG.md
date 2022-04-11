@@ -67,13 +67,6 @@
 - Enable automatic events in iOS [\#99](https://github.com/mixpanel/mixpanel-react-native/pull/99)
 - replace JCenter with Maven [\#95](https://github.com/mixpanel/mixpanel-react-native/pull/95)
 
-**Closed issues:**
-
-- library not found for -lMixpanelReactNative for iOS [\#96](https://github.com/mixpanel/mixpanel-react-native/issues/96)
-- mixpanel.register not supported in react-native library [\#90](https://github.com/mixpanel/mixpanel-react-native/issues/90)
-- Mixpanel.addPushDeviceToken ? [\#89](https://github.com/mixpanel/mixpanel-react-native/issues/89)
-- Are the types correct on the latest version? [\#83](https://github.com/mixpanel/mixpanel-react-native/issues/83)
-
 **Merged pull requests:**
 
 - Bump tmpl from 1.0.4 to 1.0.5 in /Samples/ContextAPIMixpanel [\#100](https://github.com/mixpanel/mixpanel-react-native/pull/100)

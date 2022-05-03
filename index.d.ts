@@ -30,6 +30,7 @@ export class Mixpanel {
     eventElapsedTime(eventName: string): Promise<number>;
     reset(): void;
     getDistinctId(): Promise<string>;
+    getDeviceId(): Promise<string>;
     flush(): void;
 }
 

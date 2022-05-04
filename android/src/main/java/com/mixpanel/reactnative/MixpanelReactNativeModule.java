@@ -68,6 +68,15 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void setFlushOnBackground(final String token, boolean flushOnBackground, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
+        synchronized (instance) {
+            instance.setFlushOnBackground(flushOnBackground);
+            promise.resolve(null);
+        }
+    }
+
+    @ReactMethod
     public void hasOptedOutTracking(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {

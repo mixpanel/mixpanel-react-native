@@ -107,14 +107,18 @@ export class Mixpanel {
     }
 
      /**
-     * This allows enabling or disabling whether or not Mixpanel flushes events.
-     * when the app enters the background. This is set to true by default. 
+     * This allows enabling or disabling whether or not Mixpanel flushes events
+     * when the app enters the background on iOS. This is set to true by default. 
      *
      * @param {boolean} flushOnBackground whether to enable logging
      *
      */
     setFlushOnBackground(flushOnBackground) {
-        MixpanelReactNative.setFlushOnBackground(this.token, flushOnBackground);
+        if (Platform.OS === 'ios') {
+            MixpanelReactNative.setFlushOnBackground(this.token, flushOnBackground);
+        } else {
+            console.warn('Mixpanel setFlushOnBackground was called and ignored because this method only works on iOS.')
+        }
     }
 
     /**

@@ -7,6 +7,8 @@ export class Mixpanel {
     init(optOutTrackingDefault?: boolean, superProperties?: MixpanelProperties): Promise<void>;
     setServerURL(serverURL: string): void;
     setLoggingEnabled(loggingEnabled: boolean): void;
+    setFlushOnBackground(flushOnBackground: boolean): void;
+
     setUseIpAddressForGeolocation(useIpAddressForGeolocation: boolean): void;
     hasOptedOutTracking(): Promise<boolean>;
     optInTracking(): void;

@@ -12,6 +12,8 @@ RCT_EXTERN_METHOD(setServerURL:(NSString *)token serverURL:(NSString *)serverURL
 
 RCT_EXTERN_METHOD(setLoggingEnabled:(NSString *)token loggingEnabled:(BOOL)loggingEnabled resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(setFlushOnBackground:(NSString *)token flushOnBackground:(BOOL)flushOnBackground resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
 RCT_EXTERN_METHOD(setUseIpAddressForGeolocation:(NSString *)token useIpAddressForGeolocation:(BOOL)useIpAddressForGeolocation resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
 // MARK: - Opting Users Out of Tracking

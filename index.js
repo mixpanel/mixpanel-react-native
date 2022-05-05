@@ -106,6 +106,21 @@ export class Mixpanel {
         MixpanelReactNative.setLoggingEnabled(this.token, loggingEnabled);
     }
 
+     /**
+     * This allows enabling or disabling whether or not Mixpanel flushes events
+     * when the app enters the background on iOS. This is set to true by default. 
+     *
+     * @param {boolean} flushOnBackground whether to enable logging
+     *
+     */
+    setFlushOnBackground(flushOnBackground) {
+        if (Platform.OS === 'ios') {
+            MixpanelReactNative.setFlushOnBackground(this.token, flushOnBackground);
+        } else {
+            console.warn('Mixpanel setFlushOnBackground was called and ignored because this method only works on iOS.')
+        }
+    }
+
     /**
      * This controls whether to automatically send the client IP Address as part of event tracking.
      * With an IP address, geo-location is possible down to neighborhoods within a city,

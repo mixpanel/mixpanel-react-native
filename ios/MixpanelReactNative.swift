@@ -165,6 +165,13 @@ open class MixpanelReactNative: NSObject {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         resolve(instance?.distinctId)
     }
+
+    @objc
+    func getDeviceId(_ token: String, resolver resolve: RCTPromiseResolveBlock,
+                       rejecter reject: RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        resolve(instance?.anonymousId)
+    }
     
     // MARK: - Super Properties
     

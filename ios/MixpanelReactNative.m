@@ -46,6 +46,8 @@ RCT_EXTERN_METHOD(reset:(NSString *)token resolver:(RCTPromiseResolveBlock)resol
 
 RCT_EXTERN_METHOD(getDistinctId:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(getDeviceId:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
 // MARK: - Super Properties
 
 RCT_EXTERN_METHOD(registerSuperProperties:(NSString *)token properties:(NSDictionary *)properties resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)

@@ -98,7 +98,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         synchronized (instance) {
             instance.identify(distinctId);
-            instance.getPeople().identify(distinctId);
             promise.resolve(null);
         }
     }

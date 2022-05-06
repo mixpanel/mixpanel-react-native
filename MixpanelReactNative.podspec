@@ -19,5 +19,5 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }  
   
   s.dependency "React"
-  s.dependency "Mixpanel-swift", '3.2.4'
+  s.dependency "Mixpanel-swift", '3.2.5'
 end

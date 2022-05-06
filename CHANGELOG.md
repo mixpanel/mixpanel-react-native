@@ -1,5 +1,15 @@
 #
 
+## [v1.4.0](https://github.com/mixpanel/mixpanel-react-native/tree/v1.4.0) (2022-05-06)
+
+### Enhancements
+
+- Bump to latest ios and android sdk versions and remove android people identify\(deprecated\) [\#137](https://github.com/mixpanel/mixpanel-react-native/pull/137)
+- Allow disable flush on background [\#135](https://github.com/mixpanel/mixpanel-react-native/pull/135)
+- Adds  a new API `getDeviceId` for React Native [\#134](https://github.com/mixpanel/mixpanel-react-native/pull/134)
+
+#
+
 ## [v1.3.10](https://github.com/mixpanel/mixpanel-react-native/tree/v1.3.10) (2022-03-26)
 
 ### Enhancements
@@ -166,6 +176,8 @@ This is to address issue: https://github.com/mixpanel/mixpanel-react-native/issu
 Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

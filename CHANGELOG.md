@@ -1,5 +1,13 @@
 #
 
+## [v1.4.1](https://github.com/mixpanel/mixpanel-react-native/tree/v1.4.1) (2022-05-09)
+
+### Fixes
+
+- bump android version to 6.2.1 [\#138](https://github.com/mixpanel/mixpanel-react-native/pull/138)
+
+#
+
 ## [v1.4.0](https://github.com/mixpanel/mixpanel-react-native/tree/v1.4.0) (2022-05-06)
 
 ### Enhancements
@@ -176,6 +184,8 @@ This is to address issue: https://github.com/mixpanel/mixpanel-react-native/issu
 Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

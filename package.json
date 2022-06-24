@@ -1,6 +1,6 @@
 {
     "name": "mixpanel-react-native",
-    "version": "1.4.2",
+    "version": "1.5.0",
     "description": "Official React Native Tracking Library for Mixpanel Analytics",
     "main": "index.js",
     "scripts": {

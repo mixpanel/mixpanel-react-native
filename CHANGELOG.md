@@ -1,5 +1,13 @@
 #
 
+## [v1.5.0](https://github.com/mixpanel/mixpanel-react-native/tree/v1.5.0) (2022-06-24)
+
+### Enhancements
+
+-  bump versions to get millisecond precision for event time property [\#146](https://github.com/mixpanel/mixpanel-react-native/pull/146)
+
+#
+
 ## [v1.4.2](https://github.com/mixpanel/mixpanel-react-native/tree/v1.4.2) (2022-05-21)
 
 ### Enhancements
@@ -192,6 +200,8 @@ This is to address issue: https://github.com/mixpanel/mixpanel-react-native/issu
 Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

@@ -18,6 +18,6 @@ Pod::Spec.new do |s|
   s.preserve_paths = 'LICENSE', 'README.md', 'package.json', 'index.js'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }  
   
-  s.dependency "React"
+  s.dependency "React-Core"
   s.dependency "Mixpanel-swift", '3.3.0'
 end

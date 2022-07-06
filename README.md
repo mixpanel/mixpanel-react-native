@@ -99,6 +99,7 @@ export default SampleApp;
 
 ```
 
+👋 👋  Tell us about the Mixpanel developer experience! [https://www.mixpanel.com/devnps](https://www.mixpanel.com/devnps) 👍  👎
 
 
 ## FAQ

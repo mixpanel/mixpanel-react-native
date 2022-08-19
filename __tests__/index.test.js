@@ -13,8 +13,8 @@ test(`it calls MixpanelReactNative initialize`, async () => {
 });
 
 test(`it calls MixpanelReactNative initialize with optOut and superProperties`, async () => {
-  const mixpanel = new Mixpanel("token");
-  mixpanel.init(true, true, {"super": "property"})
+  const mixpanel = new Mixpanel("token", true);
+  mixpanel.init(true, {"super": "property"})
   expect(NativeModules.MixpanelReactNative.initialize).toBeCalledWith("token", true, true, {"$lib_version": "1.5.0", "mp_lib": "react-native", "super": "property"});
 });
 

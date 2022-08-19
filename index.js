@@ -53,13 +53,14 @@ export class Mixpanel {
     /**
      * Initializes Mixpanel
      *
+     * @param {boolean} Whether or not to automatically track common mobile events
      * @param {boolean} Optional Whether or not Mixpanel can start tracking by default. See optOutTracking()
      * @param {object}  Optional A Map containing the key value pairs of the super properties to register
      *
      */
-    async init(optOutTrackingDefault = DEFAULT_OPT_OUT, superProperties = {}) {
+    async init(trackAutomaticEvents, optOutTrackingDefault = DEFAULT_OPT_OUT, superProperties = {}) {
         let metadata = Helper.getMetaData();
-        await MixpanelReactNative.initialize(this.token, optOutTrackingDefault, {...metadata, ...superProperties});
+        await MixpanelReactNative.initialize(this.token, trackAutomaticEvents, optOutTrackingDefault, {...metadata, ...superProperties});
     }
 
     /**

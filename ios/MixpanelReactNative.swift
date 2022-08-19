@@ -13,12 +13,13 @@ open class MixpanelReactNative: NSObject {
 
     @objc
     func initialize(_ token: String,
+                    trackAutomaticEvents: Bool,
                     optOutTrackingByDefault: Bool = false,
                     properties: [String: Any],
                     resolver resolve: RCTPromiseResolveBlock,
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         AutomaticProperties.setAutomaticProperties(properties)
-        Mixpanel.initialize(token: token, flushInterval: Constants.DEFAULT_FLUSH_INTERVAL,
+        Mixpanel.initialize(token: token, trackAutomaticEvents: trackAutomaticEvents, flushInterval: Constants.DEFAULT_FLUSH_INTERVAL,
                             instanceName: token, optOutTrackingByDefault: optOutTrackingByDefault,
                             superProperties: MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true))
         resolve(true)

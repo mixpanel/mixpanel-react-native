@@ -440,11 +440,7 @@ open class MixpanelReactNative: NSObject {
         if token.isEmpty {
             return nil
         }
-        var instance = Mixpanel.getInstance(name: token)
-        if instance == nil {
-            instance = Mixpanel.initialize(token: token, instanceName: token)
-        }
-        return instance
+        return Mixpanel.getInstance(name: token)
     }
     
 }

@@ -46,6 +46,9 @@ export class Mixpanel {
         if (!StringHelper.isValid(token)) {
             StringHelper.raiseError(PARAMS.TOKEN);
         }
+        if (trackAutomaticEvents == null) {
+            throw new Error(`trackAutomaticEvents is undefined`);
+        }
         this.token = token;
         this.trackAutomaticEvents = trackAutomaticEvents;
         this.people = new People(this.token);

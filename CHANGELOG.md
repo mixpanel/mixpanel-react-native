@@ -1,5 +1,13 @@
 #
 
+## [v2.0.0](https://github.com/mixpanel/mixpanel-react-native/tree/v2.0.0) (2022-09-09)
+
+### Enhancements
+
+- make trackAutomaticEvents required and bump versions to deprecate Decide [\#153](https://github.com/mixpanel/mixpanel-react-native/pull/153)
+
+#
+
 ## [v1.5.0](https://github.com/mixpanel/mixpanel-react-native/tree/v1.5.0) (2022-06-24)
 
 ### Enhancements
@@ -200,6 +208,8 @@ This is to address issue: https://github.com/mixpanel/mixpanel-react-native/issu
 Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

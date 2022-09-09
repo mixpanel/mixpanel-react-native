@@ -2,6 +2,9 @@
 
 ## [v2.0.0](https://github.com/mixpanel/mixpanel-react-native/tree/v2.0.0) (2022-09-09)
 
+### BREAKING CHANGE: 
+This major release removes all remaining calls to Mixpanel's `/decide` API endpoint. The main effect of this is that the SDK no longer fetches the remote status of your [project's "Automatically collect common mobile events" setting](https://help.mixpanel.com/hc/en-us/articles/115004596186#enable-or-disable-common-mobile-events). From this version forward, automatic event tracking can only be controlled by the, now required, parameter `trackAutomaticEvents`. Upon upgrading, existing implementations will need to add this parameter to their Mixpanel initializer calls.
+
 ### Enhancements
 
 - make trackAutomaticEvents required and bump versions to deprecate Decide [\#153](https://github.com/mixpanel/mixpanel-react-native/pull/153)

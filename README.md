@@ -81,7 +81,8 @@ import React from 'react';
 import { Button, SafeAreaView } from "react-native";
 import { Mixpanel } from 'mixpanel-react-native';
 
-const mixpanel = new Mixpanel("Your Project Token");
+const trackAutomaticEvents = true;
+const mixpanel = new Mixpanel("Your Project Token", trackAutomaticEvents);
 mixpanel.init();
 
 const SampleApp = () => {

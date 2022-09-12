@@ -1,5 +1,13 @@
 #
 
+## [v2.0.1](https://github.com/mixpanel/mixpanel-react-native/tree/v2.0.1) (2022-09-12)
+
+### Fixes
+
+- update typescript and iOS bridging header [\#158](https://github.com/mixpanel/mixpanel-react-native/pull/158)
+
+#
+
 ## [v2.0.0](https://github.com/mixpanel/mixpanel-react-native/tree/v2.0.0) (2022-09-09)
 
 ### BREAKING CHANGE: 
@@ -211,6 +219,8 @@ This is to address issue: https://github.com/mixpanel/mixpanel-react-native/issu
 Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

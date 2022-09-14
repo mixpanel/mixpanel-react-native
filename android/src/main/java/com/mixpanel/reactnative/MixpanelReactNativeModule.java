@@ -33,16 +33,17 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod
-    public void initialize(String token, boolean trackAutomaticEvents, boolean optOutTrackingDefault, ReadableMap metadata, Promise promise) throws JSONException {
+    public void initialize(String token, boolean trackAutomaticEvents, boolean optOutTrackingDefault, ReadableMap metadata, String serverURL, Promise promise) throws JSONException {
         JSONObject mixpanelProperties = ReactNativeHelper.reactToJSON(metadata);
         AutomaticProperties.setAutomaticProperties(mixpanelProperties);
-        MixpanelAPI.getInstance(this.mReactContext, token, optOutTrackingDefault, mixpanelProperties, null, trackAutomaticEvents);
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, optOutTrackingDefault, mixpanelProperties, null, trackAutomaticEvents);
+        instance.setServerURL(serverURL);
         promise.resolve(null);
     }
 
     @ReactMethod
-    public void setServerURL(final String token, final boolean trackAutomaticEvents, final String serverURL, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void setServerURL(final String token, final String serverURL, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.setServerURL(serverURL);
             promise.resolve(null);
@@ -50,8 +51,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setUseIpAddressForGeolocation(final String token, final boolean trackAutomaticEvents, boolean useIpAddressForGeolocation, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void setUseIpAddressForGeolocation(final String token, boolean useIpAddressForGeolocation, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.setUseIpAddressForGeolocation(useIpAddressForGeolocation);
             promise.resolve(null);
@@ -59,8 +60,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setLoggingEnabled(final String token, final boolean trackAutomaticEvents, boolean enableLogging, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void setLoggingEnabled(final String token, boolean enableLogging, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.setEnableLogging(enableLogging);
             promise.resolve(null);
@@ -68,16 +69,16 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void hasOptedOutTracking(final String token, final boolean trackAutomaticEvents, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void hasOptedOutTracking(final String token, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             promise.resolve(instance.hasOptedOutTracking());
         }
     }
 
     @ReactMethod
-    public void optInTracking(final String token, final boolean trackAutomaticEvents, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void optInTracking(final String token, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.optInTracking();
             promise.resolve(null);
@@ -85,8 +86,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void optOutTracking(final String token, final boolean trackAutomaticEvents, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void optOutTracking(final String token, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.optOutTracking();
             promise.resolve(null);
@@ -94,8 +95,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void identify(final String token, final boolean trackAutomaticEvents, final String distinctId, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void identify(final String token, final String distinctId, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.identify(distinctId);
             promise.resolve(null);
@@ -103,24 +104,24 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void getDistinctId(final String token, final boolean trackAutomaticEvents, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void getDistinctId(final String token, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             promise.resolve(instance.getDistinctId());
         }
     }
 
     @ReactMethod
-    public void getDeviceId(final String token, final boolean trackAutomaticEvents, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void getDeviceId(final String token, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             promise.resolve(instance.getAnonymousId());
         }
     }
 
     @ReactMethod
-    public void track(final String token, final boolean trackAutomaticEvents, final String eventName, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void track(final String token, final String eventName, ReadableMap properties, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
             AutomaticProperties.appendLibraryProperties(eventProperties);
@@ -130,8 +131,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void registerSuperProperties(final String token, final boolean trackAutomaticEvents, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void registerSuperProperties(final String token, ReadableMap properties, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             JSONObject superProperties = ReactNativeHelper.reactToJSON(properties);
             instance.registerSuperProperties(superProperties);
@@ -140,8 +141,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void registerSuperPropertiesOnce(final String token, final boolean trackAutomaticEvents, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void registerSuperPropertiesOnce(final String token, ReadableMap properties, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             JSONObject superProperties = ReactNativeHelper.reactToJSON(properties);
             instance.registerSuperPropertiesOnce(superProperties);
@@ -150,8 +151,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void unregisterSuperProperty(final String token, final boolean trackAutomaticEvents, String superPropertyName, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void unregisterSuperProperty(final String token, String superPropertyName, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.unregisterSuperProperty(superPropertyName);
             promise.resolve(null);
@@ -159,8 +160,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void union(final String token, final boolean trackAutomaticEvents, String name, ReadableArray value, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void union(final String token, String name, ReadableArray value, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             JSONArray propertyValue = ReactNativeHelper.reactToJSON(value);
             instance.getPeople().union(name, propertyValue);
@@ -169,16 +170,16 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void getSuperProperties(final String token, final boolean trackAutomaticEvents, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void getSuperProperties(final String token, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             promise.resolve(ReactNativeHelper.convertJsonToMap(instance.getSuperProperties()));
         }
     }
 
     @ReactMethod
-    public void clearSuperProperties(final String token, final boolean trackAutomaticEvents, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void clearSuperProperties(final String token, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.clearSuperProperties();
             promise.resolve(null);
@@ -186,8 +187,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void alias(final String token, final boolean trackAutomaticEvents, String alias, String original, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void alias(final String token, String alias, String original, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.alias(alias, original);
             promise.resolve(null);
@@ -195,8 +196,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void reset(final String token, final boolean trackAutomaticEvents, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void reset(final String token, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.reset();
             promise.resolve(null);
@@ -204,8 +205,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void flush(final String token, final boolean trackAutomaticEvents, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void flush(final String token, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.flush();
             promise.resolve(null);
@@ -213,8 +214,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void timeEvent(final String token, final boolean trackAutomaticEvents, final String eventName, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void timeEvent(final String token, final String eventName, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.timeEvent(eventName);
             promise.resolve(null);
@@ -222,16 +223,16 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void eventElapsedTime(final String token, final boolean trackAutomaticEvents, final String eventName, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void eventElapsedTime(final String token, final String eventName, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             promise.resolve(instance.eventElapsedTime(eventName));
         }
     }
 
     @ReactMethod
-    public void set(final String token, final boolean trackAutomaticEvents, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void set(final String token, ReadableMap properties, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
             AutomaticProperties.appendLibraryProperties(sendProperties);
@@ -241,8 +242,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void unset(final String token, final boolean trackAutomaticEvents, String propertyName, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void unset(final String token, String propertyName, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.getPeople().unset(propertyName);
             promise.resolve(null);
@@ -250,8 +251,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setOnce(final String token, final boolean trackAutomaticEvents, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void setOnce(final String token, ReadableMap properties, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
             AutomaticProperties.appendLibraryProperties(sendProperties);
@@ -261,8 +262,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void trackCharge(final String token, final boolean trackAutomaticEvents, double charge, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void trackCharge(final String token, double charge, ReadableMap properties, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             JSONObject transactionValue = ReactNativeHelper.reactToJSON(properties);
             instance.getPeople().trackCharge(charge, transactionValue);
@@ -271,8 +272,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void clearCharges(final String token, final boolean trackAutomaticEvents, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void clearCharges(final String token, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.getPeople().clearCharges();
             promise.resolve(null);
@@ -280,9 +281,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void increment(final String token, final boolean trackAutomaticEvents, ReadableMap properties, Promise promise) {
+    public void increment(final String token, ReadableMap properties, Promise promise) {
         Map incrementProperties = ReactNativeHelper.toMap(properties);
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.getPeople().increment(incrementProperties);
             promise.resolve(null);
@@ -290,8 +291,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void append(final String token, final boolean trackAutomaticEvents, String name, Dynamic value, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void append(final String token, String name, Dynamic value, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.getPeople().append(name, ReactNativeHelper.dynamicToObject(value));
             promise.resolve(null);
@@ -299,8 +300,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void deleteUser(final String token, final boolean trackAutomaticEvents, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void deleteUser(final String token, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.getPeople().deleteUser();
             promise.resolve(null);
@@ -308,8 +309,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void remove(final String token, final boolean trackAutomaticEvents, String name, Dynamic value, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void remove(final String token, String name, Dynamic value, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.getPeople().remove(name, ReactNativeHelper.dynamicToObject(value));
             promise.resolve(null);
@@ -317,8 +318,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void trackWithGroups(final String token, final boolean trackAutomaticEvents, String eventName, ReadableMap properties, ReadableMap groups, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void trackWithGroups(final String token, String eventName, ReadableMap properties, ReadableMap groups, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             Map eventProperties = ReactNativeHelper.toMap(properties);
             Map eventGroups = ReactNativeHelper.toMap(groups);
@@ -329,8 +330,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod
-    public void setGroup(final String token, final boolean trackAutomaticEvents, String groupKey, Dynamic groupID, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void setGroup(final String token, String groupKey, Dynamic groupID, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.setGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID));
             promise.resolve(null);
@@ -338,8 +339,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setGroups(final String token, final boolean trackAutomaticEvents, String groupKey, ReadableArray groupIDs, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void setGroups(final String token, String groupKey, ReadableArray groupIDs, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.setGroup(groupKey, Arrays.asList(ReactNativeHelper.toArray(groupIDs)));
             promise.resolve(null);
@@ -347,8 +348,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void addGroup(final String token, final boolean trackAutomaticEvents, String groupKey, Dynamic groupID, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void addGroup(final String token, String groupKey, Dynamic groupID, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.addGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID));
             promise.resolve(null);
@@ -356,8 +357,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void removeGroup(final String token, final boolean trackAutomaticEvents, String groupKey, Dynamic groupID, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void removeGroup(final String token, String groupKey, Dynamic groupID, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.removeGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID));
             promise.resolve(null);
@@ -365,8 +366,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void deleteGroup(final String token, final boolean trackAutomaticEvents, String groupKey, Dynamic groupID, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void deleteGroup(final String token, String groupKey, Dynamic groupID, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.getGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID)).deleteGroup();
             promise.resolve(null);
@@ -374,8 +375,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void groupSetProperties(final String token, final boolean trackAutomaticEvents, String groupKey, Dynamic groupID, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void groupSetProperties(final String token, String groupKey, Dynamic groupID, ReadableMap properties, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
             instance.getGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID)).set(sendProperties);
@@ -384,8 +385,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void groupSetPropertyOnce(final String token, final boolean trackAutomaticEvents, String groupKey, Dynamic groupID, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void groupSetPropertyOnce(final String token, String groupKey, Dynamic groupID, ReadableMap properties, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
             instance.getGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID)).setOnce(sendProperties);
@@ -394,8 +395,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void groupUnsetProperty(final String token, final boolean trackAutomaticEvents, String groupKey, Dynamic groupID, String propertyName, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void groupUnsetProperty(final String token, String groupKey, Dynamic groupID, String propertyName, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.getGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID)).unset(propertyName);
             promise.resolve(null);
@@ -403,8 +404,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void groupRemovePropertyValue(final String token, final boolean trackAutomaticEvents, String groupKey, Dynamic groupID, String name, Dynamic value, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void groupRemovePropertyValue(final String token, String groupKey, Dynamic groupID, String name, Dynamic value, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             instance.getGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID)).remove(name, ReactNativeHelper.dynamicToObject(value));
             promise.resolve(null);
@@ -412,8 +413,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void groupUnionProperty(final String token, final boolean trackAutomaticEvents, String groupKey, Dynamic groupID, String name, ReadableArray values, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents);
+    public void groupUnionProperty(final String token, String groupKey, Dynamic groupID, String name, ReadableArray values, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         synchronized (instance) {
             JSONArray arrayValues = ReactNativeHelper.reactToJSON(values);
             instance.getGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID)).union(name, arrayValues);

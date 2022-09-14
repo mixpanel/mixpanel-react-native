@@ -4,7 +4,7 @@ type MixpanelProperties = { [key: string]: MixpanelType };
 export class Mixpanel {
     constructor(token: string, trackAutomaticEvents: boolean);
     static init(token: string, trackAutomaticEvents: boolean, optOutTrackingDefault?: boolean): Promise<Mixpanel>;
-    init(optOutTrackingDefault?: boolean, superProperties?: MixpanelProperties): Promise<void>;
+    init(optOutTrackingDefault?: boolean, superProperties?: MixpanelProperties, serverURL?: String): Promise<void>;
     setServerURL(serverURL: string): void;
     setLoggingEnabled(loggingEnabled: boolean): void;
     setFlushOnBackground(flushOnBackground: boolean): void;

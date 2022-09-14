@@ -61,16 +61,17 @@ export class Mixpanel {
      * @param {object} superProperties  Optional A Map containing the key value pairs of the super properties to register
      *
      */
-    async init(optOutTrackingDefault = DEFAULT_OPT_OUT, superProperties = {}) {
+    async init(optOutTrackingDefault = DEFAULT_OPT_OUT, superProperties = {}, serverURL = "https://api.mixpanel.com") {
         let metadata = Helper.getMetaData();
-        await MixpanelReactNative.initialize(this.token, this.trackAutomaticEvents, optOutTrackingDefault, {...metadata, ...superProperties});
+        await MixpanelReactNative.initialize(this.token, this.trackAutomaticEvents, optOutTrackingDefault, {...metadata, ...superProperties}, serverURL);
     }
 
     /**
      * @deprecated since version 1.3.0. To initialize Mixpanel, please use the instance method `init` instead. See the example below:
      *
      * <pre><code>
-     * const mixpanel = new Mixpanel('your project token');
+     * const trackAutomaticEvents = true;
+     * const mixpanel = new Mixpanel('your project token', trackAutomaticEvents);
      * mixpanel.init();
      * </code></pre>
      *

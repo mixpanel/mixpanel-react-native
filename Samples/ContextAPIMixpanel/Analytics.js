@@ -9,7 +9,8 @@ export const MixpanelProvider = ({children}) => {
   const [mixpanel, setMixpanel] = React.useState(null);
 
   React.useEffect(() => {
-    const mixpanelInstance = new Mixpanel(`Your Project Token`);
+    const trackAutomaticEvents = true;
+    const mixpanelInstance = new Mixpanel(`Your Project Token`, trackAutomaticEvents);
     mixpanelInstance.init();
     setMixpanel(mixpanelInstance);
   }, []);

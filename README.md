@@ -55,7 +55,8 @@ To start tracking with the library you must first initialize with your project t
 ```js
 import { Mixpanel } from 'mixpanel-react-native';
 
-const mixpanel = new Mixpanel("Your Project Token");
+const trackAutomaticEvents = true;
+const mixpanel = new Mixpanel("Your Project Token", trackAutomaticEvents);
 mixpanel.init();
 
 ```
@@ -70,7 +71,7 @@ mixpanel.track('Plan Selected', {'Plan': 'Premium'});
 ```
 In addition to event data, you can also send [user profile data](https://developer.mixpanel.com/docs/react-native#storing-user-profiles). We recommend this after completing the quickstart guide.
 ### 4. Check for Success
-[Open up Live View in Mixpanel](http://mixpanel.com/report/live)  to view incoming events.
+[Open up Events in Mixpanel](http://mixpanel.com/report/events)  to view incoming events.
 Once data hits our API, it generally takes ~60 seconds for it to be processed, stored, and queryable in your project.
 <a name="i-want-to-know-more"></a>
 
@@ -81,7 +82,8 @@ import React from 'react';
 import { Button, SafeAreaView } from "react-native";
 import { Mixpanel } from 'mixpanel-react-native';
 
-const mixpanel = new Mixpanel("Your Project Token");
+const trackAutomaticEvents = true;
+const mixpanel = new Mixpanel("Your Project Token", trackAutomaticEvents);
 mixpanel.init();
 
 const SampleApp = () => {
@@ -99,6 +101,7 @@ export default SampleApp;
 
 ```
 
+👋 👋  Tell us about the Mixpanel developer experience! [https://www.mixpanel.com/devnps](https://www.mixpanel.com/devnps) 👍  👎
 
 
 ## FAQ

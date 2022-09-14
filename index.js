@@ -70,7 +70,8 @@ export class Mixpanel {
      * @deprecated since version 1.3.0. To initialize Mixpanel, please use the instance method `init` instead. See the example below:
      *
      * <pre><code>
-     * const mixpanel = new Mixpanel('your project token');
+     * const trackAutomaticEvents = true;
+     * const mixpanel = new Mixpanel('your project token', trackAutomaticEvents);
      * mixpanel.init();
      * </code></pre>
      *

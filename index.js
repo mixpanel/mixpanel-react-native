@@ -59,6 +59,7 @@ export class Mixpanel {
      *
      * @param {boolean} optOutTrackingDefault Optional Whether or not Mixpanel can start tracking by default. See optOutTracking()
      * @param {object} superProperties  Optional A Map containing the key value pairs of the super properties to register
+     * @param {string} serverURL Optional Set the base URL used for Mixpanel API requests. See setServerURL()
      *
      */
     async init(optOutTrackingDefault = DEFAULT_OPT_OUT, superProperties = {}, serverURL = "https://api.mixpanel.com") {

@@ -12,7 +12,7 @@
   "dependencies": {
     "mixpanel-react-native": "file:../..",
     "react": "17.0.1",
-    "react-native": "0.64.2"
+    "react-native": "0.64.4"
   },
   "devDependencies": {
     "@babel/core": "^7.14.8",

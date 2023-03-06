@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.license = package['license']
   s.author = { 'Mixpanel, Inc' => 'support@mixpanel.com' }
   s.homepage = package['homepage']
-  s.platform = :ios, "9.0"
+  s.platform = :ios, "11.0"
   s.swift_version = '5.0'
   s.source = { :git => "https://github.com/mixpanel/mixpanel-react-native.git", :tag => s.version }
   s.source_files = "ios/*.{swift,h,m}"
@@ -19,5 +19,5 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }  
   
   s.dependency "React-Core"
-  s.dependency "Mixpanel-swift", '4.0.2'
+  s.dependency "Mixpanel-swift", '4.0.5'
 end

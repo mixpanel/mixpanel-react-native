@@ -1,5 +1,13 @@
 #
 
+## [v2.2.0](https://github.com/mixpanel/mixpanel-react-native/tree/v2.2.0) (2023-03-06)
+
+**Closed issues:**
+
+- How get the alias of the current user using the react native SDK? [\#143](https://github.com/mixpanel/mixpanel-react-native/issues/143)
+
+#
+
 ## [v2.1.0](https://github.com/mixpanel/mixpanel-react-native/tree/v2.1.0) (2022-09-14)
 
 ### Enhancements
@@ -227,6 +235,8 @@ This is to address issue: https://github.com/mixpanel/mixpanel-react-native/issu
 Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

@@ -2,7 +2,9 @@
 
 ## [v2.2.1](https://github.com/mixpanel/mixpanel-react-native/tree/v2.2.1) (2023-03-23)
 
-#
+### Enhancements
+
+- bump iOS version to 4.1.0 [\#180](https://github.com/mixpanel/mixpanel-react-native/pull/180)
 
 ## [v2.2.0](https://github.com/mixpanel/mixpanel-react-native/tree/v2.2.0) (2023-03-06)
 

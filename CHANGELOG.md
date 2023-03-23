@@ -1,5 +1,9 @@
 #
 
+## [v2.2.1](https://github.com/mixpanel/mixpanel-react-native/tree/v2.2.1) (2023-03-23)
+
+#
+
 ## [v2.2.0](https://github.com/mixpanel/mixpanel-react-native/tree/v2.2.0) (2023-03-06)
 
 ### NOTE:
@@ -239,6 +243,8 @@ This is to address issue: https://github.com/mixpanel/mixpanel-react-native/issu
 Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

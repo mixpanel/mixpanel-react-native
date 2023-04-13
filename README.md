@@ -1,7 +1,7 @@
 
 
 <div align="center" style="text-align: center">
-  <img src="https://github.com/mixpanel/mixpanel-android/blob/assets/mixpanel.png?raw=true" alt="Mixpanel React Native Library" height="150"/>
+  <img src="https://user-images.githubusercontent.com/71290498/231855346-12c8fc52-5f24-485c-b9e6-24468599fb87.png" alt="Mixpanel React Native Library" height="150"/>
 </div>
 
 ##### 

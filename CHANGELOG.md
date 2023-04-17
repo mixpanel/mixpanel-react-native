@@ -1,5 +1,13 @@
 #
 
+## [v2.2.3](https://github.com/mixpanel/mixpanel-react-native/tree/v2.2.3) (2023-04-17)
+
+### Fixes
+
+- Make 'groups' argument optional in trackWithGroups [\#169](https://github.com/mixpanel/mixpanel-react-native/pull/169)
+
+#
+
 ## [v2.2.1](https://github.com/mixpanel/mixpanel-react-native/tree/v2.2.1) (2023-03-23)
 
 ### Enhancements
@@ -245,6 +253,8 @@ This is to address issue: https://github.com/mixpanel/mixpanel-react-native/issu
 Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

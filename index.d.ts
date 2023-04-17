@@ -17,7 +17,7 @@ export class Mixpanel {
     alias(alias: string, distinctId: string): void
     track(eventName: string, properties?: MixpanelProperties): void
     getPeople(): People;
-    trackWithGroups(eventName: string, properties?: MixpanelProperties, groups: MixpanelProperties): void;
+    trackWithGroups(eventName: string, properties?: MixpanelProperties, groups?: MixpanelProperties): void;
     setGroup(groupKey: string, groupID: MixpanelType): void;
     getGroup(groupKey: string, groupID: MixpanelType): MixpanelGroup;
     addGroup(groupKey: string, groupID: MixpanelType): void;

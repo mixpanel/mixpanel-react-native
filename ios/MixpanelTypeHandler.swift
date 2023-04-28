@@ -78,7 +78,7 @@
             mpProperties[key] = mixpanelTypeValue(value)
         }
         if (includeLibInfo) {
-            return mpProperties.merging(dict: AutomaticProperties.peopleProperties) { (_, new) in new }
+            return mpProperties.merging(AutomaticProperties.peopleProperties) { (_, new) in new }
         }
         return mpProperties
     }

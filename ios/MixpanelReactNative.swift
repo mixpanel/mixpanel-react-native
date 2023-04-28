@@ -21,7 +21,7 @@ open class MixpanelReactNative: NSObject {
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         Mixpanel.initialize(token: token, trackAutomaticEvents: trackAutomaticEvents, flushInterval: Constants.DEFAULT_FLUSH_INTERVAL,
                             instanceName: token, optOutTrackingByDefault: optOutTrackingByDefault,
-                            superProperties: MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true),
+                            superProperties: MixpanelTypeHandler.processProperties(properties: properties),
                             serverURL: serverURL)
         resolve(true)
     }

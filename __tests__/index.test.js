@@ -9,13 +9,13 @@ import { NativeModules } from 'react-native';
 
 test(`it calls MixpanelReactNative initialize`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
-  expect(NativeModules.MixpanelReactNative.initialize).toBeCalledWith("token", true, false, {"$lib_version": "2.2.4", "mp_lib": "react-native"});
+  expect(NativeModules.MixpanelReactNative.initialize).toBeCalledWith("token", true, false, {"$lib_version": "2.2.5", "mp_lib": "react-native"});
 });
 
 test(`it calls MixpanelReactNative initialize with optOut and superProperties`, async () => {
   const mixpanel = new Mixpanel("token", true);
   mixpanel.init(true, {"super": "property"})
-  expect(NativeModules.MixpanelReactNative.initialize).toBeCalledWith("token", true, true, {"$lib_version": "2.2.4", "mp_lib": "react-native", "super": "property"}, "https://api.mixpanel.com");
+  expect(NativeModules.MixpanelReactNative.initialize).toBeCalledWith("token", true, true, {"$lib_version": "2.2.5", "mp_lib": "react-native", "super": "property"}, "https://api.mixpanel.com");
 });
 
 test(`it calls MixpanelReactNative setServerURL`, async () => {

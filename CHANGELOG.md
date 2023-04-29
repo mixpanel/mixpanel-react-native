@@ -1,5 +1,13 @@
 #
 
+## [v2.2.5](https://github.com/mixpanel/mixpanel-react-native/tree/v2.2.5) (2023-04-29)
+
+### Fixes
+
+- Remove semaphores, copy properties, use .merging, don't includeLibInfo in init [\#191](https://github.com/mixpanel/mixpanel-react-native/pull/191)
+
+#
+
 ## [v2.2.4](https://github.com/mixpanel/mixpanel-react-native/tree/v2.2.4) (2023-04-25)
 
 ### Fixes
@@ -261,6 +269,8 @@ This is to address issue: https://github.com/mixpanel/mixpanel-react-native/issu
 Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

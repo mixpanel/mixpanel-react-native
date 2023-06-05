@@ -78,16 +78,8 @@
             mpProperties[key] = mixpanelTypeValue(value)
         }
         if (includeLibInfo) {
-            mpProperties.merge(dict: AutomaticProperties.peopleProperties)
+            return mpProperties.merging(AutomaticProperties.peopleProperties) { (_, new) in new }
         }
         return mpProperties
-    }
- }
- 
- extension Dictionary {
-    mutating func merge(dict: [Key: Value]){
-        for (k, v) in dict {
-            updateValue(v, forKey: k)
-        }
     }
  }

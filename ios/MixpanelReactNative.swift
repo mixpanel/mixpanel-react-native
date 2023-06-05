@@ -19,10 +19,12 @@ open class MixpanelReactNative: NSObject {
                     serverURL: String,
                     resolver resolve: RCTPromiseResolveBlock,
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
-        AutomaticProperties.setAutomaticProperties(properties)
+        let autoProps = properties // copy
+        AutomaticProperties.setAutomaticProperties(autoProps)
+        let propsProcessed = MixpanelTypeHandler.processProperties(properties: properties)
         Mixpanel.initialize(token: token, trackAutomaticEvents: trackAutomaticEvents, flushInterval: Constants.DEFAULT_FLUSH_INTERVAL,
                             instanceName: token, optOutTrackingByDefault: optOutTrackingByDefault,
-                            superProperties: MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true),
+                            superProperties: propsProcessed,
                             serverURL: serverURL)
         resolve(true)
     }
@@ -101,7 +103,7 @@ open class MixpanelReactNative: NSObject {
                resolver resolve: RCTPromiseResolveBlock,
                rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
-        let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true)
+        let mpProperties = MixpanelTypeHandler.processProperties(properties: properties)
         instance?.track(event: event, properties: mpProperties)
         resolve(nil)
     }
@@ -318,7 +320,7 @@ open class MixpanelReactNative: NSObject {
                          resolver resolve: RCTPromiseResolveBlock,
                          rejecter reject: RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
-        let mpProperties = MixpanelTypeHandler.processProperties(properties: properties, includeLibInfo: true)
+        let mpProperties = MixpanelTypeHandler.processProperties(properties: properties)
         var mpGroups = Dictionary<String, MixpanelType>()
         for (key,value) in groups ?? [:] {
             mpGroups[key] = MixpanelTypeHandler.mixpanelTypeValue(value)

@@ -112,7 +112,7 @@ Yes, in Lexicon, you can intercept and drop incoming events or properties. Mixpa
 Mixpanel’s client-side tracking library contains the  [optOutTracking()](https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html#optOutTracking)  method, which will set the user’s local opt-out state to “true” and will prevent data from being sent from a user’s device. More detailed instructions can be found in the section,  [Opting users out of tracking](https://developer.mixpanel.com/docs/react-native#opting-users-out-of-tracking).
 
 **Why aren't my events showing up?**  
-To preserve battery life and customer bandwidth, the Mixpanel library doesn't send the events you record immediately. Instead, it sends batches to the Mixpanel servers every 60 seconds while your application is running, as well as when the application transitions to the background. You can call  [flush()](https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html#flush)  manually if you want to force a flush at a particular moment.
+First, make sure your test device has internet access. To preserve battery life and customer bandwidth, the Mixpanel library doesn't send the events you record immediately. Instead, it sends batches to the Mixpanel servers every 60 seconds while your application is running, as well as when the application transitions to the background. You can call  [flush()](https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html#flush)  manually if you want to force a flush at a particular moment.
 
 ```
 mixpanel.flush();

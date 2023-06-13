@@ -100,7 +100,7 @@ const SampleApp = () => {
 export default SampleApp;
 
 ```
-
+### For Expo support, please refer to this [issue](https://github.com/mixpanel/mixpanel-react-native/issues/82)
 👋 👋  Tell us about the Mixpanel developer experience! [https://www.mixpanel.com/devnps](https://www.mixpanel.com/devnps) 👍  👎
 
 

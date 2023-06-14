@@ -13,7 +13,7 @@ export class Mixpanel {
     hasOptedOutTracking(): Promise<boolean>;
     optInTracking(): void;
     optOutTracking(): void;
-    identify(distinctId: string): void;
+    identify(distinctId: string): Promise<void>;
     alias(alias: string, distinctId: string): void
     track(eventName: string, properties?: MixpanelProperties): void
     getPeople(): People;

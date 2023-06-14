@@ -187,13 +187,24 @@ export class Mixpanel {
      *     Mixpanel using the same disinct_id will be considered associated with the
      *     same visitor/customer for retention and funnel reporting, so be sure that the given
      *     value is globally unique for each individual user you intend to track.
-     *
+     * @returns {Promise} A promise that resolves when the identify is successful.
+     *     It does not return any value.
+     * 
      */
     identify(distinctId) {
-        if (!StringHelper.isValid(distinctId)) {
-            StringHelper.raiseError(PARAMS.DISTINCT_ID);
-        }
-        MixpanelReactNative.identify(this.token, distinctId);
+        return new Promise((resolvem, reject) => {
+            if (!StringHelper.isValid(distinctId)) {
+                StringHelper.raiseError(PARAMS.DISTINCT_ID);
+                reject(new Error('Invalid distinctId'));
+            }
+            MixpanelReactNative.identify(this.token, distinctId)
+                .then(() => {
+                    resolve();
+                })
+                .catch(err => {
+                    reject(err);
+                });
+        });
     }
 
     /**
@@ -203,8 +214,8 @@ export class Mixpanel {
      *  `mixpane.alias("New ID", mixpane.distinctId)`
      *  `mixpane.alias("Newer ID", mixpane.distinctId)`
      *
-     * <p>This call does not identify the user after. You must still call both identify() and
-     * People.identify() if you wish the new alias to be used for Events and People.
+     * <p>This call does not identify the user after. You must still call identify()
+     *  if you wish the new alias to be used for Events and People.
      *
      * @param {string} alias A unique identifier that you want to use as an identifier for this user.
      * @param {string} distinctId the current distinct_id that alias will be mapped to.

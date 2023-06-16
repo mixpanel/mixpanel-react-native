@@ -131,11 +131,12 @@ open class MixpanelReactNative: NSObject {
      
     @objc
     func identify(_ token: String, distinctId: String,
-                  resolver resolve: RCTPromiseResolveBlock,
-                  rejecter reject: RCTPromiseRejectBlock) -> Void {
+                  resolver resolve: @escaping RCTPromiseResolveBlock,
+                  rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
-        instance?.identify(distinctId: distinctId)
-        resolve(nil)
+        instance?.identify(distinctId: distinctId) {
+            resolve(nil)
+        }
     }
     
     @objc

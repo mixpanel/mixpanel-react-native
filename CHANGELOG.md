@@ -1,5 +1,26 @@
 #
 
+## [v2.3.0](https://github.com/mixpanel/mixpanel-react-native/tree/v2.3.0) (2023-06-16)
+
+### Enhancements
+
+- Returning Promise for the identify\(\) to avoid race condition [\#200](https://github.com/mixpanel/mixpanel-react-native/pull/200)
+
+### Fixes
+
+- Fix null reference used for synchronization \(monitor-enter\) [\#199](https://github.com/mixpanel/mixpanel-react-native/pull/199)
+- fix initialize was called with 4 arguments but expects 5 arguments [\#198](https://github.com/mixpanel/mixpanel-react-native/pull/198)
+- safer handling of super properties [\#197](https://github.com/mixpanel/mixpanel-react-native/pull/197)
+- Android resource linking failure fix [\#187](https://github.com/mixpanel/mixpanel-react-native/pull/187)
+
+**Closed issues:**
+
+- Support new React Native new architecture \(TurboModules/Fabric\) [\#145](https://github.com/mixpanel/mixpanel-react-native/issues/145)
+- Feature Request: Built in getInstance\(\) or similar instead of custom tooling [\#139](https://github.com/mixpanel/mixpanel-react-native/issues/139)
+- \[Feature Request\] Add support for Expo Config Plugins [\#69](https://github.com/mixpanel/mixpanel-react-native/issues/69)
+
+#
+
 ## [v2.2.5](https://github.com/mixpanel/mixpanel-react-native/tree/v2.2.5) (2023-04-29)
 
 ### Fixes
@@ -269,6 +290,8 @@ This is to address issue: https://github.com/mixpanel/mixpanel-react-native/issu
 Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

@@ -31,6 +31,7 @@ ios/project.xcworkspace
 # Android
 android/build/
 android/app/
+android/bin/
 android/.gradle
 .gradle
 *.idea

@@ -85,7 +85,7 @@ export class Mixpanel {
      */
     static async init(token, trackAutomaticEvents, optOutTrackingDefault = DEFAULT_OPT_OUT) {
         let metadata = Helper.getMetaData();
-        await MixpanelReactNative.initialize(token, trackAutomaticEvents, optOutTrackingDefault, metadata);
+        await MixpanelReactNative.initialize(token, trackAutomaticEvents, optOutTrackingDefault, metadata, "https://api.mixpanel.com");
         return new Mixpanel(token, trackAutomaticEvents);
     }
 

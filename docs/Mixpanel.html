@@ -469,7 +469,7 @@ Initializes Mixpanel and return an instance of Mixpanel the given project token.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line311">line 311</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line322">line 322</a>
     </li></ul></dd>
     
 
@@ -519,8 +519,8 @@ Multiple aliases can point to the same identifier.
  `mixpane.alias("New ID", mixpane.distinctId)`
  `mixpane.alias("Newer ID", mixpane.distinctId)`
 
-<p>This call does not identify the user after. You must still call both identify() and
-People.identify() if you wish the new alias to be used for Events and People.
+<p>This call does not identify the user after. You must still call identify()
+ if you wish the new alias to be used for Events and People.
 </div>
 
 
@@ -636,7 +636,7 @@ People.identify() if you wish the new alias to be used for Events and People.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line212">line 212</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line223">line 223</a>
     </li></ul></dd>
     
 
@@ -729,7 +729,7 @@ superProperties registered before the clearSuperProperties method was called.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line419">line 419</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line430">line 430</a>
     </li></ul></dd>
     
 
@@ -891,7 +891,7 @@ to Group Analytics using the same group value will create and store new values.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line339">line 339</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line350">line 350</a>
     </li></ul></dd>
     
 
@@ -1028,7 +1028,7 @@ to Group Analytics using the same group value will create and store new values.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line444">line 444</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line455">line 455</a>
     </li></ul></dd>
     
 
@@ -1144,7 +1144,7 @@ send all remaining messages to the server.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line504">line 504</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line515">line 515</a>
     </li></ul></dd>
     
 
@@ -1240,7 +1240,7 @@ const deviceId = await mixpanel.getDeviceId();
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line491">line 491</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line502">line 502</a>
     </li></ul></dd>
     
 
@@ -1358,7 +1358,7 @@ const distinctId = await mixpanel.getDistinctId();
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line473">line 473</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line484">line 484</a>
     </li></ul></dd>
     
 
@@ -1541,7 +1541,7 @@ Group Analytics properties.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line301">line 301</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line312">line 312</a>
     </li></ul></dd>
     
 
@@ -1641,7 +1641,7 @@ People Analytics properties.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line251">line 251</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line262">line 262</a>
     </li></ul></dd>
     
 
@@ -1755,7 +1755,7 @@ and persist beyond the lifetime of your application.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line407">line 407</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line418">line 418</a>
     </li></ul></dd>
     
 
@@ -1923,7 +1923,7 @@ and persist beyond the lifetime of your application.
     
 
     
-    <h4 class="name" id="identify"><span class="type-signature"></span>identify<span class="signature">(distinctId)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="identify"><span class="type-signature"></span>identify<span class="signature">(distinctId)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
 
     
@@ -2036,7 +2036,7 @@ your application.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line192">line 192</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line194">line 194</a>
     </li></ul></dd>
     
 
@@ -2061,6 +2061,29 @@ your application.
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A promise that resolves when the identify is successful.
+    It does not return any value.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -2564,7 +2587,7 @@ to remove a superProperty, call unregisterSuperProperty() or clearSuperPropertie
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line361">line 361</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line372">line 372</a>
     </li></ul></dd>
     
 
@@ -2704,7 +2727,7 @@ same names has already been registered.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line376">line 376</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line387">line 387</a>
     </li></ul></dd>
     
 
@@ -2864,7 +2887,7 @@ same names has already been registered.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line324">line 324</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line335">line 335</a>
     </li></ul></dd>
     
 
@@ -2953,7 +2976,7 @@ same names has already been registered.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line455">line 455</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line466">line 466</a>
     </li></ul></dd>
     
 
@@ -3251,7 +3274,7 @@ when the app enters the background on iOS. This is set to true by default.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line285">line 285</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line296">line 296</a>
     </li></ul></dd>
     
 
@@ -3808,7 +3831,7 @@ property, representing the number of seconds between your calls.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line430">line 430</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line441">line 441</a>
     </li></ul></dd>
     
 
@@ -3974,7 +3997,7 @@ that event.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line234">line 234</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line245">line 245</a>
     </li></ul></dd>
     
 
@@ -4163,7 +4186,7 @@ that event. Group key/value pairs are upserted into the property map before trac
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line269">line 269</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line280">line 280</a>
     </li></ul></dd>
     
 
@@ -4304,7 +4327,7 @@ To clear all superProperties, use clearSuperProperties()
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line392">line 392</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line403">line 403</a>
     </li></ul></dd>
     
 
@@ -4356,7 +4379,7 @@ To clear all superProperties, use clearSuperProperties()
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Wed Mar 22 2023 21:33:52 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Fri Jun 16 2023 16:47:53 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

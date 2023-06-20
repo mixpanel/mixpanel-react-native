@@ -1,5 +1,13 @@
 #
 
+## [v2.3.1](https://github.com/mixpanel/mixpanel-react-native/tree/v2.3.1) (2023-06-20)
+
+### Fixes
+
+- fix typo in the identify function resolve [\#205](https://github.com/mixpanel/mixpanel-react-native/pull/205)
+
+#
+
 ## [v2.3.0](https://github.com/mixpanel/mixpanel-react-native/tree/v2.3.0) (2023-06-16)
 
 ### Enhancements
@@ -290,6 +298,8 @@ This is to address issue: https://github.com/mixpanel/mixpanel-react-native/issu
 Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

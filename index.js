@@ -192,7 +192,7 @@ export class Mixpanel {
      * 
      */
     identify(distinctId) {
-        return new Promise((resolvem, reject) => {
+        return new Promise((resolve, reject) => {
             if (!StringHelper.isValid(distinctId)) {
                 StringHelper.raiseError(PARAMS.DISTINCT_ID);
                 reject(new Error('Invalid distinctId'));

@@ -153,6 +153,7 @@ export class Mixpanel {
         MixpanelReactNative.setFlushBatchSize(this.token, flushBatchSize);
     }
 
+
     /**
      * Will return true if the user has opted out from tracking.
      *

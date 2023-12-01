@@ -39,7 +39,7 @@ test(`it calls MixpanelReactNative setUseIpAddressForGeolocation`, async () => {
 test(`it calls MixpanelReactNative setFlushBatchSize`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
   mixpanel.setFlushBatchSize(20);
-  expect(NativeModules.MixpanelReactNative.setFlushBatchSize).toBeCalledWith("token", true);
+  expect(NativeModules.MixpanelReactNative.setFlushBatchSize).toBeCalledWith("token", 20);
 });
 
 test(`it calls MixpanelReactNative hasOptedOutTracking`, async () => {

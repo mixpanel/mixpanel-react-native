@@ -55,7 +55,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setUseIpAddressForGeolocation(final String token, boolean useIpAddressForGeolocation, Promise promise) throws JSONException {
+    public void setUseIpAddressForGeolocation(final String token, boolean useIpAddressForGeolocation, Promise promise)
+            throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         if (instance == null) {
             promise.reject("Instance Error", "Failed to get Mixpanel instance");
@@ -63,6 +64,19 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
         synchronized (instance) {
             instance.setUseIpAddressForGeolocation(useIpAddressForGeolocation);
+            promise.resolve(null);
+        }
+    }
+
+    @ReactMethod
+    public void setFlushBatchSize(final String token, Integer flushBatchSize, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            promise.reject("Instance Error", "Failed to get Mixpanel instance");
+            return;
+        }
+        synchronized (instance) {
+            instance.setFlushBatchSize(flushBatchSize);
             promise.resolve(null);
         }
     }

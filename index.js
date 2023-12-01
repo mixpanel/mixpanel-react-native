@@ -140,6 +140,18 @@ export class Mixpanel {
     setUseIpAddressForGeolocation(useIpAddressForGeolocation) {
         MixpanelReactNative.setUseIpAddressForGeolocation(this.token, useIpAddressForGeolocation);
     }
+    
+    /**
+     * Set the number of events sent in a single network request to the Mixpanel server.
+     * By configuring this value, you can optimize network usage and manage the frequency of communication between the client and the server. The maximum size is 50; any value over 50 will default to 50.
+     *
+     * @param {integer} flushBatchSize whether to automatically send the client IP Address.
+     * Defaults to true.
+     *
+     */
+    setFlushBatchSize(flushBatchSize) {
+        MixpanelReactNative.setFlushBatchSize(this.token, flushBatchSize);
+    }
 
     /**
      * Will return true if the user has opted out from tracking.

@@ -1,0 +1,19 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/zihejia/Documents/Projects/Develop/mixpanel-react-native-original/logs/.c366df74eeb671df60a57a2075ae40a3dae2af25-audit.json",
+    "files": [
+        {
+            "date": 1709573495082,
+            "name": "/Users/zihejia/Documents/Projects/Develop/mixpanel-react-native-original/logs/error-2024-03-04.log",
+            "hash": "2068482b1fbd7e0ae87aa0268370174b"
+        },
+        {
+            "date": 1709630199950,
+            "name": "/Users/zihejia/Documents/Projects/Develop/mixpanel-react-native-original/logs/error-2024-03-05.log",
+            "hash": "4846674d0e4c226a2c8d5a784a9b08bd"
+        }
+    ]
+}

@@ -1,6 +1,5 @@
 #
 
-
 ## [v3.0.0-beta.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.0-beta.1) (2024-02-29)
 
 ### Expo and React Native Web support
@@ -30,6 +29,13 @@ Known limitations and differences compared to the native mode (iOS/Android):
 ### Fixes
 
 - Fix mp_lib(Mixpanel Library) not being set as `react-native`
+
+## [v2.4.0](https://github.com/mixpanel/mixpanel-react-native/tree/v2.4.0) (2023-12-02)
+
+### Enhancements
+
+- add api: setFlushBatchSize [\#219](https://github.com/mixpanel/mixpanel-react-native/pull/219)
+- RN 73 support for Android with AGP 8 required [\#215](https://github.com/mixpanel/mixpanel-react-native/pull/215)
 
 #
 

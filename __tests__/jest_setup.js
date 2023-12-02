@@ -22,6 +22,7 @@ jest.doMock('react-native', () => {
           setLoggingEnabled: jest.fn(),
           setFlushOnBackground: jest.fn(),
           setUseIpAddressForGeolocation: jest.fn(),
+          setFlushBatchSize: jest.fn(),
           hasOptedOutTracking: jest.fn(),
           optInTracking: jest.fn(),
           optOutTracking: jest.fn(),

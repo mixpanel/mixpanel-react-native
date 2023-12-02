@@ -8,8 +8,8 @@ export class Mixpanel {
     setServerURL(serverURL: string): void;
     setLoggingEnabled(loggingEnabled: boolean): void;
     setFlushOnBackground(flushOnBackground: boolean): void;
-
     setUseIpAddressForGeolocation(useIpAddressForGeolocation: boolean): void;
+    setFlushBatchSize(flushBatchSize: number): void;
     hasOptedOutTracking(): Promise<boolean>;
     optInTracking(): void;
     optOutTracking(): void;

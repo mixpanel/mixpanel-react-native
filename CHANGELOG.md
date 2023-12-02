@@ -1,5 +1,14 @@
 #
 
+## [v2.4.0](https://github.com/mixpanel/mixpanel-react-native/tree/v2.4.0) (2023-12-02)
+
+### Enhancements
+
+- add api: setFlushBatchSize [\#219](https://github.com/mixpanel/mixpanel-react-native/pull/219)
+- RN 73 support for Android with AGP 8 required [\#215](https://github.com/mixpanel/mixpanel-react-native/pull/215)
+
+#
+
 ## [v2.3.1](https://github.com/mixpanel/mixpanel-react-native/tree/v2.3.1) (2023-06-20)
 
 ### Fixes
@@ -298,6 +307,8 @@ This is to address issue: https://github.com/mixpanel/mixpanel-react-native/issu
 Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

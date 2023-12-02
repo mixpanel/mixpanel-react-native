@@ -16,6 +16,8 @@ RCT_EXTERN_METHOD(setFlushOnBackground:(NSString *)token flushOnBackground:(BOOL
 
 RCT_EXTERN_METHOD(setUseIpAddressForGeolocation:(NSString *)token useIpAddressForGeolocation:(BOOL)useIpAddressForGeolocation resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(setFlushBatchSize:(NSString *)token flushBatchSize:(NSInteger)flushBatchSize resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
 // MARK: - Opting Users Out of Tracking
 
 RCT_EXTERN_METHOD(optOutTracking:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)

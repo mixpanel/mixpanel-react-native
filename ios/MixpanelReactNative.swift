@@ -60,6 +60,16 @@ open class MixpanelReactNative: NSObject {
     }
 
     @objc
+    func setFlushBatchSize(_ token: String,
+                    flushBatchSize: Int,
+                    resolver resolve: RCTPromiseResolveBlock,
+                    rejecter reject: RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        instance?.flushBatchSize = flushBatchSize
+        resolve(nil)
+    }
+
+    @objc
     func setUseIpAddressForGeolocation(_ token: String,
                     useIpAddressForGeolocation: Bool,
                     resolver resolve: RCTPromiseResolveBlock,

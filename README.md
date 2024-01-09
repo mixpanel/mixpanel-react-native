@@ -55,7 +55,7 @@ To start tracking with the library you must first initialize with your project t
 ```js
 import { Mixpanel } from 'mixpanel-react-native';
 
-const trackAutomaticEvents = true;
+const trackAutomaticEvents = false;
 const mixpanel = new Mixpanel("Your Project Token", trackAutomaticEvents);
 mixpanel.init();
 
@@ -82,7 +82,7 @@ import React from 'react';
 import { Button, SafeAreaView } from "react-native";
 import { Mixpanel } from 'mixpanel-react-native';
 
-const trackAutomaticEvents = true;
+const trackAutomaticEvents = false;
 const mixpanel = new Mixpanel("Your Project Token", trackAutomaticEvents);
 mixpanel.init();
 

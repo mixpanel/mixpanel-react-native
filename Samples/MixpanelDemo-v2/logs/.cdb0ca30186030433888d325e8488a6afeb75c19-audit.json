@@ -1,0 +1,14 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/zihejia/Documents/Projects/Develop/mixpanel-react-native-original/Samples/NewMixpanelDemo/logs/.cdb0ca30186030433888d325e8488a6afeb75c19-audit.json",
+    "files": [
+        {
+            "date": 1707988549851,
+            "name": "/Users/zihejia/Documents/Projects/Develop/mixpanel-react-native-original/Samples/NewMixpanelDemo/logs/error-2024-02-15.log",
+            "hash": "ba2885c13172b49300a7800f81c5fa3a"
+        }
+    ]
+}

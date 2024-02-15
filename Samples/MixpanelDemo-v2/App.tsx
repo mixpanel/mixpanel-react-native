@@ -241,7 +241,6 @@ const App = () => {
     {
       title: "Profile",
       data: [
-        { id: "1", label: "Reset", onPress: reset },
         { id: "2", label: "Set Property", onPress: setProperty },
         { id: "3", label: "Set One Property", onPress: setOneProperty },
         {
@@ -269,6 +268,7 @@ const App = () => {
           onPress: trackCharge,
         },
         { id: "12", label: "Clear Charges", onPress: clearCharges },
+        { id: "1", label: "Reset", onPress: reset },
         { id: "13", label: "Delete User", onPress: deleteUser },
         { id: "14", label: "Flush", onPress: flush },
       ],

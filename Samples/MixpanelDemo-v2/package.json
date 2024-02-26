@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.21.0",
-    "mixpanel-react-native": "^2.4.0",
+    "mixpanel-react-native": "file:../..",
     "react": "18.2.0",
     "react-native": "0.73.2"
   },

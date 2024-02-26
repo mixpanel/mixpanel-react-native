@@ -36,17 +36,18 @@
     "@react-native-community/eslint-config": "^2.0.0",
     "babel-jest": "^26.6.0",
     "eslint": "^7.11.0",
-    "jest": "^26.6.0",
+    "jest": "^26.6.3",
+    "jest-fetch-mock": "^3.0.3",
     "metro-react-native-babel-preset": "^0.63.0",
-    "react-test-renderer": "16.13.1",
-    "react-native": "^0.63.3"
+    "react-native": "^0.63.3",
+    "react-test-renderer": "16.13.1"
   },
   "jest": {
     "modulePathIgnorePatterns": [
       "<rootDir>/MixpanelDemo/"
     ],
     "testMatch": [
-      "<rootDir>/__tests__/index.test.js"
+      "<rootDir>/__tests__/js.test.js"
     ],
     "setupFiles": [
       "<rootDir>/__tests__/jest_setup.js"

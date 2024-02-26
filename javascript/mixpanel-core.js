@@ -1,11 +1,10 @@
-import {MixpanelQueueManager} from './mixpanel-queue';
-import {MixpanelNetwork} from './mixpanel-network';
-import {SessionMetadata} from './mixpanel-utils';
-import {MixpanelType} from './mixpanel-constants';
-import {MixpanelConfig} from './mixpanel-config';
-import {MixpanelPersistent} from './mixpanel-persistent';
-import {MixpanelLogger} from './mixpanel-logger';
-import {Mixpanel} from 'mixpanel-react-native';
+import { MixpanelQueueManager } from "./mixpanel-queue";
+import { MixpanelNetwork } from "./mixpanel-network";
+import { SessionMetadata } from "./mixpanel-utils";
+import { MixpanelType } from "./mixpanel-constants";
+import { MixpanelConfig } from "./mixpanel-config";
+import { MixpanelPersistent } from "./mixpanel-persistent";
+import { MixpanelLogger } from "./mixpanel-logger";
 
 export const MixpanelCore = () => {
   const mixpanelPersistent = MixpanelPersistent.getInstance();
@@ -13,15 +12,15 @@ export const MixpanelCore = () => {
   let isProcessingQueue = false;
   let processQueueInterval = null;
 
-  const initialize = async token => {
+  const initialize = async (token) => {
     await MixpanelQueueManager.initialize(token, MixpanelType.EVENTS);
   };
 
-  const startProcessingQueue = token => {
+  const startProcessingQueue = (token) => {
     if (mixpanelPersistent.getOptedOut(token)) {
       MixpanelLogger.log(
         token,
-        `User has opted out of tracking, skipping processing queue.`,
+        `User has opted out of tracking, skipping processing queue.`
       );
       return;
     }
@@ -29,7 +28,7 @@ export const MixpanelCore = () => {
     if (isProcessingQueue) {
       MixpanelLogger.log(
         token,
-        `Queue is already being processed. Skipping new cycle.`,
+        `Queue is already being processed. Skipping new cycle.`
       );
       return;
     }
@@ -38,7 +37,6 @@ export const MixpanelCore = () => {
 
     processQueueInterval = setInterval(async () => {
       clearInterval(processQueueInterval);
-      console.log('startProcessingQueue-------');
       await processQueue(token, MixpanelType.EVENTS);
       await processQueue(token, MixpanelType.USER);
       await processQueue(token, MixpanelType.GROUPS);
@@ -62,14 +60,14 @@ export const MixpanelCore = () => {
     if (mixpanelPersistent.getOptedOut(token)) {
       MixpanelLogger.log(
         token,
-        `User has opted out of tracking, skipping tracking.`,
+        `User has opted out of tracking, skipping tracking.`
       );
       return;
     }
     if (!isValidAndSerializable(token, data)) {
       MixpanelLogger.error(
         token,
-        `The Mixpanel payload is not valid or not serializable.`,
+        `The Mixpanel payload is not valid or not serializable.`
       );
       return;
     }
@@ -84,16 +82,16 @@ export const MixpanelCore = () => {
         {
           ...sessionMetadata.toDict(type),
           ...data,
-        },
-      )}' Type: '${type}' `,
+        }
+      )}' Type: '${type}' `
     );
   };
 
-  const flush = async token => {
+  const flush = async (token) => {
     if (mixpanelPersistent.getOptedOut(token)) {
       MixpanelLogger.log(
         token,
-        `User has opted out of tracking, do not flush queue.`,
+        `User has opted out of tracking, do not flush queue.`
       );
       return;
     }
@@ -110,7 +108,7 @@ export const MixpanelCore = () => {
         MixpanelLogger.log(token, `[Flushing queue] endpoint: ${type}`);
         MixpanelLogger.log(
           token,
-          `[Flushing queue] queue: ${JSON.stringify(queue)}`,
+          `[Flushing queue] queue: ${JSON.stringify(queue)}`
         );
         const batchSize = config.getFlushBatchSize(token);
         const batch = queue.slice(0, batchSize);
@@ -120,8 +118,9 @@ export const MixpanelCore = () => {
             data: batch,
             endpoint: type,
             serverURL: config.getServerURL(token),
-            useIPAddressForGeoLocation:
-              config.getUseIpAddressForGeolocation(token),
+            useIPAddressForGeoLocation: config.getUseIpAddressForGeolocation(
+              token
+            ),
           });
           await MixpanelQueueManager.spliceQueue(token, type, 0, batch.length);
           // Process the next batch if there are more events in the queue
@@ -142,7 +141,7 @@ export const MixpanelCore = () => {
     if (error.code === 400) {
       MixpanelLogger.error(
         token,
-        `Bad request received due to corrupted data within the batch. The corrupted data is now being removed from the queue...`,
+        `Bad request received due to corrupted data within the batch. The corrupted data is now being removed from the queue...`
       );
       // Remove the corrupted data from the queue, to avoid the data loss, only remove one event at a time
       MixpanelQueueManager.spliceQueue(token, type, 0, 1).then(() => {
@@ -151,7 +150,7 @@ export const MixpanelCore = () => {
     } else {
       MixpanelLogger.error(
         token,
-        `Error sending event batch from queue, error: ${error}`,
+        `Error sending event batch from queue, error: ${error}`
       );
     }
   };

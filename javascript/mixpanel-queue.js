@@ -1,4 +1,4 @@
-import {MixpanelPersistent} from './mixpanel-persistent';
+import { MixpanelPersistent } from "./mixpanel-persistent";
 
 export const MixpanelQueueManager = (() => {
   let _queues = {};
@@ -28,9 +28,7 @@ export const MixpanelQueueManager = (() => {
         [type]: [],
       };
     }
-    console.log('enqueue start-------', type);
     _queues[token][type].push(data);
-    console.log('enqueue-------', _queues[token][type]);
     await updateQueueInStorage(token, type);
   };
 
@@ -38,7 +36,6 @@ export const MixpanelQueueManager = (() => {
     if (!_queues[token] || !_queues[token][type]) {
       return [];
     }
-    console.log('getQueue-------', _queues[token][type]);
     return [..._queues[token][type]];
   };
 

@@ -1,14 +1,14 @@
-import {MixpanelCore} from './mixpanel-core';
-import {MixpanelType} from './mixpanel-constants';
-import {MixpanelConfig} from './mixpanel-config';
-import {MixpanelPersistent} from './mixpanel-persistent';
-import {MixpanelLogger} from 'mixpanel-react-native/javascript/mixpanel-logger';
+import { MixpanelCore } from "./mixpanel-core";
+import { MixpanelType } from "./mixpanel-constants";
+import { MixpanelConfig } from "./mixpanel-config";
+import { MixpanelPersistent } from "./mixpanel-persistent";
+import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger";
 
-class MixpanelJS {
+class MixpanelMain {
   constructor(token) {
     this.token = token;
     this.config = MixpanelConfig.getInstance();
-    this.core = new MixpanelCore();
+    this.core = MixpanelCore();
     this.core.initialize(token);
     this.core.startProcessingQueue(token);
     this.mixpanelPersistent = MixpanelPersistent.getInstance();
@@ -19,13 +19,13 @@ class MixpanelJS {
     trackAutomaticEvents = false,
     optOutTrackingDefault = false,
     superProperties = null,
-    serverURL = 'https://api.mixpanel.com',
+    serverURL = "https://api.mixpanel.com"
   ) {
     MixpanelLogger.log(token, `Initializing Mixpanel`);
     if (trackAutomaticEvents) {
       MixpanelLogger.log(
         token,
-        `Automatic events tracking is not supported in JS mode. Ignoring.`,
+        `Automatic events tracking is not supported in JS mode. Ignoring.`
       );
     }
     await this.mixpanelPersistent.initializationCompletePromise(token);
@@ -48,7 +48,7 @@ class MixpanelJS {
     MixpanelLogger.log(
       token,
       `Track '${eventName}' with properties`,
-      properties,
+      properties
     );
     const superProperties = this.mixpanelPersistent.getSuperProperties(token);
     const identityProps = {
@@ -93,7 +93,7 @@ class MixpanelJS {
   setUseIpAddressForGeolocation(token, useIpAddressForGeolocation) {
     this.config.setUseIpAddressForGeolocation(
       token,
-      useIpAddressForGeolocation,
+      useIpAddressForGeolocation
     );
   }
 
@@ -108,13 +108,13 @@ class MixpanelJS {
   async optOutTracking(token) {
     this.mixpanelPersistent.updateOptedOut(token, true);
     await this.mixpanelPersistent.persistOptedOut(token);
-    MixpanelLogger.log(token, 'User has opted out of tracking');
+    MixpanelLogger.log(token, "User has opted out of tracking");
   }
 
   async optInTracking(token) {
     this.mixpanelPersistent.updateOptedOut(token, false);
     await this.mixpanelPersistent.persistOptedOut(token);
-    MixpanelLogger.log(token, 'User has opted in to tracking');
+    MixpanelLogger.log(token, "User has opted in to tracking");
   }
 
   hasOptedOutTracking(token) {
@@ -127,7 +127,7 @@ class MixpanelJS {
     if (oldDistinctId === newDistinctId) {
       MixpanelLogger.log(
         token,
-        `Distinct Id is already set to ${newDistinctId}, skipping identify.`,
+        `Distinct Id is already set to ${newDistinctId}, skipping identify.`
       );
       return;
     }
@@ -135,7 +135,7 @@ class MixpanelJS {
     this.mixpanelPersistent.updateUserId(token, newDistinctId);
     const deviceId = this.mixpanelPersistent.getDeviceId(token);
     await this.mixpanelPersistent.persistIdentity(token);
-    await this.track(token, '$identify', {
+    await this.track(token, "$identify", {
       distinctId: newDistinctId,
       $user_id: newDistinctId,
       $anon_distinct_id: oldDistinctId,
@@ -164,12 +164,13 @@ class MixpanelJS {
 
   async registerSuperProperties(token, properties) {
     MixpanelLogger.log(token, `Register super properties:`, properties);
-    const currentSuperProperties =
-      this.mixpanelPersistent.getSuperProperties(token);
+    const currentSuperProperties = this.mixpanelPersistent.getSuperProperties(
+      token
+    );
     MixpanelLogger.log(
       token,
-      `Current Super Propertes:`,
-      currentSuperProperties,
+      `Current Super Properties:`,
+      currentSuperProperties
     );
     const updatedSuperProperties = {
       ...currentSuperProperties,
@@ -179,15 +180,16 @@ class MixpanelJS {
     this._updateSuperProperties(token, updatedSuperProperties);
     MixpanelLogger.log(
       token,
-      `Updated Super Propertes:`,
-      updatedSuperProperties,
+      `Updated Super Properties:`,
+      updatedSuperProperties
     );
   }
 
   async registerSuperPropertiesOnce(token, properties) {
     MixpanelLogger.log(token, `Register super properties once`, properties);
-    const currentSuperProperties =
-      this.mixpanelPersistent.getSuperProperties(token);
+    const currentSuperProperties = this.mixpanelPersistent.getSuperProperties(
+      token
+    );
 
     const updatedSuperProperties = {
       ...properties,
@@ -197,8 +199,8 @@ class MixpanelJS {
     this._updateSuperProperties(token, updatedSuperProperties);
     MixpanelLogger.log(
       token,
-      `Updated Super Propertes:`,
-      updatedSuperProperties,
+      `Updated Super Properties:`,
+      updatedSuperProperties
     );
   }
 
@@ -207,7 +209,7 @@ class MixpanelJS {
     let superProperties = this.mixpanelPersistent.getSuperProperties(token);
     delete superProperties[propertyName];
     this._updateSuperProperties(token, superProperties);
-    MixpanelLogger.log(token, `Updated Super Propertes:`, superProperties);
+    MixpanelLogger.log(token, `Updated Super Properties:`, superProperties);
   }
 
   async getSuperProperties(token) {
@@ -220,23 +222,18 @@ class MixpanelJS {
   async clearSuperProperties(token) {
     MixpanelLogger.log(token, `Clear super properties`);
     // do not clear Mixpanel Properties
-    const excludeProperties = ['$lib_version', 'mp_lib'];
-    const currentProperties = await this.mixpanelPersistent.getSuperProperties(
-      token,
-    );
+    const excludeProperties = ["$lib_version", "mp_lib"];
+    let currentProperties = this.mixpanelPersistent.getSuperProperties(token);
+
     const updatedProperties = Object.keys(currentProperties)
-      .filter(key => excludeProperties.includes(key))
+      .filter((key) => excludeProperties.includes(key))
       .reduce((obj, key) => {
         obj[key] = currentProperties[key];
         return obj;
       }, {});
 
     this._updateSuperProperties(token, updatedProperties);
-    MixpanelLogger.log(
-      token,
-      `Updated Super Propertes:`,
-      updatedProperties,
-    );
+    MixpanelLogger.log(token, `Updated Super Properties:`, updatedProperties);
   }
 
   async timeEvent(token, eventName) {
@@ -244,7 +241,7 @@ class MixpanelJS {
     MixpanelLogger.log(
       token,
       `Add time event '${eventName}' at`,
-      new Date(currentTime * 1000).toLocaleString(),
+      new Date(currentTime * 1000).toLocaleString()
     );
     this.mixpanelPersistent.updateTimeEvents(token, {
       ...this.mixpanelPersistent.getTimeEvents(token),
@@ -279,7 +276,7 @@ class MixpanelJS {
     await this.core.addToMixpanelQueue(token, MixpanelType.USER, profileData);
   }
 
-  async sendGroupDataToMixpanel({token, groupKey, groupID, action}) {
+  async sendGroupDataToMixpanel({ token, groupKey, groupID, action }) {
     const profileData = {
       $token: token,
       $time: Date.now(),
@@ -292,65 +289,69 @@ class MixpanelJS {
 
   async set(token, properties) {
     MixpanelLogger.log(token, `Set properties: `, properties);
-    await this.sendProfileDataToMixpanel(token, {$set: properties});
+    await this.sendProfileDataToMixpanel(token, { $set: properties });
   }
 
   async setOnce(token, properties) {
     MixpanelLogger.log(token, `Set once properties: `, properties);
-    await this.sendProfileDataToMixpanel(token, {$set_once: properties});
+    await this.sendProfileDataToMixpanel(token, { $set_once: properties });
   }
 
   async increment(token, properties) {
     MixpanelLogger.log(token, `Increment properties: `, properties);
-    await this.sendProfileDataToMixpanel(token, {$add: properties});
+    await this.sendProfileDataToMixpanel(token, { $add: properties });
   }
 
   async append(token, nameOrProperties, value) {
-    if (typeof nameOrProperties === 'string' && value !== undefined) {
+    if (typeof nameOrProperties === "string" && value !== undefined) {
       MixpanelLogger.log(token, `Append properties: `, {
         [nameOrProperties]: value,
       });
       await this.sendProfileDataToMixpanel(token, {
-        $append: {[nameOrProperties]: value},
+        $append: { [nameOrProperties]: value },
       });
-    } else if (typeof nameOrProperties === 'object') {
+    } else if (typeof nameOrProperties === "object") {
       MixpanelLogger.log(token, `Append properties: `, nameOrProperties);
-      await this.sendProfileDataToMixpanel(token, {$append: nameOrProperties});
+      await this.sendProfileDataToMixpanel(token, {
+        $append: nameOrProperties,
+      });
     }
   }
 
   async union(token, nameOrProperties, value) {
-    if (typeof nameOrProperties === 'string' && value !== undefined) {
+    if (typeof nameOrProperties === "string" && value !== undefined) {
       MixpanelLogger.log(token, `Union properties: `, {
         [nameOrProperties]: value,
       });
       await this.sendProfileDataToMixpanel(token, {
-        $union: {[nameOrProperties]: value},
+        $union: { [nameOrProperties]: value },
       });
-    } else if (typeof nameOrProperties === 'object') {
+    } else if (typeof nameOrProperties === "object") {
       MixpanelLogger.log(token, `Union properties: `, nameOrProperties);
-      await this.sendProfileDataToMixpanel(token, {$union: nameOrProperties});
+      await this.sendProfileDataToMixpanel(token, { $union: nameOrProperties });
     }
   }
 
   async remove(token, nameOrProperties, value) {
-    if (typeof nameOrProperties === 'string' && value !== undefined) {
+    if (typeof nameOrProperties === "string" && value !== undefined) {
       MixpanelLogger.log(token, `Remove properties: `, {
         [nameOrProperties]: value,
       });
       await this.sendProfileDataToMixpanel(token, {
-        $remove: {[nameOrProperties]: value},
+        $remove: { [nameOrProperties]: value },
       });
-    } else if (typeof nameOrProperties === 'object') {
+    } else if (typeof nameOrProperties === "object") {
       MixpanelLogger.log(token, `Remove properties: `, nameOrProperties);
-      await this.sendProfileDataToMixpanel(token, {$remove: nameOrProperties});
+      await this.sendProfileDataToMixpanel(token, {
+        $remove: nameOrProperties,
+      });
     }
   }
 
   async trackCharge(token, charge, properties) {
     MixpanelLogger.log(token, `Track charge: `, charge, properties);
     await this.append(token, {
-      $transactions: {$amount: charge, $time: Date.now(), ...properties},
+      $transactions: { $amount: charge, $time: Date.now(), ...properties },
     });
   }
 
@@ -363,12 +364,12 @@ class MixpanelJS {
 
   async unset(token, property) {
     MixpanelLogger.log(token, `Unset property: `, property);
-    await this.sendProfileDataToMixpanel(token, {$unset: [property]});
+    await this.sendProfileDataToMixpanel(token, { $unset: [property] });
   }
 
   async deleteUser(token) {
     MixpanelLogger.log(token, `Delete user`);
-    await this.sendProfileDataToMixpanel(token, {$delete: 'null'});
+    await this.sendProfileDataToMixpanel(token, { $delete: "null" });
   }
 
   async groupSetProperties(token, groupKey, groupID, properties) {
@@ -377,7 +378,7 @@ class MixpanelJS {
       `Group set properties: `,
       groupKey,
       groupID,
-      properties,
+      properties
     );
     await this.sendGroupDataToMixpanel({
       token,
@@ -395,7 +396,7 @@ class MixpanelJS {
       `Group set once properties: `,
       groupKey,
       groupID,
-      properties,
+      properties
     );
     await this.sendGroupDataToMixpanel({
       token,
@@ -413,7 +414,7 @@ class MixpanelJS {
       `Group unset property: `,
       groupKey,
       groupID,
-      prop,
+      prop
     );
     await this.sendGroupDataToMixpanel({
       token,
@@ -432,14 +433,14 @@ class MixpanelJS {
       groupKey,
       groupID,
       name,
-      value,
+      value
     );
     await this.sendGroupDataToMixpanel({
       token,
       groupKey,
       groupID,
       action: {
-        $remove: {[name]: value},
+        $remove: { [name]: value },
       },
     });
   }
@@ -451,14 +452,14 @@ class MixpanelJS {
       groupKey,
       groupID,
       name,
-      value,
+      value
     );
     await this.sendGroupDataToMixpanel({
       token,
       groupKey,
       groupID,
       action: {
-        $union: {[name]: value},
+        $union: { [name]: value },
       },
     });
   }
@@ -469,14 +470,14 @@ class MixpanelJS {
       `Track with groups: `,
       eventName,
       properties,
-      groups,
+      groups
     );
-    await this.track(token, eventName, {...properties, ...groups});
+    await this.track(token, eventName, { ...properties, ...groups });
   }
 
   async setGroup(token, groupKey, groupID) {
     MixpanelLogger.log(token, `Set group: `, groupKey, groupID);
-    const properties = {[groupKey]: groupID};
+    const properties = { [groupKey]: groupID };
     await this.registerSuperProperties(token, properties);
     await this.set(token, properties);
   }
@@ -485,27 +486,26 @@ class MixpanelJS {
     MixpanelLogger.log(token, `Add group: `, groupKey, groupID);
     this.registerSuperProperties(token, {
       [groupKey]: [
-        ...(this.getSuperProperties(token)[groupKey] || []),
+        ...(this.mixpanelPersistent.getSuperProperties(token)[groupKey] || []),
         groupID,
       ],
     });
-
-    await this.union(token, {[groupKey]: groupID});
+    await this.union(token, { [groupKey]: groupID });
   }
 
   async removeGroup(token, groupKey, groupID) {
     MixpanelLogger.log(token, `Remove group: `, groupKey, groupID);
-    const superProperties = this.getSuperProperties(token);
+    const superProperties = this.mixpanelPersistent.getSuperProperties(token);
     if (superProperties && superProperties[groupKey]) {
       const filteredGroup = superProperties[groupKey].filter(
-        id => id !== groupID,
+        (id) => id !== groupID
       );
-      this.registerSuperProperties(token, {[groupKey]: filteredGroup});
+      this.registerSuperProperties(token, { [groupKey]: filteredGroup });
       if (filteredGroup.length === 0) {
         this.unregisterSuperProperty(token, groupKey);
       }
     }
-    await this.remove(token, {[groupKey]: groupID});
+    await this.remove(token, { [groupKey]: groupID });
   }
 
   async deleteGroup(token, groupKey, groupID) {
@@ -515,10 +515,10 @@ class MixpanelJS {
       groupKey,
       groupID,
       action: {
-        $delete: 'null',
+        $delete: "null",
       },
     });
   }
 }
 
-export default MixpanelJS;
+export default MixpanelMain;

@@ -1,4 +1,4 @@
-import {MixpanelConfig} from 'mixpanel-react-native/javascript/mixpanel-config';
+import { MixpanelConfig } from "mixpanel-react-native/javascript/mixpanel-config";
 
 export class MixpanelLogger {
   static _shouldLog(token) {
@@ -6,7 +6,7 @@ export class MixpanelLogger {
   }
 
   static _prependPrefix(args) {
-    return ['[Mixpanel]', ...args];
+    return ["[Mixpanel]", ...args];
   }
 
   static log(token, ...args) {

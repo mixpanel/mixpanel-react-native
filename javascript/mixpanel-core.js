@@ -5,7 +5,6 @@ import {MixpanelType} from "./mixpanel-constants";
 import {MixpanelConfig} from "./mixpanel-config";
 import {MixpanelPersistent} from "./mixpanel-persistent";
 import {MixpanelLogger} from "./mixpanel-logger";
-import {Mixpanel} from "mixpanel-react-native";
 
 export const MixpanelCore = () => {
   const mixpanelPersistent = MixpanelPersistent.getInstance();

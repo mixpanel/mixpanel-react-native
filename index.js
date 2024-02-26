@@ -47,7 +47,7 @@ export class Mixpanel {
     this.token = token;
     this.trackAutomaticEvents = trackAutomaticEvents;
     if (!useNative) {
-      this.mixpanelImpl = new MixpanelJS(token, trackAutomaticEvents);
+      this.mixpanelImpl = new MixpanelMain(token, trackAutomaticEvents);
       return;
     }
 
@@ -55,7 +55,7 @@ export class Mixpanel {
       console.warn(
         "MixpanelReactNative is not available, using JavaScript fallback. If you do not want to use the JavaScript fallback, please follow the guide on the Github repository: https://github.com/mixpanel/mixpanel-react-native."
       );
-      this.mixpanelImpl = new MixpanelJS(token, trackAutomaticEvents);
+      this.mixpanelImpl = new MixpanelMain(token, trackAutomaticEvents);
     } else {
       this.mixpanelImpl = MixpanelReactNative;
     }

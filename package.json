@@ -44,10 +44,10 @@
   },
   "jest": {
     "modulePathIgnorePatterns": [
-      "<rootDir>/MixpanelDemo/"
+      "<rootDir>/Samples/"
     ],
     "testMatch": [
-      "<rootDir>/__tests__/js.test.js"
+      "<rootDir>/__tests__/*.test.js"
     ],
     "setupFiles": [
       "<rootDir>/__tests__/jest_setup.js"

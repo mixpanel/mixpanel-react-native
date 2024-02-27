@@ -4,7 +4,7 @@ import { MixpanelConfig } from "./mixpanel-config";
 import { MixpanelPersistent } from "./mixpanel-persistent";
 import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger";
 
-class MixpanelMain {
+export default class MixpanelMain {
   constructor(token) {
     this.token = token;
     this.config = MixpanelConfig.getInstance();
@@ -520,5 +520,3 @@ class MixpanelMain {
     });
   }
 }
-
-export default MixpanelMain;

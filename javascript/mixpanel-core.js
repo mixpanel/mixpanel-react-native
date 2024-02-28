@@ -1,10 +1,10 @@
-import { MixpanelQueueManager } from "./mixpanel-queue";
-import { MixpanelNetwork } from "./mixpanel-network";
-import { SessionMetadata } from "./mixpanel-utils";
-import { MixpanelType } from "./mixpanel-constants";
-import { MixpanelConfig } from "./mixpanel-config";
-import { MixpanelPersistent } from "./mixpanel-persistent";
-import { MixpanelLogger } from "./mixpanel-logger";
+import {MixpanelQueueManager} from "./mixpanel-queue";
+import {MixpanelNetwork} from "./mixpanel-network";
+import {SessionMetadata} from "./mixpanel-utils";
+import {MixpanelType} from "./mixpanel-constants";
+import {MixpanelConfig} from "./mixpanel-config";
+import {MixpanelPersistent} from "./mixpanel-persistent";
+import {MixpanelLogger} from "./mixpanel-logger";
 
 export const MixpanelCore = () => {
   const mixpanelPersistent = MixpanelPersistent.getInstance();

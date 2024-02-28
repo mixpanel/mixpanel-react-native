@@ -1,4 +1,4 @@
-import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger";
+import {MixpanelLogger} from "mixpanel-react-native/javascript/mixpanel-logger";
 
 export class MixpanelHttpError extends Error {
   constructor(message, errorCode) {

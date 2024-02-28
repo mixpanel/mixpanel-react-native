@@ -1,4 +1,4 @@
-import { MixpanelPersistent } from "./mixpanel-persistent";
+import {MixpanelPersistent} from "./mixpanel-persistent";
 
 export const MixpanelQueueManager = (() => {
   let _queues = {};

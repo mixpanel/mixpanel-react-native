@@ -1,4 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {MixpanelLogger} from "mixpanel-react-native/javascript/mixpanel-logger";
 
 export class IMixpanelStorage {
   async getItem(key) {
@@ -16,14 +17,27 @@ export class IMixpanelStorage {
 
 export class AsyncStorageAdapter extends IMixpanelStorage {
   async getItem(key) {
-    return AsyncStorage.getItem(key);
+    try {
+      return await AsyncStorage.getItem(key);
+    } catch {
+      MixpanelLogger.error("error getting item from AsyncStorage");
+      return null;
+    }
   }
 
   async setItem(key, value) {
-    return AsyncStorage.setItem(key, value);
+    try {
+      await AsyncStorage.setItem(key, value);
+    } catch {
+      MixpanelLogger.error("error setting item in AsyncStorage");
+    }
   }
 
   async removeItem(key) {
-    return AsyncStorage.removeItem(key);
+    try {
+      await AsyncStorage.removeItem(key);
+    } catch {
+      MixpanelLogger.error("error removing item in AsyncStorage");
+    }
   }
 }

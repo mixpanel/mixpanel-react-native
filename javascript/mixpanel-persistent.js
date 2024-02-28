@@ -6,11 +6,12 @@ import {
   getOptedOutKey as getOutedOutKey,
   getQueueKey,
   getUserIdKey,
+  getAppHasOpenedBeforeKey,
 } from "./mixpanel-constants";
 
-import { AsyncStorageAdapter } from "./mixpanel-storage";
+import {AsyncStorageAdapter} from "./mixpanel-storage";
 import uuid from "uuid";
-import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger";
+import {MixpanelLogger} from "mixpanel-react-native/javascript/mixpanel-logger";
 
 export class MixpanelPersistent {
   static instance;
@@ -33,6 +34,7 @@ export class MixpanelPersistent {
     this._timeEvents = {};
     this._identity = {};
     this._optedOut = {};
+    this._appHasOpenedBefore = {};
   }
 
   async initializationCompletePromise(token) {
@@ -41,6 +43,7 @@ export class MixpanelPersistent {
       this.loadSuperProperties(token),
       this.loadTimeEvents(token),
       this.loadOptOut(token),
+      this.loadAppHasOpenedBefore(token),
     ]);
   }
 
@@ -180,7 +183,7 @@ export class MixpanelPersistent {
   updateSuperProperties(token, superProperties) {
     this._superProperties = {
       ...this._superProperties,
-      [token]: { ...superProperties },
+      [token]: {...superProperties},
     };
   }
 
@@ -208,7 +211,7 @@ export class MixpanelPersistent {
   }
 
   updateTimeEvents(token, timeEvents) {
-    this._timeEvents = { ...this._timeEvents, [token]: { ...timeEvents } };
+    this._timeEvents = {...this._timeEvents, [token]: {...timeEvents}};
   }
 
   async persistTimeEvents(token) {
@@ -231,7 +234,7 @@ export class MixpanelPersistent {
   }
 
   updateOptedOut(token, optOut) {
-    this._optedOut = { ...this._optedOut, [token]: optOut };
+    this._optedOut = {...this._optedOut, [token]: optOut};
   }
 
   async persistOptedOut(token) {
@@ -253,10 +256,42 @@ export class MixpanelPersistent {
     await this.storage.setItem(getQueueKey(token, type), JSON.stringify(queue));
   }
 
+  async loadAppHasOpenedBefore(token) {
+    const appHasOpenedBeforeString = await this.storage.getItem(
+      getAppHasOpenedBeforeKey(token)
+    );
+    this._appHasOpenedBefore[token] = appHasOpenedBeforeString === "true";
+  }
+
+  getAppHasOpenedBefore(token) {
+    return this._appHasOpenedBefore[token] === true;
+  }
+
+  updateAppHasOpenedBefore(token, appHasOpenedBefore) {
+    this._appHasOpenedBefore = {
+      ...this._appHasOpenedBefore,
+      [token]: appHasOpenedBefore,
+    };
+  }
+
+  async persistAppHasOpenedBefore(token) {
+    if (this._appHasOpenedBefore[token] === null) {
+      return;
+    }
+    await this.storage.setItem(
+      getAppHasOpenedBeforeKey(token),
+      this._appHasOpenedBefore[token].toString()
+    );
+  }
+
   async reset(token) {
     await this.storage.removeItem(getDeviceIdKey(token));
     await this.storage.removeItem(getDistinctIdKey(token));
     await this.storage.removeItem(getUserIdKey(token));
+    await this.storage.removeItem(getSuperPropertiesKey(token));
+    await this.storage.removeItem(getTimeEventsKey(token));
     await this.loadIdentity(token);
+    await this.loadSuperProperties(token);
+    await this.loadTimeEvents(token);
   }
 }

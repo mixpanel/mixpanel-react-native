@@ -53,7 +53,7 @@ export class Mixpanel {
 
     if (!MixpanelReactNative) {
       console.warn(
-        "MixpanelReactNative is not available, using JavaScript fallback. If you do not want to use the JavaScript fallback, please follow the guide on the Github repository: https://github.com/mixpanel/mixpanel-react-native."
+        "MixpanelReactNative is not available; using JavaScript mode. If you prefer not to use the JavaScript mode, please follow the guide in the GitHub repository: https://github.com/mixpanel/mixpanel-react-native."
       );
       this.mixpanelImpl = new MixpanelMain(token, trackAutomaticEvents);
     } else {
@@ -251,7 +251,7 @@ export class Mixpanel {
   }
 
   /**
-   * The alias method creates an alias which Mixpanel will use to remap one id to another.
+   * @deprecated The alias method creates an alias which Mixpanel will use to remap one id to another.
    * Multiple aliases can point to the same identifier.
    *
    *  `mixpane.alias("New ID", mixpane.distinctId)`
@@ -270,7 +270,7 @@ export class Mixpanel {
     if (!StringHelper.isValid(distinctId)) {
       StringHelper.raiseError(PARAMS.DISTINCT_ID);
     }
-    MixpanelReactNative.alias(this.token, alias, distinctId);
+    this.mixpanelImpl.alias(this.token, alias, distinctId);
   }
 
   /**

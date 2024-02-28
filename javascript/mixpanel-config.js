@@ -2,9 +2,9 @@ import {
   defaultBatchSize,
   defaultFlushInterval,
   defaultServerURL,
-} from './mixpanel-constants';
+} from "./mixpanel-constants";
 
-import {MixpanelLogger} from './mixpanel-logger';
+import {MixpanelLogger} from "./mixpanel-logger";
 
 export class MixpanelConfig {
   static instance;
@@ -60,7 +60,7 @@ export class MixpanelConfig {
     };
     MixpanelLogger.log(
       token,
-      `Set useIpAddressForGeolocation: ${useIpAddressForGeolocation}`,
+      `Set useIpAddressForGeolocation: ${useIpAddressForGeolocation}`
     );
   }
 

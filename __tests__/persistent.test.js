@@ -156,6 +156,6 @@ describe("MixpanelPersistent", () => {
     );
 
     await mixpanelPersistent.reset(token);
-    expect(asyncStorageAdapterMock.removeItem).toHaveBeenCalledTimes(3);
+    expect(asyncStorageAdapterMock.removeItem).toHaveBeenCalledTimes(5);
   });
 });

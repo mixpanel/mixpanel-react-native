@@ -1,4 +1,4 @@
-import {MixpanelType} from 'mixpanel-react-native/javascript/mixpanel-constants';
+import {MixpanelType} from "mixpanel-react-native/javascript/mixpanel-constants";
 
 export class SessionMetadata {
   constructor(trackingQueue) {
@@ -13,7 +13,7 @@ export class SessionMetadata {
     return (
       Math.floor(Math.random() * (1 << 30)).toString(16) +
       Math.floor(Math.random() * (1 << 30)).toString(16)
-    ).padStart(16, '0');
+    ).padStart(16, "0");
   }
 
   toDict(type) {

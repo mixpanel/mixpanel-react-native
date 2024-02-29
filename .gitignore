@@ -42,6 +42,10 @@ android/local.properties
 *.iml
 *.class
 
+
+logs/
+**/logs/
+
 # BUCK
 buck-out/
 \.buckd/

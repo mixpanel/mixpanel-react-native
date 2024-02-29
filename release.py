@@ -10,7 +10,6 @@ args = parser.parse_args()
 
 def bump_version():
     replace_version('package.json', "\"version\": \"" + args.old + "\"", "\"version\": \"" + args.new + "\"")
-    replace_version('__tests__/index.test.js', "\"$lib_version\": \"" + args.old + "\"", "\"$lib_version\": \"" + args.new + "\"")
     subprocess.call('rm -fr node_modules', shell=True)
     subprocess.call('cd Samples/MixpanelDemo;rm -fr node_modules;rm -fr android/app/build;rm -fr ios/Pods', shell=True)
     subprocess.call('cd Samples/SimpleMixpanel;rm -fr node_modules;rm -fr android/app/build;rm -fr ios/Pods', shell=True)

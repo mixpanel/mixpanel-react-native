@@ -1,3 +1,5 @@
+import {Mixpanel} from "mixpanel-react-native";
+import {NativeModules} from "react-native";
 /**
  * @format
  */
@@ -121,6 +123,9 @@ test(`it calls MixpanelReactNative alias`, async () => {
 });
 
 test(`it calls MixpanelReactNative track`, async () => {
+  const mixpanel = new Mixpanel("token", true);
+  mixpanel.init();
+  mixpanel.track("event name", {"Cool Property": "Property Value"});
   const mixpanel = await Mixpanel.init("token", true);
   mixpanel.track("event name", {
     "Cool Property": "Property Value",
@@ -128,6 +133,7 @@ test(`it calls MixpanelReactNative track`, async () => {
   expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
     "token",
     "event name",
+    {"Cool Property": "Property Value"}
     {
       "Cool Property": "Property Value",
       $lib_version: expect.any(String),
@@ -146,6 +152,8 @@ test(`it calls MixpanelReactNative trackWithGroups`, async () => {
   expect(NativeModules.MixpanelReactNative.trackWithGroups).toBeCalledWith(
     "token",
     "tracked with groups",
+    {a: 1, b: 2.3},
+    {company_id: "Mixpanel"}
     {a: 1, b: 2.3, $lib_version: expect.any(String), mp_lib: "react-native"},
     {company_id: "Mixpanel"}
   );

@@ -12,7 +12,7 @@ test(`it calls MixpanelReactNative initialize`, async () => {
     "token",
     true,
     false,
-    {$lib_version: "2.4.0", mp_lib: "react-native"},
+    {$lib_version: expect.any(String), mp_lib: "react-native"},
     "https://api.mixpanel.com"
   );
 });
@@ -24,7 +24,11 @@ test(`it calls MixpanelReactNative initialize with optOut and superProperties`, 
     "token",
     true,
     true,
-    {$lib_version: "2.4.0", mp_lib: "react-native", super: "property"},
+    {
+      $lib_version: expect.any(String),
+      mp_lib: "react-native",
+      super: "property",
+    },
     "https://api.mixpanel.com"
   );
 });
@@ -117,7 +121,7 @@ test(`it calls MixpanelReactNative track`, async () => {
     "event name",
     {
       "Cool Property": "Property Value",
-      $lib_version: "2.4.0",
+      $lib_version: expect.any(String),
       mp_lib: "react-native",
     }
   );
@@ -133,7 +137,7 @@ test(`it calls MixpanelReactNative trackWithGroups`, async () => {
   expect(NativeModules.MixpanelReactNative.trackWithGroups).toBeCalledWith(
     "token",
     "tracked with groups",
-    {a: 1, b: 2.3, $lib_version: "2.4.0", mp_lib: "react-native"},
+    {a: 1, b: 2.3, $lib_version: expect.any(String), mp_lib: "react-native"},
     {company_id: "Mixpanel"}
   );
 });

@@ -100,7 +100,13 @@ const SampleApp = () => {
 export default SampleApp;
 
 ```
-### For Expo support, please refer to this [issue](https://github.com/mixpanel/mixpanel-react-native/issues/82)
+### Expo and React Native for Web support
+Starting from version 3.0.0, we have introduced support for Expo, React Native for Web, and other platforms utilizing React Native that do not support iOS and Android directly. To enable this feature, initialize Mixpanel with an additional parameter, `useNative`, set to false(```const mixpanel = new Mixpanel(
+    "YOUR_MIXPANEL_TOKEN",
+    trackAutomaticEvents,
+    useNative
+  );```). This will activate JavaScript mode. Please note that this functionality is currently in beta testing. For further details and installation guidelines, refer to the release notes available at Mixpanel React Native [v3.0.0-beta.1](https://github.com/mixpanel/mixpanel-react-native/releases/tag/v3.0.0-beta.1).
+
 👋 👋  Tell us about the Mixpanel developer experience! [https://www.mixpanel.com/devnps](https://www.mixpanel.com/devnps) 👍  👎
 
 

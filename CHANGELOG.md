@@ -2,11 +2,9 @@
 
 ## [v2.4.1](https://github.com/mixpanel/mixpanel-react-native/tree/v2.4.1) (2024-03-01)
 
-## [v3.0.0-beta.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.0-beta.1) (2024-02-29)
+### Fixes
 
-### Enhancements
-
-- Add Expo support [\#223](https://github.com/mixpanel/mixpanel-react-native/pull/223)
+- Fix mp_lib(Mixpanel Library) not being set as `react-native`
 
 #
 

@@ -1,5 +1,30 @@
 #
 
+
+## [v3.0.0-beta.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.0-beta.1) (2024-02-29)
+
+### Expo and React Native Web support
+This version(PR [\#223](https://github.com/mixpanel/mixpanel-react-native/pull/223)) introduces support for Expo, React Native Web, and any platform using React Native that does not support iOS and Android. To activate this, initialize Mixpanel with an additional parameter `useNative` set to false, which will enable JavaScript mode. Currently in beta, we plan to iterate on this to address any issues and add more features. We welcome your feedback.
+
+```
+ const trackAutomaticEvents = false;
+ const useNative = false;
+ const mixpanel = new Mixpanel(
+    "YOUR_MIXPANEL_TOKEN",
+    trackAutomaticEvents,
+    useNative
+  );
+ mixpanel.init();
+```
+
+
+To try the Expo sample app, navigate to `Samples/MixpanelExpo`, run `npm install`, and then execute `npm run ios` or `npm run android`
+
+Known limitations and differences compared to the native mode (iOS/Android):
+- Automatic Events are currently not supported in this mode. Setting 'trackAutomaticEvents' to 'true' will have no effect.
+- Certain Mixpanel Properties are unavailable in Javascript mode, including detailed information about the device and screen.
+- The default flush interval is set to 10 seconds. The data will not flush automatically when the app moves to the background. We recommend flushing more frequently for key events.
+
 ## [v2.4.1](https://github.com/mixpanel/mixpanel-react-native/tree/v2.4.1) (2024-03-01)
 
 ### Fixes

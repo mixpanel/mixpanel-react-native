@@ -6,8 +6,8 @@ import {MixpanelConfig} from "./mixpanel-config";
 import {MixpanelPersistent} from "./mixpanel-persistent";
 import {MixpanelLogger} from "./mixpanel-logger";
 
-export const MixpanelCore = () => {
-  const mixpanelPersistent = MixpanelPersistent.getInstance();
+export const MixpanelCore = (storage) => {
+  const mixpanelPersistent = MixpanelPersistent.getInstance(storage);
   const config = MixpanelConfig.getInstance();
   let isProcessingQueue = false;
   let processQueueInterval = null;
@@ -118,9 +118,8 @@ export const MixpanelCore = () => {
             data: batch,
             endpoint: type,
             serverURL: config.getServerURL(token),
-            useIPAddressForGeoLocation: config.getUseIpAddressForGeolocation(
-              token
-            ),
+            useIPAddressForGeoLocation:
+              config.getUseIpAddressForGeolocation(token),
           });
           await MixpanelQueueManager.spliceQueue(token, type, 0, batch.length);
           // Process the next batch if there are more events in the queue

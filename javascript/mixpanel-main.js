@@ -7,10 +7,10 @@ import {MixpanelLogger} from "mixpanel-react-native/javascript/mixpanel-logger";
 import packageJson from "mixpanel-react-native/package.json";
 
 export default class MixpanelMain {
-  constructor(token, trackAutomaticEvents) {
+  constructor(token, trackAutomaticEvents, storage) {
     this.token = token;
     this.config = MixpanelConfig.getInstance();
-    this.core = MixpanelCore();
+    this.core = MixpanelCore(storage);
     this.core.initialize(token);
     this.core.startProcessingQueue(token);
     this.mixpanelPersistent = MixpanelPersistent.getInstance();
@@ -200,9 +200,8 @@ export default class MixpanelMain {
 
   async registerSuperProperties(token, properties) {
     MixpanelLogger.log(token, `Register super properties:`, properties);
-    const currentSuperProperties = this.mixpanelPersistent.getSuperProperties(
-      token
-    );
+    const currentSuperProperties =
+      this.mixpanelPersistent.getSuperProperties(token);
     MixpanelLogger.log(
       token,
       `Current Super Properties:`,
@@ -223,9 +222,8 @@ export default class MixpanelMain {
 
   async registerSuperPropertiesOnce(token, properties) {
     MixpanelLogger.log(token, `Register super properties once`, properties);
-    const currentSuperProperties = this.mixpanelPersistent.getSuperProperties(
-      token
-    );
+    const currentSuperProperties =
+      this.mixpanelPersistent.getSuperProperties(token);
 
     const updatedSuperProperties = {
       ...properties,

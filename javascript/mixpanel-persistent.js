@@ -16,20 +16,23 @@ import {MixpanelLogger} from "mixpanel-react-native/javascript/mixpanel-logger";
 export class MixpanelPersistent {
   static instance;
 
-  static getInstance(storage = new AsyncStorageAdapter()) {
+  static getInstance(storage) {
     if (!MixpanelPersistent.instance) {
-      MixpanelPersistent.instance = new MixpanelPersistent(storage);
-      MixpanelPersistent.initializationCompletePromise = MixpanelPersistent.instance.initializationCompletePromise();
+      MixpanelPersistent.instance = new MixpanelPersistent(
+        new AsyncStorageAdapter(storage)
+      );
+      MixpanelPersistent.initializationCompletePromise =
+        MixpanelPersistent.instance.initializationCompletePromise();
     }
     return MixpanelPersistent.instance;
   }
 
-  constructor(storage) {
+  constructor(storageAdapter) {
     if (MixpanelPersistent.instance) {
       throw new Error(`Use MixpanelPersistent.getInstance()`);
     }
 
-    this.storage = storage;
+    this.storageAdapter = storageAdapter;
     this._superProperties = {};
     this._timeEvents = {};
     this._identity = {};
@@ -48,15 +51,17 @@ export class MixpanelPersistent {
   }
 
   async loadDeviceId(token) {
-    await this.storage.getItem(getDeviceIdKey(token)).then((deviceId) => {
-      if (!this._identity[token]) {
-        this._identity[token] = {};
-      }
-      this._identity[token].deviceId = deviceId;
-    });
+    await this.storageAdapter
+      .getItem(getDeviceIdKey(token))
+      .then((deviceId) => {
+        if (!this._identity[token]) {
+          this._identity[token] = {};
+        }
+        this._identity[token].deviceId = deviceId;
+      });
     if (!this._identity[token].deviceId) {
       this._identity[token].deviceId = uuid.v4();
-      await this.storage.setItem(
+      await this.storageAdapter.setItem(
         getDeviceIdKey(token),
         this._identity[token].deviceId
       );
@@ -65,16 +70,18 @@ export class MixpanelPersistent {
   }
 
   async loadDistinctId(token) {
-    await this.storage.getItem(getDistinctIdKey(token)).then((distinctId) => {
-      if (!this._identity[token]) {
-        this._identity[token] = {};
-      }
-      this._identity[token].distinctId = distinctId;
-    });
+    await this.storageAdapter
+      .getItem(getDistinctIdKey(token))
+      .then((distinctId) => {
+        if (!this._identity[token]) {
+          this._identity[token] = {};
+        }
+        this._identity[token].distinctId = distinctId;
+      });
     if (!this._identity[token].distinctId) {
       this._identity[token].distinctId =
         "$device:" + this._identity[token].deviceId;
-      await this.storage.setItem(
+      await this.storageAdapter.setItem(
         getDistinctIdKey(token),
         this._identity[token].distinctId
       );
@@ -83,7 +90,7 @@ export class MixpanelPersistent {
   }
 
   async loadUserId(token) {
-    await this.storage.getItem(getUserIdKey(token)).then((userId) => {
+    await this.storageAdapter.getItem(getUserIdKey(token)).then((userId) => {
       if (!this._identity[token]) {
         this._identity[token] = {};
       }
@@ -119,7 +126,7 @@ export class MixpanelPersistent {
     if (!this._identity[token] || this._identity[token].deviceId === null) {
       return;
     }
-    await this.storage.setItem(
+    await this.storageAdapter.setItem(
       getDeviceIdKey(token),
       this._identity[token].deviceId
     );
@@ -140,7 +147,7 @@ export class MixpanelPersistent {
     if (!this._identity[token] || this._identity[token].distinctId === null) {
       return;
     }
-    await this.storage.setItem(
+    await this.storageAdapter.setItem(
       getDistinctIdKey(token),
       this._identity[token].distinctId
     );
@@ -161,14 +168,14 @@ export class MixpanelPersistent {
     if (!this._identity[token] || this._identity[token].userId === null) {
       return;
     }
-    await this.storage.setItem(
+    await this.storageAdapter.setItem(
       getUserIdKey(token),
       this._identity[token].userId
     );
   }
 
   async loadSuperProperties(token) {
-    const superPropertiesString = await this.storage.getItem(
+    const superPropertiesString = await this.storageAdapter.getItem(
       getSuperPropertiesKey(token)
     );
     this._superProperties[token] = superPropertiesString
@@ -191,14 +198,14 @@ export class MixpanelPersistent {
     if (this._superProperties[token] === null) {
       return;
     }
-    await this.storage.setItem(
+    await this.storageAdapter.setItem(
       getSuperPropertiesKey(token),
       JSON.stringify(this._superProperties[token])
     );
   }
 
   async loadTimeEvents(token) {
-    const timeEventsString = await this.storage.getItem(
+    const timeEventsString = await this.storageAdapter.getItem(
       getTimeEventsKey(token)
     );
     this._timeEvents[token] = timeEventsString
@@ -218,14 +225,16 @@ export class MixpanelPersistent {
     if (this._timeEvents[token] === null) {
       return;
     }
-    await this.storage.setItem(
+    await this.storageAdapter.setItem(
       getTimeEventsKey(token),
       JSON.stringify(this._timeEvents[token])
     );
   }
 
   async loadOptOut(token) {
-    const optOutString = await this.storage.getItem(getOutedOutKey(token));
+    const optOutString = await this.storageAdapter.getItem(
+      getOutedOutKey(token)
+    );
     this._optedOut[token] = optOutString === "true";
   }
 
@@ -241,23 +250,28 @@ export class MixpanelPersistent {
     if (this._optedOut[token] === null) {
       return;
     }
-    await this.storage.setItem(
+    await this.storageAdapter.setItem(
       getOutedOutKey(token),
       this._optedOut[token].toString()
     );
   }
 
   async loadQueue(token, type) {
-    const queueString = await this.storage.getItem(getQueueKey(token, type));
+    const queueString = await this.storageAdapter.getItem(
+      getQueueKey(token, type)
+    );
     return queueString ? JSON.parse(queueString) : [];
   }
 
   async saveQueue(token, type, queue) {
-    await this.storage.setItem(getQueueKey(token, type), JSON.stringify(queue));
+    await this.storageAdapter.setItem(
+      getQueueKey(token, type),
+      JSON.stringify(queue)
+    );
   }
 
   async loadAppHasOpenedBefore(token) {
-    const appHasOpenedBeforeString = await this.storage.getItem(
+    const appHasOpenedBeforeString = await this.storageAdapter.getItem(
       getAppHasOpenedBeforeKey(token)
     );
     this._appHasOpenedBefore[token] = appHasOpenedBeforeString === "true";
@@ -278,18 +292,18 @@ export class MixpanelPersistent {
     if (this._appHasOpenedBefore[token] === null) {
       return;
     }
-    await this.storage.setItem(
+    await this.storageAdapter.setItem(
       getAppHasOpenedBeforeKey(token),
       this._appHasOpenedBefore[token].toString()
     );
   }
 
   async reset(token) {
-    await this.storage.removeItem(getDeviceIdKey(token));
-    await this.storage.removeItem(getDistinctIdKey(token));
-    await this.storage.removeItem(getUserIdKey(token));
-    await this.storage.removeItem(getSuperPropertiesKey(token));
-    await this.storage.removeItem(getTimeEventsKey(token));
+    await this.storageAdapter.removeItem(getDeviceIdKey(token));
+    await this.storageAdapter.removeItem(getDistinctIdKey(token));
+    await this.storageAdapter.removeItem(getUserIdKey(token));
+    await this.storageAdapter.removeItem(getSuperPropertiesKey(token));
+    await this.storageAdapter.removeItem(getTimeEventsKey(token));
     await this.loadIdentity(token);
     await this.loadSuperProperties(token);
     await this.loadTimeEvents(token);

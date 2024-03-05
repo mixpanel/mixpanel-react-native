@@ -1,8 +1,8 @@
 "use strict";
 
-import { Platform, NativeModules } from "react-native";
+import {Platform, NativeModules} from "react-native";
 import packageJson from "./package.json";
-const { MixpanelReactNative } = NativeModules;
+const {MixpanelReactNative} = NativeModules;
 import MixpanelMain from "mixpanel-react-native/javascript/mixpanel-main";
 
 const DevicePlatform = {
@@ -37,7 +37,7 @@ const DEFAULT_OPT_OUT = false;
  * The primary class for integrating Mixpanel with your app.
  */
 export class Mixpanel {
-  constructor(token, trackAutomaticEvents, useNative = true) {
+  constructor(token, trackAutomaticEvents, useNative = true, storage) {
     if (!StringHelper.isValid(token)) {
       StringHelper.raiseError(PARAMS.TOKEN);
     }
@@ -47,7 +47,11 @@ export class Mixpanel {
     this.token = token;
     this.trackAutomaticEvents = trackAutomaticEvents;
     if (!useNative) {
-      this.mixpanelImpl = new MixpanelMain(token, trackAutomaticEvents);
+      this.mixpanelImpl = new MixpanelMain(
+        token,
+        trackAutomaticEvents,
+        storage
+      );
       return;
     }
 
@@ -55,7 +59,11 @@ export class Mixpanel {
       console.warn(
         "MixpanelReactNative is not available; using JavaScript mode. If you prefer not to use the JavaScript mode, please follow the guide in the GitHub repository: https://github.com/mixpanel/mixpanel-react-native."
       );
-      this.mixpanelImpl = new MixpanelMain(token, trackAutomaticEvents);
+      this.mixpanelImpl = new MixpanelMain(
+        token,
+        trackAutomaticEvents,
+        storage
+      );
     } else {
       this.mixpanelImpl = MixpanelReactNative;
     }
@@ -79,7 +87,7 @@ export class Mixpanel {
       this.token,
       this.trackAutomaticEvents,
       optOutTrackingDefault,
-      { ...metadata, ...superProperties },
+      {...metadata, ...superProperties},
       serverURL
     );
   }
@@ -719,7 +727,7 @@ export class People {
     value = Array.isArray(value) ? value : [value];
 
     if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
-      this.mixpanelImpl.union(this.token, { [name]: value });
+      this.mixpanelImpl.union(this.token, {[name]: value});
     } else {
       this.mixpanelImpl.union(this.token, name, value);
     }

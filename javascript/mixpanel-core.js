@@ -6,8 +6,8 @@ import {MixpanelConfig} from "./mixpanel-config";
 import {MixpanelPersistent} from "./mixpanel-persistent";
 import {MixpanelLogger} from "./mixpanel-logger";
 
-export const MixpanelCore = () => {
-  const mixpanelPersistent = MixpanelPersistent.getInstance();
+export const MixpanelCore = (storage) => {
+  const mixpanelPersistent = MixpanelPersistent.getInstance(storage);
   const config = MixpanelConfig.getInstance();
   let isProcessingQueue = false;
   let processQueueInterval = null;

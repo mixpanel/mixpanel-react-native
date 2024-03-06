@@ -1,0 +1,19 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/zihejia/Documents/Projects/Develop/mixpanel-react-native-original/logs/.b11bf985d66a037ca5688a574653f3bf76a28dfa-audit.json",
+    "files": [
+        {
+            "date": 1709573495087,
+            "name": "/Users/zihejia/Documents/Projects/Develop/mixpanel-react-native-original/logs/keplerCliNative-2024-03-04.log",
+            "hash": "a8749104e25632399d93a52597b7746d"
+        },
+        {
+            "date": 1709630199953,
+            "name": "/Users/zihejia/Documents/Projects/Develop/mixpanel-react-native-original/logs/keplerCliNative-2024-03-05.log",
+            "hash": "a67a9e1920ecea0686a43fc59daebbf8"
+        }
+    ]
+}

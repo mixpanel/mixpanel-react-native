@@ -1,6 +1,6 @@
 {
   "name": "mixpanel-react-native",
-  "version": "2.4.1",
+  "version": "3.0.0-beta.1",
   "description": "Official React Native Tracking Library for Mixpanel Analytics",
   "main": "index.js",
   "scripts": {
@@ -36,17 +36,18 @@
     "@react-native-community/eslint-config": "^2.0.0",
     "babel-jest": "^26.6.0",
     "eslint": "^7.11.0",
-    "jest": "^26.6.0",
+    "jest": "^26.6.3",
+    "jest-fetch-mock": "^3.0.3",
     "metro-react-native-babel-preset": "^0.63.0",
-    "react-test-renderer": "16.13.1",
-    "react-native": "^0.63.3"
+    "react-native": "^0.63.3",
+    "react-test-renderer": "16.13.1"
   },
   "jest": {
     "modulePathIgnorePatterns": [
-      "<rootDir>/MixpanelDemo/"
+      "<rootDir>/Samples/"
     ],
     "testMatch": [
-      "<rootDir>/__tests__/index.test.js"
+      "<rootDir>/__tests__/*.test.js"
     ],
     "setupFiles": [
       "<rootDir>/__tests__/jest_setup.js"
@@ -56,5 +57,9 @@
     "transform": {
       "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js"
     }
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.21.0",
+    "uuid": "3.3.2"
   }
 }

@@ -1,11 +1,30 @@
-import * as ReactNative from 'react-native';
+import * as ReactNative from "react-native";
 
-jest.doMock('react-native', () => {
+jest.mock("mixpanel-react-native/javascript/mixpanel-storage", () => {
+  return {
+    AsyncStorageAdapter: jest.fn().mockImplementation(() => ({
+      getItem: jest.fn(),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+    })),
+  };
+});
+jest.mock("uuid", () => ({
+  v4: jest.fn(),
+}));
+
+jest.mock("@react-native-async-storage/async-storage", () => ({
+  getItem: jest.fn().mockResolvedValue(null),
+  setItem: jest.fn().mockResolvedValue(undefined),
+  removeItem: jest.fn().mockResolvedValue(undefined),
+}));
+
+jest.doMock("react-native", () => {
   // Extend ReactNative
   return Object.setPrototypeOf(
     {
       // Redefine an export, like a component
-      Button: 'MockedButton',
+      Button: "MockedButton",
 
       // Mock out properties of an already mocked export
       LayoutAnimation: {
@@ -62,6 +81,6 @@ jest.doMock('react-native', () => {
         },
       },
     },
-    ReactNative,
+    ReactNative
   );
 });

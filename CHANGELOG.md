@@ -1,5 +1,13 @@
 #
 
+## [v3.0.0-beta.2](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.0-beta.2) (2024-03-06)
+
+### Enhancements
+
+- Add support to use custom storage instead of @react-native-async-storage/async-storage\(3.0.0-beta2\) [\#225](https://github.com/mixpanel/mixpanel-react-native/pull/225)
+
+#
+
 ## [v3.0.0-beta.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.0-beta.1) (2024-02-29)
 
 ### Expo and React Native Web support
@@ -348,3 +356,5 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+

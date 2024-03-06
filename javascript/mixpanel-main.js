@@ -136,12 +136,14 @@ export default class MixpanelMain {
     this.mixpanelPersistent.updateOptedOut(token, true);
     await this.mixpanelPersistent.persistOptedOut(token);
     MixpanelLogger.log(token, "User has opted out of tracking");
+    await this.mixpanelPersistent.reset(token);
   }
 
   async optInTracking(token) {
     this.mixpanelPersistent.updateOptedOut(token, false);
     await this.mixpanelPersistent.persistOptedOut(token);
     MixpanelLogger.log(token, "User has opted in to tracking");
+    await this.track(token, "$opt_in");
   }
 
   hasOptedOutTracking(token) {
@@ -200,8 +202,9 @@ export default class MixpanelMain {
 
   async registerSuperProperties(token, properties) {
     MixpanelLogger.log(token, `Register super properties:`, properties);
-    const currentSuperProperties =
-      this.mixpanelPersistent.getSuperProperties(token);
+    const currentSuperProperties = this.mixpanelPersistent.getSuperProperties(
+      token
+    );
     MixpanelLogger.log(
       token,
       `Current Super Properties:`,
@@ -222,8 +225,9 @@ export default class MixpanelMain {
 
   async registerSuperPropertiesOnce(token, properties) {
     MixpanelLogger.log(token, `Register super properties once`, properties);
-    const currentSuperProperties =
-      this.mixpanelPersistent.getSuperProperties(token);
+    const currentSuperProperties = this.mixpanelPersistent.getSuperProperties(
+      token
+    );
 
     const updatedSuperProperties = {
       ...properties,

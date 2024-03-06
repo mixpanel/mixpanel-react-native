@@ -3,9 +3,20 @@
 ## [v3.0.0-beta.2](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.0-beta.2) (2024-03-06)
 
 ### Enhancements
+- Add support to use custom storage instead of @react-native-async-storage/async-storage.(https://github.com/mixpanel/mixpanel-react-native/pull/225)
+When JavaScript mode is enabled, Mixpanel utilizes [AsyncStorage](https://reactnative.dev/docs/asyncstorage) to persist data. If you prefer not to use it, or if AsyncStorage is unavailable in your target environment, you can import or define a different storage class. However, it must follow the same interface as [AsyncStorage](https://reactnative.dev/docs/asyncstorage) The following example demonstrates how to use a custom storage solution:
 
-- Add support to use custom storage instead of @react-native-async-storage/async-storage\(3.0.0-beta2\) [\#225](https://github.com/mixpanel/mixpanel-react-native/pull/225)
+```
+const MyAsyncStorage = require("@my-org/<library-path>/AsyncStorage"); // or your own storage class
+const trackAutomaticEvents = false;
+const useNative = false;
+const mixpanel = new Mixpanel('YOUR_TOKEN', trackAutomaticEvents, useNative, MyAsyncStorage);
+mixpanel.init();
+```
 
+### Fixes
+- Make `optOutTracking` and `optInTracking` consistent with the native SDK.(https://github.com/mixpanel/mixpanel-react-native/pull/225)
+  
 #
 
 ## [v3.0.0-beta.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.0-beta.1) (2024-02-29)

@@ -1,7 +1,6 @@
 "use strict";
 
 import {Platform, NativeModules} from "react-native";
-import {Platform, NativeModules} from "react-native";
 import packageJson from "./package.json";
 const {MixpanelReactNative} = NativeModules;
 import MixpanelMain from "mixpanel-react-native/javascript/mixpanel-main";
@@ -87,7 +86,7 @@ export class Mixpanel {
       this.token,
       this.trackAutomaticEvents,
       optOutTrackingDefault,
-      {...metadata, ...superProperties},
+      {...Helper.getMetaData(), ...superProperties},
       serverURL
     );
   }
@@ -344,10 +343,13 @@ export class Mixpanel {
     if (!ObjectHelper.isValidOrUndefined(properties)) {
       ObjectHelper.raiseError(PARAMS.PROPERTIES);
     }
-    this.mixpanelImpl.trackWithGroups(
+    MixpanelReactNative.trackWithGroups(
       this.token,
       eventName,
-      properties || {},
+      {
+        ...Helper.getMetaData(),
+        ...properties,
+      },
       groups
     );
   }

@@ -1,12 +1,5 @@
 import {Mixpanel} from "mixpanel-react-native";
 import {NativeModules} from "react-native";
-/**
- * @format
- */
-
-import {Mixpanel} from "mixpanel-react-native";
-
-import {NativeModules} from "react-native";
 
 test(`it calls MixpanelReactNative initialize`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
@@ -123,9 +116,6 @@ test(`it calls MixpanelReactNative alias`, async () => {
 });
 
 test(`it calls MixpanelReactNative track`, async () => {
-  const mixpanel = new Mixpanel("token", true);
-  mixpanel.init();
-  mixpanel.track("event name", {"Cool Property": "Property Value"});
   const mixpanel = await Mixpanel.init("token", true);
   mixpanel.track("event name", {
     "Cool Property": "Property Value",
@@ -133,7 +123,6 @@ test(`it calls MixpanelReactNative track`, async () => {
   expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
     "token",
     "event name",
-    {"Cool Property": "Property Value"}
     {
       "Cool Property": "Property Value",
       $lib_version: expect.any(String),
@@ -152,8 +141,6 @@ test(`it calls MixpanelReactNative trackWithGroups`, async () => {
   expect(NativeModules.MixpanelReactNative.trackWithGroups).toBeCalledWith(
     "token",
     "tracked with groups",
-    {a: 1, b: 2.3},
-    {company_id: "Mixpanel"}
     {a: 1, b: 2.3, $lib_version: expect.any(String), mp_lib: "react-native"},
     {company_id: "Mixpanel"}
   );
@@ -417,24 +404,18 @@ test(`it calls MixpanelReactNative group set properties`, async () => {
   const mixpanel = new Mixpanel("token", true);
   mixpanel.init();
   mixpanel.getGroup("company_id", 12345).set("prop_key", "prop_value");
-  expect(NativeModules.MixpanelReactNative.groupSetProperties).toBeCalledWith(
-    "token",
-    "company_id",
-    12345,
-    {prop_key: "prop_value"}
-  );
+  expect(
+    NativeModules.MixpanelReactNative.groupSetProperties
+  ).toBeCalledWith("token", "company_id", 12345, {prop_key: "prop_value"});
 });
 
 test(`it calls MixpanelReactNative group set property once`, async () => {
   const mixpanel = new Mixpanel("token", true);
   mixpanel.init();
   mixpanel.getGroup("company_id", 12345).setOnce("prop_key", "prop_value");
-  expect(NativeModules.MixpanelReactNative.groupSetPropertyOnce).toBeCalledWith(
-    "token",
-    "company_id",
-    12345,
-    {prop_key: "prop_value"}
-  );
+  expect(
+    NativeModules.MixpanelReactNative.groupSetPropertyOnce
+  ).toBeCalledWith("token", "company_id", 12345, {prop_key: "prop_value"});
 });
 
 test(`it calls MixpanelReactNative group unset property`, async () => {

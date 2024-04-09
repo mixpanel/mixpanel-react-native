@@ -2,6 +2,8 @@
 
 ## [v3.0.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.0) (2024-04-09)
 
+This is the official release for Expo and React Native Web support. For more details, please refer to the release notes for versions [3.0.0-beta.2](https://github.com/mixpanel/mixpanel-react-native/blob/master/CHANGELOG.md#v300-beta2-2024-03-06) and [3.0.0-beta.1](https://github.com/mixpanel/mixpanel-react-native/blob/master/CHANGELOG.md#v300-beta1-2024-02-29).
+
 ### Enhancements
 
 - bump ios version to 4.2.4 [\#228](https://github.com/mixpanel/mixpanel-react-native/pull/228)

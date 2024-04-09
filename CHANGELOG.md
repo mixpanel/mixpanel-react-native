@@ -1,5 +1,13 @@
 #
 
+## [v3.0.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.0) (2024-04-09)
+
+### Enhancements
+
+- bump ios version to 4.2.4 [\#228](https://github.com/mixpanel/mixpanel-react-native/pull/228)
+
+#
+
 ## [v3.0.0-beta.2](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.0-beta.2) (2024-03-06)
 
 ### Enhancements
@@ -367,5 +375,7 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 

@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   test_main_code:
@@ -17,14 +17,14 @@ jobs:
         node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm test
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm test
 
   test_android:
     runs-on: macos-11
@@ -34,25 +34,32 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - name: Test Integration - Install dependencies
-      working-directory: ./Samples/SimpleMixpanel
-      run: yarn install
-    - name: Setup Android
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: 21
-        working-directory: ./Samples/SimpleMixpanel/android
-        script: ./gradlew
-    - name: Test Android
-      working-directory: ./Samples/SimpleMixpanel
-      run: yarn android
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - name: Test Integration - Install dependencies
+        working-directory: ./Samples/SimpleMixpanel
+        run: yarn install
+      - name: Setup Android
+        uses: reactivecircus/android-emulator-runner@v2.20.0
+        with:
+          api-level: 30
+          profile: Nexus 6
+          arch: x86_64
+          working-directory: ./Samples/SimpleMixpanel/android
+          script: ./gradlew
+      - name: Test Android
+        uses: reactivecircus/android-emulator-runner@v2.20.0
+        with:
+          api-level: 30
+          profile: Nexus 6
+          arch: x86_64
+          working-directory: ./Samples/SimpleMixpanel
+          script: yarn android
 
   test_ios:
     runs-on: macos-latest
@@ -61,20 +68,19 @@ jobs:
         node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - name: Test Integration - Install dependencies
-      working-directory: ./Samples/SimpleMixpanel
-      run: yarn install
-    - name: Setup iOS
-      working-directory: ./Samples/SimpleMixpanel/ios
-      run: pod install --repo-update
-    - name: Test iOS
-      working-directory: ./Samples/SimpleMixpanel
-      run: yarn ios
-
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - name: Test Integration - Install dependencies
+        working-directory: ./Samples/SimpleMixpanel
+        run: yarn install
+      - name: Setup iOS
+        working-directory: ./Samples/SimpleMixpanel/ios
+        run: pod install --repo-update
+      - name: Test iOS
+        working-directory: ./Samples/SimpleMixpanel
+        run: yarn ios

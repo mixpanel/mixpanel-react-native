@@ -53,8 +53,13 @@ jobs:
           working-directory: ./Samples/SimpleMixpanel/android
           script: ./gradlew
       - name: Test Android
-        working-directory: ./Samples/SimpleMixpanel
-        run: yarn android
+        uses: reactivecircus/android-emulator-runner@v2.20.0
+        with:
+          api-level: 30
+          profile: Nexus 6
+          arch: x86_64
+          working-directory: ./Samples/SimpleMixpanel
+          script: yarn android
 
   test_ios:
     runs-on: macos-latest

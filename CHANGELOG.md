@@ -1,5 +1,18 @@
 #
 
+## [v3.0.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.1) (2024-04-11)
+
+### Fixes
+
+- Replace the MixpanelReactNative with mixpanelImpl and bump native versions [\#231](https://github.com/mixpanel/mixpanel-react-native/pull/231)
+
+**Closed issues:**
+
+- Expo managed workflow support [\#82](https://github.com/mixpanel/mixpanel-react-native/issues/82)
+- Feature request: Support react-native-web [\#24](https://github.com/mixpanel/mixpanel-react-native/issues/24)
+
+#
+
 ## [v3.0.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.0) (2024-04-09)
 
 This is the official release for Expo and React Native Web support. For more details, please refer to the release notes for versions [3.0.0-beta.2](https://github.com/mixpanel/mixpanel-react-native/blob/master/CHANGELOG.md#v300-beta2-2024-03-06) and [3.0.0-beta.1](https://github.com/mixpanel/mixpanel-react-native/blob/master/CHANGELOG.md#v300-beta1-2024-02-29).
@@ -377,6 +390,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

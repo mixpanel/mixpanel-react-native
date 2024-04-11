@@ -300,7 +300,7 @@ export class Mixpanel {
     if (!ObjectHelper.isValidOrUndefined(properties)) {
       ObjectHelper.raiseError(PARAMS.PROPERTIES);
     }
-    MixpanelReactNative.track(this.token, eventName, {
+    this.mixpanelImpl.track(this.token, eventName, {
       ...Helper.getMetaData(),
       ...properties,
     });
@@ -343,7 +343,7 @@ export class Mixpanel {
     if (!ObjectHelper.isValidOrUndefined(properties)) {
       ObjectHelper.raiseError(PARAMS.PROPERTIES);
     }
-    MixpanelReactNative.trackWithGroups(
+    this.mixpanelImpl.trackWithGroups(
       this.token,
       eventName,
       {

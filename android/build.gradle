@@ -13,9 +13,9 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 33
     buildToolsVersion "30.0.3"
-    
+
     def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
-    
+
     if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
       namespace "com.mixpanel.reactnative"
     }
@@ -41,5 +41,5 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.mixpanel.android:mixpanel-android:7.3.2'
+    implementation 'com.mixpanel.android:mixpanel-android:7.5.0'
 }

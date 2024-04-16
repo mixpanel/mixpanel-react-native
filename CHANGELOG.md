@@ -1,5 +1,13 @@
 #
 
+## [v3.0.2](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.2) (2024-04-16)
+
+### Fixes
+
+- Avoid crash if AsyncStorage is null [\#235](https://github.com/mixpanel/mixpanel-react-native/pull/235)
+
+#
+
 ## [v3.0.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.1) (2024-04-11)
 
 ### Fixes
@@ -390,6 +398,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

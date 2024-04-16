@@ -100,12 +100,36 @@ const SampleApp = () => {
 export default SampleApp;
 
 ```
-### Expo and React Native for Web support
-Starting from version 3.0.0, we have introduced support for Expo, React Native for Web, and other platforms utilizing React Native that do not support iOS and Android directly. To enable this feature, initialize Mixpanel with an additional parameter, `useNative`, set to false(```const mixpanel = new Mixpanel(
+### Expo and React Native for Web support (3.0.2 and above)
+Starting from version 3.0.2, we have introduced support for Expo, React Native for Web, and other platforms utilizing React Native that do not support iOS and Android directly. 
+To enable this feature, 
+<br>Step 1: 
+```
+npm install @react-native-async-storage/async-storage
+```
+When JavaScript mode is enabled, Mixpanel utilizes [AsyncStorage](https://reactnative.dev/docs/asyncstorage) to persist data. If you prefer not to use it, or if AsyncStorage is unavailable in your target environment, you can import or define a different storage class. However, it must follow the same interface as [AsyncStorage](https://reactnative.dev/docs/asyncstorage) The following example demonstrates how to use a custom storage solution:
+
+```
+const MyAsyncStorage = require("@my-org/<library-path>/AsyncStorage"); // or your own storage class
+const trackAutomaticEvents = false;
+const useNative = false;
+const mixpanel = new Mixpanel('YOUR_TOKEN', trackAutomaticEvents, useNative, MyAsyncStorage);
+mixpanel.init();
+```
+
+<br>Step 2:
+Initialize Mixpanel with an additional parameter, `useNative`, set to false.
+```
+const trackAutomaticEvents = false;
+const useNative = false;
+const mixpanel = new Mixpanel(
     "YOUR_MIXPANEL_TOKEN",
     trackAutomaticEvents,
     useNative
-  );```). This will activate JavaScript mode. Please note that this functionality is currently in beta testing. For further details and installation guidelines, refer to the release notes available at Mixpanel React Native [v3.0.0-beta.1](https://github.com/mixpanel/mixpanel-react-native/releases/tag/v3.0.0-beta.1).
+  );
+``` 
+This will activate JavaScript mode. 
+
 
 👋 👋  Tell us about the Mixpanel developer experience! [https://www.mixpanel.com/devnps](https://www.mixpanel.com/devnps) 👍  👎
 

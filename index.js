@@ -112,7 +112,7 @@ export class Mixpanel {
     trackAutomaticEvents,
     optOutTrackingDefault = DEFAULT_OPT_OUT
   ) {
-    await this.mixpanelImpl.initialize(
+    await MixpanelReactNative.initialize(
       token,
       trackAutomaticEvents,
       optOutTrackingDefault,

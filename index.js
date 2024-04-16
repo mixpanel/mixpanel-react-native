@@ -82,7 +82,7 @@ export class Mixpanel {
     superProperties = {},
     serverURL = "https://api.mixpanel.com"
   ) {
-    await MixpanelReactNative.initialize(
+    await this.mixpanelImpl.initialize(
       this.token,
       this.trackAutomaticEvents,
       optOutTrackingDefault,

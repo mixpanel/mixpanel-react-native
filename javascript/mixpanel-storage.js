@@ -3,7 +3,15 @@ import {MixpanelLogger} from "mixpanel-react-native/javascript/mixpanel-logger";
 export class AsyncStorageAdapter {
   constructor(storage) {
     if (!storage) {
-      this.storage = require("@react-native-async-storage/async-storage");
+      try {
+        this.storage = require("@react-native-async-storage/async-storage");
+      } catch {
+        console.error(
+          "[@RNC/AsyncStorage]: NativeModule: AsyncStorage is null. Please run 'npm install @react-native-async-storage/async-storage' or follow the Mixpanel guide to set up your own Storage class."
+        );
+        console.error("[Mixpanel] Falling back to in-memory storage");
+        this.storage = new InMemoryStorage();
+      }
     } else {
       this.storage = storage;
     }
@@ -32,5 +40,23 @@ export class AsyncStorageAdapter {
     } catch {
       MixpanelLogger.error("error removing item from storage");
     }
+  }
+}
+
+class InMemoryStorage {
+  constructor() {
+    this.store = {};
+  }
+
+  async getItem(key) {
+    return this.store.hasOwnProperty(key) ? this.store[key] : null;
+  }
+
+  async setItem(key, value) {
+    this.store[key] = value;
+  }
+
+  async removeItem(key) {
+    delete this.store[key];
   }
 }

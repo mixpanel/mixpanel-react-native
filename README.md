@@ -110,7 +110,8 @@ npm install @react-native-async-storage/async-storage
 When JavaScript mode is enabled, Mixpanel utilizes [AsyncStorage](https://reactnative.dev/docs/asyncstorage) to persist data. If you prefer not to use it, or if AsyncStorage is unavailable in your target environment, you can import or define a different storage class. However, it must follow the same interface as [AsyncStorage](https://reactnative.dev/docs/asyncstorage) The following example demonstrates how to use a custom storage solution:
 
 ```
-const MyAsyncStorage = require("@my-org/<library-path>/AsyncStorage"); // or your own storage class
+// Optional: if you do not want to use the default AsyncStorage
+const MyAsyncStorage = require("@my-org/<library-path>/AsyncStorage"); 
 const trackAutomaticEvents = false;
 const useNative = false;
 const mixpanel = new Mixpanel('YOUR_TOKEN', trackAutomaticEvents, useNative, MyAsyncStorage);

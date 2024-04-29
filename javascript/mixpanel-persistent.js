@@ -50,8 +50,6 @@ export class MixpanelPersistent {
   }
 
   async loadDeviceId(token) {
-    console.info("storageAdapter", this.storageAdapter);
-    console.info("storageAdapter get item", this.storageAdapter.getItem());
     await this.storageAdapter
       .getItem(getDeviceIdKey(token))
       .then((deviceId) => {

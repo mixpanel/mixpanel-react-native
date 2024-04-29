@@ -83,4 +83,4 @@ jobs:
         run: pod install --repo-update
       - name: Test iOS
         working-directory: ./Samples/SimpleMixpanel
-        run: yarn ios
+        run: yarn ios --simulator "iPhone 15 Pro"

@@ -1,12 +1,18 @@
 type MixpanelType = any;
 type MixpanelProperties = {[key: string]: MixpanelType};
 
+export type Storage = {
+  getItem: (id: string) => Promise<string>;
+  setItem: (item: string) => Promise<void>;
+  removeItem: (id: string) => Promise<void>;
+};
+
 export class Mixpanel {
   constructor(
     token: string,
     trackAutomaticEvents: boolean,
     useNative?: boolean,
-    storage?: any
+    storage?: Storage
   );
   static init(
     token: string,

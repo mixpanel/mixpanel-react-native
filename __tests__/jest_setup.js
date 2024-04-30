@@ -3,9 +3,9 @@ import * as ReactNative from "react-native";
 jest.mock("mixpanel-react-native/javascript/mixpanel-storage", () => {
   return {
     AsyncStorageAdapter: jest.fn().mockImplementation(() => ({
-      getItem: jest.fn(),
-      setItem: jest.fn(),
-      removeItem: jest.fn(),
+      getItem: jest.fn().mockResolvedValue(null),
+      setItem: jest.fn().mockResolvedValue(undefined),
+      removeItem: jest.fn().mockResolvedValue(undefined),
     })),
   };
 });

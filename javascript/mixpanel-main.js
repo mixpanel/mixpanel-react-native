@@ -41,7 +41,7 @@ export default class MixpanelMain {
 
   getMetaData() {
     const {OS, Version, constants} = Platform;
-    const {Brand, Manufacturer, Model} = constants;
+    const {Brand, Manufacturer, Model} = constants || {};
 
     let metadata = {
       $os: OS,

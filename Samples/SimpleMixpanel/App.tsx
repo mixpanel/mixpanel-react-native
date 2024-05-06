@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { Button, SafeAreaView } from "react-native";
-import { Mixpanel } from 'mixpanel-react-native';
+import React from 'react';
+import {Button, SafeAreaView} from 'react-native';
+import {Mixpanel} from 'mixpanel-react-native';
 
 const trackAutomaticEvents = true;
-const mixpanel = new Mixpanel("Your Project Token", trackAutomaticEvents);
+const mixpanel = new Mixpanel('Your Project Token', trackAutomaticEvents);
 mixpanel.init();
 
 // *************************************
@@ -15,11 +15,11 @@ const SampleApp = () => {
     <SafeAreaView>
       <Button
         title="Select Premium Plan"
-        onPress={() => mixpanel.track("Plan Selected", {"Plan": "Premium"})}
+        onPress={() => mixpanel.track('Plan Selected', {Plan: 'Premium'})}
       />
     </SafeAreaView>
   );
-}
+};
 
 export default SampleApp;
 
@@ -36,7 +36,7 @@ export default SampleApp;
 //           onPress={() => mixpanel.track("Plan Selected", {"Plan": "Premium"})}
 //         />
 //       </SafeAreaView>
-//     );    
+//     );
 //   }
 // }
 

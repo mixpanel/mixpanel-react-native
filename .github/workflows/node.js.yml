@@ -40,7 +40,13 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: "temurin" # See 'Supported distributions' for available options
+          java-version: "17"
       - run: npm install
+      - run: npm install -g react-native-cli
+      - run: npm i react-native-gradle-plugin
       - name: Test Integration - Install dependencies
         working-directory: ./Samples/SimpleMixpanel
         run: yarn install
@@ -59,7 +65,7 @@ jobs:
           profile: Nexus 6
           arch: x86_64
           working-directory: ./Samples/SimpleMixpanel
-          script: yarn android
+          script: react-native run-android
 
   test_ios:
     runs-on: macos-latest
@@ -75,12 +81,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
+      - run: npm install -g react-native-cli
       - name: Test Integration - Install dependencies
         working-directory: ./Samples/SimpleMixpanel
-        run: yarn install
+        run: npm install
       - name: Setup iOS
         working-directory: ./Samples/SimpleMixpanel/ios
         run: pod install --repo-update
       - name: Test iOS
         working-directory: ./Samples/SimpleMixpanel
-        run: yarn ios --simulator "iPhone 15 Pro"
+        run: react-native run-ios

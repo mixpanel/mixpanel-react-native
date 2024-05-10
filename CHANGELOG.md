@@ -1,5 +1,22 @@
 #
 
+## [v3.0.3](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.3) (2024-05-10)
+
+### Enhancements
+
+- bump iOS to 4.2.7 [\#249](https://github.com/mixpanel/mixpanel-react-native/pull/249)
+- Require only the used subset of `AsnycStorage` as custom storage [\#246](https://github.com/mixpanel/mixpanel-react-native/pull/246)
+- Fix CI issues for both iOS and Android and update the sample app [\#241](https://github.com/mixpanel/mixpanel-react-native/pull/241)
+- Version bump Android SDK to 7.5.2 [\#237](https://github.com/mixpanel/mixpanel-react-native/pull/237)
+
+### Fixes
+
+- fix: fix adapter storage jest setup [\#244](https://github.com/mixpanel/mixpanel-react-native/pull/244)
+- fix storage adapter info being logged on every app launch [\#239](https://github.com/mixpanel/mixpanel-react-native/pull/239)
+- Added null check for empty constants object incase of web [\#238](https://github.com/mixpanel/mixpanel-react-native/pull/238)
+
+#
+
 ## [v3.0.2](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.2) (2024-04-16)
 
 ### Fixes
@@ -398,6 +415,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

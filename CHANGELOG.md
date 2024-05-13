@@ -1,5 +1,14 @@
 #
 
+## [v3.0.4](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.4) (2024-05-13)
+
+### Fixes
+
+- Improvement for supporting the custom storage [\#251](https://github.com/mixpanel/mixpanel-react-native/pull/251)
+- Avoid CORS errors [\#250](https://github.com/mixpanel/mixpanel-react-native/pull/250)
+
+#
+
 ## [v3.0.3](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.3) (2024-05-10)
 
 ### Enhancements
@@ -415,6 +424,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

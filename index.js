@@ -3,7 +3,6 @@
 import {Platform, NativeModules} from "react-native";
 import packageJson from "./package.json";
 const {MixpanelReactNative} = NativeModules;
-import MixpanelMain from "mixpanel-react-native/javascript/mixpanel-main";
 
 const DevicePlatform = {
   Unknown: "Unknown",
@@ -46,27 +45,18 @@ export class Mixpanel {
     }
     this.token = token;
     this.trackAutomaticEvents = trackAutomaticEvents;
-    if (!useNative) {
-      this.mixpanelImpl = new MixpanelMain(
-        token,
-        trackAutomaticEvents,
-        storage
-      );
-      return;
-    }
 
-    if (!MixpanelReactNative) {
+    if (useNative && MixpanelReactNative) {
+      this.mixpanelImpl = MixpanelReactNative;
+      return;
+    } else if (useNative) {
       console.warn(
         "MixpanelReactNative is not available; using JavaScript mode. If you prefer not to use the JavaScript mode, please follow the guide in the GitHub repository: https://github.com/mixpanel/mixpanel-react-native."
       );
-      this.mixpanelImpl = new MixpanelMain(
-        token,
-        trackAutomaticEvents,
-        storage
-      );
-    } else {
-      this.mixpanelImpl = MixpanelReactNative;
     }
+
+    const MixpanelMain = require("mixpanel-react-native/javascript/mixpanel-main");
+    this.mixpanelImpl = new MixpanelMain(token, trackAutomaticEvents, storage);
   }
 
   /**

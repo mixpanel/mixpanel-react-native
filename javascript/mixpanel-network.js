@@ -24,9 +24,9 @@ export const MixpanelNetwork = (() => {
       const response = await fetch(url, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: JSON.stringify(data),
+        body: `data=${JSON.stringify(data)}`,
       });
 
       const responseBody = await response.json();

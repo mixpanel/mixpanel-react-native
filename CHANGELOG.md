@@ -1,5 +1,13 @@
 #
 
+## [v3.0.5](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.5) (2024-05-14)
+
+### Fixes
+
+- fix: resolve import issue for MixpanelMain [\#253](https://github.com/mixpanel/mixpanel-react-native/pull/253)
+
+#
+
 ## [v3.0.4](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.4) (2024-05-13)
 
 ### Fixes
@@ -424,6 +432,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

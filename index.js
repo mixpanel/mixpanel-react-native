@@ -3,6 +3,7 @@
 import {Platform, NativeModules} from "react-native";
 import packageJson from "./package.json";
 const {MixpanelReactNative} = NativeModules;
+import MixpanelMain from "mixpanel-react-native/javascript/mixpanel-main"
 
 const DevicePlatform = {
   Unknown: "Unknown",
@@ -55,7 +56,6 @@ export class Mixpanel {
       );
     }
 
-    const MixpanelMain = require("mixpanel-react-native/javascript/mixpanel-main");
     this.mixpanelImpl = new MixpanelMain(token, trackAutomaticEvents, storage);
   }
 

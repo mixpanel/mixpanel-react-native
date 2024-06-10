@@ -30,7 +30,7 @@ export default class MixpanelMain {
       await this.optOutTracking(token);
       return;
     } else {
-      await this.optInTracking(token);
+      await this._setOptedOutTrackingFlag(token, false);
     }
 
     this.setServerURL(token, serverURL);
@@ -106,6 +106,7 @@ export default class MixpanelMain {
       this.mixpanelPersistent.updateTimeEvents(token, timeEvents);
       await this.mixpanelPersistent.persistTimeEvents(token);
     }
+    console.info("about to add to mixpanel queue");
     await this.core.addToMixpanelQueue(token, MixpanelType.EVENTS, eventData);
   }
 
@@ -133,17 +134,20 @@ export default class MixpanelMain {
   }
 
   async optOutTracking(token) {
-    this.mixpanelPersistent.updateOptedOut(token, true);
-    await this.mixpanelPersistent.persistOptedOut(token);
+    await this._setOptedOutTrackingFlag(token, true);
     MixpanelLogger.log(token, "User has opted out of tracking");
     await this.mixpanelPersistent.reset(token);
   }
 
   async optInTracking(token) {
-    this.mixpanelPersistent.updateOptedOut(token, false);
-    await this.mixpanelPersistent.persistOptedOut(token);
+    await this._setOptedOutTrackingFlag(token, false);
     MixpanelLogger.log(token, "User has opted in to tracking");
     await this.track(token, "$opt_in");
+  }
+
+  async _setOptedOutTrackingFlag(token, optedOut) {
+    this.mixpanelPersistent.updateOptedOut(token, optedOut);
+    await this.mixpanelPersistent.persistOptedOut(token);
   }
 
   hasOptedOutTracking(token) {

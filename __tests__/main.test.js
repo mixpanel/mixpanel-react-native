@@ -153,27 +153,26 @@ describe("MixpanelMain", () => {
   //   ).toHaveBeenCalledWith(token);
   // });
 
-  // it("should not track if initialize with optOutTrackingDefault being true", async () => {
-  //   const trackAutomaticEvents = false;
-  //   const optOutTrackingDefault = true;
-  //   const superProperties = {superProp1: "value1", superProp2: "value2"};
-  //   const serverURL = "https://api.mixpanel.com";
+  it("should not track if initialize with optOutTrackingDefault being true", async () => {
+    const trackAutomaticEvents = false;
+    const optOutTrackingDefault = true;
+    const superProperties = {superProp1: "value1", superProp2: "value2"};
+    const serverURL = "https://api.mixpanel.com";
 
-  //   await mixpanelMain.initialize(
-  //     token,
-  //     trackAutomaticEvents,
-  //     optOutTrackingDefault,
-  //     superProperties,
-  //     serverURL
-  //   );
+    await mixpanelMain.initialize(
+      token,
+      trackAutomaticEvents,
+      optOutTrackingDefault,
+      superProperties,
+      serverURL
+    );
 
-  //   const eventName = "Test Event";
-  //   const eventProperties = {prop1: "value1", prop2: "value2"};
+    const eventName = "Test Event";
+    const eventProperties = {prop1: "value1", prop2: "value2"};
 
-  //   await mixpanelMain.track(token, eventName, eventProperties);
-  //   const queue = MixpanelQueueManager.getQueue(token, MixpanelType.EVENTS);
-  //   expect(queue).toHaveLength(0);
-  // });
+    await mixpanelMain.track(token, eventName, eventProperties);
+    expect(mixpanelMain.core.addToMixpanelQueue).not.toHaveBeenCalled();
+  });
 
   it("should track if initialize with optOutTrackingDefault being false", async () => {
     const trackAutomaticEvents = false;
@@ -194,9 +193,6 @@ describe("MixpanelMain", () => {
 
     await mixpanelMain.track(token, eventName, eventProperties);
     expect(mixpanelMain.core.addToMixpanelQueue).toHaveBeenCalled();
-
-    const queue = MixpanelQueueManager.getQueue(token, MixpanelType.EVENTS);
-    expect(queue).toHaveLength(1);
   });
 
   // it("register super properties should update properties", async () => {

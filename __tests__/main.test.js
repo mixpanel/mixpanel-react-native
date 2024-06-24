@@ -82,13 +82,13 @@ jest.mock("mixpanel-react-native/javascript/mixpanel-config", () => ({
   },
 }));
 
-jest.mock("mixpanel-react-native/javascript/mixpanel-logger", () => {
-  return {
-    MixpanelLogger: {
-      log: jest.fn(),
-    },
-  };
-});
+// jest.mock("mixpanel-react-native/javascript/mixpanel-logger", () => {
+//   return {
+//     MixpanelLogger: {
+//       log: jest.fn(),
+//     },
+//   };
+// });
 
 const {
   MixpanelNetwork,

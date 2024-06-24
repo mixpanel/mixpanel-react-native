@@ -57,9 +57,7 @@ export const MixpanelCore = (storage) => {
   };
 
   const addToMixpanelQueue = async (token, type, data) => {
-    console.info("here");
     if (mixpanelPersistent.getOptedOut(token)) {
-      console.info("opted out of tracking, skipping tracking. ");
       MixpanelLogger.log(
         token,
         `User has opted out of tracking, skipping tracking.`

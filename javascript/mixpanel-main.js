@@ -27,7 +27,6 @@ export default class MixpanelMain {
 
     await this.mixpanelPersistent.initializationCompletePromise(token);
     if (optOutTrackingDefault) {
-      console.log("this is hit")
       await this.optOutTracking(token);
       return;
     } else {
@@ -73,7 +72,6 @@ export default class MixpanelMain {
 
   async track(token, eventName, properties) {
     if (this.mixpanelPersistent.getOptedOut(token)) {
-      console.info("opted out of tracking, skipping tracking. ");
       MixpanelLogger.log(
         token,
         `User has opted out of tracking, skipping tracking.`
@@ -116,7 +114,6 @@ export default class MixpanelMain {
       this.mixpanelPersistent.updateTimeEvents(token, timeEvents);
       await this.mixpanelPersistent.persistTimeEvents(token);
     }
-    console.info("about to add to mixpanel queue");
     await this.core.addToMixpanelQueue(token, MixpanelType.EVENTS, eventData);
   }
 
@@ -146,7 +143,6 @@ export default class MixpanelMain {
   async optOutTracking(token) {
     await this._setOptedOutTrackingFlag(token, true);
     MixpanelLogger.log(token, "User has opted out of tracking");
-    console.log("User has opted out of tracking")
     await this.mixpanelPersistent.reset(token);
   }
 

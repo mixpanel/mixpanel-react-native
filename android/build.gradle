@@ -4,15 +4,15 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:8.1.0'
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 33
-    buildToolsVersion "30.0.3"
+    compileSdkVersion 34
+    buildToolsVersion "34.0.0"
 
     def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
 
@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
     }
@@ -41,5 +41,5 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.mixpanel.android:mixpanel-android:7.5.2'
+    implementation 'com.mixpanel.android:mixpanel-android:7.5.3'
 }

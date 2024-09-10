@@ -1,5 +1,18 @@
 #
 
+## [v3.0.6](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.6) (2024-09-10)
+
+### Enhancements
+
+- bump iOS to 4.3.0 and Android minSDK to 23 [\#264](https://github.com/mixpanel/mixpanel-react-native/pull/264)
+- upgrade android sdk to 7.5.3 [\#263](https://github.com/mixpanel/mixpanel-react-native/pull/263)
+
+### Fixes
+
+- fix: opt in tracking issue during initialize [\#257](https://github.com/mixpanel/mixpanel-react-native/pull/257)
+
+#
+
 ## [v3.0.5](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.5) (2024-05-14)
 
 ### Fixes
@@ -432,6 +445,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

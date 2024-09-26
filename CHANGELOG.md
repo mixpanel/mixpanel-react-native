@@ -1,5 +1,14 @@
 #
 
+## [v3.0.7](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.7) (2024-09-26)
+
+### Fixes
+
+- Revert the minSDK to 21 [\#271](https://github.com/mixpanel/mixpanel-react-native/pull/271)
+- revert android [\#267](https://github.com/mixpanel/mixpanel-react-native/pull/267)
+
+#
+
 ## [v3.0.6](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.6) (2024-09-10)
 
 ### Enhancements
@@ -445,6 +454,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

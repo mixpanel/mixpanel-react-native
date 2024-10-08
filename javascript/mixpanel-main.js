@@ -196,7 +196,7 @@ export default class MixpanelMain {
     if (!this.mixpanelPersistent.getDeviceId(token)) {
       await this.mixpanelPersistent.loadIdentity(token);
     }
-    return this.identity[token].deviceId;
+    return this.mixpanelPersistent.getDeviceId(token);
   }
 
   async getDistinctId(token) {

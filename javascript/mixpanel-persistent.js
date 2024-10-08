@@ -51,14 +51,19 @@ export class MixpanelPersistent {
   }
 
   async loadDeviceId(token) {
-    await this.storageAdapter
-      .getItem(getDeviceIdKey(token))
-      .then((deviceId) => {
-        if (!this._identity[token]) {
-          this._identity[token] = {};
-        }
-        this._identity[token].deviceId = deviceId;
-      });
+    if (!token) {
+      return;
+    }
+
+    const storageToken = await this.storageAdapter
+      .getItem(getDeviceIdKey(token));
+
+    if (!this._identity[token]) {
+      this._identity[token] = {};
+    }
+
+    this._identity[token].deviceId = storageToken;
+
     if (!this._identity[token].deviceId) {
       try {
         this._identity[token].deviceId = randomUUID();

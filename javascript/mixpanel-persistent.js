@@ -17,12 +17,12 @@ import {randomUUID} from 'expo-crypto';
 export class MixpanelPersistent {
   static instance;
 
-  static getInstance(storage) {
+  static getInstance(storage, token) {
     if (!MixpanelPersistent.instance) {
       MixpanelPersistent.instance = new MixpanelPersistent(
         new AsyncStorageAdapter(storage)
       );
-      MixpanelPersistent.initializationCompletePromise = MixpanelPersistent.instance.initializationCompletePromise();
+      MixpanelPersistent.initializationCompletePromise = MixpanelPersistent.instance.initializationCompletePromise(token);
     }
     return MixpanelPersistent.instance;
   }

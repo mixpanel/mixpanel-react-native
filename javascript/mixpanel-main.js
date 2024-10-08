@@ -13,7 +13,7 @@ export default class MixpanelMain {
     this.core = MixpanelCore(storage);
     this.core.initialize(token);
     this.core.startProcessingQueue(token);
-    this.mixpanelPersistent = MixpanelPersistent.getInstance(storage);
+    this.mixpanelPersistent = MixpanelPersistent.getInstance(storage, token);
   }
 
   async initialize(

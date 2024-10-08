@@ -4,7 +4,12 @@ export class AsyncStorageAdapter {
   constructor(storage) {
     if (!storage) {
       try {
-        this.storage = require("@react-native-async-storage/async-storage");
+        const storageModule = require("@react-native-async-storage/async-storage");
+        if (storageModule.default) {
+          this.storage = storageModule.default
+        } else {
+          this.storage = storageModule
+        }
       } catch {
         console.error(
           "[@RNC/AsyncStorage]: NativeModule: AsyncStorage is null. Please run 'npm install @react-native-async-storage/async-storage' or follow the Mixpanel guide to set up your own Storage class."

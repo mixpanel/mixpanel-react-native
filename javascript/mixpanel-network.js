@@ -26,7 +26,7 @@ export const MixpanelNetwork = (() => {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `data=${JSON.stringify(data)}`,
+        body: `data=${encodeURIComponent(JSON.stringify(data))}`,
       });
 
       const responseBody = await response.json();

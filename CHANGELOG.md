@@ -1,5 +1,13 @@
 #
 
+## [v3.0.8](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.8) (2024-11-21)
+
+### Fixes
+
+- encodeURIComponent body JSON data [\#277](https://github.com/mixpanel/mixpanel-react-native/pull/277)
+
+#
+
 ## [v3.0.7](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.7) (2024-09-26)
 
 ### Fixes
@@ -454,6 +462,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

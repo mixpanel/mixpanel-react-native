@@ -185,7 +185,7 @@ describe("MixpanelMain", () => {
     const optOutTrackingDefault = false;
     const superProperties = {superProp1: "value1", superProp2: "value2"};
     const serverURL = "https://api.mixpanel.com";
-    console.info("here111");
+
     await mixpanelMain.initialize(
       token,
       trackAutomaticEvents,

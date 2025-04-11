@@ -2,18 +2,11 @@ import {MixpanelPersistent} from "./mixpanel-persistent";
 
 export const MixpanelQueueManager = (() => {
   let _queues = {};
-  let mixpanelPersistent;
-
-  const getPersistent = () => {
-    if (!mixpanelPersistent) {
-        mixpanelPersistent = MixpanelPersistent.getInstance();
-    }
-    return mixpanelPersistent;
-  };
+  const mixpanelPersistent = MixpanelPersistent.getInstance();
 
   const initialize = async (token, type) => {
     if (!_queues[token] || !_queues[token][type]) {
-      const queue = await getPersistent().loadQueue(token, type);
+      const queue = await mixpanelPersistent.loadQueue(token, type);
       _queues[token] = {
         ..._queues[token],
         [type]: queue,
@@ -25,7 +18,7 @@ export const MixpanelQueueManager = (() => {
     if (!_queues[token] || !_queues[token][type]) {
       return;
     }
-    await getPersistent().saveQueue(token, type, _queues[token][type]);
+    await mixpanelPersistent.saveQueue(token, type, _queues[token][type]);
   };
 
   const enqueue = async (token, type, data) => {

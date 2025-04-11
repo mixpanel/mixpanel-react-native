@@ -1,5 +1,17 @@
 #
 
+## [v3.0.9](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.9) (2025-04-11)
+
+### Enhancements
+
+- Bump native SDKs, Swift 4.4.0 and Android 8.0.3 [\#285](https://github.com/mixpanel/mixpanel-react-native/pull/285)
+
+### Fixes
+
+- fix: custom storage [\#282](https://github.com/mixpanel/mixpanel-react-native/pull/282)
+
+#
+
 ## [v3.0.8](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.8) (2024-11-21)
 
 ### Fixes
@@ -462,6 +474,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

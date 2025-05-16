@@ -9,10 +9,10 @@ import {
   getAppHasOpenedBeforeKey,
 } from "./mixpanel-constants";
 
-import {AsyncStorageAdapter} from "./mixpanel-storage";
+import { AsyncStorageAdapter } from "./mixpanel-storage";
 import uuid from "uuid";
-import {MixpanelLogger} from "mixpanel-react-native/javascript/mixpanel-logger";
-import {randomUUID} from 'expo-crypto';
+import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger";
+import { randomUUID } from "expo-crypto";
 
 export class MixpanelPersistent {
   static instance;
@@ -22,7 +22,8 @@ export class MixpanelPersistent {
       MixpanelPersistent.instance = new MixpanelPersistent(
         new AsyncStorageAdapter(storage)
       );
-      MixpanelPersistent.initializationCompletePromise = MixpanelPersistent.instance.initializationCompletePromise(token);
+      MixpanelPersistent.initializationCompletePromise =
+        MixpanelPersistent.instance.initializationCompletePromise(token);
     }
     return MixpanelPersistent.instance;
   }
@@ -55,8 +56,9 @@ export class MixpanelPersistent {
       return;
     }
 
-    const storageToken = await this.storageAdapter
-      .getItem(getDeviceIdKey(token));
+    const storageToken = await this.storageAdapter.getItem(
+      getDeviceIdKey(token)
+    );
 
     if (!this._identity[token]) {
       this._identity[token] = {};
@@ -169,6 +171,12 @@ export class MixpanelPersistent {
     return this._identity[token].userId;
   }
 
+  isIdentified(token) {
+    const userId = this.getUserId(token);
+    const isIdentified = userId !== null && userId !== undefined;
+    return isIdentified;
+  }
+
   updateUserId(token, userId) {
     this._identity[token].userId = userId;
   }
@@ -199,7 +207,7 @@ export class MixpanelPersistent {
   updateSuperProperties(token, superProperties) {
     this._superProperties = {
       ...this._superProperties,
-      [token]: {...superProperties},
+      [token]: { ...superProperties },
     };
   }
 
@@ -227,7 +235,7 @@ export class MixpanelPersistent {
   }
 
   updateTimeEvents(token, timeEvents) {
-    this._timeEvents = {...this._timeEvents, [token]: {...timeEvents}};
+    this._timeEvents = { ...this._timeEvents, [token]: { ...timeEvents } };
   }
 
   async persistTimeEvents(token) {
@@ -252,7 +260,7 @@ export class MixpanelPersistent {
   }
 
   updateOptedOut(token, optOut) {
-    this._optedOut = {...this._optedOut, [token]: optOut};
+    this._optedOut = { ...this._optedOut, [token]: optOut };
   }
 
   async persistOptedOut(token) {

@@ -14,7 +14,7 @@ const App = () => {
   const trackAutomaticEvents = false;
   const useNative = false;
   const mixpanel = new Mixpanel(
-    "YOUR_MIXPANEL_TOKEN",
+    "26d77caa3b67accd112d74ecfc0214a4",
     trackAutomaticEvents,
     useNative
   );

@@ -1,10 +1,10 @@
-import {MixpanelQueueManager} from "./mixpanel-queue";
-import {MixpanelNetwork} from "./mixpanel-network";
-import {SessionMetadata} from "./mixpanel-utils";
-import {MixpanelType} from "./mixpanel-constants";
-import {MixpanelConfig} from "./mixpanel-config";
-import {MixpanelPersistent} from "./mixpanel-persistent";
-import {MixpanelLogger} from "./mixpanel-logger";
+import { MixpanelQueueManager } from "./mixpanel-queue";
+import { MixpanelNetwork } from "./mixpanel-network";
+import { SessionMetadata } from "./mixpanel-utils";
+import { MixpanelType } from "./mixpanel-constants";
+import { MixpanelConfig } from "./mixpanel-config";
+import { MixpanelPersistent } from "./mixpanel-persistent";
+import { MixpanelLogger } from "./mixpanel-logger";
 
 export const MixpanelCore = (storage) => {
   const mixpanelPersistent = MixpanelPersistent.getInstance(storage);
@@ -57,6 +57,7 @@ export const MixpanelCore = (storage) => {
   };
 
   const addToMixpanelQueue = async (token, type, data) => {
+    MixpanelLogger.log("addToMixpanelQueue");
     if (mixpanelPersistent.getOptedOut(token)) {
       MixpanelLogger.log(
         token,
@@ -154,10 +155,15 @@ export const MixpanelCore = (storage) => {
     }
   };
 
+  const identifyUserQueue = async (token) => {
+    await MixpanelQueueManager.identifyUserQueue(token);
+  };
+
   return {
     initialize,
     startProcessingQueue,
     addToMixpanelQueue,
     flush,
+    identifyUserQueue,
   };
 };

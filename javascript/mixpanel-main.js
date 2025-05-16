@@ -13,7 +13,7 @@ export default class MixpanelMain {
     this.core = MixpanelCore(storage);
     this.core.initialize(token);
     this.core.startProcessingQueue(token);
-    this.mixpanelPersistent = MixpanelPersistent.getInstance();
+    this.mixpanelPersistent = MixpanelPersistent.getInstance(storage, token);
   }
 
   async initialize(
@@ -196,7 +196,7 @@ export default class MixpanelMain {
     if (!this.mixpanelPersistent.getDeviceId(token)) {
       await this.mixpanelPersistent.loadIdentity(token);
     }
-    return this.identity[token].deviceId;
+    return this.mixpanelPersistent.getDeviceId(token);
   }
 
   async getDistinctId(token) {

@@ -12,16 +12,17 @@ import {
 import {AsyncStorageAdapter} from "./mixpanel-storage";
 import uuid from "uuid";
 import {MixpanelLogger} from "mixpanel-react-native/javascript/mixpanel-logger";
+import {randomUUID} from 'expo-crypto';
 
 export class MixpanelPersistent {
   static instance;
 
-  static getInstance(storage) {
+  static getInstance(storage, token) {
     if (!MixpanelPersistent.instance) {
       MixpanelPersistent.instance = new MixpanelPersistent(
         new AsyncStorageAdapter(storage)
       );
-      MixpanelPersistent.initializationCompletePromise = MixpanelPersistent.instance.initializationCompletePromise();
+      MixpanelPersistent.initializationCompletePromise = MixpanelPersistent.instance.initializationCompletePromise(token);
     }
     return MixpanelPersistent.instance;
   }
@@ -50,16 +51,25 @@ export class MixpanelPersistent {
   }
 
   async loadDeviceId(token) {
-    await this.storageAdapter
-      .getItem(getDeviceIdKey(token))
-      .then((deviceId) => {
-        if (!this._identity[token]) {
-          this._identity[token] = {};
-        }
-        this._identity[token].deviceId = deviceId;
-      });
+    if (!token) {
+      return;
+    }
+
+    const storageToken = await this.storageAdapter
+      .getItem(getDeviceIdKey(token));
+
+    if (!this._identity[token]) {
+      this._identity[token] = {};
+    }
+
+    this._identity[token].deviceId = storageToken;
+
     if (!this._identity[token].deviceId) {
-      this._identity[token].deviceId = uuid.v4();
+      try {
+        this._identity[token].deviceId = randomUUID();
+      } catch (e) {
+        this._identity[token].deviceId = uuid.v4();
+      }
       await this.storageAdapter.setItem(
         getDeviceIdKey(token),
         this._identity[token].deviceId

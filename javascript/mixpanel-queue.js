@@ -31,10 +31,6 @@ export const MixpanelQueueManager = (() => {
   };
 
   const enqueue = async (token, type, data) => {
-    MixpanelLogger.log(
-      token,
-      `Enqueuing data for token: ${token}, type: ${type}`
-    );
     if (!_queues[token] || !_queues[token][type]) {
       _queues[token] = {
         ..._queues[token],
@@ -46,10 +42,6 @@ export const MixpanelQueueManager = (() => {
   };
 
   const getQueue = (token, type) => {
-    MixpanelLogger.log(
-      token,
-      `Getting queue for token: ${token}, type: ${type}`
-    );
     if (
       !_queues[token] ||
       !_queues[token][type] ||

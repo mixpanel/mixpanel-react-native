@@ -313,7 +313,6 @@ export default class MixpanelMain {
       ...(deviceId != null && { $device_id: deviceId }),
       ...(userId != null && { $user_id: userId }),
     };
-    MixpanelLogger.log(token, `Profile data: `, profileData);
     await this.core.addToMixpanelQueue(token, MixpanelType.USER, profileData);
   }
 

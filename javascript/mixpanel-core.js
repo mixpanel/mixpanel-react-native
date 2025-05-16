@@ -57,7 +57,6 @@ export const MixpanelCore = (storage) => {
   };
 
   const addToMixpanelQueue = async (token, type, data) => {
-    MixpanelLogger.log("addToMixpanelQueue");
     if (mixpanelPersistent.getOptedOut(token)) {
       MixpanelLogger.log(
         token,

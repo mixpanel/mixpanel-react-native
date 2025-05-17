@@ -1,6 +1,6 @@
-import {MixpanelType} from "mixpanel-react-native/javascript/mixpanel-constants";
-import {exp} from "react-native/Libraries/Animated/src/Easing";
-import {get} from "react-native/Libraries/Utilities/PixelRatio";
+import { MixpanelType } from "mixpanel-react-native/javascript/mixpanel-constants";
+import { exp } from "react-native/Libraries/Animated/src/Easing";
+import { get } from "react-native/Libraries/Utilities/PixelRatio";
 
 jest.mock("mixpanel-react-native/javascript/mixpanel-core", () => ({
   MixpanelCore: jest.fn().mockImplementation(() => ({
@@ -8,6 +8,7 @@ jest.mock("mixpanel-react-native/javascript/mixpanel-core", () => ({
     startProcessingQueue: jest.fn(),
     addToMixpanelQueue: jest.fn(),
     flush: jest.fn(),
+    identifyUserQueue: jest.fn(),
   })),
 }));
 
@@ -117,8 +118,8 @@ describe("MixpanelMain", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.isolateModules(async () => {
-      const MixpanelMain = require("mixpanel-react-native/javascript/mixpanel-main")
-        .default;
+      const MixpanelMain =
+        require("mixpanel-react-native/javascript/mixpanel-main").default;
       mixpanelMain = new MixpanelMain(token);
       MixpanelConfig.getInstance().getLoggingEnabled.mockReturnValue(true);
     });
@@ -128,7 +129,7 @@ describe("MixpanelMain", () => {
   it("should initialize properly", async () => {
     const trackAutomaticEvents = false;
     const optOutTrackingDefault = false;
-    const superProperties = {superProp1: "value1", superProp2: "value2"};
+    const superProperties = { superProp1: "value1", superProp2: "value2" };
     const serverURL = "https://api.mixpanel.com";
 
     await mixpanelMain.initialize(
@@ -156,9 +157,8 @@ describe("MixpanelMain", () => {
   it("should not track if initialize with optOutTrackingDefault being true", async () => {
     const trackAutomaticEvents = false;
     const optOutTrackingDefault = true;
-    const superProperties = {superProp1: "value1", superProp2: "value2"};
+    const superProperties = { superProp1: "value1", superProp2: "value2" };
     const serverURL = "https://api.mixpanel.com";
-
 
     await mixpanelMain.initialize(
       token,
@@ -169,11 +169,12 @@ describe("MixpanelMain", () => {
     );
 
     const eventName = "Test Event";
-    const eventProperties = {prop1: "value1", prop2: "value2"};
+    const eventProperties = { prop1: "value1", prop2: "value2" };
 
-    expect(
-          mixpanelMain.mixpanelPersistent.updateOptedOut
-        ).toHaveBeenCalledWith(token, true);
+    expect(mixpanelMain.mixpanelPersistent.updateOptedOut).toHaveBeenCalledWith(
+      token,
+      true
+    );
 
     mixpanelMain.mixpanelPersistent.getOptedOut.mockReturnValue(true);
     await mixpanelMain.track(token, eventName, eventProperties);
@@ -183,7 +184,7 @@ describe("MixpanelMain", () => {
   it("should track if initialize with optOutTrackingDefault being false", async () => {
     const trackAutomaticEvents = false;
     const optOutTrackingDefault = false;
-    const superProperties = {superProp1: "value1", superProp2: "value2"};
+    const superProperties = { superProp1: "value1", superProp2: "value2" };
     const serverURL = "https://api.mixpanel.com";
 
     await mixpanelMain.initialize(
@@ -195,14 +196,14 @@ describe("MixpanelMain", () => {
     );
     mixpanelMain.setLoggingEnabled(token, true);
     const eventName = "Test Event";
-    const eventProperties = {prop1: "value1", prop2: "value2"};
+    const eventProperties = { prop1: "value1", prop2: "value2" };
 
     await mixpanelMain.track(token, eventName, eventProperties);
     expect(mixpanelMain.core.addToMixpanelQueue).toHaveBeenCalled();
   });
 
   it("register super properties should update properties", async () => {
-    mixpanelMain.registerSuperProperties(token, {superProp3: "value3"});
+    mixpanelMain.registerSuperProperties(token, { superProp3: "value3" });
     expect(
       mixpanelMain.mixpanelPersistent.updateSuperProperties
     ).toHaveBeenCalledWith(token, {
@@ -217,7 +218,7 @@ describe("MixpanelMain", () => {
   });
 
   it("register super properties once should update properties only once", async () => {
-    mixpanelMain.registerSuperPropertiesOnce(token, {superProp3: "value3"});
+    mixpanelMain.registerSuperPropertiesOnce(token, { superProp3: "value3" });
     expect(
       mixpanelMain.mixpanelPersistent.updateSuperProperties
     ).toHaveBeenCalledWith(token, {
@@ -229,7 +230,7 @@ describe("MixpanelMain", () => {
     expect(
       mixpanelMain.mixpanelPersistent.persistSuperProperties
     ).toHaveBeenCalledWith(token);
-    mixpanelMain.registerSuperPropertiesOnce(token, {superProp3: "value4"});
+    mixpanelMain.registerSuperPropertiesOnce(token, { superProp3: "value4" });
     expect(
       mixpanelMain.mixpanelPersistent.updateSuperProperties
     ).toHaveBeenCalledWith(token, {
@@ -244,7 +245,7 @@ describe("MixpanelMain", () => {
   });
 
   it("unregister super properties should update properties properly", async () => {
-    mixpanelMain.registerSuperPropertiesOnce(token, {superProp3: "value3"});
+    mixpanelMain.registerSuperPropertiesOnce(token, { superProp3: "value3" });
     expect(
       mixpanelMain.mixpanelPersistent.updateSuperProperties
     ).toHaveBeenCalledWith(token, {
@@ -276,7 +277,7 @@ describe("MixpanelMain", () => {
 
   it("should send correct payload on track event", async () => {
     const eventName = "Test Event";
-    const eventProperties = {prop1: "value1", prop2: "value2"};
+    const eventProperties = { prop1: "value1", prop2: "value2" };
 
     await mixpanelMain.track(token, eventName, eventProperties);
     expect(mixpanelMain.core.addToMixpanelQueue).toHaveBeenCalledWith(
@@ -319,7 +320,7 @@ describe("MixpanelMain", () => {
     mixpanelMain.timeEvent(token, "test-event");
     expect(
       mixpanelMain.mixpanelPersistent.updateTimeEvents
-    ).toHaveBeenCalledWith(token, {"test-event": expect.any(Number)});
+    ).toHaveBeenCalledWith(token, { "test-event": expect.any(Number) });
     expect(
       mixpanelMain.mixpanelPersistent.persistTimeEvents
     ).toHaveBeenCalledWith(token);
@@ -359,7 +360,7 @@ describe("MixpanelMain", () => {
   });
 
   it("should send correct payload on set profile properties", async () => {
-    const properties = {prop1: "value1", prop2: "value2"};
+    const properties = { prop1: "value1", prop2: "value2" };
 
     await mixpanelMain.set(token, properties);
 
@@ -369,7 +370,7 @@ describe("MixpanelMain", () => {
       expect.objectContaining({
         $token: token,
         $time: expect.any(Number),
-        $set: {prop1: "value1", prop2: "value2"},
+        $set: { prop1: "value1", prop2: "value2" },
         $distinct_id: "distinct-id-mock",
         $device_id: "device-id-mock",
         $user_id: "user-id-mock",
@@ -378,7 +379,7 @@ describe("MixpanelMain", () => {
   });
 
   it("should send correct payload on setOnce profile properties", async () => {
-    const properties = {prop1: "value1", prop2: "value2"};
+    const properties = { prop1: "value1", prop2: "value2" };
 
     await mixpanelMain.setOnce(token, properties);
 
@@ -388,7 +389,7 @@ describe("MixpanelMain", () => {
       expect.objectContaining({
         $token: token,
         $time: expect.any(Number),
-        $set_once: {prop1: "value1", prop2: "value2"},
+        $set_once: { prop1: "value1", prop2: "value2" },
         $distinct_id: "distinct-id-mock",
         $device_id: "device-id-mock",
         $user_id: "user-id-mock",
@@ -397,7 +398,7 @@ describe("MixpanelMain", () => {
   });
 
   it("should send correct payload on increment profile properties", async () => {
-    const properties = {prop1: 3};
+    const properties = { prop1: 3 };
 
     await mixpanelMain.increment(token, properties);
 
@@ -407,7 +408,7 @@ describe("MixpanelMain", () => {
       expect.objectContaining({
         $token: token,
         $time: expect.any(Number),
-        $add: {prop1: 3},
+        $add: { prop1: 3 },
         $distinct_id: "distinct-id-mock",
         $device_id: "device-id-mock",
         $user_id: "user-id-mock",
@@ -416,7 +417,7 @@ describe("MixpanelMain", () => {
   });
 
   it("should send correct payload on append profile properties", async () => {
-    const properties = {prop1: "value1"};
+    const properties = { prop1: "value1" };
 
     await mixpanelMain.append(token, properties);
 
@@ -426,7 +427,7 @@ describe("MixpanelMain", () => {
       expect.objectContaining({
         $token: token,
         $time: expect.any(Number),
-        $append: {prop1: "value1"},
+        $append: { prop1: "value1" },
         $distinct_id: "distinct-id-mock",
         $device_id: "device-id-mock",
         $user_id: "user-id-mock",
@@ -441,7 +442,7 @@ describe("MixpanelMain", () => {
       expect.objectContaining({
         $token: token,
         $time: expect.any(Number),
-        $append: {testProp: "testValue"},
+        $append: { testProp: "testValue" },
         $distinct_id: "distinct-id-mock",
         $device_id: "device-id-mock",
         $user_id: "user-id-mock",
@@ -450,7 +451,7 @@ describe("MixpanelMain", () => {
   });
 
   it("should send correct payload on union profile properties", async () => {
-    const properties = {prop1: "value1"};
+    const properties = { prop1: "value1" };
 
     await mixpanelMain.union(token, properties);
 
@@ -460,7 +461,7 @@ describe("MixpanelMain", () => {
       expect.objectContaining({
         $token: token,
         $time: expect.any(Number),
-        $union: {prop1: "value1"},
+        $union: { prop1: "value1" },
         $distinct_id: "distinct-id-mock",
         $device_id: "device-id-mock",
         $user_id: "user-id-mock",
@@ -475,7 +476,7 @@ describe("MixpanelMain", () => {
       expect.objectContaining({
         $token: token,
         $time: expect.any(Number),
-        $union: {testProp: "testValue"},
+        $union: { testProp: "testValue" },
         $distinct_id: "distinct-id-mock",
         $device_id: "device-id-mock",
         $user_id: "user-id-mock",
@@ -484,7 +485,7 @@ describe("MixpanelMain", () => {
   });
 
   it("should send correct payload on remove profile properties", async () => {
-    const properties = {prop1: "value1"};
+    const properties = { prop1: "value1" };
 
     await mixpanelMain.remove(token, properties);
 
@@ -494,7 +495,7 @@ describe("MixpanelMain", () => {
       expect.objectContaining({
         $token: token,
         $time: expect.any(Number),
-        $remove: {prop1: "value1"},
+        $remove: { prop1: "value1" },
         $distinct_id: "distinct-id-mock",
         $device_id: "device-id-mock",
         $user_id: "user-id-mock",
@@ -509,7 +510,7 @@ describe("MixpanelMain", () => {
       expect.objectContaining({
         $token: token,
         $time: expect.any(Number),
-        $remove: {testProp: "testValue"},
+        $remove: { testProp: "testValue" },
         $distinct_id: "distinct-id-mock",
         $device_id: "device-id-mock",
         $user_id: "user-id-mock",
@@ -518,7 +519,7 @@ describe("MixpanelMain", () => {
   });
 
   it("should send correct payload on trackCharge", async () => {
-    const properties = {prop1: "value1"};
+    const properties = { prop1: "value1" };
     const charge = 100;
 
     await mixpanelMain.trackCharge(token, charge, properties);
@@ -598,9 +599,9 @@ describe("MixpanelMain", () => {
   });
 
   it("should send correct payload on trackWithGroups", async () => {
-    const properties = {prop1: "value1"};
+    const properties = { prop1: "value1" };
     const eventName = "event1";
-    const groups = {company_id: 111};
+    const groups = { company_id: 111 };
     await mixpanelMain.trackWithGroups(token, eventName, properties, groups);
 
     expect(mixpanelMain.core.addToMixpanelQueue).toHaveBeenCalledWith(
@@ -632,7 +633,7 @@ describe("MixpanelMain", () => {
       expect.objectContaining({
         $token: token,
         $time: expect.any(Number),
-        $union: {company_id: [111]},
+        $union: { company_id: [111] },
         $distinct_id: "distinct-id-mock",
         $device_id: "device-id-mock",
         $user_id: "user-id-mock",
@@ -660,7 +661,7 @@ describe("MixpanelMain", () => {
       expect.objectContaining({
         $token: token,
         $time: expect.any(Number),
-        $set: {company_id: [333]},
+        $set: { company_id: [333] },
         $distinct_id: "distinct-id-mock",
         $device_id: "device-id-mock",
         $user_id: "user-id-mock",
@@ -700,7 +701,7 @@ describe("MixpanelMain", () => {
       expect.objectContaining({
         $token: token,
         $time: expect.any(Number),
-        $remove: {company_id: 111},
+        $remove: { company_id: 111 },
         $distinct_id: "distinct-id-mock",
         $device_id: "device-id-mock",
         $user_id: "user-id-mock",
@@ -734,7 +735,7 @@ describe("MixpanelMain", () => {
   });
 
   it("should send correct payload on group set", async () => {
-    const properties = {prop1: "value1", prop2: "value2"};
+    const properties = { prop1: "value1", prop2: "value2" };
 
     await mixpanelMain.groupSetProperties(token, "company_id", 444, properties);
 
@@ -746,13 +747,13 @@ describe("MixpanelMain", () => {
         $time: expect.any(Number),
         $group_id: 444,
         $group_key: "company_id",
-        $set: {prop1: "value1", prop2: "value2"},
+        $set: { prop1: "value1", prop2: "value2" },
       })
     );
   });
 
   it("should send correct payload on group set once", async () => {
-    const properties = {prop1: "value1", prop2: "value2"};
+    const properties = { prop1: "value1", prop2: "value2" };
 
     await mixpanelMain.groupSetPropertyOnce(
       token,
@@ -769,7 +770,7 @@ describe("MixpanelMain", () => {
         $time: expect.any(Number),
         $group_id: 444,
         $group_key: "company_id",
-        $set_once: {prop1: "value1", prop2: "value2"},
+        $set_once: { prop1: "value1", prop2: "value2" },
       })
     );
   });
@@ -807,7 +808,7 @@ describe("MixpanelMain", () => {
         $time: expect.any(Number),
         $group_id: 444,
         $group_key: "company_id",
-        $remove: {prop1: "value1"},
+        $remove: { prop1: "value1" },
       })
     );
   });
@@ -829,7 +830,7 @@ describe("MixpanelMain", () => {
         $time: expect.any(Number),
         $group_id: 444,
         $group_key: "company_id",
-        $union: {prop1: "value1"},
+        $union: { prop1: "value1" },
       })
     );
   });

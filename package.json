@@ -56,9 +56,11 @@
     "preset": "react-native",
     "transform": {
       "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js"
-    },
-    "transformIgnorePatterns": [
-      "node_modules/(?!(expo-crypto|expo-[^/]+|react-native|@react-native|@react-navigation|uuid)/)"
-    ]
+    }
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.21.0",
+    "uuid": "3.3.2",
+    "expo-crypto": "~14.1.4"
   }
 }

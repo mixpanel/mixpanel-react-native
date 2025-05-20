@@ -359,6 +359,31 @@ describe("MixpanelMain", () => {
     );
   });
 
+  it("should call core.identifyUserQueue when identifying with a new distinct id", async () => {
+    const newDistinctId = "brand-new-distinct-id";
+    // Ensure the previous distinctId is different so the branch is triggered
+    mixpanelMain.mixpanelPersistent.getDistinctId
+      .mockReturnValueOnce("old-id")
+      .mockReturnValue("old-id");
+    mixpanelMain.core.identifyUserQueue.mockResolvedValue();
+    await mixpanelMain.identify(token, newDistinctId);
+    expect(mixpanelMain.core.identifyUserQueue).toHaveBeenCalledWith(token);
+    expect(mixpanelMain.core.addToMixpanelQueue).toHaveBeenCalledWith(
+      token,
+      MixpanelType.EVENTS,
+      expect.any(Object)
+    );
+  });
+
+  it("should NOT call core.identifyUserQueue when identifying with the same distinct id", async () => {
+    const currentDistinctId = "distinct-id-mock";
+    mixpanelMain.mixpanelPersistent.getDistinctId.mockReturnValue(
+      currentDistinctId
+    );
+    await mixpanelMain.identify(token, currentDistinctId);
+    expect(mixpanelMain.core.identifyUserQueue).not.toHaveBeenCalled();
+  });
+
   it("should send correct payload on set profile properties", async () => {
     const properties = { prop1: "value1", prop2: "value2" };
 

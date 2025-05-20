@@ -172,9 +172,7 @@ export class MixpanelPersistent {
   }
 
   isIdentified(token) {
-    const userId = this.getUserId(token);
-    const isIdentified = userId !== null && userId !== undefined;
-    return isIdentified;
+    return Boolean(this.getUserId(token));
   }
 
   updateUserId(token, userId) {

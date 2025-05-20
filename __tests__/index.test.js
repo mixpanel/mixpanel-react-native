@@ -8,8 +8,7 @@ test(`it calls MixpanelReactNative initialize`, async () => {
     true,
     false,
     { $lib_version: expect.any(String), mp_lib: "react-native" },
-    "https://api.mixpanel.com",
-    false
+    "https://api.mixpanel.com"
   );
 });
 

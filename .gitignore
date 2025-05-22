@@ -52,3 +52,5 @@ buck-out/
 # yalc
 **/.yalc/
 yalc.lock
+
+CLAUDE.md

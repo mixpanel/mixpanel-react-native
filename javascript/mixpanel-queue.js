@@ -1,4 +1,3 @@
-import { MixpanelLogger } from "./mixpanel-logger";
 import { MixpanelPersistent } from "./mixpanel-persistent";
 import { MixpanelType } from "./mixpanel-constants";
 

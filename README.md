@@ -186,6 +186,7 @@ No worries, here are some links that you will find useful:
 
 - **[Sample apps](https://github.com/mixpanel/mixpanel-react-native/tree/master/Samples)**
 - **[Full API Reference](https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html)**
-  [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/mixpanel/mixpanel-react-native)
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/mixpanel/mixpanel-react-native)
 
 Have any questions? Reach out to Mixpanel [Support](https://help.mixpanel.com/hc/en-us/requests/new) to speak to someone smart, quickly.

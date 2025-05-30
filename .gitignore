@@ -25,7 +25,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 ios/project.xcworkspace
-      
+
 # Android
 android/build/
 android/app/
@@ -48,3 +48,16 @@ logs/
 buck-out/
 \.buckd/
 *.keystore
+
+# yalc
+**/.yalc/
+yalc.lock
+
+# AI
+CLAUDE.md
+claude/
+.claude/
+.cursor/
+.github/copilot-*
+.github/instructions/
+.github/prompts/

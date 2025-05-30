@@ -1,5 +1,5 @@
-import {Mixpanel} from "mixpanel-react-native";
-import {NativeModules} from "react-native";
+import { Mixpanel } from "mixpanel-react-native";
+import { NativeModules } from "react-native";
 
 test(`it calls MixpanelReactNative initialize`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
@@ -7,14 +7,14 @@ test(`it calls MixpanelReactNative initialize`, async () => {
     "token",
     true,
     false,
-    {$lib_version: expect.any(String), mp_lib: "react-native"},
+    { $lib_version: expect.any(String), mp_lib: "react-native" },
     "https://api.mixpanel.com"
   );
 });
 
-test(`it calls MixpanelReactNative initialize with optOut and superProperties`, async () => {
+test(`it calls MixpanelReactNative initialize with optOut, superProperties and useGzipCompression`, async () => {
   const mixpanel = new Mixpanel("token", true);
-  mixpanel.init(true, {super: "property"});
+  mixpanel.init(true, { super: "property" });
   expect(NativeModules.MixpanelReactNative.initialize).toBeCalledWith(
     "token",
     true,
@@ -24,7 +24,24 @@ test(`it calls MixpanelReactNative initialize with optOut and superProperties`, 
       mp_lib: "react-native",
       super: "property",
     },
-    "https://api.mixpanel.com"
+    "https://api.mixpanel.com",
+    false
+  );
+});
+
+test(`it passes useGzipCompression parameter to native modules when enabled`, async () => {
+  const mixpanel = new Mixpanel("token", true);
+  mixpanel.init(false, {}, "https://api.mixpanel.com", true);
+  expect(NativeModules.MixpanelReactNative.initialize).toBeCalledWith(
+    "token",
+    true,
+    false,
+    {
+      $lib_version: expect.any(String),
+      mp_lib: "react-native",
+    },
+    "https://api.mixpanel.com",
+    true
   );
 });
 
@@ -135,14 +152,14 @@ test(`it calls MixpanelReactNative trackWithGroups`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
   mixpanel.trackWithGroups(
     "tracked with groups",
-    {a: 1, b: 2.3},
-    {company_id: "Mixpanel"}
+    { a: 1, b: 2.3 },
+    { company_id: "Mixpanel" }
   );
   expect(NativeModules.MixpanelReactNative.trackWithGroups).toBeCalledWith(
     "token",
     "tracked with groups",
-    {a: 1, b: 2.3, $lib_version: expect.any(String), mp_lib: "react-native"},
-    {company_id: "Mixpanel"}
+    { a: 1, b: 2.3, $lib_version: expect.any(String), mp_lib: "react-native" },
+    { company_id: "Mixpanel" }
   );
 });
 
@@ -298,7 +315,9 @@ test(`it calls MixpanelReactNative profile set`, async () => {
   });
   // set one property
   mixpanel.getPeople().set("a", 1);
-  expect(NativeModules.MixpanelReactNative.set).toBeCalledWith("token", {a: 1});
+  expect(NativeModules.MixpanelReactNative.set).toBeCalledWith("token", {
+    a: 1,
+  });
 });
 
 test(`it calls MixpanelReactNative profile setOnce`, async () => {
@@ -404,18 +423,24 @@ test(`it calls MixpanelReactNative group set properties`, async () => {
   const mixpanel = new Mixpanel("token", true);
   mixpanel.init();
   mixpanel.getGroup("company_id", 12345).set("prop_key", "prop_value");
-  expect(
-    NativeModules.MixpanelReactNative.groupSetProperties
-  ).toBeCalledWith("token", "company_id", 12345, {prop_key: "prop_value"});
+  expect(NativeModules.MixpanelReactNative.groupSetProperties).toBeCalledWith(
+    "token",
+    "company_id",
+    12345,
+    { prop_key: "prop_value" }
+  );
 });
 
 test(`it calls MixpanelReactNative group set property once`, async () => {
   const mixpanel = new Mixpanel("token", true);
   mixpanel.init();
   mixpanel.getGroup("company_id", 12345).setOnce("prop_key", "prop_value");
-  expect(
-    NativeModules.MixpanelReactNative.groupSetPropertyOnce
-  ).toBeCalledWith("token", "company_id", 12345, {prop_key: "prop_value"});
+  expect(NativeModules.MixpanelReactNative.groupSetPropertyOnce).toBeCalledWith(
+    "token",
+    "company_id",
+    12345,
+    { prop_key: "prop_value" }
+  );
 });
 
 test(`it calls MixpanelReactNative group unset property`, async () => {

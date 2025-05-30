@@ -1,4 +1,5 @@
-import {MixpanelPersistent} from "./mixpanel-persistent";
+import { MixpanelPersistent } from "./mixpanel-persistent";
+import { MixpanelType } from "./mixpanel-constants";
 
 export const MixpanelQueueManager = (() => {
   let _queues = {};
@@ -6,7 +7,7 @@ export const MixpanelQueueManager = (() => {
 
   const getPersistent = () => {
     if (!mixpanelPersistent) {
-        mixpanelPersistent = MixpanelPersistent.getInstance();
+      mixpanelPersistent = MixpanelPersistent.getInstance();
     }
     return mixpanelPersistent;
   };
@@ -40,9 +41,14 @@ export const MixpanelQueueManager = (() => {
   };
 
   const getQueue = (token, type) => {
-    if (!_queues[token] || !_queues[token][type]) {
+    if (
+      !_queues[token] ||
+      !_queues[token][type] ||
+      (type === MixpanelType.USER && !getPersistent().isIdentified(token))
+    ) {
       return [];
     }
+
     return [..._queues[token][type]];
   };
 
@@ -62,11 +68,49 @@ export const MixpanelQueueManager = (() => {
     await updateQueueInStorage(token, type);
   };
 
+  /**
+   * Ensures all USER queue records for the given token have the correct identity fields.
+   * Returns the updated queue (may be unchanged).
+   */
+  const identifyUserQueue = async (token) => {
+    const persistent = getPersistent();
+    const distinctId = persistent.getDistinctId(token);
+    const deviceId = persistent.getDeviceId(token);
+    const userId = persistent.getUserId(token);
+
+    const userQueue = _queues[token]?.[MixpanelType.USER];
+    if (!userQueue) return [];
+
+    let changed = false;
+    const updatedQueue = userQueue.map(record => {
+      let updated = record;
+      const updateDistinctId = distinctId != null && record.$distinct_id !== distinctId;
+      const updateDeviceId = deviceId != null && record.$device_id !== deviceId;
+      const updateUserId = userId != null && record.$user_id !== userId;
+      // Only update if there is a difference; minimize object copies
+      if (updateDistinctId || updateDeviceId || updateUserId) {
+        updated = { ...record }; // shallow copy only if needed
+        if (updateDistinctId) updated.$distinct_id = distinctId;
+        if (updateDeviceId) updated.$device_id = deviceId;
+        if (updateUserId) updated.$user_id = userId;
+        changed = true;
+      }
+      return updated;
+    });
+
+    if (changed) {
+      _queues[token][MixpanelType.USER] = updatedQueue;
+      await persistent.saveQueue(token, MixpanelType.USER, updatedQueue);
+    }
+    return updatedQueue;
+  };
+
   return {
     initialize,
     enqueue,
     getQueue,
     spliceQueue,
     clearQueue,
+    identifyUserQueue,
   };
 })();

@@ -1,4 +1,11 @@
 import * as ReactNative from "react-native";
+import { jest } from "@jest/globals";
+
+jest.mock("expo-crypto", () => ({
+  randomUUID: jest.fn(
+    () => "mocked-uuid-string-" + Math.random().toString(36).substring(2, 15)
+  ), // Provides a somewhat unique mock UUID
+}));
 
 jest.mock("mixpanel-react-native/javascript/mixpanel-storage", () => {
   return {

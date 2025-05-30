@@ -156,5 +156,61 @@ describe("MixpanelQueueManager - extended", () => {
       });
       expect(mixpanelPersistent.saveQueue).not.toHaveBeenCalled();
     });
+
+    it("should preserve user queue data integrity during identity updates", async () => {
+      // Add multiple items to user queue with different profile operations
+      const queueItems = [
+        { $set: { name: "John" }, $distinct_id: "old-id", $device_id: "old-device", $user_id: "old-user" },
+        { $set_once: { created: "2024-01-01" }, $distinct_id: "old-id", $device_id: "old-device", $user_id: "old-user" },
+        { $add: { points: 10 }, $distinct_id: "old-id", $device_id: "old-device", $user_id: "old-user" },
+        { $union: { tags: ["premium"] }, $distinct_id: "old-id", $device_id: "old-device", $user_id: "old-user" }
+      ];
+
+      for (const item of queueItems) {
+        await MixpanelQueueManager.enqueue(token, userType, item);
+      }
+
+      // Update identity
+      mixpanelPersistent.getDistinctId.mockReturnValue("new-id");
+      mixpanelPersistent.getDeviceId.mockReturnValue("new-device");
+      mixpanelPersistent.getUserId.mockReturnValue("new-user");
+
+      // Call identifyUserQueue
+      const result = await MixpanelQueueManager.identifyUserQueue(token);
+
+      // Verify all items preserved their data but updated identity fields
+      expect(result).toHaveLength(4);
+      expect(result[0]).toEqual({
+        $set: { name: "John" },
+        $distinct_id: "new-id",
+        $device_id: "new-device",
+        $user_id: "new-user"
+      });
+      expect(result[1]).toEqual({
+        $set_once: { created: "2024-01-01" },
+        $distinct_id: "new-id",
+        $device_id: "new-device",
+        $user_id: "new-user"
+      });
+      expect(result[2]).toEqual({
+        $add: { points: 10 },
+        $distinct_id: "new-id",
+        $device_id: "new-device",
+        $user_id: "new-user"
+      });
+      expect(result[3]).toEqual({
+        $union: { tags: ["premium"] },
+        $distinct_id: "new-id",
+        $device_id: "new-device",
+        $user_id: "new-user"
+      });
+
+      // Verify queue was saved
+      expect(mixpanelPersistent.saveQueue).toHaveBeenCalledWith(
+        token,
+        MixpanelType.USER,
+        expect.any(Array)
+      );
+    });
   });
 });

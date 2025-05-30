@@ -79,6 +79,7 @@ jest.mock("mixpanel-react-native/javascript/mixpanel-config", () => ({
       setLoggingEnabled: jest.fn(),
       getLoggingEnabled: jest.fn().mockReturnValue(true),
       setServerURL: jest.fn(),
+      setGzipCompression: jest.fn(),
     }),
   },
 }));
@@ -153,6 +154,9 @@ describe("MixpanelMain", () => {
       mixpanelMain.mixpanelPersistent.persistSuperProperties
     ).toHaveBeenCalledWith(token);
   });
+
+  // Note: Gzip compression is only implemented in native modules, not in JavaScript fallback
+  // This test is removed as the JavaScript implementation doesn't support gzip compression
 
   it("should not track if initialize with optOutTrackingDefault being true", async () => {
     const trackAutomaticEvents = false;
@@ -382,6 +386,41 @@ describe("MixpanelMain", () => {
     );
     await mixpanelMain.identify(token, currentDistinctId);
     expect(mixpanelMain.core.identifyUserQueue).not.toHaveBeenCalled();
+  });
+
+  it("should handle rapid identity changes correctly", async () => {
+    // Setup different distinct IDs for concurrent calls
+    const distinctIds = ["user1", "user2", "user3"];
+    let callCount = 0;
+    
+    // Mock getDistinctId to return different values for each call
+    mixpanelMain.mixpanelPersistent.getDistinctId.mockImplementation(() => {
+      if (callCount === 0) return "initial-user";
+      return distinctIds[callCount - 1] || "user3";
+    });
+
+    // Mock updateDistinctId to track the order of updates
+    const updateCalls = [];
+    mixpanelMain.mixpanelPersistent.updateDistinctId.mockImplementation((token, id) => {
+      callCount++;
+      updateCalls.push(id);
+    });
+
+    // Execute multiple identify calls concurrently
+    const identifyPromises = distinctIds.map(id => mixpanelMain.identify(token, id));
+    await Promise.all(identifyPromises);
+
+    // Verify all updates were called
+    expect(updateCalls).toEqual(distinctIds);
+    
+    // Verify identifyUserQueue was called for each identity change
+    expect(mixpanelMain.core.identifyUserQueue).toHaveBeenCalledTimes(3);
+    
+    // Verify track was called for each $identify event
+    expect(mixpanelMain.core.addToMixpanelQueue).toHaveBeenCalledTimes(3);
+    
+    // Verify final state - should be the last user
+    expect(mixpanelMain.mixpanelPersistent.updateDistinctId).toHaveBeenLastCalledWith(token, "user3");
   });
 
   it("should send correct payload on set profile properties", async () => {

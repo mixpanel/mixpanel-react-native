@@ -29,6 +29,22 @@ test(`it calls MixpanelReactNative initialize with optOut, superProperties and u
   );
 });
 
+test(`it passes useGzipCompression parameter to native modules when enabled`, async () => {
+  const mixpanel = new Mixpanel("token", true);
+  mixpanel.init(false, {}, "https://api.mixpanel.com", true);
+  expect(NativeModules.MixpanelReactNative.initialize).toBeCalledWith(
+    "token",
+    true,
+    false,
+    {
+      $lib_version: expect.any(String),
+      mp_lib: "react-native",
+    },
+    "https://api.mixpanel.com",
+    true
+  );
+});
+
 test(`it calls MixpanelReactNative setServerURL`, async () => {
   const mixpanel = new Mixpanel("token", true);
   mixpanel.init();

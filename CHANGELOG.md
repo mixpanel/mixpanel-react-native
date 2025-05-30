@@ -1,5 +1,13 @@
 #
 
+## [v3.1.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.1.0) (2025-05-30)
+
+### Enhancements
+
+- Use expo-crypto for UUID on Expo, expose useGzipCompression option and fix JavaScript mode People flushing issue [\#288](https://github.com/mixpanel/mixpanel-react-native/pull/288)
+
+#
+
 ## [v3.0.9](https://github.com/mixpanel/mixpanel-react-native/tree/v3.0.9) (2025-04-11)
 
 ### Enhancements
@@ -474,6 +482,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

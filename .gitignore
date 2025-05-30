@@ -53,6 +53,9 @@ buck-out/
 **/.yalc/
 yalc.lock
 
+# VS Code
+.vscode/
+
 # AI
 CLAUDE.md
 claude/

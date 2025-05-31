@@ -24,7 +24,8 @@ export class Mixpanel {
   init(
     optOutTrackingDefault?: boolean,
     superProperties?: MixpanelProperties,
-    serverURL?: String
+    serverURL?: string,
+    useGzipCompression?: boolean
   ): Promise<void>;
   setServerURL(serverURL: string): void;
   setLoggingEnabled(loggingEnabled: boolean): void;

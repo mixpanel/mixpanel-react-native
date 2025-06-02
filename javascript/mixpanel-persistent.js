@@ -12,7 +12,6 @@ import {
 import { AsyncStorageAdapter } from "./mixpanel-storage";
 import uuid from "uuid";
 import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger";
-import { randomUUID } from "expo-crypto";
 
 export class MixpanelPersistent {
   static instance;
@@ -67,11 +66,16 @@ export class MixpanelPersistent {
     this._identity[token].deviceId = storageToken;
 
     if (!this._identity[token].deviceId) {
+      let newDeviceId;
       try {
-        this._identity[token].deviceId = randomUUID();
+        // Try to use expo-crypto if available
+        const expoCrypto = require("expo-crypto");
+        newDeviceId = expoCrypto.randomUUID();
       } catch (e) {
-        this._identity[token].deviceId = uuid.v4();
+        // Fallback to uuid.v4() if expo-crypto is not available
+        newDeviceId = uuid.v4();
       }
+      this._identity[token].deviceId = newDeviceId;
       await this.storageAdapter.setItem(
         getDeviceIdKey(token),
         this._identity[token].deviceId

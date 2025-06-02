@@ -60,7 +60,9 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.21.0",
-    "uuid": "3.3.2",
+    "uuid": "3.3.2"
+  },
+  "optionalDependencies": {
     "expo-crypto": "~14.1.4"
   }
 }

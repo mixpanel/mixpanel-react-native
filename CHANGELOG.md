@@ -1,5 +1,18 @@
 #
 
+## [v3.1.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.1.1) (2025-06-02)
+
+### Enhancements
+
+- Add support for using Gzip compression [\#286](https://github.com/mixpanel/mixpanel-react-native/issues/286)
+
+### Fixes
+
+- Make expo-crypto an optional dependency [\#292](https://github.com/mixpanel/mixpanel-react-native/pull/292)
+- Add useGzipCompression parameter to types declaration file [\#290](https://github.com/mixpanel/mixpanel-react-native/pull/290)
+
+#
+
 ## [v3.1.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.1.0) (2025-05-30)
 
 ### Enhancements
@@ -482,6 +495,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

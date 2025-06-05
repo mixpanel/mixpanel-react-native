@@ -1,5 +1,14 @@
 #
 
+## [v3.1.2](https://github.com/mixpanel/mixpanel-react-native/tree/v3.1.2) (2025-06-05)
+
+### Fixes
+
+- Expo dependencies are required for non-Expo apps [\#291](https://github.com/mixpanel/mixpanel-react-native/issues/291)
+- Use a react-native-get-random-values polyfill instead of expo-crypto [\#294](https://github.com/mixpanel/mixpanel-react-native/pull/294)
+
+#
+
 ## [v3.1.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.1.1) (2025-06-02)
 
 ### Enhancements
@@ -495,6 +504,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

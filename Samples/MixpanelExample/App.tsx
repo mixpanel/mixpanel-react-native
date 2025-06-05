@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Button,
   SafeAreaView,
@@ -12,10 +12,27 @@ import {Mixpanel} from 'mixpanel-react-native';
 
 const trackAutomaticEvents = true;
 const mixpanel = new Mixpanel('Your Project Token', trackAutomaticEvents);
-mixpanel.init();
 
 function App(): React.JSX.Element {
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    const initializeMixpanel = async () => {
+      try {
+        await mixpanel.init();
+        setIsInitialized(true);
+      } catch (error) {
+        console.error('Failed to initialize Mixpanel:', error);
+      }
+    };
+
+    initializeMixpanel();
+  }, []);
   const trackEvent = () => {
+    if (!isInitialized) {
+      console.warn('Mixpanel not initialized yet');
+      return;
+    }
     mixpanel.track('Button Pressed', {
       source: 'MixpanelExample',
       timestamp: new Date().toISOString(),
@@ -23,6 +40,10 @@ function App(): React.JSX.Element {
   };
 
   const identifyUser = () => {
+    if (!isInitialized) {
+      console.warn('Mixpanel not initialized yet');
+      return;
+    }
     mixpanel.identify('test_user_123');
     mixpanel.getPeople().set({
       $name: 'Test User',
@@ -31,6 +52,10 @@ function App(): React.JSX.Element {
   };
 
   const resetUser = () => {
+    if (!isInitialized) {
+      console.warn('Mixpanel not initialized yet');
+      return;
+    }
     mixpanel.reset();
   };
 
@@ -40,14 +65,32 @@ function App(): React.JSX.Element {
       <ScrollView contentInsetAdjustmentBehavior="automatic">
         <View style={styles.header}>
           <Text style={styles.title}>Mixpanel React Native Example</Text>
+          {!isInitialized && (
+            <Text style={styles.statusText}>Initializing Mixpanel...</Text>
+          )}
+          {isInitialized && (
+            <Text style={styles.statusText}>✓ Mixpanel Ready</Text>
+          )}
         </View>
         
         <View style={styles.buttonContainer}>
-          <Button title="Track Event" onPress={trackEvent} />
+          <Button 
+            title="Track Event" 
+            onPress={trackEvent} 
+            disabled={!isInitialized}
+          />
           <View style={styles.spacer} />
-          <Button title="Identify User" onPress={identifyUser} />
+          <Button 
+            title="Identify User" 
+            onPress={identifyUser} 
+            disabled={!isInitialized}
+          />
           <View style={styles.spacer} />
-          <Button title="Reset User" onPress={resetUser} />
+          <Button 
+            title="Reset User" 
+            onPress={resetUser} 
+            disabled={!isInitialized}
+          />
         </View>
         
         <View style={styles.info}>
@@ -73,6 +116,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
+  },
+  statusText: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 8,
+    textAlign: 'center',
   },
   buttonContainer: {
     padding: 20,

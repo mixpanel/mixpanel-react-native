@@ -1,5 +1,4 @@
-// We need to test the actual module behavior, not mocked behavior
-// So we'll use jest.isolateModules to get a fresh instance
+// Test UUID generation with polyfilled crypto.getRandomValues
 describe("MixpanelPersistent - UUID Generation", () => {
   const token = "test-token";
 
@@ -7,25 +6,17 @@ describe("MixpanelPersistent - UUID Generation", () => {
     jest.clearAllMocks();
   });
 
-  it("should fallback to uuid.v4() when expo-crypto throws", async () => {
+  it("should generate device ID using uuid.v4() with polyfill", async () => {
     let mixpanelPersistent;
     
     await jest.isolateModules(async () => {
-      // Mock expo-crypto to throw an error
-      jest.doMock("expo-crypto", () => ({
-        randomUUID: jest.fn(() => {
-          throw new Error("Expo crypto not available");
-        }),
-      }));
-
       // Mock uuid to return a specific value
       jest.doMock("uuid", () => ({
-        v4: jest.fn(() => "fallback-uuid-1234"),
+        v4: jest.fn(() => "polyfilled-uuid-1234"),
       }));
 
       // Now require the modules
       const { MixpanelPersistent } = require("mixpanel-react-native/javascript/mixpanel-persistent");
-      const { randomUUID } = require("expo-crypto");
       const uuid = require("uuid");
 
       // Create instance
@@ -35,51 +26,11 @@ describe("MixpanelPersistent - UUID Generation", () => {
       // Load device ID (which triggers UUID generation)
       await mixpanelPersistent.loadDeviceId(token);
 
-      // Verify randomUUID was called
-      expect(randomUUID).toHaveBeenCalled();
-
-      // Verify uuid.v4 was called as fallback
+      // Verify uuid.v4 was called
       expect(uuid.v4).toHaveBeenCalled();
 
-      // Verify the device ID was set to the fallback value
-      expect(mixpanelPersistent.getDeviceId(token)).toBe("fallback-uuid-1234");
-    });
-  });
-
-  it("should use expo-crypto randomUUID when available", async () => {
-    let mixpanelPersistent;
-    
-    await jest.isolateModules(async () => {
-      // Mock expo-crypto to return a specific value
-      jest.doMock("expo-crypto", () => ({
-        randomUUID: jest.fn(() => "expo-uuid-5678"),
-      }));
-
-      // Mock uuid
-      jest.doMock("uuid", () => ({
-        v4: jest.fn(() => "should-not-be-called"),
-      }));
-
-      // Now require the modules
-      const { MixpanelPersistent } = require("mixpanel-react-native/javascript/mixpanel-persistent");
-      const { randomUUID } = require("expo-crypto");
-      const uuid = require("uuid");
-
-      // Create instance
-      MixpanelPersistent.instance = null;
-      mixpanelPersistent = MixpanelPersistent.getInstance(null, token);
-
-      // Load device ID
-      await mixpanelPersistent.loadDeviceId(token);
-
-      // Verify randomUUID was called
-      expect(randomUUID).toHaveBeenCalled();
-
-      // Verify uuid.v4 was NOT called
-      expect(uuid.v4).not.toHaveBeenCalled();
-
-      // Verify the device ID was set to the expo value
-      expect(mixpanelPersistent.getDeviceId(token)).toBe("expo-uuid-5678");
+      // Verify the device ID was set
+      expect(mixpanelPersistent.getDeviceId(token)).toBe("polyfilled-uuid-1234");
     });
   });
 

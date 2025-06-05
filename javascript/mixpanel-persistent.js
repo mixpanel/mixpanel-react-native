@@ -9,6 +9,7 @@ import {
   getAppHasOpenedBeforeKey,
 } from "./mixpanel-constants";
 
+import "react-native-get-random-values"; // Polyfill for crypto.getRandomValues
 import { AsyncStorageAdapter } from "./mixpanel-storage";
 import uuid from "uuid";
 import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger";
@@ -66,16 +67,8 @@ export class MixpanelPersistent {
     this._identity[token].deviceId = storageToken;
 
     if (!this._identity[token].deviceId) {
-      let newDeviceId;
-      try {
-        // Try to use expo-crypto if available
-        const expoCrypto = require("expo-crypto");
-        newDeviceId = expoCrypto.randomUUID();
-      } catch (e) {
-        // Fallback to uuid.v4() if expo-crypto is not available
-        newDeviceId = uuid.v4();
-      }
-      this._identity[token].deviceId = newDeviceId;
+      // Generate device ID using uuid.v4() with polyfilled crypto.getRandomValues
+      this._identity[token].deviceId = uuid.v4();
       await this.storageAdapter.setItem(
         getDeviceIdKey(token),
         this._identity[token].deviceId

@@ -59,6 +59,6 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.21.0",
     "react-native-get-random-values": "^1.9.0",
-    "uuid": "^11.1.0"
+    "uuid": "^3.3.2"
   }
 }

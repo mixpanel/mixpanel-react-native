@@ -32,15 +32,16 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
-    "@babel/runtime": "^7.12.1",
+    "@babel/runtime": "^7.28.2",
     "@react-native-community/eslint-config": "^2.0.0",
-    "babel-jest": "^26.6.0",
+    "@react-native/babel-preset": "^0.80.2",
+    "babel-jest": "^30.0.5",
     "eslint": "^7.11.0",
-    "jest": "^26.6.3",
+    "jest": "^30.0.5",
     "jest-fetch-mock": "^3.0.3",
-    "metro-react-native-babel-preset": "^0.63.0",
-    "react-native": "^0.63.3",
-    "react-test-renderer": "16.13.1"
+    "react": "^19.1.1",
+    "react-native": "^0.80.2",
+    "react-test-renderer": "^19.1.1"
   },
   "jest": {
     "modulePathIgnorePatterns": [
@@ -53,14 +54,11 @@
       "<rootDir>/__tests__/jest_setup.js"
     ],
     "verbose": true,
-    "preset": "react-native",
-    "transform": {
-      "^.+\\.js$": "<rootDir>/node_modules/react-native/jest/preprocessor.js"
-    }
+    "preset": "react-native"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.21.0",
     "react-native-get-random-values": "^1.9.0",
-    "uuid": "3.3.2"
+    "uuid": "^11.1.0"
   }
 }

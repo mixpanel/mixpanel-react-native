@@ -17,7 +17,7 @@ public class AutomaticProperties {
     }
 
     /**
-     * This method will append library properties and fresh super properties to the given properties.
+     * This method will append fresh super properties to the given properties.
      * Instead of using a stale static cache, it fetches super properties directly from the Android SDK
      * to ensure updated values are used.
      * 

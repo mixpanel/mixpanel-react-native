@@ -27,7 +27,7 @@ public class AutomaticProperties {
      */
     public static void appendLibraryProperties(MixpanelAPI instance, JSONObject properties) throws JSONException {
         // Get fresh super properties from the Android SDK (not from stale static cache)
-        if (instance != null && properties != null)) {
+        if (instance != null && properties != null) {
             JSONObject superProperties = instance.getSuperProperties();
             if (superProperties != null) {
                 for (Iterator<String> keys = superProperties.keys(); keys.hasNext();) {

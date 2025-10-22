@@ -104,8 +104,8 @@ export class Mixpanel {
     );
 
     // If flags are enabled, initialize them
-    if (featureFlagsOptions.enabled && this._flags) {
-      await this._flags.loadFlags();
+    if (featureFlagsOptions.enabled) {
+      await this.flags.loadFlags();
     }
   }
 

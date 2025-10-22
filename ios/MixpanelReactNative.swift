@@ -35,21 +35,20 @@ open class MixpanelReactNative: NSObject {
         }
 
         // Create MixpanelOptions with feature flags configuration
-        var options = MixpanelOptions(token: token)
-        options.featureFlagsEnabled = featureFlagsEnabled
-        if let context = featureFlagsContext {
-            options.featureFlagsContext = context
-        }
+        let options = MixpanelOptions(
+            token: token,
+            trackAutomaticEvents: trackAutomaticEvents,
+            featureFlagsEnabled: featureFlagsEnabled,
+            featureFlagsContext: featureFlagsContext ?? [:]
+        )
 
-        Mixpanel.initialize(token: token,
-                            trackAutomaticEvents: trackAutomaticEvents,
+        Mixpanel.initialize(options: options,
                             flushInterval: Constants.DEFAULT_FLUSH_INTERVAL,
                             instanceName: token,
                             optOutTrackingByDefault: optOutTrackingByDefault,
                             superProperties: propsProcessed,
                             serverURL: serverURL,
-                            useGzipCompression: useGzipCompression,
-                            options: options)
+                            useGzipCompression: useGzipCompression)
         resolve(true)
     }
 
@@ -606,8 +605,8 @@ open class MixpanelReactNative: NSObject {
         return MixpanelFlagVariant(
             key: key,
             value: value,
-            experimentID: experimentID,
             isExperimentActive: isExperimentActive,
+            experimentID: experimentID,
             isQATester: isQATester
         )
     }

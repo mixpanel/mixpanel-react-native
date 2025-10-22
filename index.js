@@ -135,7 +135,9 @@ export class Mixpanel {
       trackAutomaticEvents,
       optOutTrackingDefault,
       Helper.getMetaData(),
-      "https://api.mixpanel.com"
+      "https://api.mixpanel.com",
+      false,
+      {}
     );
     return new Mixpanel(token, trackAutomaticEvents);
   }

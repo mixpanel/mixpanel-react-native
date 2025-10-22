@@ -35,7 +35,7 @@ open class MixpanelReactNative: NSObject {
         }
 
         // Create MixpanelOptions with feature flags configuration
-        var options = MixpanelOptions()
+        var options = MixpanelOptions(token: token)
         options.featureFlagsEnabled = featureFlagsEnabled
         if let context = featureFlagsContext {
             options.featureFlagsContext = context
@@ -510,7 +510,7 @@ open class MixpanelReactNative: NSObject {
         }
 
         let fallbackVariant = convertDictToVariant(fallback)
-        let variant = flags.getVariantSync(featureName: featureName, fallback: fallbackVariant)
+        let variant = flags.getVariantSync(featureName, fallback: fallbackVariant)
         return convertVariantToDict(variant)
     }
 
@@ -524,7 +524,7 @@ open class MixpanelReactNative: NSObject {
             return fallbackValue
         }
 
-        return flags.getVariantValueSync(featureName: featureName, fallbackValue: fallbackValue)
+        return flags.getVariantValueSync(featureName, fallbackValue: fallbackValue)
     }
 
     @objc
@@ -537,7 +537,7 @@ open class MixpanelReactNative: NSObject {
             return fallbackValue
         }
 
-        return flags.isEnabledSync(featureName: featureName, fallbackValue: fallbackValue)
+        return flags.isEnabledSync(featureName, fallbackValue: fallbackValue)
     }
 
     @objc
@@ -554,7 +554,7 @@ open class MixpanelReactNative: NSObject {
         }
 
         let fallbackVariant = convertDictToVariant(fallback)
-        flags.getVariant(featureName: featureName, fallback: fallbackVariant) { variant in
+        flags.getVariant(featureName, fallback: fallbackVariant) { variant in
             resolve(self.convertVariantToDict(variant))
         }
     }
@@ -572,7 +572,7 @@ open class MixpanelReactNative: NSObject {
             return
         }
 
-        flags.getVariantValue(featureName: featureName, fallbackValue: fallbackValue) { value in
+        flags.getVariantValue(featureName, fallbackValue: fallbackValue) { value in
             resolve(value)
         }
     }
@@ -590,7 +590,7 @@ open class MixpanelReactNative: NSObject {
             return
         }
 
-        flags.isEnabled(featureName: featureName, fallbackValue: fallbackValue) { isEnabled in
+        flags.isEnabled(featureName, fallbackValue: fallbackValue) { isEnabled in
             resolve(isEnabled)
         }
     }
@@ -599,20 +599,17 @@ open class MixpanelReactNative: NSObject {
     private func convertDictToVariant(_ dict: [String: Any]) -> MixpanelFlagVariant {
         let key = dict["key"] as? String ?? ""
         let value = dict["value"] ?? NSNull()
+        let experimentID = dict["experimentID"] as? String
+        let isExperimentActive = dict["isExperimentActive"] as? Bool
+        let isQATester = dict["isQATester"] as? Bool
 
-        var variant = MixpanelFlagVariant(key: key, value: value)
-
-        if let experimentID = dict["experimentID"] as? String {
-            variant.experimentID = experimentID
-        }
-        if let isExperimentActive = dict["isExperimentActive"] as? Bool {
-            variant.isExperimentActive = isExperimentActive
-        }
-        if let isQATester = dict["isQATester"] as? Bool {
-            variant.isQATester = isQATester
-        }
-
-        return variant
+        return MixpanelFlagVariant(
+            key: key,
+            value: value,
+            experimentID: experimentID,
+            isExperimentActive: isExperimentActive,
+            isQATester: isQATester
+        )
     }
 
     private func convertVariantToDict(_ variant: MixpanelFlagVariant) -> [String: Any] {

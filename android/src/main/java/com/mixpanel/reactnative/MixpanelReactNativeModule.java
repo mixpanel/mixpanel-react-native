@@ -56,9 +56,14 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
 
         // Create Mixpanel instance with feature flags configuration
-        MixpanelOptions options = new MixpanelOptions()
-            .setFeatureFlagsEnabled(featureFlagsEnabled)
-            .setFeatureFlagsContext(featureFlagsContext);
+        MixpanelOptions.Builder optionsBuilder = new MixpanelOptions.Builder()
+            .featureFlagsEnabled(featureFlagsEnabled);
+
+        if (featureFlagsContext != null) {
+            optionsBuilder.featureFlagsContext(featureFlagsContext);
+        }
+
+        MixpanelOptions options = optionsBuilder.build();
 
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, optOutTrackingDefault, mixpanelProperties, options, trackAutomaticEvents);
         instance.setServerURL(serverURL);
@@ -806,22 +811,12 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
         String key = map.hasKey("key") ? map.getString("key") : "";
         Object value = map.hasKey("value") ? ReactNativeHelper.dynamicToObject(map.getDynamic("value")) : null;
+        String experimentID = map.hasKey("experimentID") ? map.getString("experimentID") : null;
+        Boolean isExperimentActive = map.hasKey("isExperimentActive") ? map.getBoolean("isExperimentActive") : null;
+        Boolean isQATester = map.hasKey("isQATester") ? map.getBoolean("isQATester") : null;
 
-        // Create variant with key and value
-        MixpanelFlagVariant variant = new MixpanelFlagVariant(key, value);
-
-        // Set additional properties if available
-        if (map.hasKey("experimentID")) {
-            variant.setExperimentID(map.getString("experimentID"));
-        }
-        if (map.hasKey("isExperimentActive")) {
-            variant.setIsExperimentActive(map.getBoolean("isExperimentActive"));
-        }
-        if (map.hasKey("isQATester")) {
-            variant.setIsQATester(map.getBoolean("isQATester"));
-        }
-
-        return variant;
+        // Create variant with all properties using the full constructor
+        return new MixpanelFlagVariant(key, value, experimentID, isExperimentActive, isQATester);
     }
 
     private WritableMap convertVariantToMap(ReadableMap source) {
@@ -836,9 +831,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         WritableMap map = new WritableNativeMap();
 
         if (variant != null) {
-            map.putString("key", variant.getKey());
+            map.putString("key", variant.key);
 
-            Object value = variant.getValue();
+            Object value = variant.value;
             if (value == null) {
                 map.putNull("value");
             } else if (value instanceof String) {
@@ -859,11 +854,15 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             }
 
             // Add optional fields if they exist
-            if (variant.getExperimentID() != null) {
-                map.putString("experimentID", variant.getExperimentID());
+            if (variant.experimentID != null) {
+                map.putString("experimentID", variant.experimentID);
             }
-            map.putBoolean("isExperimentActive", variant.isExperimentActive());
-            map.putBoolean("isQATester", variant.isQATester());
+            if (variant.isExperimentActive != null) {
+                map.putBoolean("isExperimentActive", variant.isExperimentActive);
+            }
+            if (variant.isQATester != null) {
+                map.putBoolean("isQATester", variant.isQATester);
+            }
         }
 
         return map;

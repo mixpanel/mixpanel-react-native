@@ -14,6 +14,7 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.Dynamic;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.Callback;
 
 import org.json.JSONArray;
@@ -57,6 +58,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
         // Create Mixpanel instance with feature flags configuration
         MixpanelOptions.Builder optionsBuilder = new MixpanelOptions.Builder()
+            .optOutTrackingDefault(optOutTrackingDefault)
             .featureFlagsEnabled(featureFlagsEnabled);
 
         if (featureFlagsContext != null) {
@@ -65,7 +67,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
         MixpanelOptions options = optionsBuilder.build();
 
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents, optOutTrackingDefault, options);
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents, options);
         instance.registerSuperProperties(mixpanelProperties);
         instance.setServerURL(serverURL);
         if (useGzipCompression) {

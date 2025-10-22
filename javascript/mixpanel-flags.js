@@ -132,7 +132,7 @@ export class Flags {
     }
 
     // Promise pattern
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.isNativeMode) {
         this.mixpanelImpl.getVariant(this.token, featureName, fallback)
           .then(resolve)
@@ -173,7 +173,7 @@ export class Flags {
     }
 
     // Promise pattern
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.isNativeMode) {
         this.mixpanelImpl.getVariantValue(this.token, featureName, fallbackValue)
           .then(resolve)
@@ -214,7 +214,7 @@ export class Flags {
     }
 
     // Promise pattern
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.isNativeMode) {
         this.mixpanelImpl.isEnabled(this.token, featureName, fallbackValue)
           .then(resolve)

@@ -1,6 +1,9 @@
 package com.mixpanel.reactnative;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.mixpanel.android.mpmetrics.MixpanelOptions;
+import com.mixpanel.android.mpmetrics.MixpanelFlagVariant;
+import com.mixpanel.android.mpmetrics.Flags;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -9,6 +12,9 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.Dynamic;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeMap;
+import com.facebook.react.bridge.Callback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,10 +39,28 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod
-    public void initialize(String token, boolean trackAutomaticEvents, boolean optOutTrackingDefault, ReadableMap metadata, String serverURL, boolean useGzipCompression, Promise promise) throws JSONException {
+    public void initialize(String token, boolean trackAutomaticEvents, boolean optOutTrackingDefault, ReadableMap metadata, String serverURL, boolean useGzipCompression, ReadableMap featureFlagsOptions, Promise promise) throws JSONException {
         JSONObject mixpanelProperties = ReactNativeHelper.reactToJSON(metadata);
         AutomaticProperties.setAutomaticProperties(mixpanelProperties);
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, optOutTrackingDefault, mixpanelProperties, null, trackAutomaticEvents);
+
+        // Handle feature flags options
+        boolean featureFlagsEnabled = false;
+        JSONObject featureFlagsContext = null;
+
+        if (featureFlagsOptions != null && featureFlagsOptions.hasKey("enabled")) {
+            featureFlagsEnabled = featureFlagsOptions.getBoolean("enabled");
+
+            if (featureFlagsOptions.hasKey("context")) {
+                featureFlagsContext = ReactNativeHelper.reactToJSON(featureFlagsOptions.getMap("context"));
+            }
+        }
+
+        // Create Mixpanel instance with feature flags configuration
+        MixpanelOptions options = new MixpanelOptions()
+            .setFeatureFlagsEnabled(featureFlagsEnabled)
+            .setFeatureFlagsContext(featureFlagsContext);
+
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, optOutTrackingDefault, mixpanelProperties, options, trackAutomaticEvents);
         instance.setServerURL(serverURL);
         if (useGzipCompression) {
             instance.setShouldGzipRequestPayload(true);
@@ -601,5 +625,247 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             instance.getGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID)).union(name, arrayValues);
             promise.resolve(null);
         }
+    }
+
+    // Feature Flags Methods
+
+    @ReactMethod
+    public void loadFlags(final String token, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            promise.reject("Instance Error", "Failed to get Mixpanel instance");
+            return;
+        }
+        synchronized (instance) {
+            instance.getFlags().loadFlags();
+            promise.resolve(null);
+        }
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public boolean areFlagsReadySync(final String token) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            return false;
+        }
+        synchronized (instance) {
+            return instance.getFlags().areFlagsReady();
+        }
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public WritableMap getVariantSync(final String token, String featureName, ReadableMap fallback) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            return convertVariantToMap(fallback);
+        }
+
+        synchronized (instance) {
+            MixpanelFlagVariant fallbackVariant = convertMapToVariant(fallback);
+            MixpanelFlagVariant variant = instance.getFlags().getVariantSync(featureName, fallbackVariant);
+            return convertVariantToWritableMap(variant);
+        }
+    }
+
+    // Note: For getVariantValueSync, we'll return the full variant and extract value in JS
+    // React Native doesn't support returning Dynamic types from synchronous methods
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public WritableMap getVariantValueSync(final String token, String featureName, Dynamic fallbackValue) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+
+        WritableMap result = new WritableNativeMap();
+        if (instance == null) {
+            result.putString("type", "fallback");
+            // We'll handle the conversion in JavaScript
+            return result;
+        }
+
+        synchronized (instance) {
+            Object value = instance.getFlags().getVariantValueSync(featureName, ReactNativeHelper.dynamicToObject(fallbackValue));
+            result.putString("type", "value");
+
+            // Convert value to appropriate type
+            if (value == null) {
+                result.putNull("value");
+            } else if (value instanceof String) {
+                result.putString("value", (String) value);
+            } else if (value instanceof Boolean) {
+                result.putBoolean("value", (Boolean) value);
+            } else if (value instanceof Integer) {
+                result.putInt("value", (Integer) value);
+            } else if (value instanceof Double) {
+                result.putDouble("value", (Double) value);
+            } else if (value instanceof Float) {
+                result.putDouble("value", ((Float) value).doubleValue());
+            } else if (value instanceof Long) {
+                result.putDouble("value", ((Long) value).doubleValue());
+            } else {
+                result.putString("value", value.toString());
+            }
+
+            return result;
+        }
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public boolean isEnabledSync(final String token, String featureName, boolean fallbackValue) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            return fallbackValue;
+        }
+
+        synchronized (instance) {
+            return instance.getFlags().isEnabledSync(featureName, fallbackValue);
+        }
+    }
+
+    @ReactMethod
+    public void getVariant(final String token, String featureName, ReadableMap fallback, final Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            promise.resolve(convertVariantToMap(fallback));
+            return;
+        }
+
+        synchronized (instance) {
+            MixpanelFlagVariant fallbackVariant = convertMapToVariant(fallback);
+            instance.getFlags().getVariant(featureName, fallbackVariant, new Flags.GetVariantCallback() {
+                @Override
+                public void onComplete(MixpanelFlagVariant variant) {
+                    promise.resolve(convertVariantToWritableMap(variant));
+                }
+            });
+        }
+    }
+
+    @ReactMethod
+    public void getVariantValue(final String token, String featureName, Dynamic fallbackValue, final Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            promise.resolve(fallbackValue);
+            return;
+        }
+
+        synchronized (instance) {
+            Object fallbackObj = ReactNativeHelper.dynamicToObject(fallbackValue);
+            instance.getFlags().getVariantValue(featureName, fallbackObj, new Flags.GetVariantValueCallback() {
+                @Override
+                public void onComplete(Object value) {
+                    // Convert the value back to a format React Native can handle
+                    if (value == null) {
+                        promise.resolve(null);
+                    } else if (value instanceof String) {
+                        promise.resolve((String) value);
+                    } else if (value instanceof Boolean) {
+                        promise.resolve((Boolean) value);
+                    } else if (value instanceof Number) {
+                        promise.resolve(((Number) value).doubleValue());
+                    } else if (value instanceof JSONObject) {
+                        try {
+                            promise.resolve(ReactNativeHelper.jsonToReact((JSONObject) value));
+                        } catch (Exception e) {
+                            promise.resolve(value.toString());
+                        }
+                    } else if (value instanceof JSONArray) {
+                        try {
+                            promise.resolve(ReactNativeHelper.jsonToReact((JSONArray) value));
+                        } catch (Exception e) {
+                            promise.resolve(value.toString());
+                        }
+                    } else {
+                        promise.resolve(value.toString());
+                    }
+                }
+            });
+        }
+    }
+
+    @ReactMethod
+    public void isEnabled(final String token, String featureName, boolean fallbackValue, final Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            promise.resolve(fallbackValue);
+            return;
+        }
+
+        synchronized (instance) {
+            instance.getFlags().isEnabled(featureName, fallbackValue, new Flags.IsEnabledCallback() {
+                @Override
+                public void onComplete(boolean isEnabled) {
+                    promise.resolve(isEnabled);
+                }
+            });
+        }
+    }
+
+    // Helper methods for variant conversion
+    private MixpanelFlagVariant convertMapToVariant(ReadableMap map) {
+        if (map == null) {
+            return new MixpanelFlagVariant("", null);
+        }
+
+        String key = map.hasKey("key") ? map.getString("key") : "";
+        Object value = map.hasKey("value") ? ReactNativeHelper.dynamicToObject(map.getDynamic("value")) : null;
+
+        // Create variant with key and value
+        MixpanelFlagVariant variant = new MixpanelFlagVariant(key, value);
+
+        // Set additional properties if available
+        if (map.hasKey("experimentID")) {
+            variant.setExperimentID(map.getString("experimentID"));
+        }
+        if (map.hasKey("isExperimentActive")) {
+            variant.setIsExperimentActive(map.getBoolean("isExperimentActive"));
+        }
+        if (map.hasKey("isQATester")) {
+            variant.setIsQATester(map.getBoolean("isQATester"));
+        }
+
+        return variant;
+    }
+
+    private WritableMap convertVariantToMap(ReadableMap source) {
+        WritableMap map = new WritableNativeMap();
+        if (source != null) {
+            map.merge(source);
+        }
+        return map;
+    }
+
+    private WritableMap convertVariantToWritableMap(MixpanelFlagVariant variant) {
+        WritableMap map = new WritableNativeMap();
+
+        if (variant != null) {
+            map.putString("key", variant.getKey());
+
+            Object value = variant.getValue();
+            if (value == null) {
+                map.putNull("value");
+            } else if (value instanceof String) {
+                map.putString("value", (String) value);
+            } else if (value instanceof Boolean) {
+                map.putBoolean("value", (Boolean) value);
+            } else if (value instanceof Integer) {
+                map.putInt("value", (Integer) value);
+            } else if (value instanceof Double) {
+                map.putDouble("value", (Double) value);
+            } else if (value instanceof Float) {
+                map.putDouble("value", ((Float) value).doubleValue());
+            } else if (value instanceof Long) {
+                map.putDouble("value", ((Long) value).doubleValue());
+            } else {
+                // For complex objects, convert to string
+                map.putString("value", value.toString());
+            }
+
+            // Add optional fields if they exist
+            if (variant.getExperimentID() != null) {
+                map.putString("experimentID", variant.getExperimentID());
+            }
+            map.putBoolean("isExperimentActive", variant.isExperimentActive());
+            map.putBoolean("isQATester", variant.isQATester());
+        }
+
+        return map;
     }
 }

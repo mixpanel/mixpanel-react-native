@@ -46,6 +46,8 @@ export class Mixpanel {
     }
     this.token = token;
     this.trackAutomaticEvents = trackAutomaticEvents;
+    this._flags = null; // Lazy-loaded flags instance
+    this.storage = storage; // Store for JavaScript mode
 
     if (useNative && MixpanelReactNative) {
       this.mixpanelImpl = MixpanelReactNative;
@@ -60,27 +62,51 @@ export class Mixpanel {
   }
 
   /**
+   * Returns the Flags instance for feature flags operations.
+   * This property is lazy-loaded to avoid unnecessary initialization.
+   */
+  get flags() {
+    if (!this._flags) {
+      // Lazy load the Flags instance
+      const Flags = require("./javascript/mixpanel-flags").Flags;
+      this._flags = new Flags(this.token, this.mixpanelImpl, this.storage);
+    }
+    return this._flags;
+  }
+
+  /**
    * Initializes Mixpanel
    *
    * @param {boolean} optOutTrackingDefault Optional Whether or not Mixpanel can start tracking by default. See optOutTracking()
    * @param {object} superProperties  Optional A Map containing the key value pairs of the super properties to register
    * @param {string} serverURL Optional Set the base URL used for Mixpanel API requests. See setServerURL()
    * @param {boolean} useGzipCompression Optional Set whether to use gzip compression for network requests. Defaults to false.
+   * @param {object} featureFlagsOptions Optional Feature flags configuration including enabled flag and context
    */
   async init(
     optOutTrackingDefault = DEFAULT_OPT_OUT,
     superProperties = {},
     serverURL = "https://api.mixpanel.com",
-    useGzipCompression = false
+    useGzipCompression = false,
+    featureFlagsOptions = {}
   ) {
+    // Store feature flags options for later use
+    this.featureFlagsOptions = featureFlagsOptions;
+
     await this.mixpanelImpl.initialize(
       this.token,
       this.trackAutomaticEvents,
       optOutTrackingDefault,
       {...Helper.getMetaData(), ...superProperties},
       serverURL,
-      useGzipCompression
+      useGzipCompression,
+      featureFlagsOptions
     );
+
+    // If flags are enabled, initialize them
+    if (featureFlagsOptions.enabled && this._flags) {
+      await this._flags.loadFlags();
+    }
   }
 
   /**

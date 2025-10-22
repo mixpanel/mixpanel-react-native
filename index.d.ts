@@ -7,7 +7,48 @@ export type MixpanelAsyncStorage = {
   removeItem(key: string): Promise<void>;
 };
 
+export interface MixpanelFlagVariant {
+  key: string;
+  value: any;
+  experimentID?: string;
+  isExperimentActive?: boolean;
+  isQATester?: boolean;
+}
+
+export interface FeatureFlagsOptions {
+  enabled?: boolean;
+  context?: {
+    [key: string]: any;
+    custom_properties?: {
+      [key: string]: any;
+    };
+  };
+}
+
+export interface Flags {
+  // Synchronous methods
+  loadFlags(): Promise<void>;
+  areFlagsReady(): boolean;
+  getVariantSync(featureName: string, fallback: MixpanelFlagVariant): MixpanelFlagVariant;
+  getVariantValueSync(featureName: string, fallbackValue: any): any;
+  isEnabledSync(featureName: string, fallbackValue?: boolean): boolean;
+
+  // Asynchronous methods with overloads for callback and Promise patterns
+  getVariant(featureName: string, fallback: MixpanelFlagVariant): Promise<MixpanelFlagVariant>;
+  getVariant(featureName: string, fallback: MixpanelFlagVariant, callback: (result: MixpanelFlagVariant) => void): void;
+
+  getVariantValue(featureName: string, fallbackValue: any): Promise<any>;
+  getVariantValue(featureName: string, fallbackValue: any, callback: (value: any) => void): void;
+
+  isEnabled(featureName: string, fallbackValue?: boolean): Promise<boolean>;
+  isEnabled(featureName: string, fallbackValue: boolean, callback: (isEnabled: boolean) => void): void;
+
+  updateContext(context: { [key: string]: any }): Promise<void>;
+}
+
 export class Mixpanel {
+  readonly flags: Flags;
+
   constructor(token: string, trackAutoMaticEvents: boolean);
   constructor(token: string, trackAutoMaticEvents: boolean, useNative: true);
   constructor(
@@ -25,7 +66,8 @@ export class Mixpanel {
     optOutTrackingDefault?: boolean,
     superProperties?: MixpanelProperties,
     serverURL?: string,
-    useGzipCompression?: boolean
+    useGzipCompression?: boolean,
+    featureFlagsOptions?: FeatureFlagsOptions
   ): Promise<void>;
   setServerURL(serverURL: string): void;
   setLoggingEnabled(loggingEnabled: boolean): void;

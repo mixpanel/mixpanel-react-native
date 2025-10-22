@@ -18,16 +18,38 @@ open class MixpanelReactNative: NSObject {
                     properties: [String: Any],
                     serverURL: String,
                     useGzipCompression: Bool = false,
+                    featureFlagsOptions: [String: Any]?,
                     resolver resolve: RCTPromiseResolveBlock,
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         let autoProps = properties // copy
         AutomaticProperties.setAutomaticProperties(autoProps)
         let propsProcessed = MixpanelTypeHandler.processProperties(properties: autoProps)
-        Mixpanel.initialize(token: token, trackAutomaticEvents: trackAutomaticEvents, flushInterval: Constants.DEFAULT_FLUSH_INTERVAL,
-                            instanceName: token, optOutTrackingByDefault: optOutTrackingByDefault,
+
+        // Handle feature flags options
+        var featureFlagsEnabled = false
+        var featureFlagsContext: [String: Any]? = nil
+
+        if let flagsOptions = featureFlagsOptions {
+            featureFlagsEnabled = flagsOptions["enabled"] as? Bool ?? false
+            featureFlagsContext = flagsOptions["context"] as? [String: Any]
+        }
+
+        // Create MixpanelOptions with feature flags configuration
+        var options = MixpanelOptions()
+        options.featureFlagsEnabled = featureFlagsEnabled
+        if let context = featureFlagsContext {
+            options.featureFlagsContext = context
+        }
+
+        Mixpanel.initialize(token: token,
+                            trackAutomaticEvents: trackAutomaticEvents,
+                            flushInterval: Constants.DEFAULT_FLUSH_INTERVAL,
+                            instanceName: token,
+                            optOutTrackingByDefault: optOutTrackingByDefault,
                             superProperties: propsProcessed,
                             serverURL: serverURL,
-                            useGzipCompression: useGzipCompression)
+                            useGzipCompression: useGzipCompression,
+                            options: options)
         resolve(true)
     }
 
@@ -458,6 +480,154 @@ open class MixpanelReactNative: NSObject {
             return nil
         }
         return Mixpanel.getInstance(name: token)
+    }
+
+    // MARK: - Feature Flags
+
+    @objc
+    func loadFlags(_ token: String,
+                   resolver resolve: RCTPromiseResolveBlock,
+                   rejecter reject: RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        instance?.flags.loadFlags()
+        resolve(nil)
+    }
+
+    @objc
+    func areFlagsReadySync(_ token: String) -> Bool {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        return instance?.flags.areFlagsReady() ?? false
+    }
+
+    @objc
+    func getVariantSync(_ token: String,
+                        featureName: String,
+                        fallback: [String: Any]) -> [String: Any] {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+
+        guard let flags = instance?.flags else {
+            return fallback
+        }
+
+        let fallbackVariant = convertDictToVariant(fallback)
+        let variant = flags.getVariantSync(featureName: featureName, fallback: fallbackVariant)
+        return convertVariantToDict(variant)
+    }
+
+    @objc
+    func getVariantValueSync(_ token: String,
+                             featureName: String,
+                             fallbackValue: Any) -> Any {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+
+        guard let flags = instance?.flags else {
+            return fallbackValue
+        }
+
+        return flags.getVariantValueSync(featureName: featureName, fallbackValue: fallbackValue)
+    }
+
+    @objc
+    func isEnabledSync(_ token: String,
+                       featureName: String,
+                       fallbackValue: Bool) -> Bool {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+
+        guard let flags = instance?.flags else {
+            return fallbackValue
+        }
+
+        return flags.isEnabledSync(featureName: featureName, fallbackValue: fallbackValue)
+    }
+
+    @objc
+    func getVariant(_ token: String,
+                    featureName: String,
+                    fallback: [String: Any],
+                    resolver resolve: @escaping RCTPromiseResolveBlock,
+                    rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+
+        guard let flags = instance?.flags else {
+            resolve(fallback)
+            return
+        }
+
+        let fallbackVariant = convertDictToVariant(fallback)
+        flags.getVariant(featureName: featureName, fallback: fallbackVariant) { variant in
+            resolve(self.convertVariantToDict(variant))
+        }
+    }
+
+    @objc
+    func getVariantValue(_ token: String,
+                         featureName: String,
+                         fallbackValue: Any,
+                         resolver resolve: @escaping RCTPromiseResolveBlock,
+                         rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+
+        guard let flags = instance?.flags else {
+            resolve(fallbackValue)
+            return
+        }
+
+        flags.getVariantValue(featureName: featureName, fallbackValue: fallbackValue) { value in
+            resolve(value)
+        }
+    }
+
+    @objc
+    func isEnabled(_ token: String,
+                   featureName: String,
+                   fallbackValue: Bool,
+                   resolver resolve: @escaping RCTPromiseResolveBlock,
+                   rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+
+        guard let flags = instance?.flags else {
+            resolve(fallbackValue)
+            return
+        }
+
+        flags.isEnabled(featureName: featureName, fallbackValue: fallbackValue) { isEnabled in
+            resolve(isEnabled)
+        }
+    }
+
+    // Helper methods for variant conversion
+    private func convertDictToVariant(_ dict: [String: Any]) -> MixpanelFlagVariant {
+        let key = dict["key"] as? String ?? ""
+        let value = dict["value"] ?? NSNull()
+
+        var variant = MixpanelFlagVariant(key: key, value: value)
+
+        if let experimentID = dict["experimentID"] as? String {
+            variant.experimentID = experimentID
+        }
+        if let isExperimentActive = dict["isExperimentActive"] as? Bool {
+            variant.isExperimentActive = isExperimentActive
+        }
+        if let isQATester = dict["isQATester"] as? Bool {
+            variant.isQATester = isQATester
+        }
+
+        return variant
+    }
+
+    private func convertVariantToDict(_ variant: MixpanelFlagVariant) -> [String: Any] {
+        var dict: [String: Any] = [
+            "key": variant.key,
+            "value": variant.value ?? NSNull()
+        ]
+
+        if let experimentID = variant.experimentID {
+            dict["experimentID"] = experimentID
+        }
+        dict["isExperimentActive"] = variant.isExperimentActive
+        dict["isQATester"] = variant.isQATester
+
+        return dict
     }
 
 }

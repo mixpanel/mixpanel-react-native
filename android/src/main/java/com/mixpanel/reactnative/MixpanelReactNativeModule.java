@@ -3,7 +3,7 @@ package com.mixpanel.reactnative;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.mixpanel.android.mpmetrics.MixpanelOptions;
 import com.mixpanel.android.mpmetrics.MixpanelFlagVariant;
-import com.mixpanel.android.mpmetrics.Flags;
+import com.mixpanel.android.mpmetrics.FlagCompletionCallback;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -65,7 +65,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
         MixpanelOptions options = optionsBuilder.build();
 
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, optOutTrackingDefault, mixpanelProperties, options, trackAutomaticEvents);
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents, optOutTrackingDefault, options);
+        instance.registerSuperProperties(mixpanelProperties);
         instance.setServerURL(serverURL);
         if (useGzipCompression) {
             instance.setShouldGzipRequestPayload(true);
@@ -734,7 +735,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
         synchronized (instance) {
             MixpanelFlagVariant fallbackVariant = convertMapToVariant(fallback);
-            instance.getFlags().getVariant(featureName, fallbackVariant, new Flags.GetVariantCallback() {
+            instance.getFlags().getVariant(featureName, fallbackVariant, new FlagCompletionCallback<MixpanelFlagVariant>() {
                 @Override
                 public void onComplete(MixpanelFlagVariant variant) {
                     promise.resolve(convertVariantToWritableMap(variant));
@@ -753,7 +754,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
         synchronized (instance) {
             Object fallbackObj = ReactNativeHelper.dynamicToObject(fallbackValue);
-            instance.getFlags().getVariantValue(featureName, fallbackObj, new Flags.GetVariantValueCallback() {
+            instance.getFlags().getVariantValue(featureName, fallbackObj, new FlagCompletionCallback<Object>() {
                 @Override
                 public void onComplete(Object value) {
                     // Convert the value back to a format React Native can handle
@@ -767,13 +768,15 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
                         promise.resolve(((Number) value).doubleValue());
                     } else if (value instanceof JSONObject) {
                         try {
-                            promise.resolve(ReactNativeHelper.jsonToReact((JSONObject) value));
+                            WritableMap map = ReactNativeHelper.convertJsonToMap((JSONObject) value);
+                            promise.resolve(map);
                         } catch (Exception e) {
                             promise.resolve(value.toString());
                         }
                     } else if (value instanceof JSONArray) {
                         try {
-                            promise.resolve(ReactNativeHelper.jsonToReact((JSONArray) value));
+                            WritableArray array = ReactNativeHelper.convertJsonToArray((JSONArray) value);
+                            promise.resolve(array);
                         } catch (Exception e) {
                             promise.resolve(value.toString());
                         }
@@ -794,9 +797,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
 
         synchronized (instance) {
-            instance.getFlags().isEnabled(featureName, fallbackValue, new Flags.IsEnabledCallback() {
+            instance.getFlags().isEnabled(featureName, fallbackValue, new FlagCompletionCallback<Boolean>() {
                 @Override
-                public void onComplete(boolean isEnabled) {
+                public void onComplete(Boolean isEnabled) {
                     promise.resolve(isEnabled);
                 }
             });

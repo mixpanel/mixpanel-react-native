@@ -92,13 +92,21 @@ jobs:
         run: xcrun simctl list devices available
       - name: Boot iOS Simulator
         run: |
-          SIMULATOR_ID=$(xcrun simctl list devices available | grep -m 1 'iPhone' | grep -oE '[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}')
+          # Get list of available iPhone simulators
+          SIMULATOR_ID=$(xcrun simctl list devices available -j | jq -r '.devices | to_entries[] | .value[] | select(.name | contains("iPhone")) | .udid' | head -n 1)
           if [ -z "$SIMULATOR_ID" ]; then
-            echo "No iPhone simulator found"
+            echo "Error: No iPhone simulator found"
             exit 1
           fi
-          echo "Booting simulator: $SIMULATOR_ID"
-          xcrun simctl boot "$SIMULATOR_ID" || true
+          echo "Found simulator: $SIMULATOR_ID"
+          # Check if simulator is already booted
+          if xcrun simctl list devices | grep -q "$SIMULATOR_ID.*Booted"; then
+            echo "Simulator already booted"
+          else
+            echo "Booting simulator..."
+            xcrun simctl boot "$SIMULATOR_ID"
+          fi
+          # Verify simulator is booted
           xcrun simctl list devices | grep Booted
       - name: Test iOS
         working-directory: ./Samples/SimpleMixpanel

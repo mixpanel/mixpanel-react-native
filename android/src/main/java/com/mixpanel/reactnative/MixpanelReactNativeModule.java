@@ -639,7 +639,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void loadFlags(final String token, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         if (instance == null) {
             promise.reject("Instance Error", "Failed to get Mixpanel instance");
             return;

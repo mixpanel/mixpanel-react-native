@@ -88,6 +88,18 @@ jobs:
       - name: Setup iOS
         working-directory: ./Samples/SimpleMixpanel/ios
         run: pod install --repo-update
+      - name: List available simulators
+        run: xcrun simctl list devices available
+      - name: Boot iOS Simulator
+        run: |
+          SIMULATOR_ID=$(xcrun simctl list devices available | grep -m 1 'iPhone' | grep -oE '[0-9A-F]{8}-([0-9A-F]{4}-){3}[0-9A-F]{12}')
+          if [ -z "$SIMULATOR_ID" ]; then
+            echo "No iPhone simulator found"
+            exit 1
+          fi
+          echo "Booting simulator: $SIMULATOR_ID"
+          xcrun simctl boot "$SIMULATOR_ID" || true
+          xcrun simctl list devices | grep Booted
       - name: Test iOS
         working-directory: ./Samples/SimpleMixpanel
         run: react-native run-ios

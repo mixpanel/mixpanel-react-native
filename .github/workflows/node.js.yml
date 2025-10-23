@@ -93,6 +93,7 @@ jobs:
       - name: Boot iOS Simulator
         run: |
           # Get list of available iPhone simulators
+          # Note: jq is pre-installed on macOS GitHub Actions runners
           SIMULATOR_ID=$(xcrun simctl list devices available -j | jq -r '.devices | to_entries[] | .value[] | select(.name | contains("iPhone")) | .udid' | head -n 1)
           if [ -z "$SIMULATOR_ID" ]; then
             echo "Error: No iPhone simulator found"
@@ -100,13 +101,15 @@ jobs:
           fi
           echo "Found simulator: $SIMULATOR_ID"
           # Check if simulator is already booted
-          if xcrun simctl list devices | grep -q "$SIMULATOR_ID.*Booted"; then
+          DEVICE_LIST=$(xcrun simctl list devices)
+          if echo "$DEVICE_LIST" | grep -q "$SIMULATOR_ID.*Booted"; then
             echo "Simulator already booted"
           else
             echo "Booting simulator..."
             xcrun simctl boot "$SIMULATOR_ID"
           fi
           # Verify simulator is booted
+          echo "Booted simulators:"
           xcrun simctl list devices | grep Booted
       - name: Test iOS
         working-directory: ./Samples/SimpleMixpanel

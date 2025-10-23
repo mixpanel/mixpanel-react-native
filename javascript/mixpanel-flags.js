@@ -1,3 +1,5 @@
+import { MixpanelFlagsJS } from './mixpanel-flags-js';
+
 /**
  * Flags class for managing Feature Flags functionality
  * This class handles both native and JavaScript fallback implementations
@@ -11,7 +13,6 @@ export class Flags {
 
     // For JavaScript mode, create the JS implementation
     if (!this.isNativeMode && storage) {
-      const MixpanelFlagsJS = require('./mixpanel-flags-js').MixpanelFlagsJS;
       this.jsFlags = new MixpanelFlagsJS(token, mixpanelImpl, storage);
     }
   }

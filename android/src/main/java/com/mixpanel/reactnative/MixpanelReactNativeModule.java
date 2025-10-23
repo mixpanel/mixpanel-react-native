@@ -59,6 +59,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         // Create Mixpanel instance with feature flags configuration
         MixpanelOptions.Builder optionsBuilder = new MixpanelOptions.Builder()
             .optOutTrackingDefault(optOutTrackingDefault)
+            .superProperties(mixpanelProperties)
             .featureFlagsEnabled(featureFlagsEnabled);
 
         if (featureFlagsContext != null) {
@@ -68,7 +69,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelOptions options = optionsBuilder.build();
 
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents, options);
-        instance.registerSuperProperties(mixpanelProperties);
         instance.setServerURL(serverURL);
         if (useGzipCompression) {
             instance.setShouldGzipRequestPayload(true);
@@ -639,7 +639,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void loadFlags(final String token, Promise promise) {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token);
         if (instance == null) {
             promise.reject("Instance Error", "Failed to get Mixpanel instance");
             return;

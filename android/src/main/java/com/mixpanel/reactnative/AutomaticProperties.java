@@ -17,21 +17,21 @@ public class AutomaticProperties {
     }
 
     /**
-     * This method will append library properties and fresh super properties to the given properties.
+     * This method will append fresh super properties to the given properties object.
      * Instead of using a stale static cache, it fetches super properties directly from the Android SDK
      * to ensure updated values are used.
      * 
      * @param instance The MixpanelAPI instance to get fresh super properties from
-     * @param properties The properties object to append to
+     * @param properties The properties object to append to. If null, a new JSONObject will be created
+     *                   (note: the caller's reference will not be updated; use the return value if needed)
      * @throws JSONException If there's an error merging properties
      */
     public static void appendLibraryProperties(MixpanelAPI instance, JSONObject properties) throws JSONException {
-        if (properties == null) {
-            properties = new JSONObject();
-        }
-
         // Get fresh super properties from the Android SDK (not from stale static cache)
         if (instance != null) {
+            if (properties == null) {
+                properties = new JSONObject();
+            }
             JSONObject superProperties = instance.getSuperProperties();
             if (superProperties != null) {
                 for (Iterator<String> keys = superProperties.keys(); keys.hasNext();) {

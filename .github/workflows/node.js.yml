@@ -27,7 +27,7 @@ jobs:
       - run: npm test
 
   test_android:
-    runs-on: macos-13
+    runs-on: macos-latest
     strategy:
       matrix:
         node-version: [18.x]

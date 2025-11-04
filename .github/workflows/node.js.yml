@@ -50,20 +50,32 @@ jobs:
       - name: Test Integration - Install dependencies
         working-directory: ./Samples/SimpleMixpanel
         run: yarn install
+      - name: Clean up emulator processes
+        run: |
+          pkill emulator || true
+          adb kill-server || true
       - name: Setup Android
         uses: reactivecircus/android-emulator-runner@v2.32.0
         with:
           api-level: 34
+          target: google_apis
           profile: Nexus 5X
           arch: x86_64
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          disable-animations: true
+          boot-timeout: 600
           working-directory: ./Samples/SimpleMixpanel/android
           script: ./gradlew
       - name: Test Android
         uses: reactivecircus/android-emulator-runner@v2.32.0
         with:
           api-level: 34
+          target: google_apis
           profile: Nexus 5X
           arch: x86_64
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          disable-animations: true
+          boot-timeout: 600
           working-directory: ./Samples/SimpleMixpanel
           script: react-native run-android
 

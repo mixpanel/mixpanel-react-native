@@ -64,3 +64,4 @@ claude/
 .github/copilot-*
 .github/instructions/
 .github/prompts/
+.devcontainer/

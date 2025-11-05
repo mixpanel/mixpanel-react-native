@@ -17,7 +17,7 @@ jest.mock("mixpanel-react-native/javascript/mixpanel-storage", () => {
   };
 });
 jest.mock("uuid", () => ({
-  v4: jest.fn(),
+  v4: jest.fn(() => "default-uuid-1234"),
 }));
 
 jest.mock("@react-native-async-storage/async-storage", () => ({
@@ -43,19 +43,19 @@ jest.doMock("react-native", () => {
       NativeModules: {
         ...ReactNative.NativeModules,
         MixpanelReactNative: {
-          initialize: jest.fn(),
+          initialize: jest.fn().mockResolvedValue(undefined),
           setServerURL: jest.fn(),
           setLoggingEnabled: jest.fn(),
           setFlushOnBackground: jest.fn(),
           setUseIpAddressForGeolocation: jest.fn(),
           setFlushBatchSize: jest.fn(),
-          hasOptedOutTracking: jest.fn(),
-          optInTracking: jest.fn(),
-          optOutTracking: jest.fn(),
-          identify: jest.fn(),
-          alias: jest.fn(),
-          track: jest.fn(),
-          trackWithGroups: jest.fn(),
+          hasOptedOutTracking: jest.fn().mockResolvedValue(false),
+          optInTracking: jest.fn().mockResolvedValue(undefined),
+          optOutTracking: jest.fn().mockResolvedValue(undefined),
+          identify: jest.fn().mockResolvedValue(undefined),
+          alias: jest.fn().mockResolvedValue(undefined),
+          track: jest.fn().mockResolvedValue(undefined),
+          trackWithGroups: jest.fn().mockResolvedValue(undefined),
           setGroup: jest.fn(),
           getGroup: jest.fn(),
           addGroup: jest.fn(),
@@ -68,8 +68,8 @@ jest.doMock("react-native", () => {
           clearSuperProperties: jest.fn(),
           timeEvent: jest.fn(),
           eventElapsedTime: jest.fn(),
-          reset: jest.fn(),
-          getDistinctId: jest.fn(),
+          reset: jest.fn().mockResolvedValue(undefined),
+          getDistinctId: jest.fn().mockResolvedValue("test-distinct-id"),
           set: jest.fn(),
           setOnce: jest.fn(),
           increment: jest.fn(),

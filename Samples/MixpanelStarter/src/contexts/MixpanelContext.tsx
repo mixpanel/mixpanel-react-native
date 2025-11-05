@@ -54,7 +54,7 @@ export const MixpanelProvider: React.FC<MixpanelProviderProps> = ({
           [SuperProperties.ENVIRONMENT]: __DEV__ ? 'development' : 'production',
         });
         // Enable logging for debugging
-        instance.setLoggingEnabled(true);
+        instance.setLoggingEnabled(__DEV__);
         
         setMixpanel(instance);
         setIsInitialized(true);

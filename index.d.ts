@@ -9,11 +9,11 @@ export type MixpanelAsyncStorage = {
 
 export class Mixpanel {
   constructor(token: string, trackAutoMaticEvents: boolean);
-  constructor(token: string, trackAutoMaticEvents: boolean, useNative: true);
+  constructor(token: string, trackAutoMaticEvents: boolean, useNative?: boolean);
   constructor(
     token: string,
     trackAutomaticEvents: boolean,
-    useNative: false,
+    useNative?: boolean,
     storage?: MixpanelAsyncStorage
   );
   static init(

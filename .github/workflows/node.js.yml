@@ -62,7 +62,6 @@ jobs:
           profile: Nexus 5X
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: true
-          boot-timeout: 600
           arch: arm64-v8a
           working-directory: ./Samples/SimpleMixpanel/android
           script: ./gradlew
@@ -72,14 +71,9 @@ jobs:
           api-level: 34
           target: google_apis
           profile: Nexus 5X
-<<<<<<< HEAD
-          arch: x86_64
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: true
-          boot-timeout: 600
-=======
           arch: arm64-v8a
->>>>>>> ace4909 (change arch in test_arndroid to match runner)
           working-directory: ./Samples/SimpleMixpanel
           script: react-native run-android
 

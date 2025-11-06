@@ -13,7 +13,7 @@ import {MIXPANEL_TOKEN} from '@env';
 const Tab = createBottomTabNavigator();
 
 // Fallback token for demo purposes (use your own from Mixpanel dashboard)
-const DEMO_TOKEN = 'DEMO_TOKEN';
+const DEMO_TOKEN = 'metrics-1';
 const token = MIXPANEL_TOKEN || DEMO_TOKEN;
 
 function App(): React.JSX.Element {

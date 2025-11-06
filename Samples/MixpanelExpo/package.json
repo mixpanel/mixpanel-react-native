@@ -15,7 +15,7 @@
     "mixpanel-react-native": "file:.yalc/mixpanel-react-native",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.73.4",
+    "react-native": "0.82.1",
     "react-native-web": "~0.19.6"
   },
   "devDependencies": {

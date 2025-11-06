@@ -64,7 +64,7 @@ export const FeatureFlagsScreen: React.FC = () => {
   const [testMode, setTestMode] = useState<TestMode>('sync');
   const [testResult, setTestResult] = useState<TestResult | null>(null);
   const [trackedEvents, setTrackedEvents] = useState<TrackedEvent[]>([]);
-  const [customFallback, setCustomFallback] = useState<string>('null');
+
 
   // Track screen view
   useEffect(() => {

@@ -68,7 +68,6 @@ export class Mixpanel {
   get flags() {
     if (!this._flags) {
       // Lazy load the Flags instance
-      const Flags = require("./javascript/mixpanel-flags").Flags;
       this._flags = new Flags(this.token, this.mixpanelImpl, this.storage);
     }
     return this._flags;

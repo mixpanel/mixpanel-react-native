@@ -10,9 +10,9 @@ export type MixpanelAsyncStorage = {
 export interface MixpanelFlagVariant {
   key: string;
   value: any;
-  experimentID?: string;
-  isExperimentActive?: boolean;
-  isQATester?: boolean;
+  experiment_id?: string | number;  // Updated to match mixpanel-js format
+  is_experiment_active?: boolean;    // Updated to match mixpanel-js format
+  is_qa_tester?: boolean;            // Updated to match mixpanel-js format
 }
 
 export interface FeatureFlagsOptions {
@@ -23,6 +23,10 @@ export interface FeatureFlagsOptions {
       [key: string]: any;
     };
   };
+}
+
+export interface UpdateContextOptions {
+  replace?: boolean;
 }
 
 export interface Flags {
@@ -43,7 +47,24 @@ export interface Flags {
   isEnabled(featureName: string, fallbackValue?: boolean): Promise<boolean>;
   isEnabled(featureName: string, fallbackValue: boolean, callback: (isEnabled: boolean) => void): void;
 
-  updateContext(context: { [key: string]: any }): Promise<void>;
+  // Context management (NEW - aligned with mixpanel-js)
+  // NOTE: Only available in JavaScript mode (Expo/React Native Web)
+  // In native mode, throws an error - context must be set during initialization
+  updateContext(newContext: MixpanelProperties, options?: UpdateContextOptions): Promise<void>;
+
+  // snake_case aliases (NEW - aligned with mixpanel-js)
+  are_flags_ready(): boolean;
+  get_variant(featureName: string, fallback: MixpanelFlagVariant): Promise<MixpanelFlagVariant>;
+  get_variant(featureName: string, fallback: MixpanelFlagVariant, callback: (result: MixpanelFlagVariant) => void): void;
+  get_variant_sync(featureName: string, fallback: MixpanelFlagVariant): MixpanelFlagVariant;
+  get_variant_value(featureName: string, fallbackValue: any): Promise<any>;
+  get_variant_value(featureName: string, fallbackValue: any, callback: (value: any) => void): void;
+  get_variant_value_sync(featureName: string, fallbackValue: any): any;
+  is_enabled(featureName: string, fallbackValue?: boolean): Promise<boolean>;
+  is_enabled(featureName: string, fallbackValue: boolean, callback: (isEnabled: boolean) => void): void;
+  is_enabled_sync(featureName: string, fallbackValue?: boolean): boolean;
+  // NOTE: Only available in JavaScript mode (Expo/React Native Web)
+  update_context(newContext: MixpanelProperties, options?: UpdateContextOptions): Promise<void>;
 }
 
 export class Mixpanel {

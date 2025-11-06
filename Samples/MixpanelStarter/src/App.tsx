@@ -6,19 +6,20 @@ import {MixpanelProvider} from './contexts/MixpanelContext';
 import {ErrorBoundary} from './components/ErrorBoundary';
 import {OnboardingScreen} from './screens/OnboardingScreen';
 import {HomeScreen} from './screens/HomeScreen';
+import {FeatureFlagsScreen} from './screens/FeatureFlagsScreen';
 import {SettingsScreen} from './screens/SettingsScreen';
 import {MIXPANEL_TOKEN} from '@env';
 
 const Tab = createBottomTabNavigator();
 
 // Fallback token for demo purposes (use your own from Mixpanel dashboard)
-const DEMO_TOKEN = 'YOUR_TOKEN_HERE';
+const DEMO_TOKEN = 'DEMO_TOKEN';
 const token = MIXPANEL_TOKEN || DEMO_TOKEN;
 
 function App(): React.JSX.Element {
   return (
     <ErrorBoundary>
-      <MixpanelProvider token={token} trackAutomaticEvents={true} useNative={true}>
+      <MixpanelProvider token={token} trackAutomaticEvents={true} useNative={false}>
         <NavigationContainer>
           <Tab.Navigator
             screenOptions={{
@@ -49,6 +50,16 @@ function App(): React.JSX.Element {
                 tabBarLabel: 'Events',
                 tabBarIcon: ({color}) => (
                   <Text style={{fontSize: 20, color}}>📊</Text>
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="FeatureFlags"
+              component={FeatureFlagsScreen}
+              options={{
+                tabBarLabel: 'Flags',
+                tabBarIcon: ({color}) => (
+                  <Text style={{fontSize: 20, color}}>🚩</Text>
                 ),
               }}
             />

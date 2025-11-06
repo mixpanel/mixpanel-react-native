@@ -1,6 +1,7 @@
 import { MixpanelLogger } from "./mixpanel-logger";
 import { MixpanelNetwork } from "./mixpanel-network";
 import { MixpanelPersistent } from "./mixpanel-persistent";
+import packageJson from "mixpanel-react-native/package.json";
 
 /**
  * JavaScript implementation of Feature Flags for React Native
@@ -135,26 +136,37 @@ export class MixpanelFlagsJS {
       const distinctId = this.mixpanelPersistent.getDistinctId(this.token);
       const deviceId = this.mixpanelPersistent.getDeviceId(this.token);
 
-      const requestData = {
-        token: this.token,
+      // Build context object (mixpanel-js format)
+      const context = {
         distinct_id: distinctId,
-        $device_id: deviceId,
+        device_id: deviceId,
         ...this.context,
       };
 
+      // Build query parameters (mixpanel-js format)
+      const queryParams = new URLSearchParams();
+      queryParams.set('context', JSON.stringify(context));
+      queryParams.set('token', this.token);
+      queryParams.set('mp_lib', 'react-native');
+      queryParams.set('$lib_version', packageJson.version);
+
       MixpanelLogger.log(
         this.token,
-        "Fetching feature flags with data:",
-        requestData
+        "Fetching feature flags with context:",
+        context
       );
 
       const serverURL =
         this.mixpanelImpl.config?.getServerURL?.(this.token) ||
         "https://api.mixpanel.com";
+
+      // Use /flags endpoint with query parameters (mixpanel-js format)
+      const endpoint = `/flags?${queryParams.toString()}`;
+
       const response = await MixpanelNetwork.sendRequest({
         token: this.token,
-        endpoint: "/decide",
-        data: requestData,
+        endpoint: endpoint,
+        data: null, // Data is in query params for flags endpoint
         serverURL: serverURL,
         useIPAddressForGeoLocation: true,
       });

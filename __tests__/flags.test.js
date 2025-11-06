@@ -215,7 +215,7 @@ describe("Feature Flags", () => {
         mockNativeModule.areFlagsReadySync.mockReturnValue(true);
         mockNativeModule.isEnabledSync.mockReturnValue(false);
 
-        const enabled = mixpanel.flags.isEnabledSync("test-flag");
+        mixpanel.flags.isEnabledSync("test-flag");
 
         expect(mockNativeModule.isEnabledSync).toHaveBeenCalledWith(
           testToken,

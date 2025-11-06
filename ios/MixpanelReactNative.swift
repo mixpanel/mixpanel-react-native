@@ -501,7 +501,7 @@ open class MixpanelReactNative: NSObject {
     @objc
     func areFlagsReadySync(_ token: String) -> NSNumber {
         guard let instance = MixpanelReactNative.getMixpanelInstance(token) else {
-            NSLog("[Mixpanel - areFlagsReadySync: instance is nil for token")
+            NSLog("[Mixpanel - areFlagsReadySync: instance is nil for token: \(token)]")
             return NSNumber(value: false)
         }
 

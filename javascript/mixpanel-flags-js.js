@@ -365,7 +365,12 @@ export class MixpanelFlagsJS {
    */
   async isEnabled(featureName, fallbackValue = false) {
     const value = await this.getVariantValue(featureName, fallbackValue);
-    return Boolean(value);
+    if (typeof value === "boolean") {
+      return value;
+    } else {
+      MixpanelLogger.log(this.token, `Flag "${featureName}" value is not boolean:`, value);
+      return fallbackValue;
+    }
   }
 
   /**

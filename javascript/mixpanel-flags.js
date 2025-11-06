@@ -189,6 +189,14 @@ export class Flags {
     });
   }
 
+  /**
+   * Check if a feature flag is enabled asynchronously.
+   * Supports both callback and Promise patterns.
+   * @param {string} featureName - Name of the feature flag
+   * @param {boolean} [fallbackValue=false] - Fallback value if flag is not available
+   * @param {function} [callback] - Optional callback function
+   * @returns {Promise<boolean>|void} Promise if no callback provided, void otherwise
+   */
   isEnabled(featureName, fallbackValue = false, callback) {
     // If callback provided, use callback pattern
     if (typeof callback === 'function') {

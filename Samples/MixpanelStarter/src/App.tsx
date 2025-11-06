@@ -19,7 +19,7 @@ const token = MIXPANEL_TOKEN || DEMO_TOKEN;
 function App(): React.JSX.Element {
   return (
     <ErrorBoundary>
-      <MixpanelProvider token={token} trackAutomaticEvents={true} useNative={false}>
+      <MixpanelProvider token={token} trackAutomaticEvents={true} useNative={true}>
         <NavigationContainer>
           <Tab.Navigator
             screenOptions={{

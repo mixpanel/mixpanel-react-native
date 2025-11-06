@@ -23,8 +23,14 @@ export default class MixpanelMain {
     superProperties = null,
     serverURL = "https://api.mixpanel.com",
     useGzipCompression = false,
+    featureFlagsOptions = {}
   ) {
     MixpanelLogger.log(token, `Initializing Mixpanel`);
+
+    // Store feature flags options for later use
+    this.featureFlagsOptions = featureFlagsOptions;
+    this.featureFlagsEnabled = featureFlagsOptions.enabled || false;
+    this.featureFlagsContext = featureFlagsOptions.context || {};
 
     await this.mixpanelPersistent.initializationCompletePromise(token);
     if (optOutTrackingDefault) {
@@ -38,6 +44,11 @@ export default class MixpanelMain {
     await this.registerSuperProperties(token, {
       ...superProperties,
     });
+
+    // Initialize feature flags if enabled
+    if (this.featureFlagsEnabled) {
+      MixpanelLogger.log(token, "Feature flags enabled during initialization");
+    }
   }
 
   getMetaData() {

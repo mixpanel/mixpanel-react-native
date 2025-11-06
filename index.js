@@ -114,10 +114,10 @@ export class Mixpanel {
       featureFlagsOptions
     );
 
-    // If flags are enabled, initialize them
-    if (featureFlagsOptions.enabled) {
+    // If flags are enabled AND we're in native mode, initialize them
+    if (featureFlagsOptions.enabled && this.mixpanelImpl === MixpanelReactNative) {
       await this.flags.loadFlags();
-    }
+  }
   }
 
   /**

@@ -489,24 +489,38 @@ open class MixpanelReactNative: NSObject {
     func loadFlags(_ token: String,
                    resolver resolve: RCTPromiseResolveBlock,
                    rejecter reject: RCTPromiseRejectBlock) -> Void {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-        instance?.flags.loadFlags()
+        guard let instance = MixpanelReactNative.getMixpanelInstance(token),
+              let flags = instance.flags else {
+            resolve(nil)
+            return
+        }
+        flags.loadFlags()
         resolve(nil)
     }
 
     @objc
-    func areFlagsReadySync(_ token: String) -> Bool {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-        return instance?.flags.areFlagsReady() ?? false
+    func areFlagsReadySync(_ token: String) -> NSNumber {
+        guard let instance = MixpanelReactNative.getMixpanelInstance(token) else {
+            NSLog("[MixpanelRN] areFlagsReadySync: instance is nil for token")
+            return NSNumber(value: false)
+        }
+
+        guard let flags = instance.flags else {
+            NSLog("[MixpanelRN] areFlagsReadySync: flags is nil")
+            return NSNumber(value: false)
+        }
+
+        let ready = flags.areFlagsReady()
+        NSLog("[MixpanelRN] areFlagsReadySync: flags ready = \(ready)")
+        return NSNumber(value: ready)
     }
 
     @objc
     func getVariantSync(_ token: String,
                         featureName: String,
                         fallback: [String: Any]) -> [String: Any] {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-
-        guard let flags = instance?.flags else {
+        guard let instance = MixpanelReactNative.getMixpanelInstance(token),
+              let flags = instance.flags else {
             return fallback
         }
 
@@ -519,26 +533,25 @@ open class MixpanelReactNative: NSObject {
     func getVariantValueSync(_ token: String,
                              featureName: String,
                              fallbackValue: Any) -> Any {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-
-        guard let flags = instance?.flags else {
+        guard let instance = MixpanelReactNative.getMixpanelInstance(token),
+              let flags = instance.flags else {
             return fallbackValue
         }
 
-        return flags.getVariantValueSync(featureName, fallbackValue: fallbackValue)
+        return flags.getVariantValueSync(featureName, fallbackValue: fallbackValue) ?? fallbackValue
     }
 
     @objc
     func isEnabledSync(_ token: String,
                        featureName: String,
-                       fallbackValue: Bool) -> Bool {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-
-        guard let flags = instance?.flags else {
-            return fallbackValue
+                       fallbackValue: Bool) -> NSNumber {
+        guard let instance = MixpanelReactNative.getMixpanelInstance(token),
+              let flags = instance.flags else {
+            return NSNumber(value: fallbackValue)
         }
 
-        return flags.isEnabledSync(featureName, fallbackValue: fallbackValue)
+        let enabled = flags.isEnabledSync(featureName, fallbackValue: fallbackValue)
+        return NSNumber(value: enabled)
     }
 
     @objc
@@ -547,9 +560,8 @@ open class MixpanelReactNative: NSObject {
                     fallback: [String: Any],
                     resolver resolve: @escaping RCTPromiseResolveBlock,
                     rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-
-        guard let flags = instance?.flags else {
+        guard let instance = MixpanelReactNative.getMixpanelInstance(token),
+              let flags = instance.flags else {
             resolve(fallback)
             return
         }
@@ -566,9 +578,8 @@ open class MixpanelReactNative: NSObject {
                          fallbackValue: Any,
                          resolver resolve: @escaping RCTPromiseResolveBlock,
                          rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-
-        guard let flags = instance?.flags else {
+        guard let instance = MixpanelReactNative.getMixpanelInstance(token),
+              let flags = instance.flags else {
             resolve(fallbackValue)
             return
         }
@@ -584,9 +595,8 @@ open class MixpanelReactNative: NSObject {
                    fallbackValue: Bool,
                    resolver resolve: @escaping RCTPromiseResolveBlock,
                    rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-
-        guard let flags = instance?.flags else {
+        guard let instance = MixpanelReactNative.getMixpanelInstance(token),
+              let flags = instance.flags else {
             resolve(fallbackValue)
             return
         }

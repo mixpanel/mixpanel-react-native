@@ -15,7 +15,7 @@ This sample app bridges the gap between basic "Hello World" examples and complex
 
 ## ✨ Features Demonstrated
 
-This app showcases 8 core Mixpanel SDK capabilities:
+This app showcases 9 core Mixpanel SDK capabilities:
 
 | Feature | Description | Screen |
 |---------|-------------|--------|
@@ -24,17 +24,19 @@ This app showcases 8 core Mixpanel SDK capabilities:
 | 📊 **Event Tracking** | `track()` with custom properties and metadata | Home |
 | ⏱️ **Timed Events** | `timeEvent()` for automatic duration tracking | Home |
 | 🌐 **Super Properties** | `registerSuperProperties()` for global context | Home |
+| 🚩 **Feature Flags** | `flags.loadFlags()`, `isEnabled()`, dynamic feature control - **FULL INTEGRATION TEST SUITE** | Feature Flags |
 | 🔒 **Privacy Controls** | `optIn/OutTracking()` for GDPR compliance | Settings |
 | 🗑️ **Data Management** | `reset()` for logout/data deletion | Settings |
 | 🚀 **Manual Flush** | `flush()` to force send queued events | Settings |
 
 ## 📱 App Structure
 
-The app has 3 tabs:
+The app has 4 tabs:
 
 1. **Onboarding (User ID Tab)**: Demonstrates user identification lifecycle
 2. **Home (Events Tab)**: Shows event tracking and super properties
-3. **Settings**: Privacy controls and data management
+3. **Feature Flags**: **Comprehensive integration test suite** - exercises all 8 public API methods, Promise/Callback patterns, edge cases, and type coercion
+4. **Settings**: Privacy controls and data management
 
 ## 🚀 Quick Start
 
@@ -83,13 +85,18 @@ MixpanelStarter/
 │   ├── screens/
 │   │   ├── OnboardingScreen.tsx     # User identification demos
 │   │   ├── HomeScreen.tsx           # Event tracking patterns
+│   │   ├── FeatureFlagsScreen.tsx   # Feature flags integration tests
 │   │   └── SettingsScreen.tsx       # Privacy & data management
 │   ├── components/
 │   │   ├── ActionButton.tsx         # Reusable button component
 │   │   ├── InfoCard.tsx             # Info display card
+│   │   ├── FlagCard.tsx             # Flag display component
+│   │   ├── TestResultDisplay.tsx    # Test results visualization
+│   │   ├── EventTrackingLog.tsx     # Event history component
 │   │   └── ErrorBoundary.tsx        # Error handling wrapper
 │   ├── types/
-│   │   └── mixpanel.types.ts        # TypeScript definitions
+│   │   ├── mixpanel.types.ts        # TypeScript definitions
+│   │   └── flags.types.ts           # Feature flags test types
 │   ├── constants/
 │   │   └── tracking.ts              # Event names & properties
 │   └── App.tsx                       # Navigation setup
@@ -169,7 +176,48 @@ mixpanel.registerSuperProperties({
 
 **Why?** Eliminates repetitive property passing. Perfect for user preferences and app state.
 
-### 5. GDPR-Compliant Logout
+### 5. Feature Flags for Dynamic Control
+
+```typescript
+// Enable feature flags during initialization
+await mixpanel.init(false, {}, undefined, false, {
+  enabled: true,
+});
+
+// Load flags from Mixpanel
+await mixpanel.flags.loadFlags();
+
+// Check if flags are ready
+const ready = mixpanel.flags.areFlagsReady();
+
+// Synchronous flag evaluation (fast, uses cached values)
+const isEnabled = mixpanel.flags.isEnabledSync('feature-key', false);
+const value = mixpanel.flags.getVariantValueSync('feature-key', 'default');
+
+// Asynchronous flag evaluation (ensures latest values)
+const enabled = await mixpanel.flags.isEnabled('feature-key', false);
+const variant = await mixpanel.flags.getVariant('feature-key', {
+  key: 'feature-key',
+  value: null,
+});
+
+```
+
+**Why?** Enables remote feature control, A/B testing, and gradual rollouts without app updates. Perfect for experimentation and user segmentation.
+
+#### Feature Flags Testing Screen
+
+The Feature Flags screen is a **full integration test suite** with:
+
+- **4 Test Modes**: Sync, Async (Promise), Edge Cases, Type Coercion
+- **12 Pre-configured Flags**: Boolean gates, string experiments, dynamic configs
+- **Real-time Results**: Execution time, type detection, fallback tracking
+- **Event Monitoring**: Live `$experiment_started` event tracking
+- **All API Methods**: getVariantSync, getVariantValueSync, isEnabledSync, getVariant, getVariantValue, isEnabled (both Promise and Callback patterns)
+
+Use this screen during development to verify Feature Flags functionality!
+
+### 6. GDPR-Compliant Logout
 
 ```typescript
 // Before logout

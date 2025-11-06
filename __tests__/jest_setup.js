@@ -101,6 +101,7 @@ jest.doMock("react-native", () => {
           getVariant: jest.fn().mockResolvedValue({ key: 'control', value: 'default' }),
           getVariantValue: jest.fn().mockResolvedValue('default'),
           isEnabled: jest.fn().mockResolvedValue(false),
+          updateContext: jest.fn().mockResolvedValue(undefined),  // Added for mixpanel-js alignment
           updateFlagsContext: jest.fn().mockResolvedValue(true),
         },
       },

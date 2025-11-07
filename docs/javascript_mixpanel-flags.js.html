@@ -1,31 +1,59 @@
-import { MixpanelFlagsJS } from './mixpanel-flags-js';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: javascript/mixpanel-flags.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: javascript/mixpanel-flags.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { MixpanelFlagsJS } from './mixpanel-flags-js';
 
 /**
  * Core class for using Mixpanel Feature Flags.
  *
- * <p>The Flags class provides access to Mixpanel's Feature Flags functionality, enabling
+ * &lt;p>The Flags class provides access to Mixpanel's Feature Flags functionality, enabling
  * dynamic feature control, A/B testing, and personalized user experiences. Feature flags
  * allow you to remotely configure your app's features without deploying new code.
  *
- * <p>This class is accessed through the {@link Mixpanel#flags} property and is lazy-loaded
+ * &lt;p>This class is accessed through the {@link Mixpanel#flags} property and is lazy-loaded
  * to minimize performance impact until feature flags are actually used.
  *
- * <p><b>Platform Support:</b>
- * <ul>
- * <li><b>Native Mode (iOS/Android):</b> Fully supported with automatic experiment tracking</li>
- * <li><b>JavaScript Mode (Expo/React Native Web):</b> Planned for future release</li>
- * </ul>
+ * &lt;p>&lt;b>Platform Support:&lt;/b>
+ * &lt;ul>
+ * &lt;li>&lt;b>Native Mode (iOS/Android):&lt;/b> Fully supported with automatic experiment tracking&lt;/li>
+ * &lt;li>&lt;b>JavaScript Mode (Expo/React Native Web):&lt;/b> Planned for future release&lt;/li>
+ * &lt;/ul>
  *
- * <p><b>Key Concepts:</b>
- * <ul>
- * <li><b>Feature Name:</b> The unique identifier for your feature flag (e.g., "new-checkout")</li>
- * <li><b>Variant:</b> An object containing both a key and value representing the feature configuration</li>
- * <li><b>Variant Key:</b> The identifier for the specific variation (e.g., "control", "treatment")</li>
- * <li><b>Variant Value:</b> The actual configuration value (can be any JSON-serializable type)</li>
- * <li><b>Fallback:</b> Default value returned when a flag is not available or not loaded</li>
- * </ul>
+ * &lt;p>&lt;b>Key Concepts:&lt;/b>
+ * &lt;ul>
+ * &lt;li>&lt;b>Feature Name:&lt;/b> The unique identifier for your feature flag (e.g., "new-checkout")&lt;/li>
+ * &lt;li>&lt;b>Variant:&lt;/b> An object containing both a key and value representing the feature configuration&lt;/li>
+ * &lt;li>&lt;b>Variant Key:&lt;/b> The identifier for the specific variation (e.g., "control", "treatment")&lt;/li>
+ * &lt;li>&lt;b>Variant Value:&lt;/b> The actual configuration value (can be any JSON-serializable type)&lt;/li>
+ * &lt;li>&lt;b>Fallback:&lt;/b> Default value returned when a flag is not available or not loaded&lt;/li>
+ * &lt;/ul>
  *
- * <p><b>Automatic Experiment Tracking:</b> When a feature flag is evaluated for the first time,
+ * &lt;p>&lt;b>Automatic Experiment Tracking:&lt;/b> When a feature flag is evaluated for the first time,
  * Mixpanel automatically tracks a "$experiment_started" event with relevant metadata.
  *
  * @example
@@ -72,7 +100,7 @@ export class Flags {
     this.isNativeMode = typeof mixpanelImpl.loadFlags === 'function';
 
     // For JavaScript mode, create the JS implementation
-    if (!this.isNativeMode && storage) {
+    if (!this.isNativeMode &amp;&amp; storage) {
       this.jsFlags = new MixpanelFlagsJS(token, mixpanelImpl, storage);
     }
   }
@@ -80,18 +108,18 @@ export class Flags {
   /**
    * Manually fetch feature flags from the Mixpanel servers.
    *
-   * <p>Feature flags are automatically loaded during initialization when feature flags are enabled.
+   * &lt;p>Feature flags are automatically loaded during initialization when feature flags are enabled.
    * This method allows you to manually trigger a refresh of the flags, which is useful when:
-   * <ul>
-   * <li>You want to reload flags after a user property change</li>
-   * <li>You need to ensure you have the latest flag configuration</li>
-   * <li>Initial automatic load failed and you want to retry</li>
-   * </ul>
+   * &lt;ul>
+   * &lt;li>You want to reload flags after a user property change&lt;/li>
+   * &lt;li>You need to ensure you have the latest flag configuration&lt;/li>
+   * &lt;li>Initial automatic load failed and you want to retry&lt;/li>
+   * &lt;/ul>
    *
-   * <p>After successfully loading flags, {@link areFlagsReady} will return true and synchronous
+   * &lt;p>After successfully loading flags, {@link areFlagsReady} will return true and synchronous
    * methods can be used to access flag values.
    *
-   * @returns {Promise<void>} A promise that resolves when flags have been fetched and loaded
+   * @returns {Promise&lt;void>} A promise that resolves when flags have been fetched and loaded
    * @throws {Error} if feature flags are not initialized
    *
    * @example
@@ -111,11 +139,11 @@ export class Flags {
   /**
    * Check if feature flags have been fetched from the server and are ready to use.
    *
-   * <p>This method returns true after feature flags have been successfully loaded via {@link loadFlags}
+   * &lt;p>This method returns true after feature flags have been successfully loaded via {@link loadFlags}
    * or during initialization. When flags are ready, you can safely use the synchronous methods
    * ({@link getVariantSync}, {@link getVariantValueSync}, {@link isEnabledSync}) without waiting.
    *
-   * <p>It's recommended to check this before using synchronous methods to ensure you're not
+   * &lt;p>It's recommended to check this before using synchronous methods to ensure you're not
    * getting fallback values due to flags not being loaded yet.
    *
    * @returns {boolean} true if flags have been loaded and are ready to use, false otherwise
@@ -147,13 +175,13 @@ export class Flags {
   /**
    * Get a feature flag variant synchronously.
    *
-   * <p>Returns the complete variant object for a feature flag, including both the variant key
+   * &lt;p>Returns the complete variant object for a feature flag, including both the variant key
    * (e.g., "control", "treatment") and the variant value (the actual configuration data).
    *
-   * <p><b>Important:</b> This is a synchronous method that only works when flags are ready.
+   * &lt;p>&lt;b>Important:&lt;/b> This is a synchronous method that only works when flags are ready.
    * Always check {@link areFlagsReady} first, or use the asynchronous {@link getVariant} method instead.
    *
-   * <p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
+   * &lt;p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
    * "$experiment_started" event with relevant experiment metadata.
    *
    * @param {string} featureName The unique identifier for the feature flag
@@ -207,13 +235,13 @@ export class Flags {
   /**
    * Get a feature flag variant value synchronously.
    *
-   * <p>Returns only the value portion of a feature flag variant, without the variant key or metadata.
+   * &lt;p>Returns only the value portion of a feature flag variant, without the variant key or metadata.
    * This is useful when you only care about the configuration data, not which variant was selected.
    *
-   * <p><b>Important:</b> This is a synchronous method that only works when flags are ready.
+   * &lt;p>&lt;b>Important:&lt;/b> This is a synchronous method that only works when flags are ready.
    * Always check {@link areFlagsReady} first, or use the asynchronous {@link getVariantValue} method instead.
    *
-   * <p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
+   * &lt;p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
    * "$experiment_started" event with relevant experiment metadata.
    *
    * @param {string} featureName The unique identifier for the feature flag
@@ -253,7 +281,7 @@ export class Flags {
     if (this.isNativeMode) {
       // Android returns a wrapped object due to React Native limitations
       const result = this.mixpanelImpl.getVariantValueSync(this.token, featureName, fallbackValue);
-      if (result && typeof result === 'object' && 'type' in result) {
+      if (result &amp;&amp; typeof result === 'object' &amp;&amp; 'type' in result) {
         // Android wraps the response
         return result.type === 'fallback' ? fallbackValue : result.value;
       }
@@ -268,14 +296,14 @@ export class Flags {
   /**
    * Check if a feature flag is enabled synchronously.
    *
-   * <p>This is a convenience method for boolean feature flags. It checks if a feature is enabled
+   * &lt;p>This is a convenience method for boolean feature flags. It checks if a feature is enabled
    * by evaluating the variant value as a boolean. A feature is considered "enabled" when its
    * variant value evaluates to true.
    *
-   * <p><b>Important:</b> This is a synchronous method that only works when flags are ready.
+   * &lt;p>&lt;b>Important:&lt;/b> This is a synchronous method that only works when flags are ready.
    * Always check {@link areFlagsReady} first, or use the asynchronous {@link isEnabled} method instead.
    *
-   * <p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
+   * &lt;p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
    * "$experiment_started" event with relevant experiment metadata.
    *
    * @param {string} featureName The unique identifier for the feature flag
@@ -316,13 +344,13 @@ export class Flags {
   /**
    * Get a feature flag variant asynchronously.
    *
-   * <p>Returns the complete variant object for a feature flag, including both the variant key
+   * &lt;p>Returns the complete variant object for a feature flag, including both the variant key
    * and the variant value. This method works regardless of whether flags are ready, making it
    * safe to use at any time.
    *
-   * <p>Supports both Promise and callback patterns for maximum flexibility.
+   * &lt;p>Supports both Promise and callback patterns for maximum flexibility.
    *
-   * <p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
+   * &lt;p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
    * "$experiment_started" event with relevant experiment metadata.
    *
    * @param {string} featureName The unique identifier for the feature flag
@@ -330,7 +358,7 @@ export class Flags {
    *     Must include both 'key' and 'value' properties.
    * @param {function} [callback] Optional callback function that receives the variant object.
    *     If provided, the method returns void. If omitted, the method returns a Promise.
-   * @returns {Promise<object>|void} Promise that resolves to the variant object if no callback provided,
+   * @returns {Promise&lt;object>|void} Promise that resolves to the variant object if no callback provided,
    *     void if callback is provided. The variant object has the following structure:
    *     - key: {string} The variant key (e.g., "control", "treatment")
    *     - value: {any} The variant value (can be any JSON-serializable type)
@@ -393,12 +421,12 @@ export class Flags {
   /**
    * Get a feature flag variant value asynchronously.
    *
-   * <p>Returns only the value portion of a feature flag variant. This method works regardless
+   * &lt;p>Returns only the value portion of a feature flag variant. This method works regardless
    * of whether flags are ready, making it safe to use at any time.
    *
-   * <p>Supports both Promise and callback patterns for maximum flexibility.
+   * &lt;p>Supports both Promise and callback patterns for maximum flexibility.
    *
-   * <p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
+   * &lt;p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
    * "$experiment_started" event with relevant experiment metadata.
    *
    * @param {string} featureName The unique identifier for the feature flag
@@ -406,7 +434,7 @@ export class Flags {
    *     Can be any JSON-serializable type (string, number, boolean, object, array, etc.)
    * @param {function} [callback] Optional callback function that receives the flag value.
    *     If provided, the method returns void. If omitted, the method returns a Promise.
-   * @returns {Promise<any>|void} Promise that resolves to the flag value if no callback provided,
+   * @returns {Promise&lt;any>|void} Promise that resolves to the flag value if no callback provided,
    *     void if callback is provided. The return type matches the type of value configured in
    *     your Mixpanel project.
    *
@@ -468,13 +496,13 @@ export class Flags {
   /**
    * Check if a feature flag is enabled asynchronously.
    *
-   * <p>This is a convenience method for boolean feature flags. It checks if a feature is enabled
+   * &lt;p>This is a convenience method for boolean feature flags. It checks if a feature is enabled
    * by evaluating the variant value as a boolean. This method works regardless of whether flags
    * are ready, making it safe to use at any time.
    *
-   * <p>Supports both Promise and callback patterns for maximum flexibility.
+   * &lt;p>Supports both Promise and callback patterns for maximum flexibility.
    *
-   * <p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
+   * &lt;p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
    * "$experiment_started" event with relevant experiment metadata.
    *
    * @param {string} featureName The unique identifier for the feature flag
@@ -482,7 +510,7 @@ export class Flags {
    *     Defaults to false if not provided.
    * @param {function} [callback] Optional callback function that receives the boolean result.
    *     If provided, the method returns void. If omitted, the method returns a Promise.
-   * @returns {Promise<boolean>|void} Promise that resolves to true if enabled, false otherwise
+   * @returns {Promise&lt;boolean>|void} Promise that resolves to true if enabled, false otherwise
    *     (when no callback provided). Returns void if callback is provided.
    *
    * @example
@@ -545,16 +573,16 @@ export class Flags {
   /**
    * Update the context used for feature flag evaluation.
    *
-   * <p>Context properties are used to determine which feature flag variants a user should receive
+   * &lt;p>Context properties are used to determine which feature flag variants a user should receive
    * based on targeting rules configured in your Mixpanel project. This allows for personalized
    * feature experiences based on user attributes, device properties, or custom criteria.
    *
-   * <p><b>IMPORTANT LIMITATION:</b> This method is <b>only available in JavaScript mode</b>
+   * &lt;p>&lt;b>IMPORTANT LIMITATION:&lt;/b> This method is &lt;b>only available in JavaScript mode&lt;/b>
    * (Expo/React Native Web). In native mode (iOS/Android), context must be set during initialization
    * via {@link Mixpanel#init} and cannot be updated at runtime.
    *
-   * <p>By default, the new context properties are merged with existing context. Set
-   * <code>options.replace = true</code> to completely replace the context instead.
+   * &lt;p>By default, the new context properties are merged with existing context. Set
+   * &lt;code>options.replace = true&lt;/code> to completely replace the context instead.
    *
    * @param {object} newContext New context properties to add or update. Can include any
    *     JSON-serializable properties that are used in your feature flag targeting rules.
@@ -562,7 +590,7 @@ export class Flags {
    * @param {object} [options={replace: false}] Configuration options for the update
    * @param {boolean} [options.replace=false] If true, replaces the entire context instead of merging.
    *     If false (default), merges new properties with existing context.
-   * @returns {Promise<void>} A promise that resolves when the context has been updated and
+   * @returns {Promise&lt;void>} A promise that resolves when the context has been updated and
    *     flags have been re-evaluated with the new context
    * @throws {Error} if called in native mode (iOS/Android)
    *
@@ -667,4 +695,26 @@ export class Flags {
   update_context(newContext, options) {
     return this.updateContext(newContext, options);
   }
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Flags.html">Flags</a></li><li><a href="Mixpanel.html">Mixpanel</a></li><li><a href="MixpanelGroup.html">MixpanelGroup</a></li><li><a href="People.html">People</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Nov 07 2025 13:06:53 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

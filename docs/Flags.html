@@ -1,0 +1,3197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: Flags</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: Flags</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>Flags<span class="signature">()</span><span class="type-signature"></span></h2>
+        
+            <div class="class-description">Core class for using Mixpanel Feature Flags.
+
+<p>The Flags class provides access to Mixpanel's Feature Flags functionality, enabling
+dynamic feature control, A/B testing, and personalized user experiences. Feature flags
+allow you to remotely configure your app's features without deploying new code.
+
+<p>This class is accessed through the <a href="Mixpanel.html#flags">Mixpanel#flags</a> property and is lazy-loaded
+to minimize performance impact until feature flags are actually used.
+
+<p><b>Platform Support:</b>
+<ul>
+<li><b>Native Mode (iOS/Android):</b> Fully supported with automatic experiment tracking</li>
+<li><b>JavaScript Mode (Expo/React Native Web):</b> Planned for future release</li>
+</ul>
+
+<p><b>Key Concepts:</b>
+<ul>
+<li><b>Feature Name:</b> The unique identifier for your feature flag (e.g., "new-checkout")</li>
+<li><b>Variant:</b> An object containing both a key and value representing the feature configuration</li>
+<li><b>Variant Key:</b> The identifier for the specific variation (e.g., "control", "treatment")</li>
+<li><b>Variant Value:</b> The actual configuration value (can be any JSON-serializable type)</li>
+<li><b>Fallback:</b> Default value returned when a flag is not available or not loaded</li>
+</ul>
+
+<p><b>Automatic Experiment Tracking:</b> When a feature flag is evaluated for the first time,
+Mixpanel automatically tracks a "$experiment_started" event with relevant metadata.</div>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+    <h2>Constructor</h2>
+    
+
+    
+    <h4 class="name" id="Flags"><span class="type-signature"></span>new Flags<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line67">line 67</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Mixpanel.html#flags">Mixpanel#flags</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Initialize with feature flags enabled
+const mixpanel = new Mixpanel('YOUR_TOKEN', true);
+await mixpanel.init(false, {}, 'https://api.mixpanel.com', false, {
+  enabled: true,
+  context: { platform: 'mobile' }
+});</code></pre>
+
+    <pre class="prettyprint"><code>// Synchronous access (when flags are ready)
+if (mixpanel.flags.areFlagsReady()) {
+  const isEnabled = mixpanel.flags.isEnabledSync('new-feature', false);
+  const color = mixpanel.flags.getVariantValueSync('button-color', 'blue');
+  const variant = mixpanel.flags.getVariantSync('checkout-flow', {
+    key: 'control',
+    value: 'standard'
+  });
+}</code></pre>
+
+    <pre class="prettyprint"><code>// Asynchronous access with Promise pattern
+const variant = await mixpanel.flags.getVariant('pricing-test', {
+  key: 'control',
+  value: { price: 9.99, currency: 'USD' }
+});</code></pre>
+
+    <pre class="prettyprint"><code>// Asynchronous access with callback pattern
+mixpanel.flags.isEnabled('beta-features', false, (isEnabled) => {
+  if (isEnabled) {
+    // Enable beta features
+  }
+});</code></pre>
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="Flags.html">Flags</a></dt>
+            <dd></dd>
+        </dl>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="areFlagsReady"><span class="type-signature"></span>areFlagsReady<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Check if feature flags have been fetched from the server and are ready to use.
+
+<p>This method returns true after feature flags have been successfully loaded via loadFlags
+or during initialization. When flags are ready, you can safely use the synchronous methods
+(getVariantSync, getVariantValueSync, isEnabledSync) without waiting.
+
+<p>It's recommended to check this before using synchronous methods to ensure you're not
+getting fallback values due to flags not being loaded yet.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line138">line 138</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    true if flags have been loaded and are ready to use, false otherwise
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Check before using synchronous methods
+if (mixpanel.flags.areFlagsReady()) {
+  const isEnabled = mixpanel.flags.isEnabledSync('new-feature', false);
+} else {
+  console.log('Flags not ready yet, using fallback');
+}</code></pre>
+
+    <pre class="prettyprint"><code>// Wait for flags to be ready
+await mixpanel.flags.loadFlags();
+if (mixpanel.flags.areFlagsReady()) {
+  // Now safe to use sync methods
+}</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="are_flags_ready"><span class="type-signature"></span>are_flags_ready<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Alias for areFlagsReady. Provided for API consistency with mixpanel-js.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line610">line 610</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>areFlagsReady</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getVariant"><span class="type-signature"></span>getVariant<span class="signature">(featureName, fallback, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;object>|void}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Get a feature flag variant asynchronously.
+
+<p>Returns the complete variant object for a feature flag, including both the variant key
+and the variant value. This method works regardless of whether flags are ready, making it
+safe to use at any time.
+
+<p>Supports both Promise and callback patterns for maximum flexibility.
+
+<p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
+"$experiment_started" event with relevant experiment metadata.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>featureName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The unique identifier for the feature flag</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fallback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The fallback variant object to return if the flag is not available.
+    Must include both 'key' and 'value' properties.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Optional callback function that receives the variant object.
+    If provided, the method returns void. If omitted, the method returns a Promise.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line360">line 360</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>getVariantSync for synchronous access when flags are ready</li>
+        
+            <li>getVariantValue to get only the value without the variant key</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Promise that resolves to the variant object if no callback provided,
+    void if callback is provided. The variant object has the following structure:
+    - key: {string} The variant key (e.g., "control", "treatment")
+    - value: {any} The variant value (can be any JSON-serializable type)
+    - experiment_id: {string|number} (optional) The experiment ID if this is an experiment
+    - is_experiment_active: {boolean} (optional) Whether the experiment is currently active
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;object></span>
+|
+
+<span class="param-type">void</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Promise pattern (recommended)
+const variant = await mixpanel.flags.getVariant('checkout-flow', {
+  key: 'control',
+  value: 'standard'
+});
+console.log(`Using ${variant.key}: ${variant.value}`);</code></pre>
+
+    <pre class="prettyprint"><code>// Callback pattern
+mixpanel.flags.getVariant('pricing-test', {
+  key: 'default',
+  value: { price: 9.99 }
+}, (variant) => {
+  console.log(`Price: ${variant.value.price}`);
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getVariantSync"><span class="type-signature"></span>getVariantSync<span class="signature">(featureName, fallback)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Get a feature flag variant synchronously.
+
+<p>Returns the complete variant object for a feature flag, including both the variant key
+(e.g., "control", "treatment") and the variant value (the actual configuration data).
+
+<p><b>Important:</b> This is a synchronous method that only works when flags are ready.
+Always check areFlagsReady first, or use the asynchronous getVariant method instead.
+
+<p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
+"$experiment_started" event with relevant experiment metadata.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>featureName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The unique identifier for the feature flag</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fallback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The fallback variant object to return if the flag is not available.
+    Must include both 'key' and 'value' properties.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line194">line 194</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>getVariant for asynchronous access</li>
+        
+            <li>getVariantValueSync to get only the value (not the full variant object)</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The flag variant object with the following structure:
+    - key: {string} The variant key (e.g., "control", "treatment")
+    - value: {any} The variant value (can be any JSON-serializable type)
+    - experiment_id: {string|number} (optional) The experiment ID if this is an experiment
+    - is_experiment_active: {boolean} (optional) Whether the experiment is currently active
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Get a checkout flow variant
+if (mixpanel.flags.areFlagsReady()) {
+  const variant = mixpanel.flags.getVariantSync('checkout-flow', {
+    key: 'control',
+    value: 'standard'
+  });
+  console.log(`Using variant: ${variant.key}`);
+  console.log(`Configuration: ${JSON.stringify(variant.value)}`);
+}</code></pre>
+
+    <pre class="prettyprint"><code>// Get a complex configuration variant
+const defaultConfig = {
+  key: 'default',
+  value: {
+    theme: 'light',
+    layout: 'grid',
+    itemsPerPage: 20
+  }
+};
+const config = mixpanel.flags.getVariantSync('ui-config', defaultConfig);</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getVariantValue"><span class="type-signature"></span>getVariantValue<span class="signature">(featureName, fallbackValue, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;any>|void}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Get a feature flag variant value asynchronously.
+
+<p>Returns only the value portion of a feature flag variant. This method works regardless
+of whether flags are ready, making it safe to use at any time.
+
+<p>Supports both Promise and callback patterns for maximum flexibility.
+
+<p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
+"$experiment_started" event with relevant experiment metadata.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>featureName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The unique identifier for the feature flag</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fallbackValue</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The fallback value to return if the flag is not available.
+    Can be any JSON-serializable type (string, number, boolean, object, array, etc.)</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Optional callback function that receives the flag value.
+    If provided, the method returns void. If omitted, the method returns a Promise.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line435">line 435</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>getVariantValueSync for synchronous access when flags are ready</li>
+        
+            <li>getVariant to get the full variant object including key and metadata</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Promise that resolves to the flag value if no callback provided,
+    void if callback is provided. The return type matches the type of value configured in
+    your Mixpanel project.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;any></span>
+|
+
+<span class="param-type">void</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Promise pattern (recommended)
+const buttonColor = await mixpanel.flags.getVariantValue('button-color', 'blue');
+applyButtonColor(buttonColor);</code></pre>
+
+    <pre class="prettyprint"><code>// Promise pattern with object value
+const pricing = await mixpanel.flags.getVariantValue('pricing-config', {
+  price: 9.99,
+  currency: 'USD'
+});
+displayPrice(pricing.price, pricing.currency);</code></pre>
+
+    <pre class="prettyprint"><code>// Callback pattern
+mixpanel.flags.getVariantValue('theme', 'light', (theme) => {
+  applyTheme(theme);
+});</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getVariantValueSync"><span class="type-signature"></span>getVariantValueSync<span class="signature">(featureName, fallbackValue)</span><span class="type-signature"> &rarr; {any}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Get a feature flag variant value synchronously.
+
+<p>Returns only the value portion of a feature flag variant, without the variant key or metadata.
+This is useful when you only care about the configuration data, not which variant was selected.
+
+<p><b>Important:</b> This is a synchronous method that only works when flags are ready.
+Always check areFlagsReady first, or use the asynchronous getVariantValue method instead.
+
+<p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
+"$experiment_started" event with relevant experiment metadata.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>featureName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The unique identifier for the feature flag</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fallbackValue</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The fallback value to return if the flag is not available.
+    Can be any JSON-serializable type (string, number, boolean, object, array, etc.)</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line248">line 248</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>getVariantValue for asynchronous access</li>
+        
+            <li>getVariantSync to get the full variant object including key and metadata</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    The flag's value, or the fallback if the flag is not available.
+    The return type matches the type of value configured in your Mixpanel project.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">any</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Get a simple string value
+if (mixpanel.flags.areFlagsReady()) {
+  const buttonColor = mixpanel.flags.getVariantValueSync('button-color', 'blue');
+  applyButtonColor(buttonColor);
+}</code></pre>
+
+    <pre class="prettyprint"><code>// Get a complex object value
+const defaultPricing = { price: 9.99, currency: 'USD', trial_days: 7 };
+const pricing = mixpanel.flags.getVariantValueSync('pricing-config', defaultPricing);
+console.log(`Price: ${pricing.price} ${pricing.currency}`);</code></pre>
+
+    <pre class="prettyprint"><code>// Get a boolean value
+const showPromo = mixpanel.flags.getVariantValueSync('show-promo', false);
+if (showPromo) {
+  displayPromotionalBanner();
+}</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="get_variant"><span class="type-signature"></span>get_variant<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Alias for getVariant. Provided for API consistency with mixpanel-js.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line618">line 618</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>getVariant</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="get_variant_sync"><span class="type-signature"></span>get_variant_sync<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Alias for getVariantSync. Provided for API consistency with mixpanel-js.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line626">line 626</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>getVariantSync</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="get_variant_value"><span class="type-signature"></span>get_variant_value<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Alias for getVariantValue. Provided for API consistency with mixpanel-js.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line634">line 634</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>getVariantValue</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="get_variant_value_sync"><span class="type-signature"></span>get_variant_value_sync<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Alias for getVariantValueSync. Provided for API consistency with mixpanel-js.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line642">line 642</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>getVariantValueSync</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="isEnabled"><span class="type-signature"></span>isEnabled<span class="signature">(featureName, fallbackValue<span class="signature-attributes">opt</span>, callback<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;boolean>|void}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Check if a feature flag is enabled asynchronously.
+
+<p>This is a convenience method for boolean feature flags. It checks if a feature is enabled
+by evaluating the variant value as a boolean. This method works regardless of whether flags
+are ready, making it safe to use at any time.
+
+<p>Supports both Promise and callback patterns for maximum flexibility.
+
+<p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
+"$experiment_started" event with relevant experiment metadata.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>featureName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The unique identifier for the feature flag</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fallbackValue</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">The fallback value to return if the flag is not available.
+    Defaults to false if not provided.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Optional callback function that receives the boolean result.
+    If provided, the method returns void. If omitted, the method returns a Promise.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line512">line 512</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>isEnabledSync for synchronous access when flags are ready</li>
+        
+            <li>getVariantValue for non-boolean flag values</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Promise that resolves to true if enabled, false otherwise
+    (when no callback provided). Returns void if callback is provided.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;boolean></span>
+|
+
+<span class="param-type">void</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Promise pattern (recommended)
+const isEnabled = await mixpanel.flags.isEnabled('new-checkout', false);
+if (isEnabled) {
+  showNewCheckout();
+} else {
+  showLegacyCheckout();
+}</code></pre>
+
+    <pre class="prettyprint"><code>// Callback pattern
+mixpanel.flags.isEnabled('beta-features', false, (isEnabled) => {
+  if (isEnabled) {
+    enableBetaFeatures();
+  }
+});</code></pre>
+
+    <pre class="prettyprint"><code>// Default fallback (false)
+const showPromo = await mixpanel.flags.isEnabled('show-promo');</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="isEnabledSync"><span class="type-signature"></span>isEnabledSync<span class="signature">(featureName, fallbackValue<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Check if a feature flag is enabled synchronously.
+
+<p>This is a convenience method for boolean feature flags. It checks if a feature is enabled
+by evaluating the variant value as a boolean. A feature is considered "enabled" when its
+variant value evaluates to true.
+
+<p><b>Important:</b> This is a synchronous method that only works when flags are ready.
+Always check areFlagsReady first, or use the asynchronous isEnabled method instead.
+
+<p>When a flag is evaluated for the first time, Mixpanel automatically tracks a
+"$experiment_started" event with relevant experiment metadata.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>featureName</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The unique identifier for the feature flag</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fallbackValue</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">The fallback value to return if the flag is not available.
+    Defaults to false if not provided.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line303">line 303</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>isEnabled for asynchronous access</li>
+        
+            <li>getVariantValueSync for non-boolean flag values</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    true if the feature is enabled, false otherwise
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Simple feature toggle
+if (mixpanel.flags.areFlagsReady()) {
+  if (mixpanel.flags.isEnabledSync('new-checkout', false)) {
+    showNewCheckout();
+  } else {
+    showLegacyCheckout();
+  }
+}</code></pre>
+
+    <pre class="prettyprint"><code>// With explicit fallback
+const enableBetaFeatures = mixpanel.flags.isEnabledSync('beta-features', true);</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="is_enabled"><span class="type-signature"></span>is_enabled<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Alias for isEnabled. Provided for API consistency with mixpanel-js.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line650">line 650</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>isEnabled</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="is_enabled_sync"><span class="type-signature"></span>is_enabled_sync<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Alias for isEnabledSync. Provided for API consistency with mixpanel-js.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line658">line 658</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>isEnabledSync</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="loadFlags"><span class="type-signature">(async) </span>loadFlags<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Manually fetch feature flags from the Mixpanel servers.
+
+<p>Feature flags are automatically loaded during initialization when feature flags are enabled.
+This method allows you to manually trigger a refresh of the flags, which is useful when:
+<ul>
+<li>You want to reload flags after a user property change</li>
+<li>You need to ensure you have the latest flag configuration</li>
+<li>Initial automatic load failed and you want to retry</li>
+</ul>
+
+<p>After successfully loading flags, areFlagsReady will return true and synchronous
+methods can be used to access flag values.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line102">line 102</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        if feature flags are not initialized
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">Error</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A promise that resolves when flags have been fetched and loaded
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>// Manually reload flags after user identification
+await mixpanel.identify('user123');
+await mixpanel.flags.loadFlags();</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="updateContext"><span class="type-signature">(async) </span>updateContext<span class="signature">(newContext, options<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Update the context used for feature flag evaluation.
+
+<p>Context properties are used to determine which feature flag variants a user should receive
+based on targeting rules configured in your Mixpanel project. This allows for personalized
+feature experiences based on user attributes, device properties, or custom criteria.
+
+<p><b>IMPORTANT LIMITATION:</b> This method is <b>only available in JavaScript mode</b>
+(Expo/React Native Web). In native mode (iOS/Android), context must be set during initialization
+via <a href="Mixpanel.html#init">Mixpanel#init</a> and cannot be updated at runtime.
+
+<p>By default, the new context properties are merged with existing context. Set
+<code>options.replace = true</code> to completely replace the context instead.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>newContext</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">New context properties to add or update. Can include any
+    JSON-serializable properties that are used in your feature flag targeting rules.
+    Common examples include user tier, region, platform version, etc.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {replace: false}
+                
+                </td>
+            
+
+            <td class="description last">Configuration options for the update
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>replace</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">If true, replaces the entire context instead of merging.
+    If false (default), merges new properties with existing context.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line591">line 591</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc">
+        if called in native mode (iOS/Android)
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl>
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">Error</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A promise that resolves when the context has been updated and
+    flags have been re-evaluated with the new context
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Merge new properties into existing context (JavaScript mode only)
+await mixpanel.flags.updateContext({
+  user_tier: 'premium',
+  region: 'us-west'
+});</code></pre>
+
+    <pre class="prettyprint"><code>// Replace entire context (JavaScript mode only)
+await mixpanel.flags.updateContext({
+  device_type: 'tablet',
+  os_version: '14.0'
+}, { replace: true });</code></pre>
+
+    <pre class="prettyprint"><code>// This will throw an error in native mode
+try {
+  await mixpanel.flags.updateContext({ tier: 'premium' });
+} catch (error) {
+  console.error('Context updates not supported in native mode');
+}</code></pre>
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="update_context"><span class="type-signature"></span>update_context<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Alias for updateContext. Provided for API consistency with mixpanel-js.
+JavaScript mode only.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="javascript_mixpanel-flags.js.html">javascript/mixpanel-flags.js</a>, <a href="javascript_mixpanel-flags.js.html#line667">line 667</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li>updateContext</li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Flags.html">Flags</a></li><li><a href="Mixpanel.html">Mixpanel</a></li><li><a href="MixpanelGroup.html">MixpanelGroup</a></li><li><a href="People.html">People</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Nov 07 2025 13:06:53 GMT-0800 (Pacific Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

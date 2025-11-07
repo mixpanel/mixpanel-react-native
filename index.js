@@ -63,10 +63,27 @@ export class Mixpanel {
 
   /**
    * Returns the Flags instance for feature flags operations.
-   * This property is lazy-loaded to avoid unnecessary initialization.
    *
-   * NOTE: Feature flags are only available in native mode.
-   * JavaScript mode is not yet supported.
+   * <p>Feature Flags enable dynamic feature control and A/B testing capabilities.
+   * This property is lazy-loaded to avoid unnecessary initialization until first access.
+   *
+   * <p><b>Native Mode Only:</b> Feature flags are currently only available when using native mode
+   * (iOS/Android). JavaScript mode (Expo/React Native Web) support is planned for a future release.
+   *
+   * @return {Flags} an instance of Flags that provides access to feature flag operations
+   * @throws {Error} if accessed in JavaScript mode (when native modules are not available)
+   *
+   * @example
+   * // Check if flags are ready
+   * if (mixpanel.flags.areFlagsReady()) {
+   *   const isEnabled = mixpanel.flags.isEnabledSync('new-checkout', false);
+   * }
+   *
+   * @example
+   * // Get a feature variant value
+   * const buttonColor = mixpanel.flags.getVariantValueSync('button-color', 'blue');
+   *
+   * @see Flags
    */
   get flags() {
     // Short circuit for JavaScript mode - flags not ready for public use
@@ -86,13 +103,50 @@ export class Mixpanel {
   }
 
   /**
-   * Initializes Mixpanel
+   * Initializes Mixpanel with optional configuration for tracking, super properties, and feature flags.
    *
-   * @param {boolean} optOutTrackingDefault Optional Whether or not Mixpanel can start tracking by default. See optOutTracking()
-   * @param {object} superProperties  Optional A Map containing the key value pairs of the super properties to register
-   * @param {string} serverURL Optional Set the base URL used for Mixpanel API requests. See setServerURL()
-   * @param {boolean} useGzipCompression Optional Set whether to use gzip compression for network requests. Defaults to false.
-   * @param {object} featureFlagsOptions Optional Feature flags configuration including enabled flag and context
+   * <p>This method must be called before using any other Mixpanel functionality. It sets up
+   * the tracking environment, registers super properties, and optionally initializes feature flags.
+   *
+   * @param {boolean} [optOutTrackingDefault=false] Whether or not Mixpanel can start tracking by default.
+   *     If true, no data will be tracked until optInTracking() is called. See optOutTracking()
+   * @param {object} [superProperties={}] A Map containing the key value pairs of the super properties to register.
+   *     These properties will be sent with every event. Pass {} if no super properties needed.
+   * @param {string} [serverURL="https://api.mixpanel.com"] The base URL used for Mixpanel API requests.
+   *     Use "https://api-eu.mixpanel.com" for EU data residency. See setServerURL()
+   * @param {boolean} [useGzipCompression=false] Whether to use gzip compression for network requests.
+   *     Enabling this reduces bandwidth usage but adds slight CPU overhead.
+   * @param {object} [featureFlagsOptions={}] Feature flags configuration object with the following properties:
+   * @param {boolean} [featureFlagsOptions.enabled=false] Whether to enable feature flags functionality
+   * @param {object} [featureFlagsOptions.context={}] Context properties used for feature flag targeting.
+   *     Can include user properties, device properties, or any custom properties for flag evaluation.
+   *     Note: In native mode, context must be set during initialization and cannot be updated later.
+   * @returns {Promise<void>} A promise that resolves when initialization is complete
+   *
+   * @example
+   * // Basic initialization
+   * const mixpanel = new Mixpanel('YOUR_TOKEN', true);
+   * await mixpanel.init();
+   *
+   * @example
+   * // Initialize with feature flags enabled
+   * const mixpanel = new Mixpanel('YOUR_TOKEN', true);
+   * await mixpanel.init(false, {}, 'https://api.mixpanel.com', false, {
+   *   enabled: true,
+   *   context: {
+   *     platform: 'mobile',
+   *     app_version: '2.1.0'
+   *   }
+   * });
+   *
+   * @example
+   * // Initialize with EU data residency and super properties
+   * await mixpanel.init(
+   *   false,
+   *   { plan: 'premium', region: 'eu' },
+   *   'https://api-eu.mixpanel.com',
+   *   true
+   * );
    */
   async init(
     optOutTrackingDefault = DEFAULT_OPT_OUT,

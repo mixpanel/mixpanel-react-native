@@ -146,124 +146,25 @@
     
 
     
-
-    
-        <h3 class="subsection-title">Methods</h3>
+        <h3 class="subsection-title">Members</h3>
 
         
             
-
-    
-
-    
-    <h4 class="name" id=".init"><span class="type-signature">(async, static) </span>init<span class="signature">(token, trackAutomaticEvents, Optional)</span><span class="type-signature"></span></h4>
-    
-
-    
+<h4 class="name" id="flags"><span class="type-signature"></span>flags<span class="type-signature"></span></h4>
 
 
 
 
+<div class="description">
+    Returns the Flags instance for feature flags operations.
 
+<p>Feature Flags enable dynamic feature control and A/B testing capabilities.
+This property is lazy-loaded to avoid unnecessary initialization until first access.
 
+<p><b>Native Mode Only:</b> Feature flags are currently only available when using native mode
+(iOS/Android). JavaScript mode (Expo/React Native Web) support is planned for a future release.
+</div>
 
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>token</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">your project token.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>trackAutomaticEvents</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Whether or not to automatically track common mobile events</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>Optional</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Whether or not Mixpanel can start tracking by default. See optOutTracking()</td>
-        </tr>
-
-    
-    </tbody>
-</table>
 
 
 
@@ -287,16 +188,6 @@
     
 
     
-        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>since version 1.3.0. To initialize Mixpanel, please use the instance method `init` instead. See the example below:
-
-<pre><code>
-const trackAutomaticEvents = true;
-const mixpanel = new Mixpanel('your project token', trackAutomaticEvents);
-mixpanel.init();
-</code></pre>
-
-Initializes Mixpanel and return an instance of Mixpanel the given project token.</li></ul></dd>
-    
 
     
 
@@ -309,12 +200,19 @@ Initializes Mixpanel and return an instance of Mixpanel the given project token.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line100">line 100</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line88">line 88</a>
     </li></ul></dd>
     
 
     
 
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="Flags.html">Flags</a></li>
+        </ul>
+    </dd>
     
 
     
@@ -324,20 +222,23 @@ Initializes Mixpanel and return an instance of Mixpanel the given project token.
 
 
 
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Check if flags are ready
+if (mixpanel.flags.areFlagsReady()) {
+  const isEnabled = mixpanel.flags.isEnabledSync('new-checkout', false);
+}</code></pre>
+
+    <pre class="prettyprint"><code>// Get a feature variant value
+const buttonColor = mixpanel.flags.getVariantValueSync('button-color', 'blue');</code></pre>
 
 
 
+        
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+        <h3 class="subsection-title">Methods</h3>
 
         
             
@@ -469,7 +370,7 @@ Initializes Mixpanel and return an instance of Mixpanel the given project token.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line389">line 389</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line484">line 484</a>
     </li></ul></dd>
     
 
@@ -634,7 +535,7 @@ Multiple aliases can point to the same identifier.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line264">line 264</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line359">line 359</a>
     </li></ul></dd>
     
 
@@ -727,7 +628,7 @@ superProperties registered before the clearSuperProperties method was called.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line497">line 497</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line592">line 592</a>
     </li></ul></dd>
     
 
@@ -889,7 +790,7 @@ to Group Analytics using the same group value will create and store new values.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line417">line 417</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line512">line 512</a>
     </li></ul></dd>
     
 
@@ -1026,7 +927,7 @@ to Group Analytics using the same group value will create and store new values.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line522">line 522</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line617">line 617</a>
     </li></ul></dd>
     
 
@@ -1142,7 +1043,7 @@ send all remaining messages to the server.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line582">line 582</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line677">line 677</a>
     </li></ul></dd>
     
 
@@ -1238,7 +1139,7 @@ const deviceId = await mixpanel.getDeviceId();
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line569">line 569</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line664">line 664</a>
     </li></ul></dd>
     
 
@@ -1356,7 +1257,7 @@ const distinctId = await mixpanel.getDistinctId();
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line551">line 551</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line646">line 646</a>
     </li></ul></dd>
     
 
@@ -1539,7 +1440,7 @@ Group Analytics properties.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line369">line 369</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line464">line 464</a>
     </li></ul></dd>
     
 
@@ -1639,7 +1540,7 @@ People Analytics properties.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line306">line 306</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line401">line 401</a>
     </li></ul></dd>
     
 
@@ -1753,7 +1654,7 @@ and persist beyond the lifetime of your application.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line485">line 485</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line580">line 580</a>
     </li></ul></dd>
     
 
@@ -1863,7 +1764,7 @@ and persist beyond the lifetime of your application.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line189">line 189</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line284">line 284</a>
     </li></ul></dd>
     
 
@@ -2034,7 +1935,7 @@ your application.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line234">line 234</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line329">line 329</a>
     </li></ul></dd>
     
 
@@ -2093,7 +1994,7 @@ your application.
     
 
     
-    <h4 class="name" id="init"><span class="type-signature">(async) </span>init<span class="signature">(optOutTrackingDefault, superProperties, serverURL)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="init"><span class="type-signature">(async) </span>init<span class="signature">(optOutTrackingDefault<span class="signature-attributes">opt</span>, superProperties<span class="signature-attributes">opt</span>, serverURL<span class="signature-attributes">opt</span>, useGzipCompression<span class="signature-attributes">opt</span>, featureFlagsOptions<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
     
 
     
@@ -2101,7 +2002,10 @@ your application.
 
 
 <div class="description">
-    Initializes Mixpanel
+    Initializes Mixpanel with optional configuration for tracking, super properties, and feature flags.
+
+<p>This method must be called before using any other Mixpanel functionality. It sets up
+the tracking environment, registers super properties, and optionally initializes feature flags.
 </div>
 
 
@@ -2124,6 +2028,8 @@ your application.
 
         <th>Type</th>
 
+        
+        <th>Attributes</th>
         
 
         
@@ -2152,14 +2058,27 @@ your application.
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
-            
-                <td class="default">
+                
+
                 
                 </td>
             
 
-            <td class="description last">Optional Whether or not Mixpanel can start tracking by default. See optOutTracking()</td>
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Whether or not Mixpanel can start tracking by default.
+    If true, no data will be tracked until optInTracking() is called. See optOutTracking()</td>
         </tr>
 
     
@@ -2179,14 +2098,27 @@ your application.
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
-            
-                <td class="default">
+                
+
                 
                 </td>
             
 
-            <td class="description last">Optional A Map containing the key value pairs of the super properties to register</td>
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last">A Map containing the key value pairs of the super properties to register.
+    These properties will be sent with every event. Pass {} if no super properties needed.</td>
         </tr>
 
     
@@ -2206,16 +2138,216 @@ your application.
             </td>
 
             
-
-            
-                <td class="default">
+                <td class="attributes">
                 
-                    https://api.mixpanel.com
+                    &lt;optional><br>
+                
+
+                
+
                 
                 </td>
             
 
-            <td class="description last">Optional Set the base URL used for Mixpanel API requests. See setServerURL()</td>
+            
+                <td class="default">
+                
+                    "https://api.mixpanel.com"
+                
+                </td>
+            
+
+            <td class="description last">The base URL used for Mixpanel API requests.
+    Use "https://api-eu.mixpanel.com" for EU data residency. See setServerURL()</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>useGzipCompression</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Whether to use gzip compression for network requests.
+    Enabling this reduces bandwidth usage but adds slight CPU overhead.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>featureFlagsOptions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last">Feature flags configuration object with the following properties:
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>enabled</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Whether to enable feature flags functionality</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    {}
+                
+                </td>
+            
+
+            <td class="description last">Context properties used for feature flag targeting.
+    Can include user properties, device properties, or any custom properties for flag evaluation.
+    Note: In native mode, context must be set during initialization and cannot be updated later.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -2256,7 +2388,7 @@ your application.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line70">line 70</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line151">line 151</a>
     </li></ul></dd>
     
 
@@ -2281,8 +2413,55 @@ your application.
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A promise that resolves when initialization is complete
+</div>
 
 
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+    <h5>Examples</h5>
+    
+    <pre class="prettyprint"><code>// Basic initialization
+const mixpanel = new Mixpanel('YOUR_TOKEN', true);
+await mixpanel.init();</code></pre>
+
+    <pre class="prettyprint"><code>// Initialize with feature flags enabled
+const mixpanel = new Mixpanel('YOUR_TOKEN', true);
+await mixpanel.init(false, {}, 'https://api.mixpanel.com', false, {
+  enabled: true,
+  context: {
+    platform: 'mobile',
+    app_version: '2.1.0'
+  }
+});</code></pre>
+
+    <pre class="prettyprint"><code>// Initialize with EU data residency and super properties
+await mixpanel.init(
+  false,
+  { plan: 'premium', region: 'eu' },
+  'https://api-eu.mixpanel.com',
+  true
+);</code></pre>
 
 
 
@@ -2346,7 +2525,7 @@ This method will internally track an opt-in event to your project.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line199">line 199</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line294">line 294</a>
     </li></ul></dd>
     
 
@@ -2438,7 +2617,7 @@ This method will also remove any user-related information from the device.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line210">line 210</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line305">line 305</a>
     </li></ul></dd>
     
 
@@ -2585,7 +2764,7 @@ to remove a superProperty, call unregisterSuperProperty() or clearSuperPropertie
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line439">line 439</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line534">line 534</a>
     </li></ul></dd>
     
 
@@ -2725,7 +2904,7 @@ same names has already been registered.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line454">line 454</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line549">line 549</a>
     </li></ul></dd>
     
 
@@ -2885,7 +3064,7 @@ same names has already been registered.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line402">line 402</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line497">line 497</a>
     </li></ul></dd>
     
 
@@ -2974,7 +3153,7 @@ same names has already been registered.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line533">line 533</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line628">line 628</a>
     </li></ul></dd>
     
 
@@ -3113,7 +3292,7 @@ Defaults to true.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line180">line 180</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line275">line 275</a>
     </li></ul></dd>
     
 
@@ -3251,7 +3430,7 @@ when the app enters the background on iOS. This is set to true by default.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line146">line 146</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line241">line 241</a>
     </li></ul></dd>
     
 
@@ -3411,7 +3590,7 @@ when the app enters the background on iOS. This is set to true by default.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line353">line 353</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line448">line 448</a>
     </li></ul></dd>
     
 
@@ -3550,7 +3729,7 @@ you are running into issues with the SDK that you want to debug
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line135">line 135</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line230">line 230</a>
     </li></ul></dd>
     
 
@@ -3689,7 +3868,7 @@ To route data to Mixpanel's EU servers, set to https://api-eu.mixpanel.com
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line123">line 123</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line218">line 218</a>
     </li></ul></dd>
     
 
@@ -3829,7 +4008,7 @@ Defaults to true.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line165">line 165</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line260">line 260</a>
     </li></ul></dd>
     
 
@@ -3968,7 +4147,7 @@ property, representing the number of seconds between your calls.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line508">line 508</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line603">line 603</a>
     </li></ul></dd>
     
 
@@ -4134,7 +4313,7 @@ that event.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line286">line 286</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line381">line 381</a>
     </li></ul></dd>
     
 
@@ -4323,7 +4502,7 @@ that event. Group key/value pairs are upserted into the property map before trac
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line329">line 329</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line424">line 424</a>
     </li></ul></dd>
     
 
@@ -4464,7 +4643,196 @@ To clear all superProperties, use clearSuperProperties()
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line470">line 470</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line565">line 565</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".init"><span class="type-signature">(async, static) </span>init<span class="signature">(token, trackAutomaticEvents, Optional)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>token</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">your project token.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>trackAutomaticEvents</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether or not to automatically track common mobile events</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>Optional</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether or not Mixpanel can start tracking by default. See optOutTracking()</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>since version 1.3.0. To initialize Mixpanel, please use the instance method `init` instead. See the example below:
+
+<pre><code>
+const trackAutomaticEvents = true;
+const mixpanel = new Mixpanel('your project token', trackAutomaticEvents);
+mixpanel.init();
+</code></pre>
+
+Initializes Mixpanel and return an instance of Mixpanel the given project token.</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line193">line 193</a>
     </li></ul></dd>
     
 
@@ -4510,13 +4878,13 @@ To clear all superProperties, use clearSuperProperties()
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Mixpanel.html">Mixpanel</a></li><li><a href="MixpanelGroup.html">MixpanelGroup</a></li><li><a href="People.html">People</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Flags.html">Flags</a></li><li><a href="Mixpanel.html">Mixpanel</a></li><li><a href="MixpanelGroup.html">MixpanelGroup</a></li><li><a href="People.html">People</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue May 14 2024 09:36:01 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Nov 07 2025 13:06:53 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

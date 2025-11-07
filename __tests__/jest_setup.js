@@ -21,9 +21,16 @@ jest.mock("uuid", () => ({
 }));
 
 jest.mock("@react-native-async-storage/async-storage", () => ({
+  default: {
+    getItem: jest.fn().mockResolvedValue(null),
+    setItem: jest.fn().mockResolvedValue(undefined),
+    removeItem: jest.fn().mockResolvedValue(undefined),
+    clear: jest.fn().mockResolvedValue(undefined),
+  },
   getItem: jest.fn().mockResolvedValue(null),
   setItem: jest.fn().mockResolvedValue(undefined),
   removeItem: jest.fn().mockResolvedValue(undefined),
+  clear: jest.fn().mockResolvedValue(undefined),
 }));
 
 jest.doMock("react-native", () => {
@@ -85,6 +92,17 @@ jest.doMock("react-native", () => {
           groupUnsetProperty: jest.fn(),
           groupRemovePropertyValue: jest.fn(),
           groupUnionProperty: jest.fn(),
+          // Feature Flags native module mocks
+          loadFlags: jest.fn().mockResolvedValue(true),
+          areFlagsReadySync: jest.fn().mockReturnValue(false),
+          getVariantSync: jest.fn(),
+          getVariantValueSync: jest.fn(),
+          isEnabledSync: jest.fn(),
+          getVariant: jest.fn().mockResolvedValue({ key: 'control', value: 'default' }),
+          getVariantValue: jest.fn().mockResolvedValue('default'),
+          isEnabled: jest.fn().mockResolvedValue(false),
+          updateContext: jest.fn().mockResolvedValue(undefined),  // Added for mixpanel-js alignment
+          updateFlagsContext: jest.fn().mockResolvedValue(true),
         },
       },
     },

@@ -27,7 +27,7 @@ jobs:
       - run: npm test
 
   test_android:
-    runs-on: ubuntu-latest
+    runs-on: macos-15-intel
     strategy:
       matrix:
         node-version: [18.x]
@@ -50,16 +50,10 @@ jobs:
       - name: Test Integration - Install dependencies
         working-directory: ./Samples/SimpleMixpanel
         run: yarn install
-      - name: Enable KVM
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
       - name: Setup Android
         uses: reactivecircus/android-emulator-runner@v2.32.0
         with:
           api-level: 34
-          target: google_apis
           profile: Nexus 5X
           arch: x86_64
           working-directory: ./Samples/SimpleMixpanel/android
@@ -68,7 +62,6 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2.32.0
         with:
           api-level: 34
-          target: google_apis
           profile: Nexus 5X
           arch: x86_64
           working-directory: ./Samples/SimpleMixpanel
@@ -95,6 +88,29 @@ jobs:
       - name: Setup iOS
         working-directory: ./Samples/SimpleMixpanel/ios
         run: pod install --repo-update
+      - name: List available simulators
+        run: xcrun simctl list devices available
+      - name: Boot iOS Simulator
+        run: |
+          # Get list of available iPhone simulators
+          # Note: jq is pre-installed on macOS GitHub Actions runners
+          SIMULATOR_ID=$(xcrun simctl list devices available -j | jq -r '.devices | to_entries[] | .value[] | select(.name | contains("iPhone")) | .udid' | head -n 1)
+          if [ -z "$SIMULATOR_ID" ]; then
+            echo "Error: No iPhone simulator found"
+            exit 1
+          fi
+          echo "Found simulator: $SIMULATOR_ID"
+          # Check if simulator is already booted
+          DEVICE_LIST=$(xcrun simctl list devices)
+          if echo "$DEVICE_LIST" | grep -q "$SIMULATOR_ID.*Booted"; then
+            echo "Simulator already booted"
+          else
+            echo "Booting simulator..."
+            xcrun simctl boot "$SIMULATOR_ID"
+          fi
+          # Verify simulator is booted
+          echo "Booted simulators:"
+          xcrun simctl list devices | grep Booted
       - name: Test iOS
         working-directory: ./Samples/SimpleMixpanel
         run: react-native run-ios

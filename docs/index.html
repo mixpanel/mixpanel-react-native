@@ -94,31 +94,29 @@ We'd also love for you to come and work with us! Check out <strong><a href="http
 </ol>
 <h3>2. Initialize Mixpanel</h3>
 <p>To start tracking with the library you must first initialize with your project token. You can get your project token from <a href="https://mixpanel.com/settings/project">project settings</a>.</p>
-<pre class="prettyprint source lang-js"><code>import { Mixpanel } from 'mixpanel-react-native';
+<pre class="prettyprint source lang-js"><code>import { Mixpanel } from &quot;mixpanel-react-native&quot;;
 
 const trackAutomaticEvents = false;
 const mixpanel = new Mixpanel(&quot;Your Project Token&quot;, trackAutomaticEvents);
 mixpanel.init();
-
 </code></pre>
 <p>Once you've called this method once, you can access <code>mixpanel</code> throughout the rest of your application.</p>
 <h3>3. Send Data</h3>
 <p>Let's get started by sending event data. You can send an event from anywhere in your application. Better understand user behavior by storing details that are specific to the event (properties). After initializing the library, Mixpanel will automatically track some properties by default. <a href="https://help.mixpanel.com/hc/en-us/articles/115004613766-Default-Properties-Collected-by-Mixpanel">learn more</a></p>
 <pre class="prettyprint source lang-js"><code>// Track with event-name
-mixpanel.track('Sent Message');
+mixpanel.track(&quot;Sent Message&quot;);
 // Track with event-name and property
-mixpanel.track('Plan Selected', {'Plan': 'Premium'});
+mixpanel.track(&quot;Plan Selected&quot;, { Plan: &quot;Premium&quot; });
 </code></pre>
 <p>In addition to event data, you can also send <a href="https://developer.mixpanel.com/docs/react-native#storing-user-profiles">user profile data</a>. We recommend this after completing the quickstart guide.</p>
 <h3>4. Check for Success</h3>
-<p><a href="http://mixpanel.com/report/events">Open up Events in Mixpanel</a>  to view incoming events.
+<p><a href="http://mixpanel.com/report/events">Open up Events in Mixpanel</a> to view incoming events.
 Once data hits our API, it generally takes ~60 seconds for it to be processed, stored, and queryable in your project.
 <a name="i-want-to-know-more"></a></p>
 <h3>Complete Code Example</h3>
-<pre class="prettyprint source lang-js"><code>
-import React from 'react';
+<pre class="prettyprint source lang-js"><code>import React from &quot;react&quot;;
 import { Button, SafeAreaView } from &quot;react-native&quot;;
-import { Mixpanel } from 'mixpanel-react-native';
+import { Mixpanel } from &quot;mixpanel-react-native&quot;;
 
 const trackAutomaticEvents = false;
 const mixpanel = new Mixpanel(&quot;Your Project Token&quot;, trackAutomaticEvents);
@@ -129,15 +127,37 @@ const SampleApp = () => {
     &lt;SafeAreaView>
       &lt;Button
         title=&quot;Select Premium Plan&quot;
-        onPress={() => mixpanel.track(&quot;Plan Selected&quot;, {&quot;Plan&quot;: &quot;Premium&quot;})}
+        onPress={() => mixpanel.track(&quot;Plan Selected&quot;, { Plan: &quot;Premium&quot; })}
       />
     &lt;/SafeAreaView>
   );
-}
+};
 
 export default SampleApp;
-
 </code></pre>
+<h3>Feature Flags (Beta - 3.2.0-beta.1+)</h3>
+<p>Control features dynamically and run A/B tests with Mixpanel Feature Flags. <strong>Native mode only</strong> (iOS/Android) in beta.</p>
+<h4>Quick Start</h4>
+<pre class="prettyprint source lang-js"><code>// Enable during initialization
+await mixpanel.init(false, {}, 'https://api.mixpanel.com', true, {
+  enabled: true,
+  context: { platform: 'mobile' }  // Optional targeting context
+});
+
+// Check if feature is enabled
+if (mixpanel.flags.areFlagsReady()) {
+  const showNewUI = mixpanel.flags.isEnabledSync('new-feature', false);
+  const buttonColor = mixpanel.flags.getVariantValueSync('button-color', 'blue');
+}
+</code></pre>
+<h4>Key Methods</h4>
+<ul>
+<li><code>areFlagsReady()</code> - Check if flags are loaded</li>
+<li><code>isEnabledSync(name, fallback)</code> - Check if feature is enabled</li>
+<li><code>getVariantValueSync(name, fallback)</code> - Get variant value</li>
+<li><code>getVariantSync(name, fallback)</code> - Get full variant object with metadata</li>
+</ul>
+<p>All methods support async versions and snake_case aliases. See <strong><a href="FEATURE_FLAGS_QUICKSTART.md">Feature Flags Quick Start Guide</a></strong> for complete documentation.</p>
 <h3>Expo and React Native for Web support (3.0.2 and above)</h3>
 <p>Starting from version 3.0.2, we have introduced support for Expo, React Native for Web, and other platforms utilizing React Native that do not support iOS and Android directly.
 To enable this feature,
@@ -146,7 +166,7 @@ To enable this feature,
 </code></pre>
 <p>When JavaScript mode is enabled, Mixpanel utilizes <a href="https://react-native-async-storage.github.io/async-storage/">AsyncStorage</a> to persist data. If you prefer not to use it, or if AsyncStorage is unavailable in your target environment, you can import or define a different storage class. However, it must follow a subset (see: <a href="index.d.ts"><code>MixpanelAsyncStorage</code></a>) of the same interface as <a href="https://react-native-async-storage.github.io/async-storage/">AsyncStorage</a> The following example demonstrates how to use a custom storage solution:</p>
 <pre class="prettyprint source"><code>// Optional: if you do not want to use the default AsyncStorage
-const MyAsyncStorage = require(&quot;@my-org/&lt;library-path>/AsyncStorage&quot;); 
+const MyAsyncStorage = require(&quot;@my-org/&lt;library-path>/AsyncStorage&quot;);
 const trackAutomaticEvents = false;
 const useNative = false;
 const mixpanel = new Mixpanel('YOUR_TOKEN', trackAutomaticEvents, useNative, MyAsyncStorage);
@@ -163,29 +183,30 @@ const mixpanel = new Mixpanel(
   );
 </code></pre>
 <p>This will activate JavaScript mode.</p>
-<p>👋 👋  Tell us about the Mixpanel developer experience! <a href="https://www.mixpanel.com/devnps">https://www.mixpanel.com/devnps</a> 👍  👎</p>
+<p>👋 👋 Tell us about the Mixpanel developer experience! <a href="https://www.mixpanel.com/devnps">https://www.mixpanel.com/devnps</a> 👍 👎</p>
 <h2>FAQ</h2>
-<p><strong>I want to stop tracking an event/event property in Mixpanel. Is that possible?</strong><br>
-Yes, in Lexicon, you can intercept and drop incoming events or properties. Mixpanel won’t store any new data for the event or property you select to drop.  <a href="https://help.mixpanel.com/hc/en-us/articles/360001307806#dropping-events-and-properties">See this article for more information</a>.</p>
-<p><strong>I have a test user I would like to opt out of tracking. How do I do that?</strong><br>
-Mixpanel’s client-side tracking library contains the  <a href="https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html#optOutTracking">optOutTracking()</a>  method, which will set the user’s local opt-out state to “true” and will prevent data from being sent from a user’s device. More detailed instructions can be found in the section,  <a href="https://developer.mixpanel.com/docs/react-native#opting-users-out-of-tracking">Opting users out of tracking</a>.</p>
-<p><strong>Why aren't my events showing up?</strong><br>
-First, make sure your test device has internet access. To preserve battery life and customer bandwidth, the Mixpanel library doesn't send the events you record immediately. Instead, it sends batches to the Mixpanel servers every 60 seconds while your application is running, as well as when the application transitions to the background. You can call  <a href="https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html#flush">flush()</a>  manually if you want to force a flush at a particular moment.</p>
+<p><strong>I want to stop tracking an event/event property in Mixpanel. Is that possible?</strong>
+Yes, in Lexicon, you can intercept and drop incoming events or properties. Mixpanel won’t store any new data for the event or property you select to drop. <a href="https://help.mixpanel.com/hc/en-us/articles/360001307806#dropping-events-and-properties">See this article for more information</a>.</p>
+<p><strong>I have a test user I would like to opt out of tracking. How do I do that?</strong>
+Mixpanel’s client-side tracking library contains the <a href="https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html#optOutTracking">optOutTracking()</a> method, which will set the user’s local opt-out state to “true” and will prevent data from being sent from a user’s device. More detailed instructions can be found in the section, <a href="https://developer.mixpanel.com/docs/react-native#opting-users-out-of-tracking">Opting users out of tracking</a>.</p>
+<p><strong>Why aren't my events showing up?</strong>
+First, make sure your test device has internet access. To preserve battery life and customer bandwidth, the Mixpanel library doesn't send the events you record immediately. Instead, it sends batches to the Mixpanel servers every 60 seconds while your application is running, as well as when the application transitions to the background. You can call <a href="https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html#flush">flush()</a> manually if you want to force a flush at a particular moment.</p>
 <pre class="prettyprint source"><code>mixpanel.flush();
 </code></pre>
-<p>If your events are still not showing up after 60 seconds, check if you have opted out of tracking. You can also enable Mixpanel debugging and logging, it allows you to see the debug output from the Mixpanel library. To enable it, call  <a href="https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html#setLoggingEnabled">setLoggingEnabled</a> with true, then run your iOS project with Xcode or android project with Android Studio. The logs should be available in the console.</p>
+<p>If your events are still not showing up after 60 seconds, check if you have opted out of tracking. You can also enable Mixpanel debugging and logging, it allows you to see the debug output from the Mixpanel library. To enable it, call <a href="https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html#setLoggingEnabled">setLoggingEnabled</a> with true, then run your iOS project with Xcode or android project with Android Studio. The logs should be available in the console.</p>
 <pre class="prettyprint source"><code>mixpanel.setLoggingEnabled(true);
 </code></pre>
-<p><strong>Starting with iOS 14.5, do I need to request the user’s permission through the AppTrackingTransparency framework to use Mixpanel?</strong><br>
+<p><strong>Starting with iOS 14.5, do I need to request the user’s permission through the AppTrackingTransparency framework to use Mixpanel?</strong>
 No, Mixpanel does not use IDFA so it does not require user permission through the AppTrackingTransparency(ATT) framework.</p>
-<p><strong>If I use Mixpanel, how do I answer app privacy questions for the App Store?</strong><br>
-Please refer to our  <a href="https://mixpanel.com/legal/app-store-privacy-details/">Apple App Developer Privacy Guidance</a></p>
+<p><strong>If I use Mixpanel, how do I answer app privacy questions for the App Store?</strong>
+Please refer to our <a href="https://mixpanel.com/legal/app-store-privacy-details/">Apple App Developer Privacy Guidance</a></p>
 <h2>I want to know more!</h2>
 <p>No worries, here are some links that you will find useful:</p>
 <ul>
 <li><strong><a href="https://github.com/mixpanel/mixpanel-react-native/tree/master/Samples">Sample apps</a></strong></li>
 <li><strong><a href="https://mixpanel.github.io/mixpanel-react-native/Mixpanel.html">Full API Reference</a></strong></li>
 </ul>
+<p><a href="https://deepwiki.com/mixpanel/mixpanel-react-native"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a></p>
 <p>Have any questions? Reach out to Mixpanel <a href="https://help.mixpanel.com/hc/en-us/requests/new">Support</a> to speak to someone smart, quickly.</p></article>
     </section>
 
@@ -197,13 +218,13 @@ Please refer to our  <a href="https://mixpanel.com/legal/app-store-privacy-detai
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Mixpanel.html">Mixpanel</a></li><li><a href="MixpanelGroup.html">MixpanelGroup</a></li><li><a href="People.html">People</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Flags.html">Flags</a></li><li><a href="Mixpanel.html">Mixpanel</a></li><li><a href="MixpanelGroup.html">MixpanelGroup</a></li><li><a href="People.html">People</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue May 14 2024 09:36:01 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Fri Nov 07 2025 13:06:53 GMT-0800 (Pacific Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

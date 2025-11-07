@@ -6,6 +6,7 @@ import {MixpanelProvider} from './contexts/MixpanelContext';
 import {ErrorBoundary} from './components/ErrorBoundary';
 import {OnboardingScreen} from './screens/OnboardingScreen';
 import {HomeScreen} from './screens/HomeScreen';
+import {FeatureFlagsScreen} from './screens/FeatureFlagsScreen';
 import {SettingsScreen} from './screens/SettingsScreen';
 import {MIXPANEL_TOKEN} from '@env';
 
@@ -49,6 +50,16 @@ function App(): React.JSX.Element {
                 tabBarLabel: 'Events',
                 tabBarIcon: ({color}) => (
                   <Text style={{fontSize: 20, color}}>📊</Text>
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="FeatureFlags"
+              component={FeatureFlagsScreen}
+              options={{
+                tabBarLabel: 'Flags',
+                tabBarIcon: ({color}) => (
+                  <Text style={{fontSize: 20, color}}>🚩</Text>
                 ),
               }}
             />

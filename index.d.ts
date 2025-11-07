@@ -7,7 +7,69 @@ export type MixpanelAsyncStorage = {
   removeItem(key: string): Promise<void>;
 };
 
+export interface MixpanelFlagVariant {
+  key: string;
+  value: any;
+  experiment_id?: string | number;  // Updated to match mixpanel-js format
+  is_experiment_active?: boolean;    // Updated to match mixpanel-js format
+  is_qa_tester?: boolean;            // Updated to match mixpanel-js format
+}
+
+export interface FeatureFlagsOptions {
+  enabled?: boolean;
+  context?: {
+    [key: string]: any;
+    custom_properties?: {
+      [key: string]: any;
+    };
+  };
+}
+
+export interface UpdateContextOptions {
+  replace?: boolean;
+}
+
+export interface Flags {
+  // Synchronous methods
+  loadFlags(): Promise<void>;
+  areFlagsReady(): boolean;
+  getVariantSync(featureName: string, fallback: MixpanelFlagVariant): MixpanelFlagVariant;
+  getVariantValueSync(featureName: string, fallbackValue: any): any;
+  isEnabledSync(featureName: string, fallbackValue?: boolean): boolean;
+
+  // Asynchronous methods with overloads for callback and Promise patterns
+  getVariant(featureName: string, fallback: MixpanelFlagVariant): Promise<MixpanelFlagVariant>;
+  getVariant(featureName: string, fallback: MixpanelFlagVariant, callback: (result: MixpanelFlagVariant) => void): void;
+
+  getVariantValue(featureName: string, fallbackValue: any): Promise<any>;
+  getVariantValue(featureName: string, fallbackValue: any, callback: (value: any) => void): void;
+
+  isEnabled(featureName: string, fallbackValue?: boolean): Promise<boolean>;
+  isEnabled(featureName: string, fallbackValue: boolean, callback: (isEnabled: boolean) => void): void;
+
+  // Context management (NEW - aligned with mixpanel-js)
+  // NOTE: Only available in JavaScript mode (Expo/React Native Web)
+  // In native mode, throws an error - context must be set during initialization
+  updateContext(newContext: MixpanelProperties, options?: UpdateContextOptions): Promise<void>;
+
+  // snake_case aliases (NEW - aligned with mixpanel-js)
+  are_flags_ready(): boolean;
+  get_variant(featureName: string, fallback: MixpanelFlagVariant): Promise<MixpanelFlagVariant>;
+  get_variant(featureName: string, fallback: MixpanelFlagVariant, callback: (result: MixpanelFlagVariant) => void): void;
+  get_variant_sync(featureName: string, fallback: MixpanelFlagVariant): MixpanelFlagVariant;
+  get_variant_value(featureName: string, fallbackValue: any): Promise<any>;
+  get_variant_value(featureName: string, fallbackValue: any, callback: (value: any) => void): void;
+  get_variant_value_sync(featureName: string, fallbackValue: any): any;
+  is_enabled(featureName: string, fallbackValue?: boolean): Promise<boolean>;
+  is_enabled(featureName: string, fallbackValue: boolean, callback: (isEnabled: boolean) => void): void;
+  is_enabled_sync(featureName: string, fallbackValue?: boolean): boolean;
+  // NOTE: Only available in JavaScript mode (Expo/React Native Web)
+  update_context(newContext: MixpanelProperties, options?: UpdateContextOptions): Promise<void>;
+}
+
 export class Mixpanel {
+  readonly flags: Flags;
+
   constructor(token: string, trackAutoMaticEvents: boolean);
   constructor(token: string, trackAutoMaticEvents: boolean, useNative: true);
   constructor(
@@ -25,7 +87,8 @@ export class Mixpanel {
     optOutTrackingDefault?: boolean,
     superProperties?: MixpanelProperties,
     serverURL?: string,
-    useGzipCompression?: boolean
+    useGzipCompression?: boolean,
+    featureFlagsOptions?: FeatureFlagsOptions
   ): Promise<void>;
   setServerURL(serverURL: string): void;
   setLoggingEnabled(loggingEnabled: boolean): void;

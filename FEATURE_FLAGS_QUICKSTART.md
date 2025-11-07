@@ -1,6 +1,6 @@
 # Feature Flags Quick Start Guide (Beta)
 
-> **Beta Version:** `3.2.0-beta.1`
+> **Beta Version:** `3.2.0-beta.2`
 > **Native Mode Only:** This beta release supports iOS and Android native implementations. JavaScript mode (Expo/React Native Web) support coming in future release.
 
 ## Installation
@@ -8,7 +8,7 @@
 Install the beta version:
 
 ```bash
-npm install mixpanel-react-native@3.2.0-beta.1
+npm install mixpanel-react-native@beta
 ```
 
 For iOS, update native dependencies:

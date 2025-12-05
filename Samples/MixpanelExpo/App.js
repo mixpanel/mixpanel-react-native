@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   SectionList,
   Text,
@@ -6,24 +6,49 @@ import {
   Button,
   StyleSheet,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 
 import { Mixpanel } from "mixpanel-react-native";
+import { MIXPANEL_TOKEN } from "@env";
 
 const App = () => {
-  const trackAutomaticEvents = false;
-  const useNative = false;
-  const mixpanel = new Mixpanel(
-    "YOUR_MIXPANEL_TOKEN",
-    trackAutomaticEvents,
-    useNative
-  );
-  // Enable feature flags during initialization
-  mixpanel.init(false, {}, undefined, false, { enabled: true });
-  mixpanel.setLoggingEnabled(true);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const mixpanelRef = useRef(null);
 
   // Test flag name - replace with your actual flag from Mixpanel
   const testFlagName = "sample-bool-flag";
+
+  useEffect(() => {
+    const initMixpanel = async () => {
+      const trackAutomaticEvents = false;
+      const useNative = false;
+      const mp = new Mixpanel(MIXPANEL_TOKEN, trackAutomaticEvents, useNative);
+
+      // Enable feature flags during initialization
+      await mp.init(false, {}, undefined, false, { enabled: true });
+      mp.setLoggingEnabled(true);
+
+      mixpanelRef.current = mp;
+      setIsInitialized(true);
+      console.log("[Mixpanel] Initialized with token:", MIXPANEL_TOKEN);
+    };
+
+    initMixpanel();
+  }, []);
+
+  // Helper to get mixpanel instance
+  const mixpanel = mixpanelRef.current;
+
+  // Show loading while initializing
+  if (!isInitialized || !mixpanel) {
+    return (
+      <SafeAreaView style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#8A2BE2" />
+        <Text style={styles.loadingText}>Initializing Mixpanel...</Text>
+      </SafeAreaView>
+    );
+  }
 
   const group = mixpanel.getGroup("company_id", 111);
   const track = async () => {
@@ -432,6 +457,17 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: "#666",
   },
   header: {
     fontSize: 20,

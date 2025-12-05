@@ -15,9 +15,12 @@ export const MixpanelNetwork = (() => {
     serverURL,
     useIPAddressForGeoLocation,
     retryCount = 0,
+    headers = {},
   }) => {
     retryCount = retryCount || 0;
-    const url = `${serverURL}${endpoint}?ip=${+useIPAddressForGeoLocation}`;
+    // Use & if endpoint already has query params, otherwise use ?
+    const separator = endpoint.includes('?') ? '&' : '?';
+    const url = `${serverURL}${endpoint}${separator}ip=${+useIPAddressForGeoLocation}`;
     MixpanelLogger.log(token, `Sending request to: ${url}`);
 
     try {
@@ -27,11 +30,13 @@ export const MixpanelNetwork = (() => {
       const fetchOptions = isGetRequest
         ? {
             method: "GET",
+            headers: headers,
           }
         : {
             method: "POST",
             headers: {
               "Content-Type": "application/x-www-form-urlencoded",
+              ...headers,
             },
             body: `data=${encodeURIComponent(JSON.stringify(data))}`,
           };

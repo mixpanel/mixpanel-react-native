@@ -10,6 +10,7 @@ import {
 } from "react-native";
 
 import { Mixpanel } from "mixpanel-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MIXPANEL_TOKEN } from "@env";
 
 const App = () => {
@@ -23,7 +24,8 @@ const App = () => {
     const initMixpanel = async () => {
       const trackAutomaticEvents = false;
       const useNative = false;
-      const mp = new Mixpanel(MIXPANEL_TOKEN, trackAutomaticEvents, useNative);
+      // Pass AsyncStorage for JavaScript mode feature flags support
+      const mp = new Mixpanel(MIXPANEL_TOKEN, trackAutomaticEvents, useNative, AsyncStorage);
 
       // Enable feature flags during initialization
       await mp.init(false, {}, undefined, false, { enabled: true });

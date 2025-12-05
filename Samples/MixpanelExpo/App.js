@@ -18,8 +18,12 @@ const App = () => {
     trackAutomaticEvents,
     useNative
   );
-  mixpanel.init();
+  // Enable feature flags during initialization
+  mixpanel.init(false, {}, undefined, false, { enabled: true });
   mixpanel.setLoggingEnabled(true);
+
+  // Test flag name - replace with your actual flag from Mixpanel
+  const testFlagName = "sample-bool-flag";
 
   const group = mixpanel.getGroup("company_id", 111);
   const track = async () => {
@@ -197,6 +201,97 @@ const App = () => {
     );
   };
 
+  // -----------------  Feature Flags API -----------------
+  const loadFlags = async () => {
+    try {
+      await mixpanel.flags.loadFlags();
+      alert("Flags loaded successfully!");
+    } catch (error) {
+      alert(`Failed to load flags: ${error.message}`);
+    }
+  };
+
+  const checkFlagsReady = () => {
+    const ready = mixpanel.flags.areFlagsReady();
+    alert(`Flags ready: ${ready}`);
+  };
+
+  const getVariantSync = () => {
+    const fallback = { key: "fallback", value: null };
+    try {
+      const result = mixpanel.flags.getVariantSync(testFlagName, fallback);
+      alert(
+        `getVariantSync('${testFlagName}'):\n` +
+        `Key: ${result.key}\n` +
+        `Value: ${JSON.stringify(result.value)}\n` +
+        `Experiment ID: ${result.experiment_id || "N/A"}`
+      );
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
+  const getVariantValueSync = () => {
+    const fallback = "default-value";
+    try {
+      const result = mixpanel.flags.getVariantValueSync(testFlagName, fallback);
+      alert(
+        `getVariantValueSync('${testFlagName}'):\n` +
+        `Value: ${JSON.stringify(result)}\n` +
+        `Type: ${typeof result}`
+      );
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
+  const isEnabledSync = () => {
+    try {
+      const result = mixpanel.flags.isEnabledSync(testFlagName, false);
+      alert(`isEnabledSync('${testFlagName}'): ${result}`);
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
+  const getVariantAsync = async () => {
+    const fallback = { key: "fallback", value: null };
+    try {
+      const result = await mixpanel.flags.getVariant(testFlagName, fallback);
+      alert(
+        `getVariant('${testFlagName}') [async]:\n` +
+        `Key: ${result.key}\n` +
+        `Value: ${JSON.stringify(result.value)}\n` +
+        `Experiment ID: ${result.experiment_id || "N/A"}`
+      );
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
+  const getVariantValueAsync = async () => {
+    const fallback = "default-value";
+    try {
+      const result = await mixpanel.flags.getVariantValue(testFlagName, fallback);
+      alert(
+        `getVariantValue('${testFlagName}') [async]:\n` +
+        `Value: ${JSON.stringify(result)}\n` +
+        `Type: ${typeof result}`
+      );
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
+  const isEnabledAsync = async () => {
+    try {
+      const result = await mixpanel.flags.isEnabled(testFlagName, false);
+      alert(`isEnabled('${testFlagName}') [async]: ${result}`);
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
   const DATA = [
     {
       title: "Events and Properties",
@@ -294,6 +389,20 @@ const App = () => {
         { id: "9", label: "Remove Property", onPress: removeGroupProperty },
         { id: "10", label: "Union Property", onPress: unionGroupProperty },
         { id: "11", label: "Flush", onPress: flush },
+      ],
+    },
+    {
+      title: "Feature Flags",
+      data: [
+        { id: "1", label: "Load Flags", onPress: loadFlags },
+        { id: "2", label: "Check Flags Ready", onPress: checkFlagsReady },
+        { id: "3", label: "getVariantSync()", onPress: getVariantSync },
+        { id: "4", label: "getVariantValueSync()", onPress: getVariantValueSync },
+        { id: "5", label: "isEnabledSync()", onPress: isEnabledSync },
+        { id: "6", label: "getVariant() [async]", onPress: getVariantAsync },
+        { id: "7", label: "getVariantValue() [async]", onPress: getVariantValueAsync },
+        { id: "8", label: "isEnabled() [async]", onPress: isEnabledAsync },
+        { id: "9", label: "Flush", onPress: flush },
       ],
     },
   ];

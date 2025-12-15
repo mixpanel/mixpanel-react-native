@@ -15,12 +15,11 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
@@ -31,60 +30,98 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        api-level: [34]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: actions/setup-java@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          distribution: "temurin" # See 'Supported distributions' for available options
+          distribution: "temurin"
           java-version: "17"
-      - run: npm install
-      - run: npm install -g react-native-cli
-      - run: npm i react-native-gradle-plugin
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install -g react-native-cli
+          npm i react-native-gradle-plugin
+
       - name: Test Integration - Install dependencies
         working-directory: ./Samples/SimpleMixpanel
         run: yarn install
+
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
-      - name: Setup Android
-        uses: reactivecircus/android-emulator-runner@v2.32.0
+
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
         with:
-          api-level: 34
-          target: google_apis
-          profile: Nexus 5X
-          arch: x86_64
-          working-directory: ./Samples/SimpleMixpanel/android
-          script: ./gradlew
-      - name: Test Android
-        uses: reactivecircus/android-emulator-runner@v2.35.0
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}-google-apis-x86_64-nexus5x
+
+      - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          GRADLE_OPTS: -Xmx4096m -Dorg.gradle.daemon=false
+          JAVA_OPTS: -Xmx4096m
         with:
-          api-level: 34
+          api-level: ${{ matrix.api-level }}
           target: google_apis
-          profile: Nexus 5X
           arch: x86_64
+          profile: Nexus 5X
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
           working-directory: ./Samples/SimpleMixpanel
-          script: react-native run-android
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Run Android Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          GRADLE_OPTS: -Xmx4096m -Dorg.gradle.daemon=false
+          JAVA_OPTS: -Xmx4096m
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 5X
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          emulator-boot-timeout: 900
+          working-directory: ./Samples/SimpleMixpanel
+          script: |
+            echo "org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError" >> android/gradle.properties
+            echo "org.gradle.daemon=false" >> android/gradle.properties
+            npx react-native run-android --no-packager
 
   test_ios:
     runs-on: macos-latest
     strategy:
       matrix:
         node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install

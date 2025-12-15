@@ -4,7 +4,7 @@ import {
   defaultServerURL,
 } from "./mixpanel-constants";
 
-import {MixpanelLogger} from "./mixpanel-logger";
+import { MixpanelLogger } from "./mixpanel-logger";
 
 export class MixpanelConfig {
   static instance;
@@ -65,10 +65,14 @@ export class MixpanelConfig {
   }
 
   getUseIpAddressForGeolocation(token) {
-    return (
-      (this._config[token] && this._config[token].useIpAddressForGeolocation) ||
-      true
-    );
+    if (
+      this._config[token] &&
+      "useIpAddressForGeolocation" in this._config[token]
+    ) {
+      return this._config[token].useIpAddressForGeolocation;
+    }
+
+    return true;
   }
 
   setFlushBatchSize(token, batchSize) {

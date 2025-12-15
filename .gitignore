@@ -61,7 +61,6 @@ CLAUDE.md
 claude/
 .claude/
 .cursor/
-.github/copilot-*
 .github/instructions/
 .github/prompts/
 WARP.md

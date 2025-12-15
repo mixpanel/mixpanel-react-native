@@ -59,7 +59,7 @@ jobs:
           working-directory: ./Samples/SimpleMixpanel/android
           script: ./gradlew
       - name: Test Android
-        uses: reactivecircus/android-emulator-runner@v2.32.0
+        uses: reactivecircus/android-emulator-runner@v2.35.0
         with:
           api-level: 34
           profile: Nexus 5X

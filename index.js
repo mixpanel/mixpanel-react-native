@@ -86,14 +86,6 @@ export class Mixpanel {
    * @see Flags
    */
   get flags() {
-    // Short circuit for JavaScript mode - flags not ready for public use
-    if (this.mixpanelImpl !== MixpanelReactNative) {
-      throw new Error(
-        "Feature flags are only available in native mode. " +
-        "JavaScript mode support is coming in a future release."
-      );
-    }
-
     if (!this._flags) {
       // Lazy load the Flags instance with proper dependencies
       const Flags = require("./javascript/mixpanel-flags").Flags;

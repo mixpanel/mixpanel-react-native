@@ -2,9 +2,6 @@
  * Tests for JavaScript mode feature flags functionality
  */
 
-// Enable JavaScript mode via environment variable
-process.env.MIXPANEL_ENABLE_JS_FLAGS = 'true';
-
 // Mock React Native to simulate JavaScript mode (no native modules)
 jest.mock('react-native', () => ({
   NativeModules: {}, // Empty to simulate no native modules

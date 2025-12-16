@@ -1,7 +1,7 @@
 # Feature Flags Quick Start Guide (Beta)
 
-> **Beta Version:** `3.2.0-beta.2`
-> **Native Mode Only:** This beta release supports iOS and Android native implementations. JavaScript mode (Expo/React Native Web) support coming in future release.
+> **Beta Version:** `3.2.0-beta.3`
+> **Full Platform Support:** This beta release supports iOS, Android, Expo, and React Native Web.
 
 ## Installation
 
@@ -21,6 +21,8 @@ cd ios && pod install
 
 ### 1. Initialize with Feature Flags Enabled
 
+#### For Native Apps (iOS/Android)
+
 ```javascript
 import { Mixpanel } from 'mixpanel-react-native';
 
@@ -36,6 +38,29 @@ await mixpanel.init(
     enabled: true,          // Enable Feature Flags
     context: {              // Optional: Add targeting context
       platform: 'mobile',
+      app_version: '2.1.0'
+    }
+  }
+);
+```
+
+#### For Expo/React Native Web
+
+```javascript
+import { Mixpanel } from 'mixpanel-react-native';
+
+const mixpanel = new Mixpanel('YOUR_TOKEN', false, false); // Force JavaScript mode
+
+// Enable Feature Flags during initialization
+await mixpanel.init(
+  false,                    // optOutTrackingDefault
+  {},                       // superProperties
+  'https://api.mixpanel.com', // serverURL
+  true,                     // useGzipCompression
+  {
+    enabled: true,          // Enable Feature Flags
+    context: {              // Optional: Add targeting context
+      platform: 'web',      // or 'expo'
       app_version: '2.1.0'
     }
   }
@@ -203,7 +228,26 @@ const App = () => {
 };
 ```
 
-### Example 4: Targeting with Context
+### Example 4: Dynamic Context Updates (JavaScript Mode Only)
+
+```javascript
+// JavaScript mode supports runtime context updates
+if (mixpanel.mixpanelImpl !== MixpanelReactNative) {
+  // Update context at runtime (e.g., after user upgrades)
+  await mixpanel.flags.updateContext({
+    user_tier: 'premium',
+    beta_tester: true
+  });
+
+  // Reload flags with new context
+  await mixpanel.flags.loadFlags();
+
+  // Check flags with updated context
+  const hasPremiumAccess = mixpanel.flags.isEnabledSync('premium-features', false);
+}
+```
+
+### Example 5: Targeting with Context
 
 ```javascript
 // Set user context for targeting
@@ -244,6 +288,7 @@ const hasAccess = mixpanel.flags.isEnabledSync('premium-feature', false);
 | `getVariantValue(name, fallback)` | Async | Async version of getVariantValueSync |
 | `getVariantSync(name, fallback)` | Sync | Get full variant object |
 | `getVariant(name, fallback)` | Async | Async version of getVariantSync |
+| `updateContext(context)` | Async | **JS Mode Only**: Update context at runtime |
 
 ### Snake Case Aliases
 
@@ -268,7 +313,8 @@ When a user is evaluated for a flag that's part of an A/B test, Mixpanel automat
 
 - ✅ **iOS**: Full support via native Swift SDK
 - ✅ **Android**: Full support via native Android SDK
-- ❌ **Expo/React Native Web**: Not supported in this beta (coming soon)
+- ✅ **Expo**: Full support via JavaScript implementation
+- ✅ **React Native Web**: Full support via JavaScript implementation
 
 ### Fallback Values
 
@@ -312,11 +358,16 @@ try {
 
 ### Native Module Not Found
 
-This beta requires native modules. If you see "Native module not found":
+For native apps (iOS/Android):
 
 1. Run `cd ios && pod install` (iOS)
 2. Rebuild the app completely
-3. Verify you're not using Expo Go (use dev client or eject)
+3. Clean build folders and reinstall dependencies
+
+For Expo apps:
+
+- This is normal - Expo uses JavaScript mode automatically
+- Ensure you're initializing with `new Mixpanel(token, false, false)` to force JS mode
 
 ### Getting Fallback Values
 
@@ -339,9 +390,9 @@ https://github.com/mixpanel/mixpanel-react-native/pull/331
 
 Coming in future releases:
 
-- JavaScript mode support (Expo/React Native Web)
-- Runtime context updates via `updateContext()`
-- Performance optimizations
+- Additional performance optimizations
+- Enhanced caching strategies
+- Real-time flag updates via WebSocket
 
 ---
 

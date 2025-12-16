@@ -1,5 +1,22 @@
 #
 
+## [v3.2.0-beta.3](https://github.com/mixpanel/mixpanel-react-native/tree/v3.2.0-beta.3) (2025-12-15)
+
+### Features
+
+- **Feature Flags**: Enable JavaScript mode support for Feature Flags
+  - Full support for Expo and React Native Web
+  - Runtime context updates via `updateContext()` (JavaScript mode only)
+  - Complete parity with native implementation
+  - Automatic fallback to JavaScript mode when native modules unavailable
+  - AsyncStorage-based caching for offline support
+
+### Improvements
+
+- Remove environment variable requirement for JavaScript mode flags
+- Enhanced documentation with Expo-specific examples
+- Improved test coverage for JavaScript mode
+
 ## [v3.1.3](https://github.com/mixpanel/mixpanel-react-native/tree/v3.1.3) (2025-12-15)
 
 ### Fixes

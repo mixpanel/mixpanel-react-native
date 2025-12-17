@@ -4,6 +4,9 @@
  * is properly passed to the JavaScript implementation of feature flags
  */
 
+// Clear any cached modules to ensure our mocks take effect
+jest.resetModules();
+
 // Mock React Native to simulate JavaScript mode (no native modules)
 jest.mock('react-native', () => ({
   NativeModules: {}, // Empty to simulate no native modules
@@ -47,7 +50,13 @@ global.fetch = jest.fn((url) => {
   });
 });
 
-const { Mixpanel } = require('../index');
+// Require Mixpanel after mocks are set up
+// Use isolateModules to ensure we get a fresh copy with our mocks
+let Mixpanel;
+jest.isolateModules(() => {
+  const module = require('../index');
+  Mixpanel = module.Mixpanel;
+});
 
 describe('Feature Flags Context Bug - JavaScript Mode', () => {
   let mixpanel;
@@ -114,9 +123,6 @@ describe('Feature Flags Context Bug - JavaScript Mode', () => {
         user_tier: 'premium',
         app_version: '2.0.0'
       });
-
-      console.log('Sent context:', sentContext);
-      console.log('Expected to contain:', expectedContext);
     });
 
     it('should merge context with distinct_id and device_id in flag requests', async () => {

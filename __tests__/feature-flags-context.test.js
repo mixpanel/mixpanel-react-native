@@ -14,6 +14,11 @@ jest.mock('react-native', () => ({
   NativeEventEmitter: jest.fn()
 }));
 
+// Mock uuid to return a consistent value for device ID generation
+jest.mock('uuid', () => ({
+  v4: jest.fn(() => 'test-device-id-1234')
+}));
+
 // Mock AsyncStorage
 const mockAsyncStorage = {
   getItem: jest.fn(() => Promise.resolve(null)),
@@ -61,29 +66,28 @@ jest.isolateModules(() => {
 describe('Feature Flags Context Bug - JavaScript Mode', () => {
   let mixpanel;
 
+  // Force test to exit by using --forceExit
+  // JavaScript implementation has background intervals that need to be cleared
+
   beforeEach(() => {
     // Clear all mocks and reset state
     jest.clearAllMocks();
     lastFetchRequest = null;
-    // Use fake timers to prevent hanging tests
-    jest.useFakeTimers();
+    // Don't use fake timers - they cause issues with async operations
+    // Tests will need --forceExit due to background intervals in JS implementation
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     // Clean up to prevent hanging
     if (mixpanel) {
+      // Call reset to cleanup any background operations
       if (mixpanel.mixpanelImpl && mixpanel.mixpanelImpl.reset) {
-        mixpanel.mixpanelImpl.reset(mixpanel.token);
-      }
-      // Stop the queue processing if it's the JS implementation
-      if (mixpanel.mixpanelImpl && mixpanel.mixpanelImpl.core) {
-        // Clear any intervals from the core module
-        jest.clearAllTimers();
+        await mixpanel.mixpanelImpl.reset(mixpanel.token);
       }
     }
+
+    // Clear references
     mixpanel = null;
-    // Restore real timers
-    jest.useRealTimers();
   });
 
   describe('Context Initialization Bug', () => {

@@ -2,6 +2,9 @@
  * Test for Feature Flags Context Bug in JavaScript Mode
  * This test verifies that the context provided during initialization
  * is properly passed to the JavaScript implementation of feature flags
+ *
+ * NOTE: These tests require --forceExit flag due to background intervals
+ * in the JavaScript implementation that keep the process running
  */
 
 // Clear any cached modules to ensure our mocks take effect

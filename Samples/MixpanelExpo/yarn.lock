@@ -1695,7 +1695,7 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
-"@react-native-async-storage/async-storage@^1.21.0":
+"@react-native-async-storage/async-storage@^1.24.0":
   version "1.24.0"
   resolved "https://registry.npmjs.org/@react-native-async-storage/async-storage/-/async-storage-1.24.0.tgz"
   integrity sha512-W4/vbwUOYOjco0x3toB8QCr7EjIP6nE9G7o8PMguvvjYT5Awg09lyV4enACRx4s++PPulBiBSjL0KTFx2u0Z/g==
@@ -4633,7 +4633,7 @@ minizlib@^2.1.1:
     yallist "^4.0.0"
 
 "mixpanel-react-native@file:.yalc/mixpanel-react-native":
-  version "3.2.0-beta.2"
+  version "3.2.0-beta.3"
   resolved "file:.yalc/mixpanel-react-native"
   dependencies:
     "@react-native-async-storage/async-storage" "^1.21.0"

@@ -1,4 +1,5 @@
 import { MixpanelFlagsJS } from './mixpanel-flags-js';
+import { MixpanelLogger } from './mixpanel-logger';
 
 /**
  * Core class for using Mixpanel Feature Flags.
@@ -73,7 +74,9 @@ export class Flags {
 
     // For JavaScript mode, create the JS implementation
     if (!this.isNativeMode && storage) {
-      this.jsFlags = new MixpanelFlagsJS(token, mixpanelImpl, storage);
+      // Get the initial context from mixpanelImpl (always MixpanelMain in JS mode)
+      const initialContext = mixpanelImpl.getFeatureFlagsContext();
+      this.jsFlags = new MixpanelFlagsJS(token, mixpanelImpl, storage, initialContext);
     }
   }
 
@@ -92,7 +95,6 @@ export class Flags {
    * methods can be used to access flag values.
    *
    * @returns {Promise<void>} A promise that resolves when flags have been fetched and loaded
-   * @throws {Error} if feature flags are not initialized
    *
    * @example
    * // Manually reload flags after user identification
@@ -105,7 +107,9 @@ export class Flags {
     } else if (this.jsFlags) {
       return await this.jsFlags.loadFlags();
     }
-    throw new Error("Feature flags are not initialized");
+    // Log warning and return gracefully instead of throwing
+    MixpanelLogger.warn(this.token, "Feature flags are not initialized - cannot load flags");
+    return;
   }
 
   /**
@@ -363,11 +367,17 @@ export class Flags {
       if (this.isNativeMode) {
         this.mixpanelImpl.getVariant(this.token, featureName, fallback)
           .then(result => callback(result))
-          .catch(() => callback(fallback));
+          .catch((error) => {
+            MixpanelLogger.error(this.token, `Failed to get variant for ${featureName}:`, error);
+            callback(fallback);
+          });
       } else if (this.jsFlags) {
         this.jsFlags.getVariant(featureName, fallback)
           .then(result => callback(result))
-          .catch(() => callback(fallback));
+          .catch((error) => {
+            MixpanelLogger.error(this.token, `Failed to get variant for ${featureName}:`, error);
+            callback(fallback);
+          });
       } else {
         callback(fallback);
       }
@@ -379,11 +389,17 @@ export class Flags {
       if (this.isNativeMode) {
         this.mixpanelImpl.getVariant(this.token, featureName, fallback)
           .then(resolve)
-          .catch(() => resolve(fallback));
+          .catch((error) => {
+            MixpanelLogger.error(this.token, `Failed to get variant for ${featureName}:`, error);
+            resolve(fallback);
+          });
       } else if (this.jsFlags) {
         this.jsFlags.getVariant(featureName, fallback)
           .then(resolve)
-          .catch(() => resolve(fallback));
+          .catch((error) => {
+            MixpanelLogger.error(this.token, `Failed to get variant for ${featureName}:`, error);
+            resolve(fallback);
+          });
       } else {
         resolve(fallback);
       }
@@ -438,11 +454,17 @@ export class Flags {
       if (this.isNativeMode) {
         this.mixpanelImpl.getVariantValue(this.token, featureName, fallbackValue)
           .then(result => callback(result))
-          .catch(() => callback(fallbackValue));
+          .catch((error) => {
+            MixpanelLogger.error(this.token, `Failed to get variant value for ${featureName}:`, error);
+            callback(fallbackValue);
+          });
       } else if (this.jsFlags) {
         this.jsFlags.getVariantValue(featureName, fallbackValue)
           .then(result => callback(result))
-          .catch(() => callback(fallbackValue));
+          .catch((error) => {
+            MixpanelLogger.error(this.token, `Failed to get variant value for ${featureName}:`, error);
+            callback(fallbackValue);
+          });
       } else {
         callback(fallbackValue);
       }
@@ -454,11 +476,17 @@ export class Flags {
       if (this.isNativeMode) {
         this.mixpanelImpl.getVariantValue(this.token, featureName, fallbackValue)
           .then(resolve)
-          .catch(() => resolve(fallbackValue));
+          .catch((error) => {
+            MixpanelLogger.error(this.token, `Failed to get variant value for ${featureName}:`, error);
+            resolve(fallbackValue);
+          });
       } else if (this.jsFlags) {
         this.jsFlags.getVariantValue(featureName, fallbackValue)
           .then(resolve)
-          .catch(() => resolve(fallbackValue));
+          .catch((error) => {
+            MixpanelLogger.error(this.token, `Failed to get variant value for ${featureName}:`, error);
+            resolve(fallbackValue);
+          });
       } else {
         resolve(fallbackValue);
       }
@@ -515,11 +543,17 @@ export class Flags {
       if (this.isNativeMode) {
         this.mixpanelImpl.isEnabled(this.token, featureName, fallbackValue)
           .then(result => callback(result))
-          .catch(() => callback(fallbackValue));
+          .catch((error) => {
+            MixpanelLogger.error(this.token, `Failed to check if ${featureName} is enabled:`, error);
+            callback(fallbackValue);
+          });
       } else if (this.jsFlags) {
         this.jsFlags.isEnabled(featureName, fallbackValue)
           .then(result => callback(result))
-          .catch(() => callback(fallbackValue));
+          .catch((error) => {
+            MixpanelLogger.error(this.token, `Failed to check if ${featureName} is enabled:`, error);
+            callback(fallbackValue);
+          });
       } else {
         callback(fallbackValue);
       }
@@ -531,11 +565,17 @@ export class Flags {
       if (this.isNativeMode) {
         this.mixpanelImpl.isEnabled(this.token, featureName, fallbackValue)
           .then(resolve)
-          .catch(() => resolve(fallbackValue));
+          .catch((error) => {
+            MixpanelLogger.error(this.token, `Failed to check if ${featureName} is enabled:`, error);
+            resolve(fallbackValue);
+          });
       } else if (this.jsFlags) {
         this.jsFlags.isEnabled(featureName, fallbackValue)
           .then(resolve)
-          .catch(() => resolve(fallbackValue));
+          .catch((error) => {
+            MixpanelLogger.error(this.token, `Failed to check if ${featureName} is enabled:`, error);
+            resolve(fallbackValue);
+          });
       } else {
         resolve(fallbackValue);
       }

@@ -9,14 +9,14 @@ import packageJson from "mixpanel-react-native/package.json";
  * Aligned with mixpanel-js reference implementation
  */
 export class MixpanelFlagsJS {
-  constructor(token, mixpanelImpl, storage) {
+  constructor(token, mixpanelImpl, storage, initialContext = {}) {
     this.token = token;
     this.mixpanelImpl = mixpanelImpl;
     this.storage = storage;
     this.flags = new Map(); // Use Map like mixpanel-js
     this.flagsReady = false;
     this.experimentTracked = new Set();
-    this.context = {};
+    this.context = initialContext; // Initialize with provided context
     this.flagsCacheKey = `MIXPANEL_${token}_FLAGS_CACHE`;
     this.flagsReadyKey = `MIXPANEL_${token}_FLAGS_READY`;
     this.mixpanelPersistent = MixpanelPersistent.getInstance(storage, token);
@@ -302,7 +302,9 @@ export class MixpanelFlagsJS {
 
     // Track experiment on first access (fire and forget)
     if (!this.experimentTracked.has(featureName)) {
-      this.trackExperimentStarted(featureName, variant).catch(() => {});
+      this.trackExperimentStarted(featureName, variant).catch(error => {
+        MixpanelLogger.warn(this.token, `Failed to track experiment for ${featureName}:`, error);
+      });
     }
 
     return variant;

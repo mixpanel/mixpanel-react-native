@@ -82,6 +82,14 @@ export default class MixpanelMain {
     await this.mixpanelPersistent.reset(token);
   }
 
+  /**
+   * Get the feature flags context that was provided during initialization
+   * @returns {object} The feature flags context object
+   */
+  getFeatureFlagsContext() {
+    return this.featureFlagsContext || {};
+  }
+
   async track(token, eventName, properties) {
     if (this.mixpanelPersistent.getOptedOut(token)) {
       MixpanelLogger.log(

@@ -4,6 +4,7 @@ import {Platform, NativeModules} from "react-native";
 import packageJson from "./package.json";
 const {MixpanelReactNative} = NativeModules;
 import MixpanelMain from "mixpanel-react-native/javascript/mixpanel-main"
+import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger"
 
 const DevicePlatform = {
   Unknown: "Unknown",
@@ -87,6 +88,15 @@ export class Mixpanel {
    */
   get flags() {
     if (!this._flags) {
+      // Check if feature flags are enabled and warn if not
+      if (!this.featureFlagsOptions || !this.featureFlagsOptions.enabled) {
+        MixpanelLogger.warn(
+          this.token,
+          "Accessing feature flags API but flags are not enabled. " +
+          "Call init() with featureFlagsOptions.enabled = true to enable feature flags. " +
+          "Flag methods will return fallback values."
+        );
+      }
       // Lazy load the Flags instance with proper dependencies
       const Flags = require("./javascript/mixpanel-flags").Flags;
       this._flags = new Flags(this.token, this.mixpanelImpl, this.storage);

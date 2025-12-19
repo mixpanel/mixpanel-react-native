@@ -4,6 +4,7 @@ import {Platform, NativeModules} from "react-native";
 import packageJson from "./package.json";
 const {MixpanelReactNative} = NativeModules;
 import MixpanelMain from "mixpanel-react-native/javascript/mixpanel-main"
+import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger"
 
 const DevicePlatform = {
   Unknown: "Unknown",
@@ -46,6 +47,8 @@ export class Mixpanel {
     }
     this.token = token;
     this.trackAutomaticEvents = trackAutomaticEvents;
+    this._flags = null; // Lazy-loaded flags instance
+    this.storage = storage; // Store for JavaScript mode
 
     if (useNative && MixpanelReactNative) {
       this.mixpanelImpl = MixpanelReactNative;
@@ -60,27 +63,117 @@ export class Mixpanel {
   }
 
   /**
-   * Initializes Mixpanel
+   * Returns the Flags instance for feature flags operations.
    *
-   * @param {boolean} optOutTrackingDefault Optional Whether or not Mixpanel can start tracking by default. See optOutTracking()
-   * @param {object} superProperties  Optional A Map containing the key value pairs of the super properties to register
-   * @param {string} serverURL Optional Set the base URL used for Mixpanel API requests. See setServerURL()
-   * @param {boolean} useGzipCompression Optional Set whether to use gzip compression for network requests. Defaults to false.
+   * <p>Feature Flags enable dynamic feature control and A/B testing capabilities.
+   * This property is lazy-loaded to avoid unnecessary initialization until first access.
+   *
+   * <p><b>Native Mode Only:</b> Feature flags are currently only available when using native mode
+   * (iOS/Android). JavaScript mode (Expo/React Native Web) support is planned for a future release.
+   *
+   * @return {Flags} an instance of Flags that provides access to feature flag operations
+   * @throws {Error} if accessed in JavaScript mode (when native modules are not available)
+   *
+   * @example
+   * // Check if flags are ready
+   * if (mixpanel.flags.areFlagsReady()) {
+   *   const isEnabled = mixpanel.flags.isEnabledSync('new-checkout', false);
+   * }
+   *
+   * @example
+   * // Get a feature variant value
+   * const buttonColor = mixpanel.flags.getVariantValueSync('button-color', 'blue');
+   *
+   * @see Flags
+   */
+  get flags() {
+    if (!this._flags) {
+      // Check if feature flags are enabled and warn if not
+      if (!this.featureFlagsOptions || !this.featureFlagsOptions.enabled) {
+        MixpanelLogger.warn(
+          this.token,
+          "Accessing feature flags API but flags are not enabled. " +
+          "Call init() with featureFlagsOptions.enabled = true to enable feature flags. " +
+          "Flag methods will return fallback values."
+        );
+      }
+      // Lazy load the Flags instance with proper dependencies
+      const Flags = require("./javascript/mixpanel-flags").Flags;
+      this._flags = new Flags(this.token, this.mixpanelImpl, this.storage);
+    }
+    return this._flags;
+  }
+
+  /**
+   * Initializes Mixpanel with optional configuration for tracking, super properties, and feature flags.
+   *
+   * <p>This method must be called before using any other Mixpanel functionality. It sets up
+   * the tracking environment, registers super properties, and optionally initializes feature flags.
+   *
+   * @param {boolean} [optOutTrackingDefault=false] Whether or not Mixpanel can start tracking by default.
+   *     If true, no data will be tracked until optInTracking() is called. See optOutTracking()
+   * @param {object} [superProperties={}] A Map containing the key value pairs of the super properties to register.
+   *     These properties will be sent with every event. Pass {} if no super properties needed.
+   * @param {string} [serverURL="https://api.mixpanel.com"] The base URL used for Mixpanel API requests.
+   *     Use "https://api-eu.mixpanel.com" for EU data residency. See setServerURL()
+   * @param {boolean} [useGzipCompression=false] Whether to use gzip compression for network requests.
+   *     Enabling this reduces bandwidth usage but adds slight CPU overhead.
+   * @param {object} [featureFlagsOptions={}] Feature flags configuration object with the following properties:
+   * @param {boolean} [featureFlagsOptions.enabled=false] Whether to enable feature flags functionality
+   * @param {object} [featureFlagsOptions.context={}] Context properties used for feature flag targeting.
+   *     Can include user properties, device properties, or any custom properties for flag evaluation.
+   *     Note: In native mode, context must be set during initialization and cannot be updated later.
+   * @returns {Promise<void>} A promise that resolves when initialization is complete
+   *
+   * @example
+   * // Basic initialization
+   * const mixpanel = new Mixpanel('YOUR_TOKEN', true);
+   * await mixpanel.init();
+   *
+   * @example
+   * // Initialize with feature flags enabled
+   * const mixpanel = new Mixpanel('YOUR_TOKEN', true);
+   * await mixpanel.init(false, {}, 'https://api.mixpanel.com', false, {
+   *   enabled: true,
+   *   context: {
+   *     platform: 'mobile',
+   *     app_version: '2.1.0'
+   *   }
+   * });
+   *
+   * @example
+   * // Initialize with EU data residency and super properties
+   * await mixpanel.init(
+   *   false,
+   *   { plan: 'premium', region: 'eu' },
+   *   'https://api-eu.mixpanel.com',
+   *   true
+   * );
    */
   async init(
     optOutTrackingDefault = DEFAULT_OPT_OUT,
     superProperties = {},
     serverURL = "https://api.mixpanel.com",
-    useGzipCompression = false
+    useGzipCompression = false,
+    featureFlagsOptions = {}
   ) {
+    // Store feature flags options for later use
+    this.featureFlagsOptions = featureFlagsOptions;
+
     await this.mixpanelImpl.initialize(
       this.token,
       this.trackAutomaticEvents,
       optOutTrackingDefault,
       {...Helper.getMetaData(), ...superProperties},
       serverURL,
-      useGzipCompression
+      useGzipCompression,
+      featureFlagsOptions
     );
+
+    // If flags are enabled AND we're in native mode, initialize them
+    if (featureFlagsOptions.enabled && this.mixpanelImpl === MixpanelReactNative) {
+      await this.flags.loadFlags();
+  }
   }
 
   /**
@@ -109,7 +202,9 @@ export class Mixpanel {
       trackAutomaticEvents,
       optOutTrackingDefault,
       Helper.getMetaData(),
-      "https://api.mixpanel.com"
+      "https://api.mixpanel.com",
+      false,
+      {}
     );
     return new Mixpanel(token, trackAutomaticEvents);
   }

@@ -5,7 +5,7 @@
 
 // MARK: - Mixpanel Instance
 
-RCT_EXTERN_METHOD(initialize:(NSString *)token trackAutomaticEvents:(BOOL)trackAutomaticEvents optOutTrackingByDefault:(BOOL)optOutTrackingByDefault properties:(NSDictionary *)properties serverURL:(NSString *)serverURL useGzipCompression:(BOOL)useGzipCompression resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(initialize:(NSString *)token trackAutomaticEvents:(BOOL)trackAutomaticEvents optOutTrackingByDefault:(BOOL)optOutTrackingByDefault properties:(NSDictionary *)properties serverURL:(NSString *)serverURL useGzipCompression:(BOOL)useGzipCompression featureFlagsOptions:(NSDictionary *)featureFlagsOptions resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
 // Mark: - Settings
 RCT_EXTERN_METHOD(setServerURL:(NSString *)token serverURL:(NSString *)serverURL resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
@@ -104,5 +104,23 @@ RCT_EXTERN_METHOD(groupUnsetProperty:(NSString *)token groupKey:(NSString *)grou
 RCT_EXTERN_METHOD(groupRemovePropertyValue:(NSString *)token groupKey:(NSString *)groupKey groupID:(id)groupID name:(NSString *)name value:(id)value resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(groupUnionProperty:(NSString *)token groupKey:(NSString *)groupKey groupID:(id)groupID name:(NSString *)name values:(NSArray *)values resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
+// MARK: - Feature Flags
+
+RCT_EXTERN_METHOD(loadFlags:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(areFlagsReadySync:(NSString *)token)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(getVariantSync:(NSString *)token featureName:(NSString *)featureName fallback:(NSDictionary *)fallback)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(getVariantValueSync:(NSString *)token featureName:(NSString *)featureName fallbackValue:(id)fallbackValue)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(isEnabledSync:(NSString *)token featureName:(NSString *)featureName fallbackValue:(BOOL)fallbackValue)
+
+RCT_EXTERN_METHOD(getVariant:(NSString *)token featureName:(NSString *)featureName fallback:(NSDictionary *)fallback resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getVariantValue:(NSString *)token featureName:(NSString *)featureName fallbackValue:(id)fallbackValue resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(isEnabled:(NSString *)token featureName:(NSString *)featureName fallbackValue:(BOOL)fallbackValue resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
 @end

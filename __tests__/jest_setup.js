@@ -17,7 +17,7 @@ jest.mock("mixpanel-react-native/javascript/mixpanel-storage", () => {
   };
 });
 jest.mock("uuid", () => ({
-  v4: jest.fn(),
+  v4: jest.fn(() => "polyfilled-uuid-1234"),
 }));
 
 jest.mock("@react-native-async-storage/async-storage", () => ({
@@ -43,16 +43,16 @@ jest.doMock("react-native", () => {
       NativeModules: {
         ...ReactNative.NativeModules,
         MixpanelReactNative: {
-          initialize: jest.fn(),
+          initialize: jest.fn().mockResolvedValue(undefined),
           setServerURL: jest.fn(),
           setLoggingEnabled: jest.fn(),
           setFlushOnBackground: jest.fn(),
           setUseIpAddressForGeolocation: jest.fn(),
           setFlushBatchSize: jest.fn(),
-          hasOptedOutTracking: jest.fn(),
+          hasOptedOutTracking: jest.fn().mockResolvedValue(false),
           optInTracking: jest.fn(),
           optOutTracking: jest.fn(),
-          identify: jest.fn(),
+          identify: jest.fn().mockResolvedValue(undefined),
           alias: jest.fn(),
           track: jest.fn(),
           trackWithGroups: jest.fn(),

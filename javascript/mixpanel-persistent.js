@@ -42,7 +42,7 @@ export class MixpanelPersistent {
   }
 
   async initializationCompletePromise(token) {
-    Promise.all([
+    await Promise.all([
       this.loadIdentity(token),
       this.loadSuperProperties(token),
       this.loadTimeEvents(token),

@@ -10,9 +10,11 @@
     "ios/",
     "android/src/",
     "android/build.gradle",
-    "android/*.gradle",
     "MixpanelReactNative.podspec",
-    "react-native.config.js"
+    "react-native.config.js",
+    "README.md",
+    "LICENSE.md",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "test": "jest"

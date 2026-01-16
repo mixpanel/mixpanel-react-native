@@ -113,11 +113,9 @@ npm test
 
 ## Sample Apps
 Located in `Samples/` directory:
-- `SimpleMixpanel` - Minimal integration example (used in CI)
-- `MixpanelDemo` - Full API demonstration
-- `ContextAPIMixpanel` - React Context integration
-- `MixpanelExpo` - Expo project example
-- `MixpanelExample`, `MixpanelStarter` - Additional examples
+- `MixpanelExample` - Core integration patterns (used in CI)
+- `MixpanelExpo` - Expo project example with full API reference
+- `MixpanelStarter` - Production-ready architecture with TypeScript
 
 ## Generating Documentation
 ```bash

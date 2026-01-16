@@ -11,7 +11,7 @@ import {
 
 import "react-native-get-random-values"; // Polyfill for crypto.getRandomValues
 import { AsyncStorageAdapter } from "./mixpanel-storage";
-import uuid from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger";
 
 export class MixpanelPersistent {
@@ -42,7 +42,7 @@ export class MixpanelPersistent {
   }
 
   async initializationCompletePromise(token) {
-    Promise.all([
+    await Promise.all([
       this.loadIdentity(token),
       this.loadSuperProperties(token),
       this.loadTimeEvents(token),
@@ -67,8 +67,8 @@ export class MixpanelPersistent {
     this._identity[token].deviceId = storageToken;
 
     if (!this._identity[token].deviceId) {
-      // Generate device ID using uuid.v4() with polyfilled crypto.getRandomValues
-      this._identity[token].deviceId = uuid.v4();
+      // Generate device ID using uuidv4() with polyfilled crypto.getRandomValues
+      this._identity[token].deviceId = uuidv4();
       await this.storageAdapter.setItem(
         getDeviceIdKey(token),
         this._identity[token].deviceId

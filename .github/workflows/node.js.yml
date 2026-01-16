@@ -57,7 +57,7 @@ jobs:
           npm i react-native-gradle-plugin
 
       - name: Test Integration - Install dependencies
-        working-directory: ./Samples/SimpleMixpanel
+        working-directory: ./Samples/MixpanelExample
         run: yarn install
 
       - name: Enable KVM
@@ -89,7 +89,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
-          working-directory: ./Samples/SimpleMixpanel
+          working-directory: ./Samples/MixpanelExample
           script: echo "Generated AVD snapshot for caching."
 
       - name: Run Android Tests
@@ -106,7 +106,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           emulator-boot-timeout: 900
-          working-directory: ./Samples/SimpleMixpanel
+          working-directory: ./Samples/MixpanelExample
           script: |
             echo "org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError" >> android/gradle.properties
             echo "org.gradle.daemon=false" >> android/gradle.properties
@@ -127,11 +127,11 @@ jobs:
       - run: npm install
       - run: npm install -g react-native-cli
       - name: Test Integration - Install dependencies
-        working-directory: ./Samples/SimpleMixpanel
+        working-directory: ./Samples/MixpanelExample
         run: npm install
       - name: Setup iOS
-        working-directory: ./Samples/SimpleMixpanel/ios
+        working-directory: ./Samples/MixpanelExample/ios
         run: pod install --repo-update
       - name: Test iOS
-        working-directory: ./Samples/SimpleMixpanel
+        working-directory: ./Samples/MixpanelExample
         run: react-native run-ios

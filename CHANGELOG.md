@@ -1,17 +1,5 @@
 #
 
-## [v3.2.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.2.0)
-
-### Changes
-
-- **Breaking (minor):** `@react-native-async-storage/async-storage` is now a peer dependency [\#327](https://github.com/mixpanel/mixpanel-react-native/pull/327)
-  - **Action Required:** If your project doesn't already include async-storage, run: `npm install @react-native-async-storage/async-storage`
-  - Supports both v1.x (^1.15.0) and v2.x (^2.0.0)
-  - Resolves Expo 52+ duplicate native module conflicts [\#323](https://github.com/mixpanel/mixpanel-react-native/issues/323)
-  - The dependency is optional - SDK falls back to in-memory storage if unavailable
-
-#
-
 ## [v3.1.3](https://github.com/mixpanel/mixpanel-react-native/tree/v3.1.3) (2025-12-15)
 
 ### Fixes

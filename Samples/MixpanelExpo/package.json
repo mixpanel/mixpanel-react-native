@@ -12,11 +12,11 @@
     "@expo/metro-runtime": "~5.0.4",
     "expo": "~54.0.31",
     "expo-status-bar": "~2.2.3",
-    "mixpanel-react-native": "file:.yalc/mixpanel-react-native",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "react-native": "0.76.6",
-    "react-native-web": "~0.19.13"
+    "mixpanel-react-native": "file:../..",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-web": "~0.20.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

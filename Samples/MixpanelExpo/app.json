@@ -16,8 +16,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mixpanel.expo.sample"
+      "bundleIdentifier": "com.mixpanel.expo.sample",
+      "newArchEnabled": true
     },
+    "newArchEnabled": true,
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",

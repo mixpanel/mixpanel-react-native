@@ -44,6 +44,7 @@
     "mp_lib": "react-native"
   },
   "devDependencies": {
+    "@react-native-async-storage/async-storage": "^1.24.0",
     "@babel/core": "^7.26.0",
     "@babel/runtime": "^7.26.0",
     "@react-native-community/eslint-config": "^3.2.0",
@@ -73,8 +74,15 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.21.0",
     "react-native-get-random-values": "^1.9.0",
     "uuid": "^9.0.1"
+  },
+  "peerDependencies": {
+    "@react-native-async-storage/async-storage": "^1.15.0 || ^2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    }
   }
 }

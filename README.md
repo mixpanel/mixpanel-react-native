@@ -47,7 +47,15 @@ Mixpanel's React Native SDK is a wrapper around Mixpanel’s native iOS and Andr
 npm install mixpanel-react-native
 ```
 
-2. Under your application's ios folder, run
+2. Install AsyncStorage (required for data persistence):
+
+```
+npm install @react-native-async-storage/async-storage
+```
+
+> **Note:** Starting from v3.2.0, `@react-native-async-storage/async-storage` is a peer dependency. This allows your project to use either v1.x or v2.x, avoiding conflicts with frameworks like Expo 52+.
+
+3. Under your application's ios folder, run
 
 ```
 pod install
@@ -55,7 +63,7 @@ pod install
 
 Please note: You do not need to update your Podfile to add Mixpanel.
 
-3. Since Xcode 12.5, there is a known swift compile issue, please refer to this **[workaround](https://github.com/mixpanel/mixpanel-react-native/issues/43#issuecomment-829599732)**. However the compile issue has been resolved in Xcode 13.2.1+, there is no extra step required as long as you upgrade to Xcode 13.2.1+.
+4. Since Xcode 12.5, there is a known swift compile issue, please refer to this **[workaround](https://github.com/mixpanel/mixpanel-react-native/issues/43#issuecomment-829599732)**. However the compile issue has been resolved in Xcode 13.2.1+, there is no extra step required as long as you upgrade to Xcode 13.2.1+.
 
 ### 2. Initialize Mixpanel
 

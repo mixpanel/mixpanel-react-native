@@ -1,5 +1,14 @@
 #
 
+## [v3.2.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.2.0) (2026-01-17)
+
+### Enhancements
+
+- feat: move async-storage to peerDependencies [\#354](https://github.com/mixpanel/mixpanel-react-native/pull/354)
+- Security: Update dev dependencies and fix npm packaging [\#353](https://github.com/mixpanel/mixpanel-react-native/pull/353)
+
+#
+
 ## [v3.1.3](https://github.com/mixpanel/mixpanel-react-native/tree/v3.1.3) (2025-12-15)
 
 ### Fixes
@@ -518,6 +527,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

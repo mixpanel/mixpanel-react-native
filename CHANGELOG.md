@@ -1,5 +1,9 @@
 #
 
+## [v3.2.2](https://github.com/mixpanel/mixpanel-react-native/tree/v3.2.2) (2026-01-17)
+
+#
+
 ## [v3.2.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.2.1) (2026-01-17)
 
 ### Enhancements
@@ -535,6 +539,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

@@ -31,7 +31,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         return "MixpanelReactNative";
     }
 
-
     @ReactMethod
     public void initialize(String token, boolean trackAutomaticEvents, boolean optOutTrackingDefault, ReadableMap metadata, String serverURL, boolean useGzipCompression, Promise promise) throws JSONException {
         JSONObject mixpanelProperties = ReactNativeHelper.reactToJSON(metadata);
@@ -181,7 +180,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
         synchronized (instance) {
             JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
-            AutomaticProperties.appendLibraryProperties(eventProperties);
+            AutomaticProperties.appendLibraryProperties(instance, eventProperties);
             instance.track(eventName, eventProperties);
             promise.resolve(null);
         }
@@ -340,7 +339,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
         synchronized (instance) {
             JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
-            AutomaticProperties.appendLibraryProperties(sendProperties);
+            AutomaticProperties.appendLibraryProperties(instance, sendProperties);
             instance.getPeople().set(sendProperties);
             promise.resolve(null);
         }
@@ -368,7 +367,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
         synchronized (instance) {
             JSONObject sendProperties = ReactNativeHelper.reactToJSON(properties);
-            AutomaticProperties.appendLibraryProperties(sendProperties);
+            AutomaticProperties.appendLibraryProperties(instance, sendProperties);
             instance.getPeople().setOnce(sendProperties);
             promise.resolve(null);
         }

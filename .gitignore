@@ -63,7 +63,3 @@ claude/
 .cursor/
 .github/instructions/
 .github/prompts/
-
-#samples
-*build*
-*app*

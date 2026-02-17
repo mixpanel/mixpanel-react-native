@@ -37,15 +37,15 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void initialize(String token, boolean trackAutomaticEvents, boolean optOutTrackingDefault, ReadableMap metadata, String serverURL, boolean useGzipCompression, Promise promise) throws JSONException {
         JSONObject mixpanelProperties = ReactNativeHelper.reactToJSON(metadata);
         AutomaticProperties.setAutomaticProperties(mixpanelProperties);
-        MixpanelOptions.Builder optionsBuilder = new MixpanelOptions.Builder()
+        MixpanelOptions options = new MixpanelOptions.Builder()
             .serverURL(serverURL)
             .optOutTrackingDefault(optOutTrackingDefault)
-            .superProperties(mixpanelProperties);
-        if (useGzipCompression) {
-            optionsBuilder.useGzipCompression(true);
-        }
-        MixpanelOptions options = optionsBuilder.build();
+            .superProperties(mixpanelProperties)
+            .build();
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents, options);
+        if (useGzipCompression) {
+            instance.setShouldGzipRequestPayload(true);
+        }
         promise.resolve(null);
     }
 

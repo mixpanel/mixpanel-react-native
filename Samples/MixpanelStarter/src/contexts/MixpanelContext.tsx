@@ -20,6 +20,7 @@ interface MixpanelProviderProps {
   token: string;
   trackAutomaticEvents?: boolean;
   useNative?: boolean;
+  serverURL?: string;
 }
 
 export const MixpanelProvider: React.FC<MixpanelProviderProps> = ({
@@ -27,6 +28,7 @@ export const MixpanelProvider: React.FC<MixpanelProviderProps> = ({
   token,
   trackAutomaticEvents = true,
   useNative = true,
+  serverURL,
 }) => {
   const [mixpanel, setMixpanel] = useState<Mixpanel | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -45,7 +47,7 @@ export const MixpanelProvider: React.FC<MixpanelProviderProps> = ({
           : new Mixpanel(token, trackAutomaticEvents, false);
 
         // Initialize
-        await instance.init();
+        await instance.init(false, {}, serverURL);
 
         // Set up default super properties
         instance.registerSuperProperties({

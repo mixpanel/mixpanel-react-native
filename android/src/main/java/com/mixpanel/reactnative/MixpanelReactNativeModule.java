@@ -1,6 +1,7 @@
 package com.mixpanel.reactnative;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.mixpanel.android.mpmetrics.MixpanelOptions;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -36,8 +37,12 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     public void initialize(String token, boolean trackAutomaticEvents, boolean optOutTrackingDefault, ReadableMap metadata, String serverURL, boolean useGzipCompression, Promise promise) throws JSONException {
         JSONObject mixpanelProperties = ReactNativeHelper.reactToJSON(metadata);
         AutomaticProperties.setAutomaticProperties(mixpanelProperties);
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, optOutTrackingDefault, mixpanelProperties, null, trackAutomaticEvents);
-        instance.setServerURL(serverURL);
+        MixpanelOptions options = new MixpanelOptions.Builder()
+            .serverURL(serverURL)
+            .optOutTrackingDefault(optOutTrackingDefault)
+            .superProperties(mixpanelProperties)
+            .build();
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents, options);
         if (useGzipCompression) {
             instance.setShouldGzipRequestPayload(true);
         }

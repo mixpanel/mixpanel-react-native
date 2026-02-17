@@ -19,6 +19,7 @@ const App = () => {
     useNative
   );
   mixpanel.init();
+  // mixpanel.init(undefined, undefined, "https://api-eu.mixpanel.com");
   mixpanel.setLoggingEnabled(true);
 
   const group = mixpanel.getGroup("company_id", 111);

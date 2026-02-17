@@ -131,7 +131,9 @@ jobs:
         run: npm install
       - name: Setup iOS
         working-directory: ./Samples/MixpanelExample/ios
-        run: pod install --repo-update
+        run: |
+          rm -f Podfile.lock
+          pod install --repo-update
       - name: Test iOS
         working-directory: ./Samples/MixpanelExample
         run: react-native run-ios

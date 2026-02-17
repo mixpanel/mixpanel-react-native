@@ -1,5 +1,13 @@
 #
 
+## [v3.3.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.3.0) (2026-02-17)
+
+### Enhancements
+
+- Set server URL during initialization using MixpanelOptions [\#368](https://github.com/mixpanel/mixpanel-react-native/pull/368)
+
+#
+
 ## [v3.2.2](https://github.com/mixpanel/mixpanel-react-native/tree/v3.2.2) (2026-01-17)
 
 #
@@ -539,6 +547,8 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
 
 
 

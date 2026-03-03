@@ -32,9 +32,9 @@ import { MixpanelLogger } from './mixpanel-logger';
  * @example
  * // Initialize with feature flags enabled
  * const mixpanel = new Mixpanel('YOUR_TOKEN', true);
- * await mixpanel.init(false, {}, 'https://api.mixpanel.com', false, {
+ * await mixpanel.init(false, {}, 'https://api.mixpanel.com', false, { // serverURL: use api-eu.mixpanel.com (EU) or api-in.mixpanel.com (India)
  *   enabled: true,
- *   context: { platform: 'mobile' }
+ *   context: { custom_properties: { platform: 'mobile' } }
  * });
  *
  * @example

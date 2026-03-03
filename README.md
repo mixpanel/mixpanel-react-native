@@ -123,9 +123,9 @@ Control features dynamically and run A/B tests with Mixpanel Feature Flags. **Na
 
 ```js
 // Enable during initialization
-await mixpanel.init(false, {}, 'https://api.mixpanel.com', true, {
+await mixpanel.init(false, {}, 'https://api.mixpanel.com', true, { 
   enabled: true,
-  context: { platform: 'mobile' }  // Optional targeting context
+  context: { custom_properties: { platform: 'mobile' } }  // Optional targeting context
 });
 
 // Check if feature is enabled

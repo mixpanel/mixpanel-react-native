@@ -115,7 +115,10 @@ export class Mixpanel {
    * @param {object} [superProperties={}] A Map containing the key value pairs of the super properties to register.
    *     These properties will be sent with every event. Pass {} if no super properties needed.
    * @param {string} [serverURL="https://api.mixpanel.com"] The base URL used for Mixpanel API requests.
-   *     Use "https://api-eu.mixpanel.com" for EU data residency. See setServerURL()
+   *     Must match your project's data residency region:
+   *     US (default): "https://api.mixpanel.com",
+   *     EU: "https://api-eu.mixpanel.com",
+   *     India: "https://api-in.mixpanel.com". See setServerURL()
    * @param {boolean} [useGzipCompression=false] Whether to use gzip compression for network requests.
    *     Enabling this reduces bandwidth usage but adds slight CPU overhead.
    * @param {object} [featureFlagsOptions={}] Feature flags configuration object with the following properties:

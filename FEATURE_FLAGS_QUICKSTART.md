@@ -2,6 +2,11 @@
 
 > **Beta Version:** `3.2.0-beta.3`
 > **Full Platform Support:** This beta release supports iOS, Android, Expo, and React Native Web.
+>
+> **Data Residency:** Use the server URL that matches your Mixpanel project's data residency region:
+> - **US** (default): `https://api.mixpanel.com`
+> - **EU**: `https://api-eu.mixpanel.com`
+> - **India**: `https://api-in.mixpanel.com`
 
 ## Installation
 
@@ -32,13 +37,15 @@ const mixpanel = new Mixpanel('YOUR_TOKEN');
 await mixpanel.init(
   false,                    // optOutTrackingDefault
   {},                       // superProperties
-  'https://api.mixpanel.com', // serverURL
+  'https://api.mixpanel.com', // serverURL — see Data Residency note above
   true,                     // useGzipCompression
   {
     enabled: true,          // Enable Feature Flags
     context: {              // Optional: Add targeting context
-      platform: 'mobile',
-      app_version: '2.1.0'
+      custom_properties: {
+        platform: 'mobile',
+        app_version: '2.1.0'
+      }
     }
   }
 );
@@ -55,13 +62,15 @@ const mixpanel = new Mixpanel('YOUR_TOKEN', false, false); // Force JavaScript m
 await mixpanel.init(
   false,                    // optOutTrackingDefault
   {},                       // superProperties
-  'https://api.mixpanel.com', // serverURL
+  'https://api.mixpanel.com', // serverURL — see Data Residency note above
   true,                     // useGzipCompression
   {
     enabled: true,          // Enable Feature Flags
     context: {              // Optional: Add targeting context
-      platform: 'web',      // or 'expo'
-      app_version: '2.1.0'
+      custom_properties: {
+        platform: 'web',    // or 'expo'
+        app_version: '2.1.0'
+      }
     }
   }
 );
@@ -254,15 +263,15 @@ if (mixpanel.mixpanelImpl !== MixpanelReactNative) {
 await mixpanel.init(
   false,
   {},
-  'https://api.mixpanel.com',
+  'https://api.mixpanel.com', // serverURL — see Data Residency note above
   true,
   {
     enabled: true,
     context: {
-      user_tier: 'premium',
-      device_type: Platform.OS,
-      app_version: '2.1.0',
       custom_properties: {
+        user_tier: 'premium',
+        device_type: Platform.OS,
+        app_version: '2.1.0',
         beta_tester: true,
         region: 'US'
       }

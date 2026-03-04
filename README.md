@@ -115,7 +115,7 @@ const SampleApp = () => {
 export default SampleApp;
 ```
 
-### Feature Flags (Beta - 3.2.0-beta.1+)
+### Feature Flags (Beta - 3.2.0-beta.3)
 
 Control features dynamically and run A/B tests with Mixpanel Feature Flags. **Native mode only** (iOS/Android) in beta.
 
@@ -123,7 +123,7 @@ Control features dynamically and run A/B tests with Mixpanel Feature Flags. **Na
 
 ```js
 // Enable during initialization
-await mixpanel.init(false, {}, 'https://api.mixpanel.com', true, { 
+await mixpanel.init(false, {}, 'https://api.mixpanel.com', true, {
   enabled: true,
   context: { custom_properties: { platform: 'mobile' } }  // Optional targeting context
 });

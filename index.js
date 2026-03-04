@@ -68,11 +68,10 @@ export class Mixpanel {
    * <p>Feature Flags enable dynamic feature control and A/B testing capabilities.
    * This property is lazy-loaded to avoid unnecessary initialization until first access.
    *
-   * <p><b>Native Mode Only:</b> Feature flags are currently only available when using native mode
-   * (iOS/Android). JavaScript mode (Expo/React Native Web) support is planned for a future release.
+   * <p>Feature flags work in both native mode (iOS/Android) and JavaScript mode (Expo/React Native Web).
+   * In JavaScript mode, use {@link Flags#updateContext} to update targeting context at runtime.
    *
    * @return {Flags} an instance of Flags that provides access to feature flag operations
-   * @throws {Error} if accessed in JavaScript mode (when native modules are not available)
    *
    * @example
    * // Check if flags are ready
@@ -124,7 +123,8 @@ export class Mixpanel {
    * @param {object} [featureFlagsOptions={}] Feature flags configuration object with the following properties:
    * @param {boolean} [featureFlagsOptions.enabled=false] Whether to enable feature flags functionality
    * @param {object} [featureFlagsOptions.context={}] Context properties used for feature flag targeting.
-   *     Can include user properties, device properties, or any custom properties for flag evaluation.
+   *     Use the `custom_properties` key to nest targeting properties
+   *     (e.g., `context: { custom_properties: { user_tier: 'premium' } }`).
    *     Note: In native mode, context must be set during initialization and cannot be updated later.
    * @returns {Promise<void>} A promise that resolves when initialization is complete
    *
@@ -139,8 +139,10 @@ export class Mixpanel {
    * await mixpanel.init(false, {}, 'https://api.mixpanel.com', false, {
    *   enabled: true,
    *   context: {
-   *     platform: 'mobile',
-   *     app_version: '2.1.0'
+   *     custom_properties: {
+   *       platform: 'mobile',
+   *       app_version: '2.1.0'
+   *     }
    *   }
    * });
    *
@@ -215,7 +217,9 @@ export class Mixpanel {
   /**
    * Set the base URL used for Mixpanel API requests.
    * Useful if you need to proxy Mixpanel requests. Defaults to https://api.mixpanel.com.
-   * To route data to Mixpanel's EU servers, set to https://api-eu.mixpanel.com
+   * Must match your project's data residency region:
+   * US (default): https://api.mixpanel.com, EU: https://api-eu.mixpanel.com,
+   * India: https://api-in.mixpanel.com
    *
    * @param {string} serverURL the base URL used for Mixpanel API requests
    *

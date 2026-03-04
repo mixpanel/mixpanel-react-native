@@ -29,12 +29,14 @@ import { MixpanelLogger } from './mixpanel-logger';
  * <p><b>Automatic Experiment Tracking:</b> When a feature flag is evaluated for the first time,
  * Mixpanel automatically tracks a "$experiment_started" event with relevant metadata.
  *
+ * For EU data residency use https://api-eu.mixpanel.com; for India use https://api-in.mixpanel.com.
+ *
  * @example
  * // Initialize with feature flags enabled
  * const mixpanel = new Mixpanel('YOUR_TOKEN', true);
  * await mixpanel.init(false, {}, 'https://api.mixpanel.com', false, {
  *   enabled: true,
- *   context: { platform: 'mobile' }
+ *   context: { custom_properties: { platform: 'mobile' } }
  * });
  *
  * @example

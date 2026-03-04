@@ -56,12 +56,14 @@
  * &lt;p>&lt;b>Automatic Experiment Tracking:&lt;/b> When a feature flag is evaluated for the first time,
  * Mixpanel automatically tracks a "$experiment_started" event with relevant metadata.
  *
+ * For EU data residency use https://api-eu.mixpanel.com; for India use https://api-in.mixpanel.com.
+ *
  * @example
  * // Initialize with feature flags enabled
  * const mixpanel = new Mixpanel('YOUR_TOKEN', true);
  * await mixpanel.init(false, {}, 'https://api.mixpanel.com', false, {
  *   enabled: true,
- *   context: { platform: 'mobile' }
+ *   context: { custom_properties: { platform: 'mobile' } }
  * });
  *
  * @example
@@ -119,8 +121,7 @@ export class Flags {
    * &lt;p>After successfully loading flags, {@link areFlagsReady} will return true and synchronous
    * methods can be used to access flag values.
    *
-   * @returns {Promise&lt;void>} A promise that resolves when flags have been fetched and loaded
-   * @throws {Error} if feature flags are not initialized
+   * @returns {Promise&lt;void>} Resolves when flags are fetched; logs a warning and returns gracefully if not initialized
    *
    * @example
    * // Manually reload flags after user identification
@@ -133,7 +134,8 @@ export class Flags {
     } else if (this.jsFlags) {
       return await this.jsFlags.loadFlags();
     }
-    throw new Error("Feature flags are not initialized");
+    MixpanelLogger.warn(this.token, "Feature flags are not initialized - cannot load flags");
+    return;
   }
 
   /**

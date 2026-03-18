@@ -60,6 +60,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelOptions.Builder optionsBuilder = new MixpanelOptions.Builder()
             .optOutTrackingDefault(optOutTrackingDefault)
             .superProperties(mixpanelProperties)
+            .serverURL(serverURL)
             .featureFlagsEnabled(featureFlagsEnabled);
 
         if (featureFlagsContext != null) {
@@ -69,7 +70,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelOptions options = optionsBuilder.build();
 
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents, options);
-        instance.setServerURL(serverURL);
         if (useGzipCompression) {
             instance.setShouldGzipRequestPayload(true);
         }

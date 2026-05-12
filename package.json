@@ -38,7 +38,6 @@
   "bugs": {
     "url": "https://github.com/mixpanel/mixpanel-react-native/issues"
   },
-  "TODO": "Change the git URL before publishing on npm",
   "homepage": "https://github.com/mixpanel/mixpanel-react-native#readme",
   "metadata": {
     "mp_lib": "react-native"

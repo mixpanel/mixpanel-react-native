@@ -108,7 +108,7 @@ npm test
 - `uuid@3.3.2` - UUID generation
 
 ### Native SDK Dependencies
-- iOS: `Mixpanel-swift@6.4.0`
+- iOS: `Mixpanel-swift@6.4.1`
 - Android: `mixpanel-android@8.7.0`
 
 ## Sample Apps

@@ -133,6 +133,8 @@ jobs:
         working-directory: ./Samples/MixpanelExample/ios
         run: |
           rm -f Podfile.lock
+          rm -rf ~/Library/Caches/CocoaPods
+          pod cache clean --all
           pod install --repo-update
       - name: Test iOS
         working-directory: ./Samples/MixpanelExample

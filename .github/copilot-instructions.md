@@ -109,7 +109,7 @@ npm test
 
 ### Native SDK Dependencies
 - iOS: `Mixpanel-swift@6.4.0`
-- Android: `mixpanel-android@8.2.0`
+- Android: `mixpanel-android@8.7.0`
 
 ## Sample Apps
 Located in `Samples/` directory:

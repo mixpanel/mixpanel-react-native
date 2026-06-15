@@ -156,195 +156,6 @@
     
 
     
-    <h4 class="name" id=".init"><span class="type-signature">(async, static) </span>init<span class="signature">(token, trackAutomaticEvents, Optional)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>token</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">your project token.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>trackAutomaticEvents</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Whether or not to automatically track common mobile events</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>Optional</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Whether or not Mixpanel can start tracking by default. See optOutTracking()</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>since version 1.3.0. To initialize Mixpanel, please use the instance method `init` instead. See the example below:
-
-<pre><code>
-const trackAutomaticEvents = true;
-const mixpanel = new Mixpanel('your project token', trackAutomaticEvents);
-mixpanel.init();
-</code></pre>
-
-Initializes Mixpanel and return an instance of Mixpanel the given project token.</li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line100">line 100</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    
     <h4 class="name" id="addGroup"><span class="type-signature"></span>addGroup<span class="signature">(groupKey, groupID)</span><span class="type-signature"></span></h4>
     
 
@@ -469,7 +280,7 @@ Initializes Mixpanel and return an instance of Mixpanel the given project token.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line389">line 389</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line391">line 391</a>
     </li></ul></dd>
     
 
@@ -634,7 +445,7 @@ Multiple aliases can point to the same identifier.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line264">line 264</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line266">line 266</a>
     </li></ul></dd>
     
 
@@ -727,7 +538,7 @@ superProperties registered before the clearSuperProperties method was called.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line497">line 497</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line499">line 499</a>
     </li></ul></dd>
     
 
@@ -889,7 +700,7 @@ to Group Analytics using the same group value will create and store new values.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line417">line 417</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line419">line 419</a>
     </li></ul></dd>
     
 
@@ -1026,7 +837,7 @@ to Group Analytics using the same group value will create and store new values.<
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line522">line 522</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line524">line 524</a>
     </li></ul></dd>
     
 
@@ -1142,7 +953,7 @@ send all remaining messages to the server.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line582">line 582</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line584">line 584</a>
     </li></ul></dd>
     
 
@@ -1238,7 +1049,7 @@ const deviceId = await mixpanel.getDeviceId();
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line569">line 569</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line571">line 571</a>
     </li></ul></dd>
     
 
@@ -1356,7 +1167,7 @@ const distinctId = await mixpanel.getDistinctId();
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line551">line 551</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line553">line 553</a>
     </li></ul></dd>
     
 
@@ -1539,7 +1350,7 @@ Group Analytics properties.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line369">line 369</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line371">line 371</a>
     </li></ul></dd>
     
 
@@ -1639,7 +1450,7 @@ People Analytics properties.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line306">line 306</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line308">line 308</a>
     </li></ul></dd>
     
 
@@ -1753,7 +1564,7 @@ and persist beyond the lifetime of your application.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line485">line 485</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line487">line 487</a>
     </li></ul></dd>
     
 
@@ -1863,7 +1674,7 @@ and persist beyond the lifetime of your application.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line189">line 189</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line191">line 191</a>
     </li></ul></dd>
     
 
@@ -2034,7 +1845,7 @@ your application.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line234">line 234</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line236">line 236</a>
     </li></ul></dd>
     
 
@@ -2093,7 +1904,7 @@ your application.
     
 
     
-    <h4 class="name" id="init"><span class="type-signature">(async) </span>init<span class="signature">(optOutTrackingDefault, superProperties, serverURL)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="init"><span class="type-signature">(async) </span>init<span class="signature">(optOutTrackingDefault, superProperties, serverURL, useGzipCompression)</span><span class="type-signature"></span></h4>
     
 
     
@@ -2216,6 +2027,35 @@ your application.
             
 
             <td class="description last">Optional Set the base URL used for Mixpanel API requests. See setServerURL()</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>useGzipCompression</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Optional Set whether to use gzip compression for network requests. Defaults to false.</td>
         </tr>
 
     
@@ -2346,7 +2186,7 @@ This method will internally track an opt-in event to your project.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line199">line 199</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line201">line 201</a>
     </li></ul></dd>
     
 
@@ -2438,7 +2278,7 @@ This method will also remove any user-related information from the device.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line210">line 210</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line212">line 212</a>
     </li></ul></dd>
     
 
@@ -2585,7 +2425,7 @@ to remove a superProperty, call unregisterSuperProperty() or clearSuperPropertie
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line439">line 439</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line441">line 441</a>
     </li></ul></dd>
     
 
@@ -2725,7 +2565,7 @@ same names has already been registered.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line454">line 454</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line456">line 456</a>
     </li></ul></dd>
     
 
@@ -2885,7 +2725,7 @@ same names has already been registered.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line402">line 402</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line404">line 404</a>
     </li></ul></dd>
     
 
@@ -2974,7 +2814,7 @@ same names has already been registered.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line533">line 533</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line535">line 535</a>
     </li></ul></dd>
     
 
@@ -3113,7 +2953,7 @@ Defaults to true.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line180">line 180</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line182">line 182</a>
     </li></ul></dd>
     
 
@@ -3251,7 +3091,7 @@ when the app enters the background on iOS. This is set to true by default.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line146">line 146</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line148">line 148</a>
     </li></ul></dd>
     
 
@@ -3411,7 +3251,7 @@ when the app enters the background on iOS. This is set to true by default.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line353">line 353</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line355">line 355</a>
     </li></ul></dd>
     
 
@@ -3550,7 +3390,7 @@ you are running into issues with the SDK that you want to debug
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line135">line 135</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line137">line 137</a>
     </li></ul></dd>
     
 
@@ -3689,7 +3529,7 @@ To route data to Mixpanel's EU servers, set to https://api-eu.mixpanel.com
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line123">line 123</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line125">line 125</a>
     </li></ul></dd>
     
 
@@ -3829,7 +3669,7 @@ Defaults to true.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line165">line 165</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line167">line 167</a>
     </li></ul></dd>
     
 
@@ -3968,7 +3808,7 @@ property, representing the number of seconds between your calls.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line508">line 508</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line510">line 510</a>
     </li></ul></dd>
     
 
@@ -4134,7 +3974,7 @@ that event.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line286">line 286</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line288">line 288</a>
     </li></ul></dd>
     
 
@@ -4323,7 +4163,7 @@ that event. Group key/value pairs are upserted into the property map before trac
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line329">line 329</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line331">line 331</a>
     </li></ul></dd>
     
 
@@ -4464,7 +4304,196 @@ To clear all superProperties, use clearSuperProperties()
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line470">line 470</a>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line472">line 472</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".init"><span class="type-signature">(async, static) </span>init<span class="signature">(token, trackAutomaticEvents, Optional)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>token</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">your project token.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>trackAutomaticEvents</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether or not to automatically track common mobile events</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>Optional</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Whether or not Mixpanel can start tracking by default. See optOutTracking()</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>since version 1.3.0. To initialize Mixpanel, please use the instance method `init` instead. See the example below:
+
+<pre><code>
+const trackAutomaticEvents = true;
+const mixpanel = new Mixpanel('your project token', trackAutomaticEvents);
+mixpanel.init();
+</code></pre>
+
+Initializes Mixpanel and return an instance of Mixpanel the given project token.</li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="index.js.html">index.js</a>, <a href="index.js.html#line102">line 102</a>
     </li></ul></dd>
     
 
@@ -4516,7 +4545,7 @@ To clear all superProperties, use clearSuperProperties()
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue May 14 2024 09:36:01 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Jun 15 2026 17:54:59 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

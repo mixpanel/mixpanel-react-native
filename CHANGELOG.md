@@ -1,3 +1,14 @@
+# Changelog
+
+## [v3.4.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.4.0) (2026-06-15)
+
+### Enhancements
+
+- Updated Mixpanel-swift SDK from 5.2.0 to 6.4.1 [\#421](https://github.com/mixpanel/mixpanel-react-native/pull/421)
+- Updated mixpanel-android SDK from 8.3.0 to 8.7.0 [\#420](https://github.com/mixpanel/mixpanel-react-native/pull/420)
+
+[Full Changelog](https://github.com/mixpanel/mixpanel-react-native/compare/v3.3.0...v3.4.0)
+
 #
 
 ## [v3.3.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.3.0) (2026-02-17)

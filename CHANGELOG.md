@@ -1,3 +1,8 @@
+# Changelog
+
+## [v3.4.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.4.0) (2026-06-15)
+
+[Full Changelog](https://github.com/mixpanel/mixpanel-react-native/compare/v3.3.0...v3.4.0)
 #
 
 ## [v3.3.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.3.0) (2026-02-17)

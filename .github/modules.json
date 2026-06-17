@@ -1,0 +1,9 @@
+{
+  "analytics": {
+    "tag_prefix": "v",
+    "package_json": "package.json",
+    "changelog": "CHANGELOG.md",
+    "readme": "README.md",
+    "package_name": "mixpanel-react-native"
+  }
+}

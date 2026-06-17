@@ -109,15 +109,13 @@ npm test
 
 ### Native SDK Dependencies
 - iOS: `Mixpanel-swift@5.1.0`
-- Android: `mixpanel-android@8.2.0`
+- Android: `mixpanel-android@8.7.0`
 
 ## Sample Apps
 Located in `Samples/` directory:
-- `SimpleMixpanel` - Minimal integration example (used in CI)
-- `MixpanelDemo` - Full API demonstration
-- `ContextAPIMixpanel` - React Context integration
-- `MixpanelExpo` - Expo project example
-- `MixpanelExample`, `MixpanelStarter` - Additional examples
+- `MixpanelExample` - Core integration patterns (used in CI)
+- `MixpanelExpo` - Expo project example with full API reference
+- `MixpanelStarter` - Production-ready architecture with TypeScript
 
 ## Generating Documentation
 ```bash

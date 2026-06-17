@@ -12,9 +12,9 @@ export class AsyncStorageAdapter {
         }
       } catch {
         console.error(
-          "[@RNC/AsyncStorage]: NativeModule: AsyncStorage is null. Please run 'npm install @react-native-async-storage/async-storage' or follow the Mixpanel guide to set up your own Storage class."
+          "[Mixpanel] AsyncStorage not available. Install @react-native-async-storage/async-storage (^1.15.0 or ^2.0.0), or provide a custom storage implementation. See: https://github.com/mixpanel/mixpanel-react-native#readme"
         );
-        console.error("[Mixpanel] Falling back to in-memory storage");
+        console.error("[Mixpanel] Falling back to in-memory storage. Data will not persist across app restarts.");
         this.storage = new InMemoryStorage();
       }
     } else {

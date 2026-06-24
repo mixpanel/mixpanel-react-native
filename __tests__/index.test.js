@@ -504,37 +504,6 @@ test(`it calls track for screenView without properties`, async () => {
   );
 });
 
-test(`it does not call track for screenView with null screenName`, async () => {
-  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-  const mixpanel = await Mixpanel.init("token", true);
-
-  NativeModules.MixpanelReactNative.track.mockClear();
-
-  mixpanel.trackScreenView(null);
-
-  expect(consoleErrorSpy).toHaveBeenCalledWith(
-    'Mixpanel.trackScreenView: screenName is null or empty. Event not tracked.'
-  );
-
-  expect(NativeModules.MixpanelReactNative.track).not.toHaveBeenCalled();
-
-  consoleErrorSpy.mockRestore();
-});
-
-test(`it does not call track for screenView with empty screenName`, async () => {
-  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-  const mixpanel = await Mixpanel.init("token", true);
-
-  NativeModules.MixpanelReactNative.track.mockClear();
-
-  mixpanel.trackScreenView("");
-
-  expect(consoleErrorSpy).toHaveBeenCalled();
-  expect(NativeModules.MixpanelReactNative.track).not.toHaveBeenCalled();
-
-  consoleErrorSpy.mockRestore();
-});
-
 test(`it calls track for screenLeave with correct event name`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
   mixpanel.trackScreenLeave("HomeScreen", { time_spent: 30 });
@@ -549,22 +518,6 @@ test(`it calls track for screenLeave with correct event name`, async () => {
       mp_lib: "react-native",
     }
   );
-});
-
-test(`it does not call track for screenLeave with null screenName`, async () => {
-  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-  const mixpanel = await Mixpanel.init("token", true);
-
-  NativeModules.MixpanelReactNative.track.mockClear();
-
-  mixpanel.trackScreenLeave(null);
-
-  expect(consoleErrorSpy).toHaveBeenCalledWith(
-    'Mixpanel.trackScreenLeave: screenName is null or empty. Event not tracked.'
-  );
-  expect(NativeModules.MixpanelReactNative.track).not.toHaveBeenCalled();
-
-  consoleErrorSpy.mockRestore();
 });
 
 test(`screenView allows user to override current_page_title`, async () => {

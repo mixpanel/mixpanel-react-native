@@ -306,11 +306,6 @@ export class Mixpanel {
    * @param {object} properties Optional additional properties to include with this event
    */
   trackScreenView(screenName, properties) {
-    if (!StringHelper.isValid(screenName)) {
-      console.error('Mixpanel.trackScreenView: screenName is null or empty. Event not tracked.');
-      return;
-    }
-
     const mergedProperties = {
       current_page_title: screenName,
       $mp_autocapture: true,
@@ -328,11 +323,6 @@ export class Mixpanel {
    * @param {object} properties Optional additional properties to include with this event
    */
   trackScreenLeave(screenName, properties) {
-    if (!StringHelper.isValid(screenName)) {
-      console.error('Mixpanel.trackScreenLeave: screenName is null or empty. Event not tracked.');
-      return;
-    }
-
     const mergedProperties = {
       current_page_title: screenName,
       $mp_autocapture: true,

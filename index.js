@@ -313,6 +313,7 @@ export class Mixpanel {
 
     const mergedProperties = {
       current_page_title: screenName,
+      $mp_autocapture: true,
       ...properties,
     };
 
@@ -334,6 +335,7 @@ export class Mixpanel {
 
     const mergedProperties = {
       current_page_title: screenName,
+      $mp_autocapture: true,
       ...properties,
     };
 

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Text} from 'react-native';
-import {MixpanelProvider} from './contexts/MixpanelContext';
+import {MixpanelProvider, useMixpanel} from './contexts/MixpanelContext';
 import {ErrorBoundary} from './components/ErrorBoundary';
 import {OnboardingScreen} from './screens/OnboardingScreen';
 import {HomeScreen} from './screens/HomeScreen';
@@ -15,11 +15,48 @@ const Tab = createBottomTabNavigator();
 const DEMO_TOKEN = 'YOUR_TOKEN_HERE';
 const token = MIXPANEL_TOKEN || DEMO_TOKEN;
 
+// Navigation wrapper component to access Mixpanel context
+function NavigationWithTracking({children}: {children: React.ReactNode}) {
+  const {mixpanel} = useMixpanel();
+  const routeNameRef = useRef<string>();
+  const navigationRef = useRef<any>();
+
+  return (
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={() => {
+        routeNameRef.current = navigationRef.current?.getCurrentRoute()?.name;
+      }}
+      onStateChange={async () => {
+        const previousRouteName = routeNameRef.current;
+        const currentRoute = navigationRef.current?.getCurrentRoute();
+        const currentRouteName = currentRoute?.name;
+
+        if (previousRouteName !== currentRouteName && mixpanel) {
+          // Track screen leave for previous screen
+          if (previousRouteName) {
+            mixpanel.screenLeave(previousRouteName);
+          }
+
+          // Track screen view for current screen
+          if (currentRouteName) {
+            mixpanel.screenView(currentRouteName);
+          }
+        }
+
+        // Save the current route name for next change
+        routeNameRef.current = currentRouteName;
+      }}>
+      {children}
+    </NavigationContainer>
+  );
+}
+
 function App(): React.JSX.Element {
   return (
     <ErrorBoundary>
       <MixpanelProvider token={token} trackAutomaticEvents={true} useNative={true} serverURL="https://api-eu.mixpanel.com">
-        <NavigationContainer>
+        <NavigationWithTracking>
           <Tab.Navigator
             screenOptions={{
               tabBarActiveTintColor: '#007AFF',
@@ -63,7 +100,7 @@ function App(): React.JSX.Element {
               }}
             />
           </Tab.Navigator>
-        </NavigationContainer>
+        </NavigationWithTracking>
       </MixpanelProvider>
     </ErrorBoundary>
   );

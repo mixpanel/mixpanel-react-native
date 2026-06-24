@@ -472,3 +472,112 @@ test(`it calls MixpanelReactNative group union property`, async () => {
     NativeModules.MixpanelReactNative.groupRemovePropertyValue
   ).toBeCalledWith("token", "company_id", 12345, "prop_key", "334");
 });
+
+test(`it calls track for screenView with correct event name and properties`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  mixpanel.screenView("HomeScreen", { extra_prop: "extra_value" });
+
+  expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
+    "token",
+    "$mp_page_view",
+    {
+      current_page_title: "HomeScreen",
+      extra_prop: "extra_value",
+      $lib_version: expect.any(String),
+      mp_lib: "react-native",
+    }
+  );
+});
+
+test(`it calls track for screenView without properties`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  mixpanel.screenView("HomeScreen");
+
+  expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
+    "token",
+    "$mp_page_view",
+    {
+      current_page_title: "HomeScreen",
+      $lib_version: expect.any(String),
+      mp_lib: "react-native",
+    }
+  );
+});
+
+test(`it does not call track for screenView with null screenName`, async () => {
+  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+  const mixpanel = await Mixpanel.init("token", true);
+
+  NativeModules.MixpanelReactNative.track.mockClear();
+
+  mixpanel.screenView(null);
+
+  expect(consoleErrorSpy).toHaveBeenCalledWith(
+    'Mixpanel.screenView: screenName is null or empty. Event not tracked.'
+  );
+
+  expect(NativeModules.MixpanelReactNative.track).not.toHaveBeenCalled();
+
+  consoleErrorSpy.mockRestore();
+});
+
+test(`it does not call track for screenView with empty screenName`, async () => {
+  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+  const mixpanel = await Mixpanel.init("token", true);
+
+  NativeModules.MixpanelReactNative.track.mockClear();
+
+  mixpanel.screenView("");
+
+  expect(consoleErrorSpy).toHaveBeenCalled();
+  expect(NativeModules.MixpanelReactNative.track).not.toHaveBeenCalled();
+
+  consoleErrorSpy.mockRestore();
+});
+
+test(`it calls track for screenLeave with correct event name`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  mixpanel.screenLeave("HomeScreen", { time_spent: 30 });
+
+  expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
+    "token",
+    "$mp_page_leave",
+    {
+      current_page_title: "HomeScreen",
+      time_spent: 30,
+      $lib_version: expect.any(String),
+      mp_lib: "react-native",
+    }
+  );
+});
+
+test(`it does not call track for screenLeave with null screenName`, async () => {
+  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+  const mixpanel = await Mixpanel.init("token", true);
+
+  NativeModules.MixpanelReactNative.track.mockClear();
+
+  mixpanel.screenLeave(null);
+
+  expect(consoleErrorSpy).toHaveBeenCalledWith(
+    'Mixpanel.screenLeave: screenName is null or empty. Event not tracked.'
+  );
+  expect(NativeModules.MixpanelReactNative.track).not.toHaveBeenCalled();
+
+  consoleErrorSpy.mockRestore();
+});
+
+test(`screenView allows user to override current_page_title`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  mixpanel.screenView("HomeScreen", { current_page_title: "CustomTitle" });
+
+  expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
+    "token",
+    "$mp_page_view",
+    {
+      current_page_title: "CustomTitle",
+      $lib_version: expect.any(String),
+      mp_lib: "react-native",
+    }
+  );
+});

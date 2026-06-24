@@ -299,6 +299,48 @@ export class Mixpanel {
   }
 
   /**
+   * Track a screen view event. This is a convenience method for tracking when users view
+   * a screen/page in your application.
+   *
+   * @param {string} screenName The name of the screen/page being viewed
+   * @param {object} properties Optional additional properties to include with this event
+   */
+  screenView(screenName, properties) {
+    if (!StringHelper.isValid(screenName)) {
+      console.error('Mixpanel.screenView: screenName is null or empty. Event not tracked.');
+      return;
+    }
+
+    const mergedProperties = {
+      current_page_title: screenName,
+      ...properties,
+    };
+
+    this.track('$mp_page_view', mergedProperties);
+  }
+
+  /**
+   * Track a screen leave event. This is a convenience method for tracking when users leave
+   * a screen/page in your application.
+   *
+   * @param {string} screenName The name of the screen/page being left
+   * @param {object} properties Optional additional properties to include with this event
+   */
+  screenLeave(screenName, properties) {
+    if (!StringHelper.isValid(screenName)) {
+      console.error('Mixpanel.screenLeave: screenName is null or empty. Event not tracked.');
+      return;
+    }
+
+    const mergedProperties = {
+      current_page_title: screenName,
+      ...properties,
+    };
+
+    this.track('$mp_page_leave', mergedProperties);
+  }
+
+  /**
    * Returns a Mixpanel People object that can be used to set and increment
    * People Analytics properties.
    *

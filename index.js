@@ -305,9 +305,9 @@ export class Mixpanel {
    * @param {string} screenName The name of the screen/page being viewed
    * @param {object} properties Optional additional properties to include with this event
    */
-  screenView(screenName, properties) {
+  trackScreenView(screenName, properties) {
     if (!StringHelper.isValid(screenName)) {
-      console.error('Mixpanel.screenView: screenName is null or empty. Event not tracked.');
+      console.error('Mixpanel.trackScreenView: screenName is null or empty. Event not tracked.');
       return;
     }
 
@@ -327,9 +327,9 @@ export class Mixpanel {
    * @param {string} screenName The name of the screen/page being left
    * @param {object} properties Optional additional properties to include with this event
    */
-  screenLeave(screenName, properties) {
+  trackScreenLeave(screenName, properties) {
     if (!StringHelper.isValid(screenName)) {
-      console.error('Mixpanel.screenLeave: screenName is null or empty. Event not tracked.');
+      console.error('Mixpanel.trackScreenLeave: screenName is null or empty. Event not tracked.');
       return;
     }
 

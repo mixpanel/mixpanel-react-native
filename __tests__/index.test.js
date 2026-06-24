@@ -475,7 +475,7 @@ test(`it calls MixpanelReactNative group union property`, async () => {
 
 test(`it calls track for screenView with correct event name and properties`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
-  mixpanel.screenView("HomeScreen", { extra_prop: "extra_value" });
+  mixpanel.trackScreenView("HomeScreen", { extra_prop: "extra_value" });
 
   expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
     "token",
@@ -491,7 +491,7 @@ test(`it calls track for screenView with correct event name and properties`, asy
 
 test(`it calls track for screenView without properties`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
-  mixpanel.screenView("HomeScreen");
+  mixpanel.trackScreenView("HomeScreen");
 
   expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
     "token",
@@ -510,10 +510,10 @@ test(`it does not call track for screenView with null screenName`, async () => {
 
   NativeModules.MixpanelReactNative.track.mockClear();
 
-  mixpanel.screenView(null);
+  mixpanel.trackScreenView(null);
 
   expect(consoleErrorSpy).toHaveBeenCalledWith(
-    'Mixpanel.screenView: screenName is null or empty. Event not tracked.'
+    'Mixpanel.trackScreenView: screenName is null or empty. Event not tracked.'
   );
 
   expect(NativeModules.MixpanelReactNative.track).not.toHaveBeenCalled();
@@ -527,7 +527,7 @@ test(`it does not call track for screenView with empty screenName`, async () => 
 
   NativeModules.MixpanelReactNative.track.mockClear();
 
-  mixpanel.screenView("");
+  mixpanel.trackScreenView("");
 
   expect(consoleErrorSpy).toHaveBeenCalled();
   expect(NativeModules.MixpanelReactNative.track).not.toHaveBeenCalled();
@@ -537,7 +537,7 @@ test(`it does not call track for screenView with empty screenName`, async () => 
 
 test(`it calls track for screenLeave with correct event name`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
-  mixpanel.screenLeave("HomeScreen", { time_spent: 30 });
+  mixpanel.trackScreenLeave("HomeScreen", { time_spent: 30 });
 
   expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
     "token",
@@ -557,10 +557,10 @@ test(`it does not call track for screenLeave with null screenName`, async () => 
 
   NativeModules.MixpanelReactNative.track.mockClear();
 
-  mixpanel.screenLeave(null);
+  mixpanel.trackScreenLeave(null);
 
   expect(consoleErrorSpy).toHaveBeenCalledWith(
-    'Mixpanel.screenLeave: screenName is null or empty. Event not tracked.'
+    'Mixpanel.trackScreenLeave: screenName is null or empty. Event not tracked.'
   );
   expect(NativeModules.MixpanelReactNative.track).not.toHaveBeenCalled();
 
@@ -569,7 +569,7 @@ test(`it does not call track for screenLeave with null screenName`, async () => 
 
 test(`screenView allows user to override current_page_title`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
-  mixpanel.screenView("HomeScreen", { current_page_title: "CustomTitle" });
+  mixpanel.trackScreenView("HomeScreen", { current_page_title: "CustomTitle" });
 
   expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
     "token",

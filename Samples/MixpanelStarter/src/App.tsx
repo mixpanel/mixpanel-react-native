@@ -35,12 +35,12 @@ function NavigationWithTracking({children}: {children: React.ReactNode}) {
         if (previousRouteName !== currentRouteName && mixpanel) {
           // Track screen leave for previous screen
           if (previousRouteName) {
-            mixpanel.screenLeave(previousRouteName);
+            mixpanel.trackScreenLeave(previousRouteName);
           }
 
           // Track screen view for current screen
           if (currentRouteName) {
-            mixpanel.screenView(currentRouteName);
+            mixpanel.trackScreenView(currentRouteName);
           }
         }
 

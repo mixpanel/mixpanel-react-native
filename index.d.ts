@@ -38,6 +38,8 @@ export class Mixpanel {
   identify(distinctId: string): Promise<void>;
   alias(alias: string, distinctId: string): void;
   track(eventName: string, properties?: MixpanelProperties): void;
+  trackScreenView(screenName: string, properties?: MixpanelProperties): void;
+  trackScreenLeave(screenName: string, properties?: MixpanelProperties): void;
   getPeople(): People;
   trackWithGroups(
     eventName: string,

@@ -636,6 +636,9 @@ export class Mixpanel {
      */
   reset() {
     this.mixpanelImpl.reset(this.token);
+    if (this._flags) {
+      this._flags.reset();
+    }
   }
 
   /**

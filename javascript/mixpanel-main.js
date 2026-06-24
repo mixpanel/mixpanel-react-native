@@ -90,6 +90,16 @@ export default class MixpanelMain {
     return this.featureFlagsContext || {};
   }
 
+  /**
+   * Get the full feature flags options object that was provided during
+   * initialization. Used by the JS-fallback Flags impl to read the
+   * variantLookupPolicy and any other persistence-related configuration.
+   * @returns {object}
+   */
+  getFeatureFlagsOptions() {
+    return this.featureFlagsOptions || {};
+  }
+
   async track(token, eventName, properties) {
     if (this.mixpanelPersistent.getOptedOut(token)) {
       MixpanelLogger.log(

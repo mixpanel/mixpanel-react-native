@@ -77,6 +77,7 @@ jest.doMock("react-native", () => {
           eventElapsedTime: jest.fn(),
           reset: jest.fn(),
           getDistinctId: jest.fn(),
+          getDeviceId: jest.fn(),
           set: jest.fn(),
           setOnce: jest.fn(),
           increment: jest.fn(),
@@ -101,7 +102,9 @@ jest.doMock("react-native", () => {
           getVariant: jest.fn().mockResolvedValue({ key: 'control', value: 'default' }),
           getVariantValue: jest.fn().mockResolvedValue('default'),
           isEnabled: jest.fn().mockResolvedValue(false),
-          updateContext: jest.fn().mockResolvedValue(undefined),  // Added for mixpanel-js alignment
+          getAllVariants: jest.fn().mockResolvedValue({}),
+          getAllVariantsSync: jest.fn().mockReturnValue({}),
+          updateContext: jest.fn().mockResolvedValue(undefined),  // legacy alias, retained
           updateFlagsContext: jest.fn().mockResolvedValue(true),
         },
       },

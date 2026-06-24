@@ -695,47 +695,432 @@ describe("Feature Flags", () => {
     });
   });
 
-  describe("updateContext (mixpanel-js alignment) - JavaScript mode only", () => {
+  describe("getAllVariants - native mode", () => {
     beforeEach(async () => {
       mixpanel = new Mixpanel(testToken, false);
       await mixpanel.init();
+      mockNativeModule.getAllVariants.mockReset();
+      mockNativeModule.getAllVariantsSync.mockReset();
     });
 
-    it("should throw error in native mode with descriptive message", async () => {
-      await expect(
-        mixpanel.flags.updateContext({ user_tier: "premium" })
-      ).rejects.toThrow(
-        "updateContext() is not supported in native mode"
+    it("returns the full variants map", async () => {
+      const variants = {
+        "feature-1": {
+          key: "treatment",
+          value: "blue",
+          experiment_id: 42,
+          is_experiment_active: true,
+          is_qa_tester: false,
+          variant_source: "network",
+        },
+        "feature-2": {
+          key: "control",
+          value: false,
+          variant_source: "persistence",
+          persisted_at_in_ms: 1717689600000,
+        },
+      };
+      mockNativeModule.getAllVariants.mockResolvedValueOnce(variants);
+
+      const result = await mixpanel.flags.getAllVariants();
+
+      expect(mockNativeModule.getAllVariants).toHaveBeenCalledWith(testToken);
+      expect(result).toEqual(variants);
+      expect(result["feature-1"].variant_source).toBe("network");
+      expect(result["feature-2"].persisted_at_in_ms).toBe(1717689600000);
+    });
+
+    it("returns empty object when native returns null", async () => {
+      mockNativeModule.getAllVariants.mockResolvedValueOnce(null);
+      const result = await mixpanel.flags.getAllVariants();
+      expect(result || {}).toEqual({});
+    });
+
+    it("returns empty object when native returns an empty map", async () => {
+      mockNativeModule.getAllVariants.mockResolvedValueOnce({});
+      const result = await mixpanel.flags.getAllVariants();
+      expect(result).toEqual({});
+    });
+
+    it("resolves with an empty object when the native call rejects", async () => {
+      mockNativeModule.getAllVariants.mockRejectedValueOnce(new Error("boom"));
+      const result = await mixpanel.flags.getAllVariants();
+      expect(result).toEqual({});
+    });
+
+    it("supports the callback form", async () => {
+      mockNativeModule.getAllVariants.mockResolvedValueOnce({
+        a: { key: "v", value: 1 },
+      });
+      const seen = await new Promise((resolve) => {
+        mixpanel.flags.getAllVariants(resolve);
+      });
+      expect(seen).toEqual({ a: { key: "v", value: 1 } });
+    });
+
+    it("getAllVariantsSync passes through the blocking native call", () => {
+      mockNativeModule.getAllVariantsSync.mockReturnValueOnce({
+        "feature-x": { key: "k", value: 1, variant_source: "network" },
+      });
+      const result = mixpanel.flags.getAllVariantsSync();
+      expect(mockNativeModule.getAllVariantsSync).toHaveBeenCalledWith(testToken);
+      expect(result["feature-x"].value).toBe(1);
+    });
+
+    it("getAllVariantsSync coerces a null native return to {}", () => {
+      mockNativeModule.getAllVariantsSync.mockReturnValueOnce(null);
+      expect(mixpanel.flags.getAllVariantsSync()).toEqual({});
+    });
+  });
+
+  describe("getAllVariants - JS-fallback mode", () => {
+    const jsToken = "js-mode-token";
+    let jsMixpanel;
+    let mockStorage;
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      mockStorage = {
+        getItem: jest.fn().mockResolvedValue(null),
+        setItem: jest.fn().mockResolvedValue(undefined),
+        removeItem: jest.fn().mockResolvedValue(undefined),
+      };
+      global.fetch = jest.fn();
+    });
+
+    it("returns the full in-memory variants map after a network load", async () => {
+      global.fetch.mockResolvedValue({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: {
+              alpha: { variant_key: "on", variant_value: true },
+              beta: { variant_key: "control", variant_value: "x" },
+            },
+          }),
+      });
+
+      jsMixpanel = new Mixpanel(jsToken, false, false, mockStorage);
+      await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, {
+        enabled: true,
+      });
+      await jsMixpanel.flags.loadFlags();
+
+      const all = await jsMixpanel.flags.getAllVariants();
+      expect(Object.keys(all).sort()).toEqual(["alpha", "beta"]);
+      expect(all.alpha.value).toBe(true);
+      expect(all.alpha.variant_source).toBe("network");
+    });
+
+    it("getAllVariantsSync returns {} when no flags are loaded yet", () => {
+      jsMixpanel = new Mixpanel(jsToken, false, false, mockStorage);
+      expect(jsMixpanel.flags.getAllVariantsSync()).toEqual({});
+    });
+  });
+
+  describe("whenReady + snake_case aliases", () => {
+    it("native mode: whenReady() resolves immediately", async () => {
+      mixpanel = new Mixpanel(testToken, false);
+      await mixpanel.init();
+      await expect(mixpanel.flags.whenReady()).resolves.toBeUndefined();
+    });
+
+    it("native mode: load_flags() invokes the native bridge", async () => {
+      mockNativeModule.loadFlags.mockClear();
+      mockNativeModule.loadFlags.mockResolvedValueOnce(true);
+      mixpanel = new Mixpanel(testToken, false);
+      await mixpanel.init();
+      await mixpanel.flags.load_flags();
+      expect(mockNativeModule.loadFlags).toHaveBeenCalledWith(testToken);
+    });
+
+    it("native mode: when_ready() resolves immediately", async () => {
+      mixpanel = new Mixpanel(testToken, false);
+      await mixpanel.init();
+      await expect(mixpanel.flags.when_ready()).resolves.toBeUndefined();
+    });
+
+    it("JS-fallback: whenReady() returns the in-flight fetchPromise during a load", async () => {
+      const mockStorage = {
+        getItem: jest.fn().mockResolvedValue(null),
+        setItem: jest.fn().mockResolvedValue(undefined),
+        removeItem: jest.fn().mockResolvedValue(undefined),
+      };
+      let resolveLoad;
+      global.fetch = jest.fn().mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveLoad = () =>
+              resolve({
+                status: 200,
+                json: () => Promise.resolve({ flags: {} }),
+              });
+          })
+      );
+
+      const jsMixpanel = new Mixpanel("js-when-ready", false, false, mockStorage);
+      jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+      void jsMixpanel.flags;
+      await new Promise((r) => setTimeout(r, 0));
+
+      const ready = jsMixpanel.flags.whenReady();
+      expect(ready).toBe(jsMixpanel.flags.jsFlags.fetchPromise);
+
+      resolveLoad();
+      await ready;
+      await expect(jsMixpanel.flags.whenReady()).resolves.toBeUndefined();
+    });
+
+    it("JS-fallback: load_flags() and when_ready() aliases work", async () => {
+      const mockStorage = {
+        getItem: jest.fn().mockResolvedValue(null),
+        setItem: jest.fn().mockResolvedValue(undefined),
+        removeItem: jest.fn().mockResolvedValue(undefined),
+      };
+      global.fetch = jest.fn().mockResolvedValue({
+        status: 200,
+        json: () => Promise.resolve({ flags: {} }),
+      });
+
+      const jsMixpanel = new Mixpanel("js-aliases", false, false, mockStorage);
+      await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+
+      await expect(jsMixpanel.flags.load_flags()).resolves.toBeUndefined();
+      await expect(jsMixpanel.flags.when_ready()).resolves.toBeUndefined();
+    });
+  });
+
+  describe("getter ⇄ persistence consistency", () => {
+    let mockStorage;
+
+    beforeEach(() => {
+      mockStorage = {
+        getItem: jest.fn().mockResolvedValue(null),
+        setItem: jest.fn().mockResolvedValue(undefined),
+        removeItem: jest.fn().mockResolvedValue(undefined),
+      };
+      global.fetch = jest.fn();
+    });
+
+    it("async getVariant returns fallback when in-memory state is stale and no fetch is in flight", async () => {
+      global.fetch.mockResolvedValueOnce({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: { f: { variant_key: "k", variant_value: "loaded" } },
+          }),
+      });
+
+      const jsMixpanel = new Mixpanel("js-stale-1", false, false, mockStorage);
+      await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+      void jsMixpanel.flags;
+      await jsMixpanel.flags.jsFlags.persistenceLoadedPromise;
+      await jsMixpanel.flags.whenReady();
+
+      jsMixpanel.flags.jsFlags._loadedPersistedAtMs = Date.now() - 1_000_000;
+      jsMixpanel.flags.jsFlags._loadedTtlMs = 1;
+      global.fetch.mockClear();
+
+      const variant = await jsMixpanel.flags.getVariant("f", { key: "x", value: "fallback-value" });
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(variant.value).toBe("fallback-value");
+      expect(variant.variant_source).toBe("fallback");
+    });
+
+    it("async getVariant serves the refresh after a caller invokes loadFlags()", async () => {
+      global.fetch.mockResolvedValueOnce({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: { f: { variant_key: "k", variant_value: "initial" } },
+          }),
+      });
+
+      const jsMixpanel = new Mixpanel("js-stale-1b", false, false, mockStorage);
+      await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+      void jsMixpanel.flags;
+      await jsMixpanel.flags.jsFlags.persistenceLoadedPromise;
+      await jsMixpanel.flags.whenReady();
+
+      jsMixpanel.flags.jsFlags._loadedPersistedAtMs = Date.now() - 1_000_000;
+      jsMixpanel.flags.jsFlags._loadedTtlMs = 1;
+      global.fetch.mockClear();
+      global.fetch.mockResolvedValueOnce({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: { f: { variant_key: "k", variant_value: "refreshed" } },
+          }),
+      });
+
+      await jsMixpanel.flags.loadFlags();
+      const variant = await jsMixpanel.flags.getVariant("f", { key: "x", value: null });
+      expect(global.fetch).toHaveBeenCalled();
+      expect(variant.value).toBe("refreshed");
+    });
+
+    it("async getAllVariants returns empty object when stale and no fetch is in flight", async () => {
+      global.fetch.mockResolvedValueOnce({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: { a: { variant_key: "k", variant_value: 1 } },
+          }),
+      });
+
+      const jsMixpanel = new Mixpanel("js-stale-2", false, false, mockStorage);
+      await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+      void jsMixpanel.flags;
+      await jsMixpanel.flags.jsFlags.persistenceLoadedPromise;
+      await jsMixpanel.flags.whenReady();
+
+      jsMixpanel.flags.jsFlags._loadedPersistedAtMs = Date.now() - 1_000_000;
+      jsMixpanel.flags.jsFlags._loadedTtlMs = 1;
+      global.fetch.mockClear();
+
+      const all = await jsMixpanel.flags.getAllVariants();
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(all).toEqual({});
+    });
+
+    it("sync getters continue to return fallback / empty when in-memory state is stale", async () => {
+      global.fetch.mockResolvedValueOnce({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: { f: { variant_key: "k", variant_value: "v" } },
+          }),
+      });
+
+      const jsMixpanel = new Mixpanel("js-stale-3", false, false, mockStorage);
+      await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+      void jsMixpanel.flags;
+      await jsMixpanel.flags.jsFlags.persistenceLoadedPromise;
+      await jsMixpanel.flags.whenReady();
+
+      jsMixpanel.flags.jsFlags._loadedPersistedAtMs = Date.now() - 1_000_000;
+      jsMixpanel.flags.jsFlags._loadedTtlMs = 1;
+
+      const variant = jsMixpanel.flags.getVariantSync("f", { key: "x", value: "fallback" });
+      expect(variant.value).toBe("fallback");
+      expect(variant.variant_source).toBe("fallback");
+
+      expect(jsMixpanel.flags.getAllVariantsSync()).toEqual({});
+    });
+  });
+
+  describe("reset", () => {
+    it("native mode: calls native reset bridge and triggers flags.reset() no-op", async () => {
+      mixpanel = new Mixpanel(testToken, false);
+      await mixpanel.init();
+      mockNativeModule.reset.mockClear();
+      mockNativeModule.loadFlags.mockClear();
+
+      // Materialize the lazy flags property so the reset() chain reaches it.
+      void mixpanel.flags;
+      mixpanel.reset();
+
+      expect(mockNativeModule.reset).toHaveBeenCalledTimes(1);
+      expect(mockNativeModule.reset).toHaveBeenCalledWith(testToken);
+      expect(mockNativeModule.loadFlags).not.toHaveBeenCalled();
+    });
+
+    it("JS-fallback mode: clears persisted blob and triggers a fresh fetch", async () => {
+      const jsToken = "js-reset-token";
+      const mockStorage = {
+        getItem: jest.fn().mockResolvedValue(null),
+        setItem: jest.fn().mockResolvedValue(undefined),
+        removeItem: jest.fn().mockResolvedValue(undefined),
+      };
+      global.fetch = jest.fn().mockResolvedValue({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: { reset_flag: { variant_key: "v", variant_value: "after-reset" } },
+          }),
+      });
+
+      const jsMixpanel = new Mixpanel(jsToken, false, false, mockStorage);
+      await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, {
+        enabled: true,
+        persistence: {
+          variantLookupPolicy: "persistenceUntilNetworkSuccess",
+          persistenceTtlMs: 60 * 60 * 1000,
+        },
+      });
+      await jsMixpanel.flags.loadFlags();
+
+      mockStorage.removeItem.mockClear();
+      global.fetch.mockClear();
+      global.fetch.mockResolvedValueOnce({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: { reset_flag: { variant_key: "v", variant_value: "fresh" } },
+          }),
+      });
+
+      jsMixpanel.reset();
+      await jsMixpanel.flags.jsFlags.initialLoadPromise;
+      await new Promise((r) => setTimeout(r, 10));
+
+      expect(mockStorage.removeItem).toHaveBeenCalledWith(
+        `persisted_variants_for_${jsToken}`
+      );
+      expect(global.fetch).toHaveBeenCalled();
+      const variant = await jsMixpanel.flags.getVariant("reset_flag", {
+        key: "x",
+        value: null,
+      });
+      expect(variant.variant_source).toBe("network");
+    });
+  });
+
+  describe("updateContext", () => {
+    beforeEach(async () => {
+      mixpanel = new Mixpanel(testToken, false);
+      await mixpanel.init();
+      mockNativeModule.updateFlagsContext.mockClear();
+    });
+
+    it("forwards to the native updateFlagsContext bridge method", async () => {
+      mockNativeModule.updateFlagsContext.mockResolvedValueOnce(undefined);
+      await mixpanel.flags.updateContext({ user_tier: "premium" });
+      expect(mockNativeModule.updateFlagsContext).toHaveBeenCalledWith(
+        testToken,
+        { user_tier: "premium" },
+        { replace: false }
       );
     });
 
-    it("should throw error for update_context() snake_case alias in native mode", async () => {
-      await expect(
-        mixpanel.flags.update_context({ user_tier: "premium" })
-      ).rejects.toThrow(
-        "updateContext() is not supported in native mode"
+    it("forwards options.replace to the native bridge", async () => {
+      mockNativeModule.updateFlagsContext.mockResolvedValueOnce(undefined);
+      await mixpanel.flags.updateContext({ tier: "trial" }, { replace: true });
+      expect(mockNativeModule.updateFlagsContext).toHaveBeenCalledWith(
+        testToken,
+        { tier: "trial" },
+        { replace: true }
       );
     });
 
-    it("should provide helpful error message about initialization", async () => {
-      await expect(
-        mixpanel.flags.updateContext({ user_tier: "premium" })
-      ).rejects.toThrow(
-        "Context must be set during initialization via FeatureFlagsOptions"
+    it("works via the update_context snake_case alias", async () => {
+      mockNativeModule.updateFlagsContext.mockResolvedValueOnce(undefined);
+      await mixpanel.flags.update_context({ user_tier: "premium" });
+      expect(mockNativeModule.updateFlagsContext).toHaveBeenCalledWith(
+        testToken,
+        { user_tier: "premium" },
+        { replace: false }
       );
     });
 
-    it("should indicate feature is JavaScript mode only", async () => {
-      await expect(
-        mixpanel.flags.updateContext({ user_tier: "premium" })
-      ).rejects.toThrow(
-        "This feature is only available in JavaScript mode"
+    it("propagates native rejection to the caller", async () => {
+      mockNativeModule.updateFlagsContext.mockRejectedValueOnce(
+        new Error("native boom")
       );
+      await expect(
+        mixpanel.flags.updateContext({ x: 1 })
+      ).rejects.toThrow("native boom");
     });
-
-    // Note: Testing actual JavaScript mode behavior would require complex mocking
-    // of the mode switching logic. The JavaScript implementation is tested
-    // indirectly through integration testing with Expo/RN Web environments.
   });
 
   describe("Boolean Validation Enhancement (mixpanel-js alignment)", () => {

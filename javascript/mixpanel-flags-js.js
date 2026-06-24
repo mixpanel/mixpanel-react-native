@@ -1,100 +1,114 @@
-import { MixpanelLogger } from "./mixpanel-logger";
-import { MixpanelNetwork } from "./mixpanel-network";
-import { MixpanelPersistent } from "./mixpanel-persistent";
-import packageJson from "mixpanel-react-native/package.json";
+import { encode as base64Encode } from 'base-64';
+import { MixpanelLogger } from './mixpanel-logger';
+import { MixpanelNetwork } from './mixpanel-network';
+import { MixpanelPersistent } from './mixpanel-persistent';
+import {
+  MixpanelFlagPersistence,
+  VariantLookupPolicy,
+} from './mixpanel-flag-persistence';
+import packageJson from 'mixpanel-react-native/package.json';
 
-/**
- * JavaScript implementation of Feature Flags for React Native
- * This is used when native modules are not available (Expo, React Native Web)
- * Aligned with mixpanel-js reference implementation
- */
+const NETWORK_SOURCE = 'network';
+const FALLBACK_SOURCE = 'fallback';
+
+function withSource(variant, source, extras) {
+  if (!variant || typeof variant !== 'object') {
+    return variant;
+  }
+  const stamped = { ...variant, variant_source: source };
+  if (extras) {
+    Object.assign(stamped, extras);
+  }
+  return stamped;
+}
+
 export class MixpanelFlagsJS {
-  constructor(token, mixpanelImpl, storage, initialContext = {}) {
+  constructor(token, mixpanelImpl, storage, featureFlagsOptions = {}) {
     this.token = token;
     this.mixpanelImpl = mixpanelImpl;
     this.storage = storage;
-    this.flags = new Map(); // Use Map like mixpanel-js
-    this.flagsReady = false;
-    this.experimentTracked = new Set();
-    this.context = initialContext; // Initialize with provided context
-    this.flagsCacheKey = `MIXPANEL_${token}_FLAGS_CACHE`;
-    this.flagsReadyKey = `MIXPANEL_${token}_FLAGS_READY`;
+    this.featureFlagsOptions = featureFlagsOptions || {};
+    this.context = this.featureFlagsOptions.context || {};
     this.mixpanelPersistent = MixpanelPersistent.getInstance(storage, token);
+  }
 
-    // Performance tracking (mixpanel-js alignment)
+  init() {
+    this.flags = null;
+    this.experimentTracked = new Set();
+    this._loadedPersistedAtMs = null;
+    this._loadedTtlMs = null;
     this._fetchStartTime = null;
     this._fetchCompleteTime = null;
     this._fetchLatency = null;
     this._traceparent = null;
+    this.fetchPromise = null;
 
-    // Load cached flags on initialization (fire and forget - loads in background)
-    // This is async but intentionally not awaited to avoid blocking constructor
-    // Flags will be available once cache loads or after explicit loadFlags() call
-    this.loadCachedFlags().catch(error => {
-      MixpanelLogger.log(this.token, "Failed to load cached flags in constructor:", error);
-    });
+    this.persistence = new MixpanelFlagPersistence(
+      this.featureFlagsOptions.persistence,
+      this.token,
+      this.storage
+    );
+
+    this.persistenceLoadedPromise = this.persistence
+      .loadFlagsFromStorage(this._buildContext())
+      .then((loaded) => {
+        if (loaded) {
+          this.flags = loaded.flags;
+          this._loadedPersistedAtMs = loaded.persistedAtMs;
+          this._loadedTtlMs = loaded.ttlMs;
+        }
+      });
+
+    return this.persistenceLoadedPromise
+      .then(() => this.fetchFlags())
+      .catch((error) => {
+        MixpanelLogger.log(
+          this.token,
+          'Error initializing feature flags:',
+          error
+        );
+      });
   }
 
-  /**
-   * Load cached flags from storage
-   */
-  async loadCachedFlags() {
-    try {
-      const cachedFlags = await this.storage.getItem(this.flagsCacheKey);
-      if (cachedFlags) {
-        const parsed = JSON.parse(cachedFlags);
-        // Convert array back to Map for consistency
-        this.flags = new Map(parsed);
-        this.flagsReady = true;
-        MixpanelLogger.log(this.token, "Loaded cached feature flags");
-      }
-    } catch (error) {
-      MixpanelLogger.log(this.token, "Error loading cached flags:", error);
+  _buildContext() {
+    return {
+      distinct_id: this.mixpanelPersistent.getDistinctId(this.token),
+      device_id: this.mixpanelPersistent.getDeviceId(this.token),
+      ...this.context,
+    };
+  }
+
+  _loadedPersistenceIsStale() {
+    if (this._loadedPersistedAtMs === null || !this._loadedTtlMs) {
+      return false;
     }
+    return Date.now() - this._loadedPersistedAtMs >= this._loadedTtlMs;
   }
 
   /**
-   * Cache flags to storage
-   */
-  async cacheFlags() {
-    try {
-      // Convert Map to array for JSON serialization
-      const flagsArray = Array.from(this.flags.entries());
-      await this.storage.setItem(
-        this.flagsCacheKey,
-        JSON.stringify(flagsArray)
-      );
-      await this.storage.setItem(this.flagsReadyKey, "true");
-    } catch (error) {
-      MixpanelLogger.log(this.token, "Error caching flags:", error);
-    }
-  }
-
-  /**
-   * Generate W3C traceparent header
-   * Format: 00-{traceID}-{parentID}-{flags}
-   * Returns null if UUID generation fails (graceful degradation)
+   * Generate W3C traceparent header. Format: 00-{traceID}-{parentID}-{flags}
+   * Returns null if UUID generation fails (graceful degradation).
    */
   generateTraceparent() {
     try {
       // Try expo-crypto first
-      const crypto = require("expo-crypto");
-      const traceID = crypto.randomUUID().replace(/-/g, "");
-      const parentID = crypto.randomUUID().replace(/-/g, "").substring(0, 16);
+      const crypto = require('expo-crypto');
+      const traceID = crypto.randomUUID().replace(/-/g, '');
+      const parentID = crypto.randomUUID().replace(/-/g, '').substring(0, 16);
       return `00-${traceID}-${parentID}-01`;
     } catch (expoCryptoError) {
       try {
         // Fallback to uuid (import the v4 function directly)
-        const { v4: uuidv4 } = require("uuid");
-        const traceID = uuidv4().replace(/-/g, "");
-        const parentID = uuidv4().replace(/-/g, "").substring(0, 16);
+        const { v4: uuidv4 } = require('uuid');
+        const traceID = uuidv4().replace(/-/g, '');
+        const parentID = uuidv4().replace(/-/g, '').substring(0, 16);
         return `00-${traceID}-${parentID}-01`;
       } catch (uuidError) {
         // Graceful degradation: traceparent is optional for observability
         // Don't block flag loading if UUID generation fails
         MixpanelLogger.log(
           this.token,
-          "Could not generate traceparent (UUID unavailable):",
+          'Could not generate traceparent (UUID unavailable):',
           uuidError
         );
         return null;
@@ -102,14 +116,11 @@ export class MixpanelFlagsJS {
     }
   }
 
-  /**
-   * Mark fetch operation complete and calculate latency
-   */
   markFetchComplete() {
     if (!this._fetchStartTime) {
       MixpanelLogger.error(
         this.token,
-        "Fetch start time not set, cannot mark fetch complete"
+        'Fetch start time not set, cannot mark fetch complete'
       );
       return;
     }
@@ -118,10 +129,18 @@ export class MixpanelFlagsJS {
     this._fetchStartTime = null;
   }
 
-  /**
-   * Fetch feature flags from Mixpanel API
-   */
-  async loadFlags() {
+  loadFlags() {
+    if (!this.persistence) {
+      MixpanelLogger.error(this.token, 'loadFlags called before init');
+      return Promise.resolve();
+    }
+    if (this._fetchStartTime !== null) {
+      return this.fetchPromise;
+    }
+    return this.fetchFlags();
+  }
+
+  fetchFlags() {
     this._fetchStartTime = Date.now();
 
     // Generate traceparent if possible (graceful degradation if UUID unavailable)
@@ -132,187 +151,195 @@ export class MixpanelFlagsJS {
       this._traceparent = null;
     }
 
-    try {
-      const distinctId = this.mixpanelPersistent.getDistinctId(this.token);
-      const deviceId = this.mixpanelPersistent.getDeviceId(this.token);
+    const context = this._buildContext();
 
-      // Build context object (mixpanel-js format)
-      const context = {
-        distinct_id: distinctId,
-        device_id: deviceId,
-        ...this.context,
-      };
+    // Build query parameters
+    const queryParams = new URLSearchParams();
+    queryParams.set('context', JSON.stringify(context));
+    queryParams.set('token', this.token);
+    queryParams.set('mp_lib', 'react-native');
+    queryParams.set('$lib_version', packageJson.version);
 
-      // Build query parameters (mixpanel-js format)
-      const queryParams = new URLSearchParams();
-      queryParams.set('context', JSON.stringify(context));
-      queryParams.set('token', this.token);
-      queryParams.set('mp_lib', 'react-native');
-      queryParams.set('$lib_version', packageJson.version);
+    MixpanelLogger.log(
+      this.token,
+      'Fetching feature flags with context:',
+      context
+    );
 
-      MixpanelLogger.log(
-        this.token,
-        "Fetching feature flags with context:",
-        context
-      );
+    const serverURL =
+      this.mixpanelImpl.config?.getServerURL?.(this.token) ||
+      'https://api.mixpanel.com';
 
-      const serverURL =
-        this.mixpanelImpl.config?.getServerURL?.(this.token) ||
-        "https://api.mixpanel.com";
+    // Use /flags endpoint with query parameters
+    const endpoint = `/flags?${queryParams.toString()}`;
 
-      // Use /flags endpoint with query parameters (mixpanel-js format)
-      const endpoint = `/flags?${queryParams.toString()}`;
+    // HTTP Basic with the project token as the username and an empty password.
+    const authHeaders = {
+      Authorization: `Basic ${base64Encode(this.token + ':')}`,
+    };
+    if (this._traceparent) {
+      authHeaders.traceparent = this._traceparent;
+    }
 
-      const response = await MixpanelNetwork.sendRequest({
-        token: this.token,
-        endpoint: endpoint,
-        data: null, // Data is in query params for flags endpoint
-        serverURL: serverURL,
-        useIPAddressForGeoLocation: true,
-      });
+    this.fetchPromise = MixpanelNetwork.sendRequest({
+      token: this.token,
+      endpoint: endpoint,
+      data: null,
+      serverURL: serverURL,
+      useIPAddressForGeoLocation: true,
+      headers: authHeaders,
+    })
+      .then((response) => {
+        this.markFetchComplete();
 
-      this.markFetchComplete();
-
-      // Support both response formats for backwards compatibility
-      if (response && response.flags) {
-        // New format (mixpanel-js compatible): {flags: {key: {variant_key, variant_value, ...}}}
-        this.flags = new Map();
+        if (!response || !response.flags) {
+          throw new Error('No flags in API response');
+        }
+        const flags = new Map();
         for (const [key, data] of Object.entries(response.flags)) {
-          this.flags.set(key, {
+          flags.set(key, {
             key: data.variant_key,
             value: data.variant_value,
             experiment_id: data.experiment_id,
             is_experiment_active: data.is_experiment_active,
             is_qa_tester: data.is_qa_tester,
+            variant_source: NETWORK_SOURCE,
           });
         }
-        this.flagsReady = true;
-        await this.cacheFlags();
-        MixpanelLogger.log(this.token, "Feature flags loaded successfully");
-      } else if (response && response.featureFlags) {
-        // Legacy format: {featureFlags: [{key, value, experimentID, ...}]}
-        this.flags = new Map();
-        for (const flag of response.featureFlags) {
-          this.flags.set(flag.key, {
-            key: flag.key,
-            value: flag.value,
-            experiment_id: flag.experimentID,
-            is_experiment_active: flag.isExperimentActive,
-            is_qa_tester: flag.isQATester,
-          });
+        this.flags = flags;
+        this._loadedPersistedAtMs = null;
+        this._loadedTtlMs = null;
+        return this.persistence.save(context, this.flags).then(() => {
+          MixpanelLogger.log(this.token, 'Feature flags loaded successfully');
+        });
+      })
+      .catch((error) => {
+        if (this._fetchStartTime !== null) {
+          this.markFetchComplete();
         }
-        this.flagsReady = true;
-        await this.cacheFlags();
-        MixpanelLogger.warn(
-          this.token,
-          'Received legacy featureFlags format. Please update backend to use "flags" format.'
-        );
-      }
-    } catch (error) {
-      this.markFetchComplete();
-      MixpanelLogger.log(this.token, "Error loading feature flags:", error);
-      // Keep using cached flags if available
-      if (this.flags.size > 0) {
-        this.flagsReady = true;
-      }
-    }
+        MixpanelLogger.log(this.token, 'Error loading feature flags:', error);
+        throw error;
+      });
+
+    return this.fetchPromise;
   }
 
-  /**
-   * Check if flags are ready to use
-   */
   areFlagsReady() {
-    return this.flagsReady;
+    return !!this.flags;
   }
 
   /**
-   * Track experiment started event
-   * Aligned with mixpanel-js tracking properties
+   * Resolves with the current in-flight fetch (if one is running) or
+   * immediately with the current state.
+   */
+  whenReady() {
+    if (this.fetchPromise) return this.fetchPromise;
+    return Promise.resolve();
+  }
+
+  /**
+   * Track $experiment_started for a feature on first access. Includes
+   * $variant_source so analytics can distinguish network-served from
+   * persistence-served evaluations.
    */
   async trackExperimentStarted(featureName, variant) {
     if (this.experimentTracked.has(featureName)) {
-      return; // Already tracked
+      return;
     }
 
     try {
       const properties = {
-        "Experiment name": featureName, // Human-readable (mixpanel-js format)
-        "Variant name": variant.key, // Human-readable (mixpanel-js format)
-        $experiment_type: "feature_flag", // Added to match mixpanel-js
+        'Experiment name': featureName,
+        'Variant name': variant.key,
+        $experiment_type: 'feature_flag',
       };
 
-      // Add performance metrics if available
       if (this._fetchCompleteTime) {
         const fetchStartTime =
           this._fetchCompleteTime - (this._fetchLatency || 0);
-        properties["Variant fetch start time"] = new Date(
+        properties['Variant fetch start time'] = new Date(
           fetchStartTime
         ).toISOString();
-        properties["Variant fetch complete time"] = new Date(
+        properties['Variant fetch complete time'] = new Date(
           this._fetchCompleteTime
         ).toISOString();
-        properties["Variant fetch latency (ms)"] = this._fetchLatency || 0;
+        properties['Variant fetch latency (ms)'] = this._fetchLatency || 0;
       }
 
-      // Add traceparent if available
       if (this._traceparent) {
-        properties["Variant fetch traceparent"] = this._traceparent;
+        properties['Variant fetch traceparent'] = this._traceparent;
       }
 
-      // Add experiment metadata (system properties)
       if (
         variant.experiment_id !== undefined &&
         variant.experiment_id !== null
       ) {
-        properties["$experiment_id"] = variant.experiment_id;
+        properties['$experiment_id'] = variant.experiment_id;
       }
-      if (variant.is_experiment_active !== undefined) {
-        properties["$is_experiment_active"] = variant.is_experiment_active;
+      if (
+        variant.is_experiment_active !== undefined &&
+        variant.is_experiment_active !== null
+      ) {
+        properties['$is_experiment_active'] = variant.is_experiment_active;
       }
-      if (variant.is_qa_tester !== undefined) {
-        properties["$is_qa_tester"] = variant.is_qa_tester;
+      if (
+        variant.is_qa_tester !== undefined &&
+        variant.is_qa_tester !== null
+      ) {
+        properties['$is_qa_tester'] = variant.is_qa_tester;
+      }
+      if (
+        variant.variant_source !== undefined &&
+        variant.variant_source !== null
+      ) {
+        properties['$variant_source'] = variant.variant_source;
+      }
+      if (
+        variant.persisted_at_in_ms !== undefined &&
+        variant.persisted_at_in_ms !== null
+      ) {
+        properties['$persisted_at_in_ms'] = variant.persisted_at_in_ms;
       }
 
-      // Track the experiment started event
       await this.mixpanelImpl.track(
         this.token,
-        "$experiment_started",
+        '$experiment_started',
         properties
       );
       this.experimentTracked.add(featureName);
-
-      MixpanelLogger.log(
-        this.token,
-        `Tracked experiment started for ${featureName}`
-      );
     } catch (error) {
-      MixpanelLogger.log(this.token, "Error tracking experiment:", error);
+      MixpanelLogger.log(this.token, 'Error tracking experiment:', error);
     }
   }
 
-  /**
-   * Get variant synchronously (only works when flags are ready)
-   */
   getVariantSync(featureName, fallback) {
-    if (!this.flagsReady || !this.flags.has(featureName)) {
-      return fallback;
+    if (this._loadedPersistenceIsStale()) {
+      MixpanelLogger.log(
+        this.token,
+        `Loaded persisted variants are past TTL so returning fallback for "${featureName}"`
+      );
+      return withSource(fallback, FALLBACK_SOURCE);
+    }
+    if (!this.areFlagsReady()) {
+      MixpanelLogger.log(this.token, 'Flags not loaded yet');
+      return withSource(fallback, FALLBACK_SOURCE);
+    }
+    if (!this.flags.has(featureName)) {
+      MixpanelLogger.log(this.token, `No flag found: "${featureName}"`);
+      return withSource(fallback, FALLBACK_SOURCE);
     }
 
     const variant = this.flags.get(featureName);
-
-    // Track experiment on first access (fire and forget)
-    if (!this.experimentTracked.has(featureName)) {
-      this.trackExperimentStarted(featureName, variant).catch(error => {
-        MixpanelLogger.warn(this.token, `Failed to track experiment for ${featureName}:`, error);
-      });
-    }
-
+    this.trackExperimentStarted(featureName, variant).catch((error) => {
+      MixpanelLogger.warn(
+        this.token,
+        `Failed to track experiment for ${featureName}:`,
+        error
+      );
+    });
     return variant;
   }
 
-  /**
-   * Get variant value synchronously
-   */
   getVariantValueSync(featureName, fallbackValue) {
     const variant = this.getVariantSync(featureName, {
       key: featureName,
@@ -321,14 +348,8 @@ export class MixpanelFlagsJS {
     return variant.value;
   }
 
-  /**
-   * Check if feature is enabled synchronously
-   * Enhanced with boolean validation like mixpanel-js
-   */
   isEnabledSync(featureName, fallbackValue = false) {
     const value = this.getVariantValueSync(featureName, fallbackValue);
-
-    // Validate boolean type (mixpanel-js pattern)
     if (value !== true && value !== false) {
       MixpanelLogger.error(
         this.token,
@@ -336,36 +357,45 @@ export class MixpanelFlagsJS {
       );
       return fallbackValue;
     }
-
     return value;
   }
 
-  /**
-   * Get variant asynchronously
-   */
   async getVariant(featureName, fallback) {
-    // If flags not ready, try to load them
-    if (!this.flagsReady) {
-      await this.loadFlags();
+    if (!this.persistenceLoadedPromise) {
+      MixpanelLogger.error(this.token, 'Feature Flags not initialized');
+      return withSource(fallback, FALLBACK_SOURCE);
+    }
+    await this.persistenceLoadedPromise;
+
+    const policy = this.persistence.getPolicy();
+    if (policy === VariantLookupPolicy.PERSISTENCE_UNTIL_NETWORK_SUCCESS) {
+      if (this.areFlagsReady() && !this._loadedPersistenceIsStale()) {
+        return this.getVariantSync(featureName, fallback);
+      }
+      if (!this.fetchPromise) {
+        return withSource(fallback, FALLBACK_SOURCE);
+      }
+      try {
+        await this.fetchPromise;
+        return this.getVariantSync(featureName, fallback);
+      } catch (error) {
+        MixpanelLogger.error(this.token, 'Error awaiting fetch:', error);
+        return withSource(fallback, FALLBACK_SOURCE);
+      }
     }
 
-    if (!this.flags.has(featureName)) {
-      return fallback;
+    if (!this.fetchPromise) {
+      return withSource(fallback, FALLBACK_SOURCE);
     }
-
-    const variant = this.flags.get(featureName);
-
-    // Track experiment on first access
-    if (!this.experimentTracked.has(featureName)) {
-      await this.trackExperimentStarted(featureName, variant);
+    try {
+      await this.fetchPromise;
+      return this.getVariantSync(featureName, fallback);
+    } catch (error) {
+      MixpanelLogger.error(this.token, 'Error awaiting fetch:', error);
+      return withSource(fallback, FALLBACK_SOURCE);
     }
-
-    return variant;
   }
 
-  /**
-   * Get variant value asynchronously
-   */
   async getVariantValue(featureName, fallbackValue) {
     const variant = await this.getVariant(featureName, {
       key: featureName,
@@ -374,63 +404,128 @@ export class MixpanelFlagsJS {
     return variant.value;
   }
 
-  /**
-   * Check if feature is enabled asynchronously
-   */
   async isEnabled(featureName, fallbackValue = false) {
     const value = await this.getVariantValue(featureName, fallbackValue);
-    if (typeof value === "boolean") {
+    if (typeof value === 'boolean') {
       return value;
-    } else {
-      MixpanelLogger.log(this.token, `Flag "${featureName}" value is not boolean:`, value);
-      return fallbackValue;
+    }
+    MixpanelLogger.log(
+      this.token,
+      `Flag "${featureName}" value is not boolean:`,
+      value
+    );
+    return fallbackValue;
+  }
+
+  async getAllVariants() {
+    if (!this.persistenceLoadedPromise) {
+      MixpanelLogger.error(this.token, 'Feature Flags not initialized');
+      return {};
+    }
+    await this.persistenceLoadedPromise;
+
+    const policy = this.persistence.getPolicy();
+    if (policy === VariantLookupPolicy.PERSISTENCE_UNTIL_NETWORK_SUCCESS) {
+      if (this.areFlagsReady() && !this._loadedPersistenceIsStale()) {
+        return this.getAllVariantsSync();
+      }
+      if (!this.fetchPromise) {
+        return {};
+      }
+      try {
+        await this.fetchPromise;
+        return this.getAllVariantsSync();
+      } catch (error) {
+        MixpanelLogger.error(this.token, 'Error awaiting fetch:', error);
+        return {};
+      }
+    }
+
+    if (!this.fetchPromise) {
+      return {};
+    }
+    try {
+      await this.fetchPromise;
+      return this.getAllVariantsSync();
+    } catch (error) {
+      MixpanelLogger.error(this.token, 'Error awaiting fetch:', error);
+      return {};
     }
   }
 
+  getAllVariantsSync() {
+    if (this._loadedPersistenceIsStale()) {
+      return {};
+    }
+    if (!this.areFlagsReady()) {
+      return {};
+    }
+    return this._snapshotFlags();
+  }
+
+  _snapshotFlags() {
+    const out = {};
+    this.flags.forEach((variant, key) => {
+      out[key] = variant;
+    });
+    return out;
+  }
+
   /**
-   * Update context and reload flags
-   * Aligned with mixpanel-js API signature
-   * @param {object} newContext - New context properties to add/update
-   * @param {object} options - Options object
-   * @param {boolean} options.replace - If true, replace entire context instead of merging
+   * Update context and re-fetch flags. After a context change, persisted
+   * variants captured under the old context are no longer relevant.
    */
   async updateContext(newContext, options = {}) {
     if (options.replace) {
-      // Replace entire context
       this.context = { ...newContext };
     } else {
-      // Merge with existing context (default)
       this.context = {
         ...this.context,
         ...newContext,
       };
     }
 
-    // Clear experiment tracking since context changed
+    this._loadedPersistedAtMs = null;
+    this._loadedTtlMs = null;
     this.experimentTracked.clear();
 
-    // Reload flags with new context
-    await this.loadFlags();
+    try {
+      await this.loadFlags();
+    } catch (error) {
+      MixpanelLogger.log(this.token, 'Error fetching flags during updateContext:', error);
+    }
 
-    MixpanelLogger.log(this.token, "Context updated, flags reloaded");
+    MixpanelLogger.log(this.token, 'Context updated, flags reloaded');
   }
 
-  /**
-   * Clear cached flags
-   */
-  async clearCache() {
+  /** Clear all flag state and trigger a fresh fetch under the new identity. */
+  async reset() {
+    this.flags = null;
+    this.experimentTracked.clear();
+    this._loadedPersistedAtMs = null;
+    this._loadedTtlMs = null;
     try {
-      await this.storage.removeItem(this.flagsCacheKey);
-      await this.storage.removeItem(this.flagsReadyKey);
-      this.flags = new Map();
-      this.flagsReady = false;
-      this.experimentTracked.clear();
+      await this.persistence.clear();
+      await this.loadFlags();
     } catch (error) {
-      MixpanelLogger.log(this.token, "Error clearing flag cache:", error);
+      MixpanelLogger.log(this.token, 'Error during flags reset:', error);
     }
   }
 
-  // snake_case aliases for API consistency with mixpanel-js
+  /** Discard in-memory and persisted variants. */
+  async clearCache() {
+    try {
+      await this.persistence.clear();
+      this.flags = null;
+      this.experimentTracked.clear();
+      this._loadedPersistedAtMs = null;
+      this._loadedTtlMs = null;
+    } catch (error) {
+      MixpanelLogger.log(this.token, 'Error clearing flag cache:', error);
+    }
+  }
+
+  // snake_case aliases
   are_flags_ready() {
     return this.areFlagsReady();
   }
@@ -457,6 +552,22 @@ export class MixpanelFlagsJS {
 
   is_enabled_sync(featureName, fallbackValue = false) {
     return this.isEnabledSync(featureName, fallbackValue);
+  }
+
+  get_all_variants() {
+    return this.getAllVariants();
+  }
+
+  get_all_variants_sync() {
+    return this.getAllVariantsSync();
+  }
+
+  load_flags() {
+    return this.loadFlags();
+  }
+
+  when_ready() {
+    return this.whenReady();
   }
 
   update_context(newContext, options) {

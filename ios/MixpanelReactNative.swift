@@ -25,16 +25,18 @@ open class MixpanelReactNative: NSObject {
         AutomaticProperties.setAutomaticProperties(autoProps)
         let propsProcessed = MixpanelTypeHandler.processProperties(properties: autoProps)
 
-        // Handle feature flags options
-        var featureFlagsEnabled = false
-        var featureFlagsContext: [String: Any]? = nil
-
-        if let flagsOptions = featureFlagsOptions {
-            featureFlagsEnabled = flagsOptions["enabled"] as? Bool ?? false
-            featureFlagsContext = flagsOptions["context"] as? [String: Any]
+        var resolvedFeatureFlagOptions: FeatureFlagOptions? = nil
+        if let flagsOptions = featureFlagsOptions,
+           let enabled = flagsOptions["enabled"] as? Bool, enabled {
+            let context = flagsOptions["context"] as? [String: Any] ?? [:]
+            let policy = parseVariantLookupPolicy(flagsOptions["persistence"] as? [String: Any])
+            resolvedFeatureFlagOptions = FeatureFlagOptions(
+                enabled: true,
+                context: context,
+                variantLookupPolicy: policy
+            )
         }
 
-        // Create MixpanelOptions with all configuration including feature flags
         let options = MixpanelOptions(
             token: token,
             flushInterval: Constants.DEFAULT_FLUSH_INTERVAL,
@@ -46,12 +48,35 @@ open class MixpanelReactNative: NSObject {
             serverURL: serverURL,
             proxyServerConfig: nil,
             useGzipCompression: useGzipCompression,
-            featureFlagsEnabled: featureFlagsEnabled,
-            featureFlagsContext: featureFlagsContext ?? [:]
+            featureFlagOptions: resolvedFeatureFlagOptions
         )
 
         Mixpanel.initialize(options: options)
         resolve(true)
+    }
+
+    private func parseVariantLookupPolicy(_ policyMap: [String: Any]?) -> VariantLookupPolicy {
+        guard let policyMap = policyMap, let kind = policyMap["variantLookupPolicy"] as? String else {
+            return .networkOnly
+        }
+        switch kind {
+        case "networkOnly":
+            return .networkOnly
+        case "persistenceUntilNetworkSuccess":
+            return .persistenceUntilNetworkSuccess(persistenceTtl: readPersistenceTtlSeconds(policyMap))
+        case "networkFirst":
+            return .networkFirst(persistenceTtl: readPersistenceTtlSeconds(policyMap))
+        default:
+            NSLog("[Mixpanel] Unknown variantLookupPolicy '\(kind)', falling back to networkOnly")
+            return .networkOnly
+        }
+    }
+
+    private func readPersistenceTtlSeconds(_ policyMap: [String: Any]) -> TimeInterval {
+        if let millis = policyMap["persistenceTtlMs"] as? NSNumber {
+            return TimeInterval(truncating: millis) / 1000.0
+        }
+        return 24 * 60 * 60
     }
 
     @objc
@@ -606,14 +631,64 @@ open class MixpanelReactNative: NSObject {
         }
     }
 
-    // Helper methods for variant conversion
+    // MARK: - Feature Flags (getAllVariants / updateFlagsContext)
+
+    @objc
+    func getAllVariants(_ token: String,
+                        resolver resolve: @escaping RCTPromiseResolveBlock,
+                        rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
+        guard let instance = MixpanelReactNative.getMixpanelInstance(token),
+              let flags = instance.flags else {
+            resolve([String: Any]())
+            return
+        }
+        flags.getAllVariants { variants in
+            var out = [String: [String: Any]]()
+            for (key, variant) in variants {
+                out[key] = self.convertVariantToDict(variant)
+            }
+            resolve(out)
+        }
+    }
+
+    @objc
+    func getAllVariantsSync(_ token: String) -> [String: [String: Any]] {
+        guard let instance = MixpanelReactNative.getMixpanelInstance(token),
+              let flags = instance.flags else {
+            return [:]
+        }
+        let variants = flags.getAllVariantsSync()
+        var out = [String: [String: Any]]()
+        for (key, variant) in variants {
+            out[key] = self.convertVariantToDict(variant)
+        }
+        return out
+    }
+
+    @objc
+    func updateFlagsContext(_ token: String,
+                            context: [String: Any],
+                            options: [String: Any]?,
+                            resolver resolve: @escaping RCTPromiseResolveBlock,
+                            rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
+        guard let instance = MixpanelReactNative.getMixpanelInstance(token),
+              let flags = instance.flags else {
+            resolve(nil)
+            return
+        }
+        flags.setContext(context) {
+            resolve(nil)
+        }
+    }
+
+    // MARK: - Variant conversion
+
     private func convertDictToVariant(_ dict: [String: Any]) -> MixpanelFlagVariant {
         let key = dict["key"] as? String ?? ""
         let value = dict["value"] ?? NSNull()
-        let experimentID = dict["experimentID"] as? String
-        let isExperimentActive = dict["isExperimentActive"] as? Bool
-        let isQATester = dict["isQATester"] as? Bool
-
+        let experimentID = dict["experiment_id"] as? String
+        let isExperimentActive = dict["is_experiment_active"] as? Bool
+        let isQATester = dict["is_qa_tester"] as? Bool
         return MixpanelFlagVariant(
             key: key,
             value: value,
@@ -630,10 +705,24 @@ open class MixpanelReactNative: NSObject {
         ]
 
         if let experimentID = variant.experimentID {
-            dict["experimentID"] = experimentID
+            dict["experiment_id"] = experimentID
         }
-        dict["isExperimentActive"] = variant.isExperimentActive
-        dict["isQATester"] = variant.isQATester
+        if let isExperimentActive = variant.isExperimentActive {
+            dict["is_experiment_active"] = isExperimentActive
+        }
+        if let isQATester = variant.isQATester {
+            dict["is_qa_tester"] = isQATester
+        }
+
+        switch variant.source {
+        case .network:
+            dict["variant_source"] = "network"
+        case .persistence(let persistedAt):
+            dict["variant_source"] = "persistence"
+            dict["persisted_at_in_ms"] = Int64(persistedAt.timeIntervalSince1970 * 1000)
+        case .fallback:
+            dict["variant_source"] = "fallback"
+        }
 
         return dict
     }

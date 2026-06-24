@@ -1,9 +1,11 @@
 package com.mixpanel.reactnative;
 
+import com.mixpanel.android.mpmetrics.FeatureFlagOptions;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.mixpanel.android.mpmetrics.MixpanelOptions;
 import com.mixpanel.android.mpmetrics.MixpanelFlagVariant;
 import com.mixpanel.android.mpmetrics.FlagCompletionCallback;
+import com.mixpanel.android.mpmetrics.VariantLookupPolicy;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -21,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
 
@@ -44,36 +47,72 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         JSONObject mixpanelProperties = ReactNativeHelper.reactToJSON(metadata);
         AutomaticProperties.setAutomaticProperties(mixpanelProperties);
 
-        // Handle feature flags options
         boolean featureFlagsEnabled = false;
         JSONObject featureFlagsContext = null;
+        VariantLookupPolicy variantLookupPolicy = null;
 
-        if (featureFlagsOptions != null && featureFlagsOptions.hasKey("enabled")) {
-            featureFlagsEnabled = featureFlagsOptions.getBoolean("enabled");
-
-            if (featureFlagsOptions.hasKey("context")) {
+        if (featureFlagsOptions != null) {
+            if (featureFlagsOptions.hasKey("enabled")) {
+                featureFlagsEnabled = featureFlagsOptions.getBoolean("enabled");
+            }
+            if (featureFlagsOptions.hasKey("context") && featureFlagsOptions.getMap("context") != null) {
                 featureFlagsContext = ReactNativeHelper.reactToJSON(featureFlagsOptions.getMap("context"));
+            }
+            if (featureFlagsOptions.hasKey("persistence")
+                    && featureFlagsOptions.getMap("persistence") != null) {
+                variantLookupPolicy = parseVariantLookupPolicy(featureFlagsOptions.getMap("persistence"));
             }
         }
 
-        // Create Mixpanel instance with feature flags configuration
         MixpanelOptions.Builder optionsBuilder = new MixpanelOptions.Builder()
             .optOutTrackingDefault(optOutTrackingDefault)
             .superProperties(mixpanelProperties)
-            .serverURL(serverURL)
-            .featureFlagsEnabled(featureFlagsEnabled);
+            .serverURL(serverURL);
 
-        if (featureFlagsContext != null) {
-            optionsBuilder.featureFlagsContext(featureFlagsContext);
+        if (featureFlagsEnabled) {
+            FeatureFlagOptions.Builder ffBuilder = new FeatureFlagOptions.Builder().enabled(true);
+            if (featureFlagsContext != null) {
+                ffBuilder.context(featureFlagsContext);
+            }
+            if (variantLookupPolicy != null) {
+                ffBuilder.variantLookupPolicy(variantLookupPolicy);
+            }
+            optionsBuilder.featureFlagOptions(ffBuilder.build());
         }
 
-        MixpanelOptions options = optionsBuilder.build();
-
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents, options);
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents, optionsBuilder.build());
         if (useGzipCompression) {
             instance.setShouldGzipRequestPayload(true);
         }
         promise.resolve(null);
+    }
+
+    private VariantLookupPolicy parseVariantLookupPolicy(ReadableMap policyMap) {
+        if (policyMap == null || !policyMap.hasKey("variantLookupPolicy")) {
+            return null;
+        }
+        String kind = policyMap.getString("variantLookupPolicy");
+        if (kind == null) {
+            return null;
+        }
+        switch (kind) {
+            case "networkOnly":
+                return VariantLookupPolicy.networkOnly();
+            case "persistenceUntilNetworkSuccess":
+                return VariantLookupPolicy.persistenceUntilNetworkSuccess(readPersistenceTtlMillis(policyMap));
+            case "networkFirst":
+                return VariantLookupPolicy.networkFirst(readPersistenceTtlMillis(policyMap));
+            default:
+                android.util.Log.w("Mixpanel", "Unknown variantLookupPolicy '" + kind + "', falling back to networkOnly");
+                return VariantLookupPolicy.networkOnly();
+        }
+    }
+
+    private long readPersistenceTtlMillis(ReadableMap policyMap) {
+        if (policyMap.hasKey("persistenceTtlMs") && !policyMap.isNull("persistenceTtlMs")) {
+            return (long) policyMap.getDouble("persistenceTtlMs");
+        }
+        return java.util.concurrent.TimeUnit.HOURS.toMillis(24);
     }
 
     @ReactMethod
@@ -808,19 +847,82 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
     }
 
-    // Helper methods for variant conversion
+    @ReactMethod
+    public void getAllVariants(final String token, final Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            promise.resolve(new WritableNativeMap());
+            return;
+        }
+        synchronized (instance) {
+            instance.getFlags().getAllVariants(new FlagCompletionCallback<Map<String, MixpanelFlagVariant>>() {
+                @Override
+                public void onComplete(Map<String, MixpanelFlagVariant> variants) {
+                    WritableMap result = new WritableNativeMap();
+                    if (variants != null) {
+                        for (Map.Entry<String, MixpanelFlagVariant> entry : variants.entrySet()) {
+                            result.putMap(entry.getKey(), convertVariantToWritableMap(entry.getValue()));
+                        }
+                    }
+                    promise.resolve(result);
+                }
+            });
+        }
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public WritableMap getAllVariantsSync(final String token) {
+        WritableMap result = new WritableNativeMap();
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            return result;
+        }
+        synchronized (instance) {
+            Map<String, MixpanelFlagVariant> variants = instance.getFlags().getAllVariantsSync();
+            if (variants != null) {
+                for (Map.Entry<String, MixpanelFlagVariant> entry : variants.entrySet()) {
+                    result.putMap(entry.getKey(), convertVariantToWritableMap(entry.getValue()));
+                }
+            }
+        }
+        return result;
+    }
+
+    @ReactMethod
+    public void updateFlagsContext(final String token, ReadableMap context, ReadableMap options, final Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            promise.resolve(null);
+            return;
+        }
+        final Map<String, Object> contextMap = context == null ? new HashMap<String, Object>() : ReactNativeHelper.toMap(context);
+        synchronized (instance) {
+            instance.getFlags().setContext(contextMap, new FlagCompletionCallback<Boolean>() {
+                @Override
+                public void onComplete(Boolean success) {
+                    promise.resolve(null);
+                }
+            });
+        }
+    }
+
     private MixpanelFlagVariant convertMapToVariant(ReadableMap map) {
         if (map == null) {
             return new MixpanelFlagVariant("", null);
         }
-
         String key = map.hasKey("key") ? map.getString("key") : "";
-        Object value = map.hasKey("value") ? ReactNativeHelper.dynamicToObject(map.getDynamic("value")) : null;
-        String experimentID = map.hasKey("experimentID") ? map.getString("experimentID") : null;
-        Boolean isExperimentActive = map.hasKey("isExperimentActive") ? map.getBoolean("isExperimentActive") : null;
-        Boolean isQATester = map.hasKey("isQATester") ? map.getBoolean("isQATester") : null;
-
-        // Create variant with all properties using the full constructor
+        Object value = map.hasKey("value")
+                ? ReactNativeHelper.dynamicToObject(map.getDynamic("value"))
+                : null;
+        String experimentID = map.hasKey("experiment_id") && !map.isNull("experiment_id")
+                ? map.getString("experiment_id")
+                : null;
+        Boolean isExperimentActive = map.hasKey("is_experiment_active") && !map.isNull("is_experiment_active")
+                ? map.getBoolean("is_experiment_active")
+                : null;
+        Boolean isQATester = map.hasKey("is_qa_tester") && !map.isNull("is_qa_tester")
+                ? map.getBoolean("is_qa_tester")
+                : null;
         return new MixpanelFlagVariant(key, value, experimentID, isExperimentActive, isQATester);
     }
 
@@ -834,39 +936,51 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
     private WritableMap convertVariantToWritableMap(MixpanelFlagVariant variant) {
         WritableMap map = new WritableNativeMap();
+        if (variant == null) {
+            return map;
+        }
 
-        if (variant != null) {
-            map.putString("key", variant.key);
+        map.putString("key", variant.key);
 
-            Object value = variant.value;
-            if (value == null) {
-                map.putNull("value");
-            } else if (value instanceof String) {
-                map.putString("value", (String) value);
-            } else if (value instanceof Boolean) {
-                map.putBoolean("value", (Boolean) value);
-            } else if (value instanceof Integer) {
-                map.putInt("value", (Integer) value);
-            } else if (value instanceof Double) {
-                map.putDouble("value", (Double) value);
-            } else if (value instanceof Float) {
-                map.putDouble("value", ((Float) value).doubleValue());
-            } else if (value instanceof Long) {
-                map.putDouble("value", ((Long) value).doubleValue());
+        Object value = variant.value;
+        if (value == null) {
+            map.putNull("value");
+        } else if (value instanceof String) {
+            map.putString("value", (String) value);
+        } else if (value instanceof Boolean) {
+            map.putBoolean("value", (Boolean) value);
+        } else if (value instanceof Integer) {
+            map.putInt("value", (Integer) value);
+        } else if (value instanceof Double) {
+            map.putDouble("value", (Double) value);
+        } else if (value instanceof Float) {
+            map.putDouble("value", ((Float) value).doubleValue());
+        } else if (value instanceof Long) {
+            map.putDouble("value", ((Long) value).doubleValue());
+        } else {
+            map.putString("value", value.toString());
+        }
+
+        if (variant.experimentID != null) {
+            map.putString("experiment_id", variant.experimentID);
+        }
+        if (variant.isExperimentActive != null) {
+            map.putBoolean("is_experiment_active", variant.isExperimentActive);
+        }
+        if (variant.isQATester != null) {
+            map.putBoolean("is_qa_tester", variant.isQATester);
+        }
+
+        if (variant.source != null) {
+            if (variant.source instanceof MixpanelFlagVariant.Source.Persistence) {
+                map.putString("variant_source", "persistence");
+                long persistedAtMillis = ((MixpanelFlagVariant.Source.Persistence) variant.source).persistedAtMillis;
+                // WritableMap has no putLong; current epoch-ms fits double precision (< 2^53).
+                map.putDouble("persisted_at_in_ms", (double) persistedAtMillis);
+            } else if (variant.source instanceof MixpanelFlagVariant.Source.Network) {
+                map.putString("variant_source", "network");
             } else {
-                // For complex objects, convert to string
-                map.putString("value", value.toString());
-            }
-
-            // Add optional fields if they exist
-            if (variant.experimentID != null) {
-                map.putString("experimentID", variant.experimentID);
-            }
-            if (variant.isExperimentActive != null) {
-                map.putBoolean("isExperimentActive", variant.isExperimentActive);
-            }
-            if (variant.isQATester != null) {
-                map.putBoolean("isQATester", variant.isQATester);
+                map.putString("variant_source", "fallback");
             }
         }
 

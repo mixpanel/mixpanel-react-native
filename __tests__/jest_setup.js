@@ -106,6 +106,7 @@ jest.doMock("react-native", () => {
           getAllVariantsSync: jest.fn().mockReturnValue({}),
           updateContext: jest.fn().mockResolvedValue(undefined),  // legacy alias, retained
           updateFlagsContext: jest.fn().mockResolvedValue(true),
+          checkFirstTimeEvents: jest.fn(),
         },
       },
     },

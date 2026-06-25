@@ -312,4 +312,29 @@ describe("MixpanelFlagPersistence — direct unit coverage", () => {
     );
     expect(p.getPolicy()).toBe(VariantLookupPolicy.NETWORK_ONLY);
   });
+
+  it("round-trips pendingFirstTimeEvents through save() and loadFlagsFromStorage()", async () => {
+    const p = makePersistence();
+    const context = { distinct_id: "u1" };
+    const flagsMap = new Map([
+      ["onboarding", { key: "control", value: false }],
+    ]);
+    const pendingFirstTimeEvents = {
+      "onboarding:abc123": {
+        flag_key: "onboarding",
+        flag_id: "flag-1",
+        project_id: 7,
+        first_time_event_hash: "abc123",
+        event_name: "Dashboard Viewed",
+        property_filters: { ">": [{ var: "x" }, 0] },
+        pending_variant: { variant_key: "treatment", variant_value: true },
+      },
+    };
+
+    await p.save(context, flagsMap, pendingFirstTimeEvents);
+    const loaded = await p.loadFlagsFromStorage(context);
+
+    expect(loaded).not.toBeNull();
+    expect(loaded.pendingFirstTimeEvents).toEqual(pendingFirstTimeEvents);
+  });
 });

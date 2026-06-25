@@ -695,6 +695,24 @@ export class Flags {
     throw new Error("Feature flags are not initialized");
   }
 
+  /**
+   * Notify the flags system that a user event was tracked. If any pending
+   * first-time event matches, the corresponding flag's variant is switched
+   * to the pending variant and the activation is recorded with the server.
+   *
+   * <p>Native mode is a no-op — the iOS/Android SDKs handle first-time event
+   * activation internally on their own track() path. JS-fallback mode
+   * delegates to the in-memory subsystem.
+   */
+  checkFirstTimeEvents(eventName, properties) {
+    if (this.isNativeMode) {
+      return;
+    }
+    if (this.jsFlags) {
+      this.jsFlags.checkFirstTimeEvents(eventName, properties);
+    }
+  }
+
   // snake_case aliases
 
   /** Alias for {@link areFlagsReady}. */
@@ -789,5 +807,10 @@ export class Flags {
    */
   update_context(newContext, options) {
     return this.updateContext(newContext, options);
+  }
+
+  /** Alias for {@link checkFirstTimeEvents}. */
+  check_first_time_events(eventName, properties) {
+    return this.checkFirstTimeEvents(eventName, properties);
   }
 }

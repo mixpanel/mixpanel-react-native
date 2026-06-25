@@ -79,6 +79,9 @@ export interface Flags {
   // Context management — available in both native and JavaScript modes.
   updateContext(newContext: MixpanelProperties, options?: UpdateContextOptions): Promise<void>;
 
+  // First-time event hook (JavaScript mode only; native mode is a no-op).
+  checkFirstTimeEvents(eventName: string, properties?: MixpanelProperties): void;
+
   // snake_case aliases
   are_flags_ready(): boolean;
   get_variant(featureName: string, fallback: MixpanelFlagVariant): Promise<MixpanelFlagVariant>;
@@ -95,6 +98,7 @@ export interface Flags {
   load_flags(): Promise<void>;
   when_ready(): Promise<void>;
   update_context(newContext: MixpanelProperties, options?: UpdateContextOptions): Promise<void>;
+  check_first_time_events(eventName: string, properties?: MixpanelProperties): void;
 }
 
 export class Mixpanel {

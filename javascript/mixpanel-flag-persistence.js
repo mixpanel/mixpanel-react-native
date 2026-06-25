@@ -133,12 +133,13 @@ export class MixpanelFlagPersistence {
 
     return {
       flags: persistedFlags,
+      pendingFirstTimeEvents: data.pendingFirstTimeEvents || {},
       persistedAtMs: data.persistedAt,
       ttlMs: ttlMs,
     };
   }
 
-  async save(context, flagsMap) {
+  async save(context, flagsMap, pendingFirstTimeEvents) {
     if (this.getPolicy() === VariantLookupPolicy.NETWORK_ONLY) {
       return;
     }
@@ -159,6 +160,7 @@ export class MixpanelFlagPersistence {
       distinctId: context && context.distinct_id,
       context: context,
       flagVariants: flagVariants,
+      pendingFirstTimeEvents: pendingFirstTimeEvents || {},
     };
 
     try {

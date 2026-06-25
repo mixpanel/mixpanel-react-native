@@ -1,4 +1,5 @@
 import { encode as base64Encode } from 'base-64';
+import jsonLogic from 'json-logic-js';
 import { MixpanelLogger } from './mixpanel-logger';
 import { MixpanelNetwork } from './mixpanel-network';
 import { MixpanelPersistent } from './mixpanel-persistent';
@@ -22,6 +23,33 @@ function withSource(variant, source, extras) {
   return stamped;
 }
 
+function getPendingEventKey(flagKey, firstTimeEventHash) {
+  return flagKey + ':' + firstTimeEventHash;
+}
+
+function getFlagKeyFromPendingEventKey(eventKey) {
+  return eventKey.split(':')[0];
+}
+
+/**
+ * Direct port of ~/mixpanel-js/src/targeting/event-matcher.js. Replaces the
+ * window.__mp_targeting bundle dance with a synchronous json-logic-js import.
+ */
+function eventMatchesCriteria(eventName, properties, criteria) {
+  if (eventName !== criteria.event_name) {
+    return { matches: false };
+  }
+  const propertyFilters = criteria.property_filters;
+  if (!propertyFilters || Object.keys(propertyFilters).length === 0) {
+    return { matches: true };
+  }
+  try {
+    return { matches: !!jsonLogic.apply(propertyFilters, properties || {}) };
+  } catch (error) {
+    return { matches: false, error: String(error) };
+  }
+}
+
 export class MixpanelFlagsJS {
   constructor(token, mixpanelImpl, storage, featureFlagsOptions = {}) {
     this.token = token;
@@ -35,6 +63,8 @@ export class MixpanelFlagsJS {
   init() {
     this.flags = null;
     this.experimentTracked = new Set();
+    this.pendingFirstTimeEvents = {};
+    this.activatedFirstTimeEvents = {};
     this._loadedPersistedAtMs = null;
     this._loadedTtlMs = null;
     this._fetchStartTime = null;
@@ -49,11 +79,18 @@ export class MixpanelFlagsJS {
       this.storage
     );
 
+    // Register a back-reference so MixpanelMain.track() can invoke
+    // checkFirstTimeEvents on every tracked event in JS-fallback mode.
+    if (this.mixpanelImpl) {
+      this.mixpanelImpl._flagsJS = this;
+    }
+
     this.persistenceLoadedPromise = this.persistence
       .loadFlagsFromStorage(this._buildContext())
       .then((loaded) => {
         if (loaded) {
           this.flags = loaded.flags;
+          this.pendingFirstTimeEvents = loaded.pendingFirstTimeEvents || {};
           this._loadedPersistedAtMs = loaded.persistedAtMs;
           this._loadedTtlMs = loaded.ttlMs;
         }
@@ -196,7 +233,27 @@ export class MixpanelFlagsJS {
           throw new Error('No flags in API response');
         }
         const flags = new Map();
+        const pendingFirstTimeEvents = {};
+
         for (const [key, data] of Object.entries(response.flags)) {
+          // If a first-time event for this flag has already been activated
+          // this session, preserve the activated variant rather than
+          // overwriting it with the server's current variant.
+          let hasActivatedEvent = false;
+          const prefix = key + ':';
+          for (const eventKey of Object.keys(this.activatedFirstTimeEvents)) {
+            if (eventKey.startsWith(prefix)) {
+              hasActivatedEvent = true;
+              break;
+            }
+          }
+          if (hasActivatedEvent) {
+            const currentFlag = this.flags && this.flags.get(key);
+            if (currentFlag) {
+              flags.set(key, currentFlag);
+              continue;
+            }
+          }
           flags.set(key, {
             key: data.variant_key,
             value: data.variant_value,
@@ -206,13 +263,50 @@ export class MixpanelFlagsJS {
             variant_source: NETWORK_SOURCE,
           });
         }
+
+        const topLevelDefinitions = response.pending_first_time_events;
+        if (Array.isArray(topLevelDefinitions)) {
+          for (const def of topLevelDefinitions) {
+            const eventKey = getPendingEventKey(
+              def.flag_key,
+              def.first_time_event_hash
+            );
+            // Skip events that have already been activated this session.
+            if (this.activatedFirstTimeEvents[eventKey]) {
+              continue;
+            }
+            pendingFirstTimeEvents[eventKey] = {
+              flag_key: def.flag_key,
+              flag_id: def.flag_id,
+              project_id: def.project_id,
+              first_time_event_hash: def.first_time_event_hash,
+              event_name: def.event_name,
+              property_filters: def.property_filters,
+              pending_variant: def.pending_variant,
+            };
+          }
+        }
+
+        // Preserve activated orphan flags whose flag_key is no longer in the
+        // server response.
+        for (const eventKey of Object.keys(this.activatedFirstTimeEvents)) {
+          if (!this.activatedFirstTimeEvents[eventKey]) continue;
+          const flagKey = getFlagKeyFromPendingEventKey(eventKey);
+          if (!flags.has(flagKey) && this.flags && this.flags.has(flagKey)) {
+            flags.set(flagKey, this.flags.get(flagKey));
+          }
+        }
+
         this.flags = flags;
         this.experimentTracked = new Set();
+        this.pendingFirstTimeEvents = pendingFirstTimeEvents;
         this._loadedPersistedAtMs = null;
         this._loadedTtlMs = null;
-        return this.persistence.save(context, this.flags).then(() => {
-          MixpanelLogger.log(this.token, 'Feature flags loaded successfully');
-        });
+        return this.persistence
+          .save(context, this.flags, this.pendingFirstTimeEvents)
+          .then(() => {
+            MixpanelLogger.log(this.token, 'Feature flags loaded successfully');
+          });
       })
       .catch((error) => {
         if (this._fetchStartTime !== null) {
@@ -462,6 +556,8 @@ export class MixpanelFlagsJS {
     this._loadedPersistedAtMs = null;
     this._loadedTtlMs = null;
     this.experimentTracked.clear();
+    this.pendingFirstTimeEvents = {};
+    this.activatedFirstTimeEvents = {};
 
     try {
       await this.loadFlags();
@@ -476,6 +572,8 @@ export class MixpanelFlagsJS {
   async reset() {
     this.flags = null;
     this.experimentTracked.clear();
+    this.pendingFirstTimeEvents = {};
+    this.activatedFirstTimeEvents = {};
     this._loadedPersistedAtMs = null;
     this._loadedTtlMs = null;
     try {
@@ -492,10 +590,135 @@ export class MixpanelFlagsJS {
       await this.persistence.clear();
       this.flags = null;
       this.experimentTracked.clear();
+      this.pendingFirstTimeEvents = {};
+      this.activatedFirstTimeEvents = {};
       this._loadedPersistedAtMs = null;
       this._loadedTtlMs = null;
     } catch (error) {
       MixpanelLogger.log(this.token, 'Error clearing flag cache:', error);
+    }
+  }
+
+  /**
+   * If a tracked event matches any pending first-time event, switch the
+   * corresponding flag to its pending variant and record the activation
+   * with the server (fire-and-forget). Synchronous because json-logic-js
+   * imports synchronously — no targeting-bundle Promise dance needed.
+   */
+  checkFirstTimeEvents(eventName, properties) {
+    if (
+      !this.pendingFirstTimeEvents ||
+      Object.keys(this.pendingFirstTimeEvents).length === 0
+    ) {
+      return;
+    }
+    this._processFirstTimeEventCheck(eventName, properties);
+  }
+
+  _processFirstTimeEventCheck(eventName, properties) {
+    for (const eventKey of Object.keys(this.pendingFirstTimeEvents)) {
+      if (this.activatedFirstTimeEvents[eventKey]) {
+        continue;
+      }
+      const pendingEvent = this.pendingFirstTimeEvents[eventKey];
+      const flagKey = pendingEvent.flag_key;
+
+      const criteria = {
+        event_name: pendingEvent.event_name,
+        property_filters: pendingEvent.property_filters,
+      };
+      const matchResult = eventMatchesCriteria(eventName, properties, criteria);
+
+      if (matchResult.error) {
+        MixpanelLogger.error(
+          this.token,
+          `Error checking first-time event for flag "${flagKey}": ${matchResult.error}`
+        );
+        continue;
+      }
+      if (!matchResult.matches) {
+        continue;
+      }
+
+      MixpanelLogger.log(
+        this.token,
+        `First-time event matched for flag "${flagKey}": ${eventName}`
+      );
+
+      const newVariant = {
+        key: pendingEvent.pending_variant.variant_key,
+        value: pendingEvent.pending_variant.variant_value,
+        experiment_id: pendingEvent.pending_variant.experiment_id,
+        is_experiment_active: pendingEvent.pending_variant.is_experiment_active,
+      };
+
+      this.flags.set(flagKey, newVariant);
+      this.experimentTracked.delete(flagKey);
+      this.activatedFirstTimeEvents[eventKey] = true;
+
+      this.recordFirstTimeEvent(
+        pendingEvent.flag_id,
+        pendingEvent.project_id,
+        pendingEvent.first_time_event_hash
+      );
+    }
+  }
+
+  getFirstTimeEventApiRoute(flagId) {
+    const serverURL =
+      this.mixpanelImpl.config?.getServerURL?.(this.token) ||
+      'https://api.mixpanel.com';
+    return `${serverURL.replace(/\/$/, '')}/flags/${flagId}/first-time-events`;
+  }
+
+  /** Fire-and-forget POST to record a first-time event activation. */
+  recordFirstTimeEvent(flagId, projectId, firstTimeEventHash) {
+    const distinctId = this.mixpanelPersistent.getDistinctId(this.token);
+
+    const searchParams = new URLSearchParams();
+    searchParams.set('mp_lib', 'react-native');
+    searchParams.set('$lib_version', packageJson.version);
+    const url = `${this.getFirstTimeEventApiRoute(flagId)}?${searchParams.toString()}`;
+
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Basic ${base64Encode(this.token + ':')}`,
+    };
+    if (this._traceparent) {
+      headers.traceparent = this._traceparent;
+    }
+
+    const payload = {
+      distinct_id: distinctId,
+      project_id: projectId,
+      first_time_event_hash: firstTimeEventHash,
+    };
+
+    MixpanelLogger.log(this.token, `Recording first-time event for flag: ${flagId}`);
+
+    // Direct fetch (not MixpanelNetwork) mirrors mixpanel-js: fire-and-forget
+    // with no retries, raw JSON body. Swallow errors — cohort sync catches up.
+    try {
+      const promise = fetch(url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload),
+      });
+      if (promise && typeof promise.catch === 'function') {
+        promise.catch((error) => {
+          MixpanelLogger.error(
+            this.token,
+            `Failed to record first-time event for flag ${flagId}:`,
+            error
+          );
+        });
+      }
+    } catch (error) {
+      MixpanelLogger.error(
+        this.token,
+        `Failed to record first-time event for flag ${flagId}:`,
+        error
+      );
     }
   }
 
@@ -546,5 +769,9 @@ export class MixpanelFlagsJS {
 
   update_context(newContext, options) {
     return this.updateContext(newContext, options);
+  }
+
+  check_first_time_events(eventName, properties) {
+    return this.checkFirstTimeEvents(eventName, properties);
   }
 }

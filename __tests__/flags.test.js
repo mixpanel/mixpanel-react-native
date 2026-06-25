@@ -1164,4 +1164,572 @@ describe("Feature Flags", () => {
     });
   });
 
+  describe("First-Time Event Targeting", () => {
+    // Ports ~/mixpanel-js/tests/unit/flags.js:337-1070 to the RN JS-fallback
+    // path. Each test below has a 1:1 counterpart in the reference suite.
+
+    const ftToken = "ft-token";
+    const flushPromises = () => new Promise(setImmediate);
+    let mockStorage;
+    let ftMixpanel;
+
+    function defaultResponse() {
+      return {
+        flags: {
+          "onboarding-checklist": {
+            variant_key: "control",
+            variant_value: false,
+            experiment_id: null,
+            is_experiment_active: false,
+          },
+          "premium-welcome": {
+            variant_key: "control",
+            variant_value: null,
+            experiment_id: null,
+            is_experiment_active: false,
+          },
+        },
+        pending_first_time_events: [
+          {
+            flag_key: "onboarding-checklist",
+            flag_id: "flag-123",
+            project_id: 3,
+            first_time_event_hash: "abc123def456",
+            event_name: "Dashboard Viewed",
+            property_filters: {},
+            pending_variant: {
+              variant_key: "treatment",
+              variant_value: true,
+              experiment_id: 123,
+              is_experiment_active: true,
+            },
+          },
+          {
+            flag_key: "premium-welcome",
+            flag_id: "flag-456",
+            project_id: 3,
+            first_time_event_hash: "xyz789",
+            event_name: "Purchase Complete",
+            property_filters: { ">": [{ var: "amount" }, 100] },
+            pending_variant: {
+              variant_key: "premium",
+              variant_value: { discount: 20 },
+              experiment_id: 456,
+              is_experiment_active: true,
+            },
+          },
+        ],
+      };
+    }
+
+    // Build a fake fetch Response with the given JSON body.
+    function jsonResponse(body) {
+      return { status: 200, json: () => Promise.resolve(body) };
+    }
+
+    // Setup helper: stand up a fresh JS-mode Mixpanel + flags whose first
+    // fetch resolves to `body`, and wait until init's fetch settles.
+    async function setupJsMixpanel(body) {
+      global.fetch.mockReset();
+      // Default every fetch (flag fetch, recording POST) to a JSON 200.
+      // Tests can override for specific scenarios.
+      global.fetch.mockResolvedValue(jsonResponse(body));
+
+      mockStorage = {
+        getItem: jest.fn().mockResolvedValue(null),
+        setItem: jest.fn().mockResolvedValue(undefined),
+        removeItem: jest.fn().mockResolvedValue(undefined),
+        clear: jest.fn().mockResolvedValue(undefined),
+      };
+      ftMixpanel = new Mixpanel(ftToken, false, false, mockStorage);
+      await ftMixpanel.init(false, {}, "https://api.mixpanel.com", false, {
+        enabled: true,
+      });
+      // Touch flags to trigger lazy construction + init.
+      void ftMixpanel.flags;
+      await ftMixpanel.flags.jsFlags.persistenceLoadedPromise;
+      await ftMixpanel.flags.whenReady();
+    }
+
+    afterEach(() => {
+      ftMixpanel = null;
+      mockStorage = null;
+    });
+
+    // ----------------------------------------------------------------------
+    // fetchFlags parsing — mixpanel-js lines 395-436
+    // ----------------------------------------------------------------------
+    describe("fetchFlags parsing", () => {
+      it("parses pending_first_time_events from response", async () => {
+        await setupJsMixpanel(defaultResponse());
+        const jsFlags = ftMixpanel.flags.jsFlags;
+        const eventKey = "onboarding-checklist:abc123def456";
+        expect(jsFlags.pendingFirstTimeEvents[eventKey]).toBeDefined();
+
+        const pending = jsFlags.pendingFirstTimeEvents[eventKey];
+        expect(pending.flag_key).toBe("onboarding-checklist");
+        expect(pending.flag_id).toBe("flag-123");
+        expect(pending.project_id).toBe(3);
+        expect(pending.first_time_event_hash).toBe("abc123def456");
+        expect(pending.event_name).toBe("Dashboard Viewed");
+        expect(pending.pending_variant.variant_key).toBe("treatment");
+      });
+
+      it("applies current variant immediately (pending variant not active yet)", async () => {
+        await setupJsMixpanel(defaultResponse());
+        const flag = ftMixpanel.flags.jsFlags.flags.get("onboarding-checklist");
+        expect(flag.key).toBe("control");
+        expect(flag.value).toBe(false);
+      });
+
+      it("handles a response with no pending_first_time_events field", async () => {
+        await setupJsMixpanel({
+          flags: { "simple-flag": { variant_key: "enabled", variant_value: true } },
+        });
+        expect(
+          Object.keys(ftMixpanel.flags.jsFlags.pendingFirstTimeEvents)
+        ).toHaveLength(0);
+      });
+    });
+
+    // ----------------------------------------------------------------------
+    // checkFirstTimeEvents — mixpanel-js lines 438-695
+    // ----------------------------------------------------------------------
+    describe("checkFirstTimeEvents", () => {
+      beforeEach(async () => {
+        await setupJsMixpanel(defaultResponse());
+      });
+
+      it("matches event by exact name and switches variant", async () => {
+        ftMixpanel.flags.checkFirstTimeEvents("Dashboard Viewed", {});
+        await flushPromises();
+
+        const flag = ftMixpanel.flags.jsFlags.flags.get("onboarding-checklist");
+        expect(flag.key).toBe("treatment");
+        expect(flag.value).toBe(true);
+        expect(flag.experiment_id).toBe(123);
+      });
+
+      it("does not match event with a different name", () => {
+        ftMixpanel.flags.checkFirstTimeEvents("Other Event", {});
+        const flag = ftMixpanel.flags.jsFlags.flags.get("onboarding-checklist");
+        expect(flag.key).toBe("control");
+        expect(flag.value).toBe(false);
+      });
+
+      it("is case-sensitive for event names", () => {
+        ftMixpanel.flags.checkFirstTimeEvents("dashboard viewed", {});
+        const flag = ftMixpanel.flags.jsFlags.flags.get("onboarding-checklist");
+        expect(flag.key).toBe("control");
+      });
+
+      it("evaluates property filters using json-logic", async () => {
+        ftMixpanel.flags.checkFirstTimeEvents("Purchase Complete", { amount: 150 });
+        await flushPromises();
+
+        const flag = ftMixpanel.flags.jsFlags.flags.get("premium-welcome");
+        expect(flag.key).toBe("premium");
+        expect(flag.value).toEqual({ discount: 20 });
+      });
+
+      it("does not match when property filters fail", () => {
+        ftMixpanel.flags.checkFirstTimeEvents("Purchase Complete", { amount: 50 });
+        const flag = ftMixpanel.flags.jsFlags.flags.get("premium-welcome");
+        expect(flag.key).toBe("control");
+      });
+
+      it("handles undefined properties in filters", () => {
+        ftMixpanel.flags.checkFirstTimeEvents("Purchase Complete", {});
+        const flag = ftMixpanel.flags.jsFlags.flags.get("premium-welcome");
+        expect(flag.key).toBe("control");
+      });
+
+      it("requires exact case match for property keys", async () => {
+        ftMixpanel.flags.checkFirstTimeEvents("Purchase Complete", {
+          Amount: 150,
+          CATEGORY: "PREMIUM",
+        });
+        await flushPromises();
+        expect(ftMixpanel.flags.jsFlags.flags.get("premium-welcome").key).toBe(
+          "control"
+        );
+
+        ftMixpanel.flags.checkFirstTimeEvents("Purchase Complete", {
+          amount: 150,
+          category: "premium",
+        });
+        await flushPromises();
+        expect(ftMixpanel.flags.jsFlags.flags.get("premium-welcome").key).toBe(
+          "premium"
+        );
+      });
+
+      it("marks event as activated after first match", async () => {
+        ftMixpanel.flags.checkFirstTimeEvents("Dashboard Viewed", {});
+        await flushPromises();
+        const eventKey = "onboarding-checklist:abc123def456";
+        expect(
+          ftMixpanel.flags.jsFlags.activatedFirstTimeEvents[eventKey]
+        ).toBe(true);
+      });
+
+      it("does not re-trigger on subsequent matching events", async () => {
+        ftMixpanel.flags.checkFirstTimeEvents("Dashboard Viewed", {});
+        await flushPromises();
+        const eventKey = "onboarding-checklist:abc123def456";
+        expect(
+          ftMixpanel.flags.jsFlags.activatedFirstTimeEvents[eventKey]
+        ).toBe(true);
+
+        // Manually flip the variant back; a second matching call must NOT
+        // switch it (the activation is sticky for the session).
+        ftMixpanel.flags.jsFlags.flags.set("onboarding-checklist", { key: "control" });
+        ftMixpanel.flags.checkFirstTimeEvents("Dashboard Viewed", {});
+        await flushPromises();
+        expect(ftMixpanel.flags.jsFlags.flags.get("onboarding-checklist").key).toBe(
+          "control"
+        );
+      });
+
+      it("does not track $experiment_started (deferred to getVariant)", async () => {
+        const mockTrack = jest.fn().mockResolvedValue(undefined);
+        ftMixpanel.mixpanelImpl.track = mockTrack;
+
+        ftMixpanel.flags.checkFirstTimeEvents("Dashboard Viewed", {});
+        await flushPromises();
+
+        const exp = mockTrack.mock.calls.filter(
+          ([, eventName]) => eventName === "$experiment_started"
+        );
+        expect(exp).toHaveLength(0);
+      });
+
+      it("calls recording endpoint with correct payload", async () => {
+        // Filter the calls to the first-time-events POST (the initial GET
+        // already used the same global.fetch mock).
+        const fetchBefore = global.fetch.mock.calls.length;
+        ftMixpanel.flags.checkFirstTimeEvents("Dashboard Viewed", {});
+        await flushPromises();
+
+        const postCalls = global.fetch.mock.calls
+          .slice(fetchBefore)
+          .filter(([url]) => String(url).includes("first-time-events"));
+        expect(postCalls).toHaveLength(1);
+
+        const [url, options] = postCalls[0];
+        expect(url).toContain("/flags/flag-123/first-time-events");
+        expect(url).not.toContain("//flag-123");
+        expect(options.method).toBe("POST");
+        expect(options.headers["Content-Type"]).toBe("application/json");
+        expect(options.headers.Authorization).toMatch(/^Basic /);
+
+        const payload = JSON.parse(options.body);
+        expect(typeof payload.distinct_id).toBe("string");
+        expect(payload.project_id).toBe(3);
+        expect(payload.first_time_event_hash).toBe("abc123def456");
+      });
+
+      it("handles recording endpoint failures gracefully", async () => {
+        // Make subsequent fetches reject (the recording POST will be one).
+        global.fetch.mockReset();
+        global.fetch.mockRejectedValue(new Error("Network error"));
+
+        expect(() => {
+          ftMixpanel.flags.checkFirstTimeEvents("Dashboard Viewed", {});
+        }).not.toThrow();
+        await flushPromises();
+
+        // Variant still switches; the recording failure is swallowed.
+        const flag = ftMixpanel.flags.jsFlags.flags.get("onboarding-checklist");
+        expect(flag.key).toBe("treatment");
+      });
+
+      it("handles json-logic evaluation errors gracefully", () => {
+        const eventKey = "onboarding-checklist:abc123def456";
+        // Inject an unknown operator to force json-logic to throw.
+        ftMixpanel.flags.jsFlags.pendingFirstTimeEvents[eventKey].property_filters = {
+          totally_bogus_operator: [],
+        };
+
+        expect(() => {
+          ftMixpanel.flags.checkFirstTimeEvents("Dashboard Viewed", {});
+        }).not.toThrow();
+
+        // Variant must NOT switch when the filter throws.
+        expect(ftMixpanel.flags.jsFlags.flags.get("onboarding-checklist").key).toBe(
+          "control"
+        );
+      });
+
+      it("handles multiple events for the same flag independently", async () => {
+        await setupJsMixpanel({
+          flags: {
+            "multi-event-flag": { variant_key: "control", variant_value: null },
+          },
+          pending_first_time_events: [
+            {
+              flag_key: "multi-event-flag",
+              flag_id: "flag-multi",
+              project_id: 3,
+              first_time_event_hash: "cohort-A",
+              event_name: "Event A",
+              property_filters: {},
+              pending_variant: {
+                variant_key: "variant-A",
+                variant_value: "value-A",
+                experiment_id: 100,
+                is_experiment_active: true,
+              },
+            },
+            {
+              flag_key: "multi-event-flag",
+              flag_id: "flag-multi",
+              project_id: 3,
+              first_time_event_hash: "cohort-B",
+              event_name: "Event B",
+              property_filters: {},
+              pending_variant: {
+                variant_key: "variant-B",
+                variant_value: "value-B",
+                experiment_id: 200,
+                is_experiment_active: true,
+              },
+            },
+          ],
+        });
+
+        const jsFlags = ftMixpanel.flags.jsFlags;
+        const keyA = "multi-event-flag:cohort-A";
+        const keyB = "multi-event-flag:cohort-B";
+        expect(jsFlags.pendingFirstTimeEvents[keyA]).toBeDefined();
+        expect(jsFlags.pendingFirstTimeEvents[keyB]).toBeDefined();
+
+        ftMixpanel.flags.checkFirstTimeEvents("Event A", {});
+        await flushPromises();
+        expect(jsFlags.activatedFirstTimeEvents[keyA]).toBe(true);
+        expect(jsFlags.activatedFirstTimeEvents[keyB]).toBeUndefined();
+        expect(jsFlags.flags.get("multi-event-flag").key).toBe("variant-A");
+
+        ftMixpanel.flags.checkFirstTimeEvents("Event B", {});
+        await flushPromises();
+        expect(jsFlags.activatedFirstTimeEvents[keyB]).toBe(true);
+        expect(jsFlags.flags.get("multi-event-flag").key).toBe("variant-B");
+      });
+    });
+
+    // ----------------------------------------------------------------------
+    // session persistence across refetches — mixpanel-js lines 697-808
+    // ----------------------------------------------------------------------
+    describe("session persistence across refetches", () => {
+      beforeEach(async () => {
+        await setupJsMixpanel(defaultResponse());
+      });
+
+      it("preserves activated variant when flags are refetched", async () => {
+        ftMixpanel.flags.checkFirstTimeEvents("Dashboard Viewed", {});
+        await flushPromises();
+        expect(ftMixpanel.flags.jsFlags.flags.get("onboarding-checklist").key).toBe(
+          "treatment"
+        );
+
+        // Refetch returns the same definition; the activated variant must persist.
+        await ftMixpanel.flags.loadFlags();
+        const flag = ftMixpanel.flags.jsFlags.flags.get("onboarding-checklist");
+        expect(flag.key).toBe("treatment");
+        expect(flag.value).toBe(true);
+      });
+
+      it("does not re-add the activated flag to pendingFirstTimeEvents on refetch", async () => {
+        ftMixpanel.flags.checkFirstTimeEvents("Dashboard Viewed", {});
+        await flushPromises();
+        const eventKey = "onboarding-checklist:abc123def456";
+        expect(ftMixpanel.flags.jsFlags.activatedFirstTimeEvents[eventKey]).toBe(true);
+
+        await ftMixpanel.flags.loadFlags();
+        expect(
+          ftMixpanel.flags.jsFlags.pendingFirstTimeEvents[eventKey]
+        ).toBeUndefined();
+      });
+
+      it("allows new flags to be added on refetch", async () => {
+        // Second fetch returns a new flag + a new pending event alongside the
+        // original.
+        global.fetch.mockReset();
+        global.fetch.mockResolvedValue(
+          jsonResponse({
+            flags: {
+              "onboarding-checklist": { variant_key: "control", variant_value: false },
+              "new-flag": { variant_key: "v1", variant_value: "test" },
+            },
+            pending_first_time_events: [
+              {
+                flag_key: "onboarding-checklist",
+                flag_id: "flag-123",
+                project_id: 3,
+                first_time_event_hash: "abc123def456",
+                event_name: "Dashboard Viewed",
+                property_filters: {},
+                pending_variant: {
+                  variant_key: "treatment",
+                  variant_value: true,
+                },
+              },
+              {
+                flag_key: "new-flag",
+                flag_id: "flag-789",
+                project_id: 3,
+                first_time_event_hash: "new123",
+                event_name: "New Event",
+                property_filters: {},
+                pending_variant: {
+                  variant_key: "v2",
+                  variant_value: "test2",
+                },
+              },
+            ],
+          })
+        );
+
+        await ftMixpanel.flags.loadFlags();
+        expect(ftMixpanel.flags.jsFlags.flags.get("new-flag")).toBeDefined();
+        expect(
+          ftMixpanel.flags.jsFlags.pendingFirstTimeEvents["new-flag:new123"]
+        ).toBeDefined();
+      });
+    });
+
+    // ----------------------------------------------------------------------
+    // orphaned pending events — mixpanel-js lines 810-950
+    // ----------------------------------------------------------------------
+    describe("orphaned pending events", () => {
+      function orphanResponse() {
+        return {
+          flags: {
+            "existing-flag": { variant_key: "control", variant_value: false },
+          },
+          pending_first_time_events: [
+            {
+              flag_key: "orphaned-flag",
+              flag_id: "orphan-123",
+              project_id: 3,
+              first_time_event_hash: "orphan-hash",
+              event_name: "Orphan Event",
+              property_filters: {},
+              pending_variant: {
+                variant_key: "orphan-variant",
+                variant_value: "orphan-value",
+                experiment_id: 999,
+                is_experiment_active: true,
+              },
+            },
+          ],
+        };
+      }
+
+      it("stores pending events even if their flag is not in the flags response", async () => {
+        await setupJsMixpanel(orphanResponse());
+        const jsFlags = ftMixpanel.flags.jsFlags;
+        expect(jsFlags.pendingFirstTimeEvents["orphaned-flag:orphan-hash"]).toBeDefined();
+        expect(jsFlags.flags.has("orphaned-flag")).toBe(false);
+      });
+
+      it("creates a flag entry when an orphaned pending event activates", async () => {
+        await setupJsMixpanel(orphanResponse());
+        const jsFlags = ftMixpanel.flags.jsFlags;
+        expect(jsFlags.flags.has("orphaned-flag")).toBe(false);
+
+        const fetchBefore = global.fetch.mock.calls.length;
+        ftMixpanel.flags.checkFirstTimeEvents("Orphan Event", {});
+        await flushPromises();
+
+        expect(jsFlags.flags.has("orphaned-flag")).toBe(true);
+        const flag = jsFlags.flags.get("orphaned-flag");
+        expect(flag.key).toBe("orphan-variant");
+        expect(flag.value).toBe("orphan-value");
+        expect(flag.experiment_id).toBe(999);
+
+        // Recording POST fires exactly once.
+        const postCalls = global.fetch.mock.calls
+          .slice(fetchBefore)
+          .filter(([url]) => String(url).includes("first-time-events"));
+        expect(postCalls).toHaveLength(1);
+      });
+
+      it("preserves an activated orphan flag on refetch even if it's missing from the new response", async () => {
+        await setupJsMixpanel(orphanResponse());
+        ftMixpanel.flags.checkFirstTimeEvents("Orphan Event", {});
+        await flushPromises();
+
+        // Subsequent fetch returns a totally different set with no mention
+        // of `orphaned-flag` at all.
+        global.fetch.mockReset();
+        global.fetch.mockResolvedValue(
+          jsonResponse({
+            flags: { "some-other-flag": { variant_key: "other", variant_value: "other" } },
+            pending_first_time_events: [],
+          })
+        );
+        await ftMixpanel.flags.loadFlags();
+
+        const jsFlags = ftMixpanel.flags.jsFlags;
+        expect(jsFlags.flags.has("orphaned-flag")).toBe(true);
+        expect(jsFlags.flags.get("orphaned-flag").key).toBe("orphan-variant");
+      });
+    });
+
+    // ----------------------------------------------------------------------
+    // dynamic targeting loading — mixpanel-js lines 952-1070 (NOT PORTED).
+    // ----------------------------------------------------------------------
+    describe("dynamic targeting loading", () => {
+      // eslint-disable-next-line jest/no-disabled-tests
+      xit("N/A in RN — json-logic-js imports synchronously, no async targeting bundle", () => {
+        // The RN port replaces ~/mixpanel-js/src/targeting/loader.js
+        // (loadExtraBundle/getTargetingPromise/__mp_targeting) with a
+        // synchronous `import jsonLogic from 'json-logic-js'`. There is no
+        // script-tag injection path to test.
+      });
+    });
+
+    // ----------------------------------------------------------------------
+    // RN-specific: native-mode passthrough.
+    // ----------------------------------------------------------------------
+    describe("native-mode passthrough", () => {
+      it("checkFirstTimeEvents on the native path is a no-op", async () => {
+        const nativeMixpanel = new Mixpanel(testToken, false);
+        await nativeMixpanel.init();
+
+        // Native bridge was not given a checkFirstTimeEvents in the wrapper
+        // path; the wrapper should not invoke it on native mode. Calling
+        // must not throw.
+        expect(() => {
+          nativeMixpanel.flags.checkFirstTimeEvents("Anything", { x: 1 });
+        }).not.toThrow();
+
+        // The wrapper's native mock checkFirstTimeEvents (jest_setup) was
+        // never invoked because native is a no-op at the wrapper layer.
+        expect(mockNativeModule.checkFirstTimeEvents).not.toHaveBeenCalled();
+      });
+    });
+
+    // ----------------------------------------------------------------------
+    // RN-specific: full integration through mixpanel.track().
+    // ----------------------------------------------------------------------
+    describe("integration via mixpanel.track()", () => {
+      it("activates a pending variant when the matching event is tracked", async () => {
+        await setupJsMixpanel(defaultResponse());
+        // Pre-flight: variant is still control.
+        expect(ftMixpanel.flags.jsFlags.flags.get("onboarding-checklist").key).toBe(
+          "control"
+        );
+
+        ftMixpanel.track("Dashboard Viewed");
+        await flushPromises();
+
+        expect(ftMixpanel.flags.jsFlags.flags.get("onboarding-checklist").key).toBe(
+          "treatment"
+        );
+      });
+    });
+  });
+
 });

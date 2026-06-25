@@ -144,6 +144,19 @@ export default class MixpanelMain {
       this.mixpanelPersistent.updateTimeEvents(token, timeEvents);
       await this.mixpanelPersistent.persistTimeEvents(token);
     }
+
+    // Notify the JS-fallback flags subsystem so it can activate any
+    // matching first-time event and switch the corresponding variant.
+    // Self-registered as `_flagsJS` by MixpanelFlagsJS.init(); absent in
+    // native mode (the platform SDK handles this internally).
+    if (this._flagsJS) {
+      try {
+        this._flagsJS.checkFirstTimeEvents(eventName, properties);
+      } catch (e) {
+        MixpanelLogger.log(token, "checkFirstTimeEvents error:", e);
+      }
+    }
+
     await this.core.addToMixpanelQueue(token, MixpanelType.EVENTS, eventData);
   }
 

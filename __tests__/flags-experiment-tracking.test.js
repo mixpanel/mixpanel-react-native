@@ -507,4 +507,105 @@ describe("Feature Flags - Experiment Tracking", () => {
       );
     });
   });
+
+  describe("Tracking dedup and re-tracking on refetch", () => {
+    it("fires $experiment_started only once when getVariantSync is called twice in the same tick", async () => {
+      global.fetch.mockResolvedValueOnce({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: {
+              "race-flag": {
+                variant_key: "treatment",
+                variant_value: "blue",
+              },
+            },
+          }),
+      });
+
+      mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
+      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, {
+        enabled: true,
+      });
+      mixpanel.mixpanelImpl.track = mockTrack;
+
+      await mixpanel.flags.loadFlags();
+
+      mixpanel.flags.getVariantSync("race-flag", "fallback");
+      mixpanel.flags.getVariantSync("race-flag", "fallback");
+
+      await flushPromises();
+
+      const calls = mockTrack.mock.calls.filter(
+        ([, eventName]) => eventName === "$experiment_started"
+      );
+      expect(calls).toHaveLength(1);
+    });
+
+    it("allows a retry of $experiment_started after the first track call fails", async () => {
+      global.fetch.mockResolvedValueOnce({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: {
+              "retry-flag": { variant_key: "treatment", variant_value: "v" },
+            },
+          }),
+      });
+
+      mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
+      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, {
+        enabled: true,
+      });
+
+      mockTrack
+        .mockRejectedValueOnce(new Error("first track fails"))
+        .mockResolvedValue(undefined);
+      mixpanel.mixpanelImpl.track = mockTrack;
+
+      await mixpanel.flags.loadFlags();
+
+      mixpanel.flags.getVariantSync("retry-flag", "fallback");
+      await flushPromises();
+
+      mixpanel.flags.getVariantSync("retry-flag", "fallback");
+      await flushPromises();
+
+      const calls = mockTrack.mock.calls.filter(
+        ([, eventName]) => eventName === "$experiment_started"
+      );
+      expect(calls).toHaveLength(2);
+    });
+
+    it("re-tracks $experiment_started after a refetch (mirrors identify path)", async () => {
+      global.fetch.mockResolvedValue({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: {
+              "refetch-flag": { variant_key: "treatment", variant_value: 1 },
+            },
+          }),
+      });
+
+      mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
+      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, {
+        enabled: true,
+      });
+      mixpanel.mixpanelImpl.track = mockTrack;
+
+      await mixpanel.flags.loadFlags();
+      mixpanel.flags.getVariantSync("refetch-flag", "fallback");
+      await flushPromises();
+
+      await mixpanel.flags.loadFlags();
+      mixpanel.flags.getVariantSync("refetch-flag", "fallback");
+      await flushPromises();
+
+      const calls = mockTrack.mock.calls.filter(
+        ([, eventName]) => eventName === "$experiment_started"
+      );
+      expect(calls).toHaveLength(2);
+    });
+  });
 });

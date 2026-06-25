@@ -156,6 +156,53 @@ describe("Feature Flags - JS-fallback Persistence (end-to-end)", () => {
     expect(keys).toContain(persistedKey(t1));
     expect(keys).toContain(persistedKey(t2));
   });
+
+  it("networkFirst falls back to the persisted variant when the network fetch fails", async () => {
+    // First session: fetch succeeds and writes a persisted blob under the runtime distinct_id.
+    global.fetch.mockResolvedValue({
+      status: 200,
+      json: () =>
+        Promise.resolve({
+          flags: {
+            "cached-only": {
+              variant_key: "treatment",
+              variant_value: "from-persistence",
+              experiment_id: 99,
+            },
+          },
+        }),
+    });
+
+    const POLICY_NETWORK_FIRST = {
+      variantLookupPolicy: VariantLookupPolicy.NETWORK_FIRST,
+      persistenceTtlMs: 60 * 60 * 1000,
+    };
+
+    const mp = new Mixpanel(token, false, false, mockStorage);
+    await mp.init(false, {}, "https://api.mixpanel.com", false, {
+      enabled: true,
+      persistence: POLICY_NETWORK_FIRST,
+    });
+    await mp.flags.loadFlags();
+    expect(
+      mockStorage.setItem.mock.calls.some(([k]) => k === persistedKey(token))
+    ).toBe(true);
+
+    // Drive a second fetch attempt that fails; in-memory variants should survive.
+    global.fetch.mockReset();
+    global.fetch.mockRejectedValue(new Error("offline"));
+
+    await expect(mp.flags.loadFlags()).rejects.toBeDefined();
+
+    const variant = await mp.flags.getVariant("cached-only", {
+      key: "fb",
+      value: "fallback-value",
+    });
+
+    expect(variant.value).toBe("from-persistence");
+    // In-memory variant retains its origin from the original successful fetch.
+    expect(["network", "persistence"]).toContain(variant.variant_source);
+  });
 });
 
 describe("MixpanelFlagPersistence — direct unit coverage", () => {

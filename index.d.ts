@@ -61,7 +61,7 @@ export interface Flags {
   getVariantSync(featureName: string, fallback: MixpanelFlagVariant): MixpanelFlagVariant;
   getVariantValueSync(featureName: string, fallbackValue: any): any;
   isEnabledSync(featureName: string, fallbackValue?: boolean): boolean;
-  getAllVariantsSync(): {[featureName: string]: MixpanelFlagVariant};
+  getAllVariantsSync(): Map<string, MixpanelFlagVariant>;
 
   // Asynchronous methods with overloads for callback and Promise patterns
   getVariant(featureName: string, fallback: MixpanelFlagVariant): Promise<MixpanelFlagVariant>;
@@ -73,8 +73,8 @@ export interface Flags {
   isEnabled(featureName: string, fallbackValue?: boolean): Promise<boolean>;
   isEnabled(featureName: string, fallbackValue: boolean, callback: (isEnabled: boolean) => void): void;
 
-  getAllVariants(): Promise<{[featureName: string]: MixpanelFlagVariant}>;
-  getAllVariants(callback: (variants: {[featureName: string]: MixpanelFlagVariant}) => void): void;
+  getAllVariants(): Promise<Map<string, MixpanelFlagVariant>>;
+  getAllVariants(callback: (variants: Map<string, MixpanelFlagVariant>) => void): void;
 
   // Context management — available in both native and JavaScript modes.
   updateContext(newContext: MixpanelProperties, options?: UpdateContextOptions): Promise<void>;
@@ -90,8 +90,8 @@ export interface Flags {
   is_enabled(featureName: string, fallbackValue?: boolean): Promise<boolean>;
   is_enabled(featureName: string, fallbackValue: boolean, callback: (isEnabled: boolean) => void): void;
   is_enabled_sync(featureName: string, fallbackValue?: boolean): boolean;
-  get_all_variants(): Promise<{[featureName: string]: MixpanelFlagVariant}>;
-  get_all_variants_sync(): {[featureName: string]: MixpanelFlagVariant};
+  get_all_variants(): Promise<Map<string, MixpanelFlagVariant>>;
+  get_all_variants_sync(): Map<string, MixpanelFlagVariant>;
   load_flags(): Promise<void>;
   when_ready(): Promise<void>;
   update_context(newContext: MixpanelProperties, options?: UpdateContextOptions): Promise<void>;

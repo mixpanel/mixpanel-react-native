@@ -725,27 +725,31 @@ describe("Feature Flags", () => {
       const result = await mixpanel.flags.getAllVariants();
 
       expect(mockNativeModule.getAllVariants).toHaveBeenCalledWith(testToken);
-      expect(result).toEqual(variants);
-      expect(result["feature-1"].variant_source).toBe("network");
-      expect(result["feature-2"].persisted_at_in_ms).toBe(1717689600000);
+      expect(result).toBeInstanceOf(Map);
+      expect(result.size).toBe(2);
+      expect(result.get("feature-1").variant_source).toBe("network");
+      expect(result.get("feature-2").persisted_at_in_ms).toBe(1717689600000);
     });
 
-    it("returns empty object when native returns null", async () => {
+    it("returns empty Map when native returns null", async () => {
       mockNativeModule.getAllVariants.mockResolvedValueOnce(null);
       const result = await mixpanel.flags.getAllVariants();
-      expect(result || {}).toEqual({});
+      expect(result).toBeInstanceOf(Map);
+      expect(result.size).toBe(0);
     });
 
-    it("returns empty object when native returns an empty map", async () => {
+    it("returns empty Map when native returns an empty map", async () => {
       mockNativeModule.getAllVariants.mockResolvedValueOnce({});
       const result = await mixpanel.flags.getAllVariants();
-      expect(result).toEqual({});
+      expect(result).toBeInstanceOf(Map);
+      expect(result.size).toBe(0);
     });
 
-    it("resolves with an empty object when the native call rejects", async () => {
+    it("resolves with an empty Map when the native call rejects", async () => {
       mockNativeModule.getAllVariants.mockRejectedValueOnce(new Error("boom"));
       const result = await mixpanel.flags.getAllVariants();
-      expect(result).toEqual({});
+      expect(result).toBeInstanceOf(Map);
+      expect(result.size).toBe(0);
     });
 
     it("supports the callback form", async () => {
@@ -755,7 +759,8 @@ describe("Feature Flags", () => {
       const seen = await new Promise((resolve) => {
         mixpanel.flags.getAllVariants(resolve);
       });
-      expect(seen).toEqual({ a: { key: "v", value: 1 } });
+      expect(seen).toBeInstanceOf(Map);
+      expect(seen.get("a")).toEqual({ key: "v", value: 1 });
     });
 
     it("getAllVariantsSync passes through the blocking native call", () => {
@@ -764,12 +769,15 @@ describe("Feature Flags", () => {
       });
       const result = mixpanel.flags.getAllVariantsSync();
       expect(mockNativeModule.getAllVariantsSync).toHaveBeenCalledWith(testToken);
-      expect(result["feature-x"].value).toBe(1);
+      expect(result).toBeInstanceOf(Map);
+      expect(result.get("feature-x").value).toBe(1);
     });
 
-    it("getAllVariantsSync coerces a null native return to {}", () => {
+    it("getAllVariantsSync coerces a null native return to an empty Map", () => {
       mockNativeModule.getAllVariantsSync.mockReturnValueOnce(null);
-      expect(mixpanel.flags.getAllVariantsSync()).toEqual({});
+      const result = mixpanel.flags.getAllVariantsSync();
+      expect(result).toBeInstanceOf(Map);
+      expect(result.size).toBe(0);
     });
   });
 
@@ -807,14 +815,17 @@ describe("Feature Flags", () => {
       await jsMixpanel.flags.loadFlags();
 
       const all = await jsMixpanel.flags.getAllVariants();
-      expect(Object.keys(all).sort()).toEqual(["alpha", "beta"]);
-      expect(all.alpha.value).toBe(true);
-      expect(all.alpha.variant_source).toBe("network");
+      expect(all).toBeInstanceOf(Map);
+      expect(Array.from(all.keys()).sort()).toEqual(["alpha", "beta"]);
+      expect(all.get("alpha").value).toBe(true);
+      expect(all.get("alpha").variant_source).toBe("network");
     });
 
-    it("getAllVariantsSync returns {} when no flags are loaded yet", () => {
+    it("getAllVariantsSync returns an empty Map when no flags are loaded yet", () => {
       jsMixpanel = new Mixpanel(jsToken, false, false, mockStorage);
-      expect(jsMixpanel.flags.getAllVariantsSync()).toEqual({});
+      const all = jsMixpanel.flags.getAllVariantsSync();
+      expect(all).toBeInstanceOf(Map);
+      expect(all.size).toBe(0);
     });
   });
 
@@ -959,7 +970,7 @@ describe("Feature Flags", () => {
       expect(variant.value).toBe("refreshed");
     });
 
-    it("async getAllVariants returns empty object when stale and no fetch is in flight", async () => {
+    it("async getAllVariants returns empty Map when stale and no fetch is in flight", async () => {
       global.fetch.mockResolvedValueOnce({
         status: 200,
         json: () =>
@@ -980,7 +991,8 @@ describe("Feature Flags", () => {
 
       const all = await jsMixpanel.flags.getAllVariants();
       expect(global.fetch).not.toHaveBeenCalled();
-      expect(all).toEqual({});
+      expect(all).toBeInstanceOf(Map);
+      expect(all.size).toBe(0);
     });
 
     it("sync getters continue to return fallback / empty when in-memory state is stale", async () => {
@@ -1005,7 +1017,9 @@ describe("Feature Flags", () => {
       expect(variant.value).toBe("fallback");
       expect(variant.variant_source).toBe("fallback");
 
-      expect(jsMixpanel.flags.getAllVariantsSync()).toEqual({});
+      const all = jsMixpanel.flags.getAllVariantsSync();
+      expect(all).toBeInstanceOf(Map);
+      expect(all.size).toBe(0);
     });
   });
 

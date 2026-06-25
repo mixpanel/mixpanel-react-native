@@ -590,20 +590,20 @@ export class Flags {
   /**
    * Get all currently loaded feature flag variants asynchronously.
    *
-   * <p>Returns a map keyed by feature name. Honors the configured `variantLookupPolicy`:
+   * <p>Returns a Map keyed by feature name. Honors the configured `variantLookupPolicy`:
    * `persistenceUntilNetworkSuccess` may resolve with on-disk variants before the
    * first network fetch completes; `networkFirst` waits for the network and falls back
    * to persisted entries on failure; `networkOnly` always waits for the network.
    *
-   * <p>If no flags are loaded and a fetch fails, resolves with an empty object.
+   * <p>If no flags are loaded and a fetch fails, resolves with an empty Map.
    *
-   * @param {function} [callback] Optional callback receiving the variants map. If
+   * @param {function} [callback] Optional callback receiving the variants Map. If
    *     provided, the method returns void. Otherwise returns a Promise.
-   * @returns {Promise<Object<string, object>>|void}
+   * @returns {Promise<Map<string, object>>|void}
    *
    * @example
    * const all = await mixpanel.flags.getAllVariants();
-   * for (const [name, variant] of Object.entries(all)) {
+   * for (const [name, variant] of all) {
    *   console.log(name, variant.value, variant.variant_source);
    * }
    */
@@ -611,14 +611,17 @@ export class Flags {
     const run = (resolve) => {
       const handleError = (error) => {
         MixpanelLogger.error(this.token, "Failed to get all variants:", error);
-        resolve({});
+        resolve(new Map());
       };
       if (this.isNativeMode) {
-        this.mixpanelImpl.getAllVariants(this.token).then(resolve).catch(handleError);
+        this.mixpanelImpl
+          .getAllVariants(this.token)
+          .then((obj) => resolve(new Map(Object.entries(obj || {}))))
+          .catch(handleError);
       } else if (this.jsFlags) {
         this.jsFlags.getAllVariants().then(resolve).catch(handleError);
       } else {
-        resolve({});
+        resolve(new Map());
       }
     };
     if (typeof callback === 'function') {
@@ -631,25 +634,27 @@ export class Flags {
   /**
    * Get all currently loaded feature flag variants synchronously.
    *
-   * <p>Returns whatever is currently in memory. Returns an empty object if flags
+   * <p>Returns whatever is currently in memory. Returns an empty Map if flags
    * have not been loaded, or if a persisting policy holds variants whose TTL has
    * elapsed.
    *
-   * @returns {Object<string, object>} Map of feature name → variant object.
+   * @returns {Map<string, object>} Map of feature name → variant object.
    *
    * @example
    * if (mixpanel.flags.areFlagsReady()) {
    *   const all = mixpanel.flags.getAllVariantsSync();
-   *   console.log(`${Object.keys(all).length} flags loaded`);
+   *   console.log(`${all.size} flags loaded`);
    * }
    */
   getAllVariantsSync() {
     if (this.isNativeMode) {
-      return this.mixpanelImpl.getAllVariantsSync(this.token) || {};
+      return new Map(
+        Object.entries(this.mixpanelImpl.getAllVariantsSync(this.token) || {})
+      );
     } else if (this.jsFlags) {
       return this.jsFlags.getAllVariantsSync();
     }
-    return {};
+    return new Map();
   }
 
   /**

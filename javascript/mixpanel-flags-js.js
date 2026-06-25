@@ -207,6 +207,7 @@ export class MixpanelFlagsJS {
           });
         }
         this.flags = flags;
+        this.experimentTracked = new Set();
         this._loadedPersistedAtMs = null;
         this._loadedTtlMs = null;
         return this.persistence.save(context, this.flags).then(() => {
@@ -246,6 +247,7 @@ export class MixpanelFlagsJS {
     if (this.experimentTracked.has(featureName)) {
       return;
     }
+    this.experimentTracked.add(featureName);
 
     try {
       const properties = {
@@ -306,8 +308,8 @@ export class MixpanelFlagsJS {
         '$experiment_started',
         properties
       );
-      this.experimentTracked.add(featureName);
     } catch (error) {
+      this.experimentTracked.delete(featureName);
       MixpanelLogger.log(this.token, 'Error tracking experiment:', error);
     }
   }
@@ -368,32 +370,22 @@ export class MixpanelFlagsJS {
     await this.persistenceLoadedPromise;
 
     const policy = this.persistence.getPolicy();
-    if (policy === VariantLookupPolicy.PERSISTENCE_UNTIL_NETWORK_SUCCESS) {
-      if (this.areFlagsReady() && !this._loadedPersistenceIsStale()) {
-        return this.getVariantSync(featureName, fallback);
-      }
-      if (!this.fetchPromise) {
-        return withSource(fallback, FALLBACK_SOURCE);
-      }
-      try {
-        await this.fetchPromise;
-        return this.getVariantSync(featureName, fallback);
-      } catch (error) {
-        MixpanelLogger.error(this.token, 'Error awaiting fetch:', error);
-        return withSource(fallback, FALLBACK_SOURCE);
-      }
+    if (
+      policy === VariantLookupPolicy.PERSISTENCE_UNTIL_NETWORK_SUCCESS &&
+      this.areFlagsReady() &&
+      !this._loadedPersistenceIsStale()
+    ) {
+      return this.getVariantSync(featureName, fallback);
     }
 
-    if (!this.fetchPromise) {
-      return withSource(fallback, FALLBACK_SOURCE);
+    if (this.fetchPromise) {
+      try {
+        await this.fetchPromise;
+      } catch (error) {
+        MixpanelLogger.log(this.token, 'Error awaiting fetch:', error);
+      }
     }
-    try {
-      await this.fetchPromise;
-      return this.getVariantSync(featureName, fallback);
-    } catch (error) {
-      MixpanelLogger.error(this.token, 'Error awaiting fetch:', error);
-      return withSource(fallback, FALLBACK_SOURCE);
-    }
+    return this.getVariantSync(featureName, fallback);
   }
 
   async getVariantValue(featureName, fallbackValue) {
@@ -420,55 +412,37 @@ export class MixpanelFlagsJS {
   async getAllVariants() {
     if (!this.persistenceLoadedPromise) {
       MixpanelLogger.error(this.token, 'Feature Flags not initialized');
-      return {};
+      return new Map();
     }
     await this.persistenceLoadedPromise;
 
     const policy = this.persistence.getPolicy();
-    if (policy === VariantLookupPolicy.PERSISTENCE_UNTIL_NETWORK_SUCCESS) {
-      if (this.areFlagsReady() && !this._loadedPersistenceIsStale()) {
-        return this.getAllVariantsSync();
-      }
-      if (!this.fetchPromise) {
-        return {};
-      }
-      try {
-        await this.fetchPromise;
-        return this.getAllVariantsSync();
-      } catch (error) {
-        MixpanelLogger.error(this.token, 'Error awaiting fetch:', error);
-        return {};
-      }
+    if (
+      policy === VariantLookupPolicy.PERSISTENCE_UNTIL_NETWORK_SUCCESS &&
+      this.areFlagsReady() &&
+      !this._loadedPersistenceIsStale()
+    ) {
+      return this.getAllVariantsSync();
     }
 
-    if (!this.fetchPromise) {
-      return {};
+    if (this.fetchPromise) {
+      try {
+        await this.fetchPromise;
+      } catch (error) {
+        MixpanelLogger.log(this.token, 'Error awaiting fetch:', error);
+      }
     }
-    try {
-      await this.fetchPromise;
-      return this.getAllVariantsSync();
-    } catch (error) {
-      MixpanelLogger.error(this.token, 'Error awaiting fetch:', error);
-      return {};
-    }
+    return this.getAllVariantsSync();
   }
 
   getAllVariantsSync() {
     if (this._loadedPersistenceIsStale()) {
-      return {};
+      return new Map();
     }
     if (!this.areFlagsReady()) {
-      return {};
+      return new Map();
     }
-    return this._snapshotFlags();
-  }
-
-  _snapshotFlags() {
-    const out = {};
-    this.flags.forEach((variant, key) => {
-      out[key] = variant;
-    });
-    return out;
+    return new Map(this.flags);
   }
 
   /**

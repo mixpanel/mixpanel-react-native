@@ -635,10 +635,11 @@ export class Mixpanel {
       Useful for clearing data when a user logs out.
      */
   reset() {
-    this.mixpanelImpl.reset(this.token);
-    if (this._flags) {
-      this._flags.reset();
-    }
+    this.mixpanelImpl.reset(this.token).then(() => {
+      if (this._flags) {
+        this._flags.reset();
+      }
+    });
   }
 
   /**

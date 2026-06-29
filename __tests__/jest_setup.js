@@ -75,7 +75,7 @@ jest.doMock("react-native", () => {
           clearSuperProperties: jest.fn(),
           timeEvent: jest.fn(),
           eventElapsedTime: jest.fn(),
-          reset: jest.fn(),
+          reset: jest.fn().mockResolvedValue(undefined),
           getDistinctId: jest.fn(),
           getDeviceId: jest.fn(),
           set: jest.fn(),

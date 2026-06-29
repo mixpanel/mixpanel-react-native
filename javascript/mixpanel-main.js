@@ -219,12 +219,24 @@ export default class MixpanelMain {
     const deviceId = this.mixpanelPersistent.getDeviceId(token);
     await this.mixpanelPersistent.persistIdentity(token);
     await this.core.identifyUserQueue(token);
+
     await this.track(token, "$identify", {
       distinctId: newDistinctId,
       $user_id: newDistinctId,
       $anon_distinct_id: oldDistinctId,
       $device_id: deviceId,
     });
+
+    if (this._flagsJS) {
+      this._flagsJS._invalidateInFlightFetch();
+      this._flagsJS.loadFlags().catch(() => {
+        MixpanelLogger.log(
+          token,
+          `Failed to load flags for distinct Id ${newDistinctId}.`
+        );
+      });
+    }
+
   }
 
   async alias(token, alias, distinctId) {

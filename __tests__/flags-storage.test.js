@@ -39,7 +39,7 @@ describe("Feature Flags - JS-fallback Persistence (end-to-end)", () => {
         return Promise.resolve();
       }),
     };
-    global.fetch.mockClear();
+    global.fetch.mockReset();
   });
 
   afterEach(() => {

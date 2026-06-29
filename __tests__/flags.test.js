@@ -1063,6 +1063,7 @@ describe("Feature Flags", () => {
         },
       });
       await jsMixpanel.flags.loadFlags();
+      const originalDistinctId = await jsMixpanel.getDistinctId();
 
       mockStorage.removeItem.mockClear();
       global.fetch.mockClear();
@@ -1082,11 +1083,121 @@ describe("Feature Flags", () => {
         `persisted_variants_for_${jsToken}`
       );
       expect(global.fetch).toHaveBeenCalled();
+
+      // The post-reset fetch must use the rotated distinct_id, not the old one.
+      const fetchURL = global.fetch.mock.calls[0][0];
+      const contextParam = new URL(fetchURL).searchParams.get("context");
+      const fetchedContext = JSON.parse(contextParam);
+      expect(fetchedContext.distinct_id).toBeTruthy();
+      expect(fetchedContext.distinct_id).not.toBe(originalDistinctId);
+
       const variant = await jsMixpanel.flags.getVariant("reset_flag", {
         key: "x",
         value: null,
       });
       expect(variant.variant_source).toBe("network");
+    });
+
+    it("JS-fallback mode: post-reset loadFlags() starts a fresh fetch, not the in-flight one", async () => {
+      const jsToken = "js-reset-inflight-token";
+      const mockStorage = {
+        getItem: jest.fn().mockResolvedValue(null),
+        setItem: jest.fn().mockResolvedValue(undefined),
+        removeItem: jest.fn().mockResolvedValue(undefined),
+      };
+      global.fetch = jest.fn(
+        () =>
+          new Promise(() => {
+            /* never settles — keep first fetch in flight */
+          })
+      );
+
+      const jsMixpanel = new Mixpanel(jsToken, false, false, mockStorage);
+      await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, {
+        enabled: true,
+      });
+      void jsMixpanel.flags;
+      await new Promise((r) => setTimeout(r, 0));
+      const inFlightPromise = jsMixpanel.flags.jsFlags.fetchPromise;
+      expect(inFlightPromise).not.toBeNull();
+
+      jsMixpanel.reset();
+      await new Promise((r) => setTimeout(r, 0));
+
+      // After reset, calling loadFlags() must yield a fresh promise — not the
+      // pre-reset in-flight one (which mixpanel-js parity requires us to drop
+      // so the dedup gate doesn't keep returning it).
+      expect(jsMixpanel.flags.jsFlags.fetchPromise).not.toBe(inFlightPromise);
+    });
+  });
+
+  describe("identify (JS-fallback)", () => {
+    it("triggers a flag refetch under the new distinct_id", async () => {
+      const jsToken = "js-identify-token";
+      const mockStorage = {
+        getItem: jest.fn().mockResolvedValue(null),
+        setItem: jest.fn().mockResolvedValue(undefined),
+        removeItem: jest.fn().mockResolvedValue(undefined),
+      };
+      global.fetch = jest.fn().mockResolvedValue({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: { f: { variant_key: "v", variant_value: "x" } },
+          }),
+      });
+
+      const jsMixpanel = new Mixpanel(jsToken, false, false, mockStorage);
+      await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, {
+        enabled: true,
+      });
+      await jsMixpanel.flags.loadFlags();
+      await jsMixpanel.flags.jsFlags.persistenceLoadedPromise;
+      if (jsMixpanel.flags.jsFlags.fetchPromise) {
+        await jsMixpanel.flags.jsFlags.fetchPromise.catch(() => {});
+      }
+
+      global.fetch.mockClear();
+      await jsMixpanel.identify("brand-new-user");
+      await new Promise((r) => setTimeout(r, 10));
+
+      expect(global.fetch).toHaveBeenCalled();
+      const url = global.fetch.mock.calls[0][0];
+      const ctx = JSON.parse(new URL(url).searchParams.get("context"));
+      expect(ctx.distinct_id).toBe("brand-new-user");
+    });
+
+    it("does not refetch when distinct_id is unchanged", async () => {
+      const jsToken = "js-identify-noop-token";
+      const mockStorage = {
+        getItem: jest.fn().mockResolvedValue(null),
+        setItem: jest.fn().mockResolvedValue(undefined),
+        removeItem: jest.fn().mockResolvedValue(undefined),
+      };
+      global.fetch = jest.fn().mockResolvedValue({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: { f: { variant_key: "v", variant_value: "x" } },
+          }),
+      });
+
+      const jsMixpanel = new Mixpanel(jsToken, false, false, mockStorage);
+      await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, {
+        enabled: true,
+      });
+      await jsMixpanel.flags.loadFlags();
+      await jsMixpanel.flags.jsFlags.persistenceLoadedPromise;
+      if (jsMixpanel.flags.jsFlags.fetchPromise) {
+        await jsMixpanel.flags.jsFlags.fetchPromise.catch(() => {});
+      }
+      const sameId = await jsMixpanel.getDistinctId();
+
+      global.fetch.mockClear();
+      await jsMixpanel.identify(sameId);
+      await new Promise((r) => setTimeout(r, 10));
+
+      expect(global.fetch).not.toHaveBeenCalled();
     });
   });
 

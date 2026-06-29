@@ -13,10 +13,10 @@ const NETWORK_SOURCE = 'network';
 const FALLBACK_SOURCE = 'fallback';
 
 function withSource(variant, source, extras) {
-  if (!variant || typeof variant !== 'object') {
-    return variant;
-  }
-  const stamped = { ...variant, variant_source: source };
+  const stamped =
+    variant !== null && typeof variant === 'object'
+      ? { ...variant, variant_source: source }
+      : { value: variant, variant_source: source };
   if (extras) {
     Object.assign(stamped, extras);
   }
@@ -97,7 +97,7 @@ export class MixpanelFlagsJS {
       });
 
     return this.persistenceLoadedPromise
-      .then(() => this.fetchFlags())
+      .then(() => this.loadFlags())
       .catch((error) => {
         MixpanelLogger.log(
           this.token,
@@ -123,34 +123,14 @@ export class MixpanelFlagsJS {
   }
 
   /**
-   * Generate W3C traceparent header. Format: 00-{traceID}-{parentID}-{flags}
-   * Returns null if UUID generation fails (graceful degradation).
+   * Generate W3C traceparent header. Format: 00-{traceID}-{parentID}-{flags}.
+   * Callers wrap in try/catch; this method does not — failures bubble.
    */
   generateTraceparent() {
-    try {
-      // Try expo-crypto first
-      const crypto = require('expo-crypto');
-      const traceID = crypto.randomUUID().replace(/-/g, '');
-      const parentID = crypto.randomUUID().replace(/-/g, '').substring(0, 16);
-      return `00-${traceID}-${parentID}-01`;
-    } catch (expoCryptoError) {
-      try {
-        // Fallback to uuid (import the v4 function directly)
-        const { v4: uuidv4 } = require('uuid');
-        const traceID = uuidv4().replace(/-/g, '');
-        const parentID = uuidv4().replace(/-/g, '').substring(0, 16);
-        return `00-${traceID}-${parentID}-01`;
-      } catch (uuidError) {
-        // Graceful degradation: traceparent is optional for observability
-        // Don't block flag loading if UUID generation fails
-        MixpanelLogger.log(
-          this.token,
-          'Could not generate traceparent (UUID unavailable):',
-          uuidError
-        );
-        return null;
-      }
-    }
+    const uuidv4 = require('uuid/v4');
+    const traceID = uuidv4().replace(/-/g, '');
+    const parentID = uuidv4().replace(/-/g, '').substring(0, 16);
+    return `00-${traceID}-${parentID}-01`;
   }
 
   markFetchComplete() {
@@ -344,27 +324,26 @@ export class MixpanelFlagsJS {
     this.experimentTracked.add(featureName);
 
     try {
+      const fetchStartTime =
+        this._fetchCompleteTime != null
+          ? this._fetchCompleteTime - (this._fetchLatency || 0)
+          : null;
       const properties = {
         'Experiment name': featureName,
         'Variant name': variant.key,
         $experiment_type: 'feature_flag',
+        'Variant fetch start time':
+          fetchStartTime != null
+            ? new Date(fetchStartTime).toISOString()
+            : null,
+        'Variant fetch complete time':
+          this._fetchCompleteTime != null
+            ? new Date(this._fetchCompleteTime).toISOString()
+            : null,
+        'Variant fetch latency (ms)':
+          this._fetchLatency != null ? this._fetchLatency : null,
+        'Variant fetch traceparent': this._traceparent || null,
       };
-
-      if (this._fetchCompleteTime) {
-        const fetchStartTime =
-          this._fetchCompleteTime - (this._fetchLatency || 0);
-        properties['Variant fetch start time'] = new Date(
-          fetchStartTime
-        ).toISOString();
-        properties['Variant fetch complete time'] = new Date(
-          this._fetchCompleteTime
-        ).toISOString();
-        properties['Variant fetch latency (ms)'] = this._fetchLatency || 0;
-      }
-
-      if (this._traceparent) {
-        properties['Variant fetch traceparent'] = this._traceparent;
-      }
 
       if (
         variant.experiment_id !== undefined &&
@@ -568,6 +547,16 @@ export class MixpanelFlagsJS {
     MixpanelLogger.log(this.token, 'Context updated, flags reloaded');
   }
 
+  /**
+   * Discard any in-flight fetch so subsequent loadFlags() starts fresh under
+   * the current identity. Used by reset() and by identify() flows that need
+   * to abandon a fetch keyed under a stale identity.
+   */
+  _invalidateInFlightFetch() {
+    this.fetchPromise = null;
+    this._fetchStartTime = null;
+  }
+
   /** Clear all flag state and trigger a fresh fetch under the new identity. */
   async reset() {
     this.flags = null;
@@ -576,26 +565,12 @@ export class MixpanelFlagsJS {
     this.activatedFirstTimeEvents = {};
     this._loadedPersistedAtMs = null;
     this._loadedTtlMs = null;
+    this._invalidateInFlightFetch();
     try {
       await this.persistence.clear();
       await this.loadFlags();
     } catch (error) {
       MixpanelLogger.log(this.token, 'Error during flags reset:', error);
-    }
-  }
-
-  /** Discard in-memory and persisted variants. */
-  async clearCache() {
-    try {
-      await this.persistence.clear();
-      this.flags = null;
-      this.experimentTracked.clear();
-      this.pendingFirstTimeEvents = {};
-      this.activatedFirstTimeEvents = {};
-      this._loadedPersistedAtMs = null;
-      this._loadedTtlMs = null;
-    } catch (error) {
-      MixpanelLogger.log(this.token, 'Error clearing flag cache:', error);
     }
   }
 

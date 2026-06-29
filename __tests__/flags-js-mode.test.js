@@ -137,7 +137,8 @@ describe('Feature Flags - JavaScript Mode', () => {
 
       it('should return fallback from getVariant', async () => {
         const variant = await mixpanel.flags.getVariant('async-test', 'async-fallback');
-        expect(variant).toBe('async-fallback');
+        // Primitive fallbacks are wrapped to match mixpanel-js parity.
+        expect(variant).toEqual({ value: 'async-fallback', variant_source: 'fallback' });
       });
 
       it('should return fallback from getVariantValue', async () => {
@@ -152,7 +153,8 @@ describe('Feature Flags - JavaScript Mode', () => {
 
       it('should support callback pattern', (done) => {
         mixpanel.flags.getVariant('callback-test', 'callback-fallback', (variant) => {
-          expect(variant).toBe('callback-fallback');
+          // Primitive fallbacks are wrapped to match mixpanel-js parity.
+          expect(variant).toEqual({ value: 'callback-fallback', variant_source: 'fallback' });
           done();
         });
       });

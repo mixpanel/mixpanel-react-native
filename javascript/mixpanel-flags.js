@@ -587,26 +587,7 @@ export class Flags {
     });
   }
 
-  /**
-   * Get all currently loaded feature flag variants asynchronously.
-   *
-   * <p>Returns a Map keyed by feature name. Honors the configured `variantLookupPolicy`:
-   * `persistenceUntilNetworkSuccess` may resolve with on-disk variants before the
-   * first network fetch completes; `networkFirst` waits for the network and falls back
-   * to persisted entries on failure; `networkOnly` always waits for the network.
-   *
-   * <p>If no flags are loaded and a fetch fails, resolves with an empty Map.
-   *
-   * @param {function} [callback] Optional callback receiving the variants Map. If
-   *     provided, the method returns void. Otherwise returns a Promise.
-   * @returns {Promise<Map<string, object>>|void}
-   *
-   * @example
-   * const all = await mixpanel.flags.getAllVariants();
-   * for (const [name, variant] of all) {
-   *   console.log(name, variant.value, variant.variant_source);
-   * }
-   */
+  /** Get all loaded variants as a Map keyed by feature name. Resolves to an empty Map on failure. */
   getAllVariants(callback) {
     const run = (resolve) => {
       const handleError = (error) => {
@@ -631,21 +612,7 @@ export class Flags {
     return new Promise(run);
   }
 
-  /**
-   * Get all currently loaded feature flag variants synchronously.
-   *
-   * <p>Returns whatever is currently in memory. Returns an empty Map if flags
-   * have not been loaded, or if a persisting policy holds variants whose TTL has
-   * elapsed.
-   *
-   * @returns {Map<string, object>} Map of feature name → variant object.
-   *
-   * @example
-   * if (mixpanel.flags.areFlagsReady()) {
-   *   const all = mixpanel.flags.getAllVariantsSync();
-   *   console.log(`${all.size} flags loaded`);
-   * }
-   */
+  /** Synchronous variant of {@link getAllVariants}; returns whatever is in memory. */
   getAllVariantsSync() {
     if (this.isNativeMode) {
       return new Map(
@@ -658,29 +625,9 @@ export class Flags {
   }
 
   /**
-   * Update the context used for feature flag evaluation.
-   *
-   * <p>Context properties are used to determine which feature flag variants a user should receive
-   * based on targeting rules configured in your Mixpanel project. This allows for personalized
-   * feature experiences based on user attributes, device properties, or custom criteria.
-   *
-   * <p>By default, the new context properties are merged with existing context. Set
-   * <code>options.replace = true</code> to completely replace the context instead.
-   *
-   * <p>Native iOS/Android (Mixpanel-swift 6.4+ / mixpanel-android 8.8+) accept context
-   * updates via the new `setContext` API; JavaScript mode re-fetches flags with the
-   * updated context and writes through the persistence layer.
-   *
-   * @param {object} newContext New context properties to add or update
-   * @param {object} [options={replace: false}] If true, replaces the entire context;
-   *     otherwise merges with existing.
-   * @returns {Promise<void>}
-   *
-   * @example
-   * await mixpanel.flags.updateContext({ user_tier: 'premium', region: 'us-west' });
-   *
-   * @example
-   * await mixpanel.flags.updateContext({ device_type: 'tablet' }, { replace: true });
+   * Update the context used for feature flag evaluation. Merges by default; pass
+   * `{ replace: true }` to overwrite. Requires Mixpanel-swift 6.4+ / mixpanel-android 8.8+
+   * on native.
    */
   async updateContext(newContext, options = { replace: false }) {
     if (this.isNativeMode) {
@@ -696,13 +643,8 @@ export class Flags {
   }
 
   /**
-   * Notify the flags system that a user event was tracked. If any pending
-   * first-time event matches, the corresponding flag's variant is switched
-   * to the pending variant and the activation is recorded with the server.
-   *
-   * <p>Native mode is a no-op — the iOS/Android SDKs handle first-time event
-   * activation internally on their own track() path. JS-fallback mode
-   * delegates to the in-memory subsystem.
+   * Notify the flags system of a tracked event so any matching first-time-event
+   * activations are recorded. No-op on native (handled by the iOS/Android SDKs).
    */
   checkFirstTimeEvents(eventName, properties) {
     if (this.isNativeMode) {

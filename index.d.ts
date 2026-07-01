@@ -9,6 +9,8 @@ export type MixpanelAsyncStorage = {
 
 export type VariantSource = "network" | "persistence" | "fallback";
 
+export type FallbackReason = "FLAG_NOT_FOUND" | "NOT_READY" | "BACKEND_ERROR";
+
 export interface MixpanelFlagVariant {
   key: string;
   value: any;
@@ -16,6 +18,7 @@ export interface MixpanelFlagVariant {
   is_experiment_active?: boolean;
   is_qa_tester?: boolean;
   variant_source?: VariantSource;
+  fallback_reason?: FallbackReason;
   persisted_at_in_ms?: number;
 }
 

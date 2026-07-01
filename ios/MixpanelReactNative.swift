@@ -668,7 +668,6 @@ open class MixpanelReactNative: NSObject {
     @objc
     func updateFlagsContext(_ token: String,
                             context: [String: Any],
-                            options: [String: Any]?,
                             resolver resolve: @escaping RCTPromiseResolveBlock,
                             rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
         guard let instance = MixpanelReactNative.getMixpanelInstance(token),

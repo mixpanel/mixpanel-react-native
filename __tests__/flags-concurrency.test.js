@@ -172,15 +172,18 @@ describe("Feature Flags - Concurrency", () => {
       await mixpanel.flags.whenReady();
       const fetchesAfterInit = fetchCallCount;
 
-      // Update context multiple times concurrently — concurrent calls share the
-      // in-flight fetch, so all three settle against the same network call.
+      // Update context multiple times concurrently. Each call mutates the
+      // context, invalidates any in-flight fetch, and starts a fresh fetch
+      // under the just-updated context — otherwise the second and third
+      // callers would await the first fetch (built with a stale context)
+      // and silently receive flags for the wrong targeting.
       const update1 = mixpanel.flags.updateContext({ plan: "free" });
       const update2 = mixpanel.flags.updateContext({ plan: "premium" });
       const update3 = mixpanel.flags.updateContext({ plan: "enterprise" });
 
       await Promise.all([update1, update2, update3]);
 
-      expect(fetchCallCount).toBe(fetchesAfterInit + 1);
+      expect(fetchCallCount).toBe(fetchesAfterInit + 3);
       expect(mixpanel.flags.areFlagsReady()).toBe(true);
     });
 

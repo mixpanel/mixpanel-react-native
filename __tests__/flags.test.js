@@ -1213,18 +1213,16 @@ describe("Feature Flags", () => {
       await mixpanel.flags.updateContext({ user_tier: "premium" });
       expect(mockNativeModule.updateFlagsContext).toHaveBeenCalledWith(
         testToken,
-        { user_tier: "premium" },
-        { replace: false }
+        { user_tier: "premium" }
       );
     });
 
-    it("forwards options.replace to the native bridge", async () => {
+    it("does not forward options to the native bridge (native ignores replace)", async () => {
       mockNativeModule.updateFlagsContext.mockResolvedValueOnce(undefined);
       await mixpanel.flags.updateContext({ tier: "trial" }, { replace: true });
       expect(mockNativeModule.updateFlagsContext).toHaveBeenCalledWith(
         testToken,
-        { tier: "trial" },
-        { replace: true }
+        { tier: "trial" }
       );
     });
 
@@ -1233,8 +1231,7 @@ describe("Feature Flags", () => {
       await mixpanel.flags.update_context({ user_tier: "premium" });
       expect(mockNativeModule.updateFlagsContext).toHaveBeenCalledWith(
         testToken,
-        { user_tier: "premium" },
-        { replace: false }
+        { user_tier: "premium" }
       );
     });
 

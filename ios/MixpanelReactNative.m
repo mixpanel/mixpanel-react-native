@@ -127,6 +127,6 @@ RCT_EXTERN_METHOD(getAllVariants:(NSString *)token resolver:(RCTPromiseResolveBl
 
 RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(getAllVariantsSync:(NSString *)token)
 
-RCT_EXTERN_METHOD(updateFlagsContext:(NSString *)token context:(NSDictionary *)context options:(NSDictionary *)options resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(updateFlagsContext:(NSString *)token context:(NSDictionary *)context resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
 @end

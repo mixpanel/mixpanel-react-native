@@ -625,16 +625,19 @@ export class Flags {
   }
 
   /**
-   * Update the context used for feature flag evaluation. Merges by default; pass
-   * `{ replace: true }` to overwrite. Requires Mixpanel-swift 6.4+ / mixpanel-android 8.8+
-   * on native.
+   * Update the context used for feature flag evaluation.
+   *
+   * In JavaScript mode, `options.replace` controls merge vs. replace semantics
+   * (merge by default). In native mode, the underlying iOS/Android SDKs always
+   * merge context and do not currently expose a replace toggle, so `options` is
+   * accepted for forward compatibility but ignored — not forwarded across the
+   * bridge. Requires Mixpanel-swift 6.4+ / mixpanel-android 8.8+ on native.
    */
   async updateContext(newContext, options = { replace: false }) {
     if (this.isNativeMode) {
       return await this.mixpanelImpl.updateFlagsContext(
         this.token,
-        newContext || {},
-        options || {}
+        newContext || {}
       );
     } else if (this.jsFlags) {
       return await this.jsFlags.updateContext(newContext, options);

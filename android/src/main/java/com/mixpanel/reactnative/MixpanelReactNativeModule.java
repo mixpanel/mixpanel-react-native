@@ -889,7 +889,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void updateFlagsContext(final String token, ReadableMap context, ReadableMap options, final Promise promise) {
+    public void updateFlagsContext(final String token, ReadableMap context, final Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         if (instance == null) {
             promise.resolve(null);

@@ -538,6 +538,10 @@ export class MixpanelFlagsJS {
     this.pendingFirstTimeEvents = {};
     this.activatedFirstTimeEvents = {};
 
+    // Any in-flight fetch was built under the previous context; discard it so
+    // loadFlags() below issues a fresh request under the updated context.
+    this._invalidateInFlightFetch();
+
     try {
       await this.loadFlags();
     } catch (error) {

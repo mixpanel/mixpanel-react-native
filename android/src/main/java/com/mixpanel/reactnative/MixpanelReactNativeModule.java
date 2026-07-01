@@ -979,8 +979,21 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
                 map.putDouble("persisted_at_in_ms", (double) persistedAtMillis);
             } else if (variant.source instanceof MixpanelFlagVariant.Source.Network) {
                 map.putString("variant_source", "network");
-            } else {
+            } else if (variant.source instanceof MixpanelFlagVariant.Source.Fallback) {
                 map.putString("variant_source", "fallback");
+                MixpanelFlagVariant.Source.Fallback fallbackSource =
+                    (MixpanelFlagVariant.Source.Fallback) variant.source;
+                switch (fallbackSource.reason) {
+                    case FLAG_NOT_FOUND:
+                        map.putString("fallback_reason", "FLAG_NOT_FOUND");
+                        break;
+                    case NOT_READY:
+                        map.putString("fallback_reason", "NOT_READY");
+                        break;
+                    case BACKEND_ERROR:
+                        map.putString("fallback_reason", "BACKEND_ERROR");
+                        break;
+                }
             }
         }
 

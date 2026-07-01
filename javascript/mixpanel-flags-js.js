@@ -12,15 +12,24 @@ import packageJson from 'mixpanel-react-native/package.json';
 const NETWORK_SOURCE = 'network';
 const FALLBACK_SOURCE = 'fallback';
 
-function withSource(variant, source, extras) {
-  const stamped =
-    variant !== null && typeof variant === 'object'
-      ? { ...variant, variant_source: source }
-      : { value: variant, variant_source: source };
-  if (extras) {
-    Object.assign(stamped, extras);
+// Fallback reasons surfaced via a NEW `fallback_reason` field on the returned
+// variant. `variant_source` stays as the coarse 'network' | 'persistence' |
+// 'fallback' values — adding a sibling field rather than extending the
+// existing one keeps every consumer of the published type working unchanged.
+// Values match mixpanel-js so the OpenFeature wrapper dispatch is consistent
+// across SDKs.
+const FALLBACK_REASON_FLAG_NOT_FOUND = 'FLAG_NOT_FOUND';
+const FALLBACK_REASON_NOT_READY = 'NOT_READY';
+const FALLBACK_REASON_BACKEND_ERROR = 'BACKEND_ERROR';
+
+function withSource(variant, source, reason) {
+  const extras = { variant_source: source };
+  if (reason) {
+    extras.fallback_reason = reason;
   }
-  return stamped;
+  return variant !== null && typeof variant === 'object'
+    ? { ...variant, ...extras }
+    : { value: variant, ...extras };
 }
 
 function getPendingEventKey(flagKey, firstTimeEventHash) {
@@ -393,15 +402,15 @@ export class MixpanelFlagsJS {
         this.token,
         `Loaded persisted variants are past TTL so returning fallback for "${featureName}"`
       );
-      return withSource(fallback, FALLBACK_SOURCE);
+      return withSource(fallback, FALLBACK_SOURCE, FALLBACK_REASON_NOT_READY);
     }
     if (!this.areFlagsReady()) {
       MixpanelLogger.log(this.token, 'Flags not loaded yet');
-      return withSource(fallback, FALLBACK_SOURCE);
+      return withSource(fallback, FALLBACK_SOURCE, FALLBACK_REASON_NOT_READY);
     }
     if (!this.flags.has(featureName)) {
       MixpanelLogger.log(this.token, `No flag found: "${featureName}"`);
-      return withSource(fallback, FALLBACK_SOURCE);
+      return withSource(fallback, FALLBACK_SOURCE, FALLBACK_REASON_FLAG_NOT_FOUND);
     }
 
     const variant = this.flags.get(featureName);
@@ -438,7 +447,7 @@ export class MixpanelFlagsJS {
   async getVariant(featureName, fallback) {
     if (!this.persistenceLoadedPromise) {
       MixpanelLogger.error(this.token, 'Feature Flags not initialized');
-      return withSource(fallback, FALLBACK_SOURCE);
+      return withSource(fallback, FALLBACK_SOURCE, FALLBACK_REASON_NOT_READY);
     }
     await this.persistenceLoadedPromise;
 
@@ -454,11 +463,20 @@ export class MixpanelFlagsJS {
     if (this.fetchPromise) {
       try {
         await this.fetchPromise;
+        return this.getVariantSync(featureName, fallback);
       } catch (error) {
         MixpanelLogger.log(this.token, 'Error awaiting fetch:', error);
+        // If the fetch failure still left usable state (e.g. persistence hit
+        // under a different policy), serve from cache. Otherwise stamp
+        // BACKEND_ERROR so callers can distinguish "backend is down" from
+        // "flags never loaded".
+        return this.areFlagsReady()
+          ? this.getVariantSync(featureName, fallback)
+          : withSource(fallback, FALLBACK_SOURCE, FALLBACK_REASON_BACKEND_ERROR);
       }
     }
-    return this.getVariantSync(featureName, fallback);
+    // No fetch in flight and no ready state to serve from.
+    return withSource(fallback, FALLBACK_SOURCE, FALLBACK_REASON_NOT_READY);
   }
 
   async getVariantValue(featureName, fallbackValue) {

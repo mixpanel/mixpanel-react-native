@@ -138,7 +138,12 @@ describe('Feature Flags - JavaScript Mode', () => {
       it('should return fallback from getVariant', async () => {
         const variant = await mixpanel.flags.getVariant('async-test', 'async-fallback');
         // Primitive fallbacks are wrapped to match mixpanel-js parity.
-        expect(variant).toEqual({ value: 'async-fallback', variant_source: 'fallback' });
+        // Test's fetch mock returns 404 → fetch rejects, no cache → BACKEND_ERROR.
+        expect(variant).toEqual({
+          value: 'async-fallback',
+          variant_source: 'fallback',
+          fallback_reason: 'BACKEND_ERROR',
+        });
       });
 
       it('should return fallback from getVariantValue', async () => {
@@ -154,7 +159,12 @@ describe('Feature Flags - JavaScript Mode', () => {
       it('should support callback pattern', (done) => {
         mixpanel.flags.getVariant('callback-test', 'callback-fallback', (variant) => {
           // Primitive fallbacks are wrapped to match mixpanel-js parity.
-          expect(variant).toEqual({ value: 'callback-fallback', variant_source: 'fallback' });
+          // Same 404 fetch mock → BACKEND_ERROR.
+          expect(variant).toEqual({
+            value: 'callback-fallback',
+            variant_source: 'fallback',
+            fallback_reason: 'BACKEND_ERROR',
+          });
           done();
         });
       });

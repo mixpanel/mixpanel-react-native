@@ -936,6 +936,8 @@ describe("Feature Flags", () => {
       expect(global.fetch).not.toHaveBeenCalled();
       expect(variant.value).toBe("fallback-value");
       expect(variant.variant_source).toBe("fallback");
+      // Persistence-stale path stamps NOT_READY (mirrors mixpanel-js).
+      expect(variant.fallback_reason).toBe("NOT_READY");
     });
 
     it("async getVariant serves the refresh after a caller invokes loadFlags()", async () => {
@@ -1016,6 +1018,8 @@ describe("Feature Flags", () => {
       const variant = jsMixpanel.flags.getVariantSync("f", { key: "x", value: "fallback" });
       expect(variant.value).toBe("fallback");
       expect(variant.variant_source).toBe("fallback");
+      // Persistence-stale path stamps NOT_READY (mirrors mixpanel-js).
+      expect(variant.fallback_reason).toBe("NOT_READY");
 
       const all = jsMixpanel.flags.getAllVariantsSync();
       expect(all).toBeInstanceOf(Map);
@@ -1198,6 +1202,74 @@ describe("Feature Flags", () => {
       await new Promise((r) => setTimeout(r, 10));
 
       expect(global.fetch).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("fallback_reason (JS-fallback)", () => {
+    const mockStorage = () => ({
+      getItem: jest.fn().mockResolvedValue(null),
+      setItem: jest.fn().mockResolvedValue(undefined),
+      removeItem: jest.fn().mockResolvedValue(undefined),
+    });
+
+    it("getVariantSync stamps NOT_READY before flags have loaded", () => {
+      const storage = mockStorage();
+      global.fetch = jest.fn(
+        () => new Promise(() => {})
+      );
+      const jsMixpanel = new Mixpanel("js-reason-not-ready", false, false, storage);
+      // Init started; flags not yet ready.
+      jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+      void jsMixpanel.flags;
+
+      const variant = jsMixpanel.flags.jsFlags.getVariantSync("anything", {
+        key: "x",
+        value: "fb",
+      });
+      expect(variant.variant_source).toBe("fallback");
+      expect(variant.fallback_reason).toBe("NOT_READY");
+    });
+
+    it("getVariantSync stamps FLAG_NOT_FOUND when key is absent from the loaded set", async () => {
+      const storage = mockStorage();
+      global.fetch = jest.fn().mockResolvedValue({
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            flags: { present: { variant_key: "k", variant_value: "v" } },
+          }),
+      });
+      const jsMixpanel = new Mixpanel("js-reason-flag-not-found", false, false, storage);
+      await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, {
+        enabled: true,
+      });
+      await jsMixpanel.flags.loadFlags();
+
+      const variant = jsMixpanel.flags.jsFlags.getVariantSync("absent", {
+        key: "x",
+        value: "fb",
+      });
+      expect(variant.variant_source).toBe("fallback");
+      expect(variant.fallback_reason).toBe("FLAG_NOT_FOUND");
+    });
+
+    it("getVariant (async) stamps BACKEND_ERROR when fetch fails with no cache", async () => {
+      const storage = mockStorage();
+      global.fetch = jest.fn().mockRejectedValue(new Error("offline"));
+      const jsMixpanel = new Mixpanel("js-reason-backend-error", false, false, storage);
+      await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, {
+        enabled: true,
+      });
+      // Force init's loadFlags to attempt and fail so this.fetchPromise
+      // exists but this.flags stays null.
+      await jsMixpanel.flags.loadFlags().catch(() => {});
+
+      const variant = await jsMixpanel.flags.jsFlags.getVariant("anything", {
+        key: "x",
+        value: "fb",
+      });
+      expect(variant.variant_source).toBe("fallback");
+      expect(variant.fallback_reason).toBe("BACKEND_ERROR");
     });
   });
 

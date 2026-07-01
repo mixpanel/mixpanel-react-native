@@ -164,7 +164,8 @@ describe("Feature Flags - Network Operations", () => {
 
       expect(mixpanel.flags.areFlagsReady()).toBe(false);
       const variant = mixpanel.flags.getVariantSync("any-flag", "fallback");
-      expect(variant).toBe("fallback");
+      expect(variant.value).toBe("fallback");
+      expect(variant.variant_source).toBe("fallback");
     });
 
     it("should handle network timeout errors", async () => {

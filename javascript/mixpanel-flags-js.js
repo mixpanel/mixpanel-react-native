@@ -216,6 +216,11 @@ export class MixpanelFlagsJS {
       headers: authHeaders,
     })
       .then((response) => {
+        // Abandoned by _invalidateInFlightFetch() (reset/updateContext/
+        // identify). Discard so this fetch can't overwrite fresh state.
+        if (this._fetchStartTime === null) {
+          return;
+        }
         this.markFetchComplete();
 
         if (!response || !response.flags) {
@@ -309,6 +314,7 @@ export class MixpanelFlagsJS {
   }
 
   areFlagsReady() {
+    if (this._loadedPersistenceIsStale()) return false;
     return !!this.flags;
   }
 

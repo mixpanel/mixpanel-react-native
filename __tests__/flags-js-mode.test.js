@@ -106,7 +106,8 @@ describe('Feature Flags - JavaScript Mode', () => {
 
       it('should return fallback from getVariantSync', () => {
         const variant = mixpanel.flags.getVariantSync('test-flag', 'fallback-value');
-        expect(variant).toBe('fallback-value');
+        expect(variant.value).toBe('fallback-value');
+        expect(variant.variant_source).toBe('fallback');
       });
 
       it('should return fallback from getVariantValueSync', () => {
@@ -208,7 +209,8 @@ describe('Feature Flags - JavaScript Mode', () => {
     it('should handle null feature names gracefully', () => {
       expect(() => mixpanel.flags.getVariantSync(null, 'fallback')).not.toThrow();
       const result = mixpanel.flags.getVariantSync(null, 'fallback');
-      expect(result).toBe('fallback');
+      expect(result.value).toBe('fallback');
+      expect(result.variant_source).toBe('fallback');
     });
 
     it('should handle undefined callbacks', async () => {

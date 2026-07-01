@@ -201,13 +201,10 @@ export class Flags {
    * @see getVariantValueSync to get only the value (not the full variant object)
    */
   getVariantSync(featureName, fallback) {
-    if (!this.areFlagsReady()) {
-      return fallback;
-    }
-
     if (this.isNativeMode) {
       return this.mixpanelImpl.getVariantSync(this.token, featureName, fallback);
-    } else if (this.jsFlags) {
+    }
+    if (this.jsFlags) {
       return this.jsFlags.getVariantSync(featureName, fallback);
     }
     return fallback;
@@ -255,10 +252,6 @@ export class Flags {
    * @see getVariantSync to get the full variant object including key and metadata
    */
   getVariantValueSync(featureName, fallbackValue) {
-    if (!this.areFlagsReady()) {
-      return fallbackValue;
-    }
-
     if (this.isNativeMode) {
       // Android returns a wrapped object due to React Native limitations
       const result = this.mixpanelImpl.getVariantValueSync(this.token, featureName, fallbackValue);
@@ -310,10 +303,6 @@ export class Flags {
    * @see getVariantValueSync for non-boolean flag values
    */
   isEnabledSync(featureName, fallbackValue = false) {
-    if (!this.areFlagsReady()) {
-      return fallbackValue;
-    }
-
     if (this.isNativeMode) {
       return this.mixpanelImpl.isEnabledSync(this.token, featureName, fallbackValue);
     } else if (this.jsFlags) {

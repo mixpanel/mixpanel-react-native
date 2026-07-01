@@ -117,13 +117,18 @@ describe("Feature Flags", () => {
     describe("getVariantSync", () => {
       const fallbackVariant = { key: "fallback", value: "default" };
 
-      it("should return fallback when flags not ready", () => {
+      it("delegates to native getVariantSync; native returns the fallback when not ready", () => {
         mockNativeModule.areFlagsReadySync.mockReturnValue(false);
+        mockNativeModule.getVariantSync.mockReturnValue(fallbackVariant);
 
         const variant = mixpanel.flags.getVariantSync("test-flag", fallbackVariant);
 
         expect(variant).toEqual(fallbackVariant);
-        expect(mockNativeModule.getVariantSync).not.toHaveBeenCalled();
+        expect(mockNativeModule.getVariantSync).toHaveBeenCalledWith(
+          testToken,
+          "test-flag",
+          fallbackVariant
+        );
       });
 
       it("should get variant when flags are ready", () => {
@@ -152,13 +157,18 @@ describe("Feature Flags", () => {
     });
 
     describe("getVariantValueSync", () => {
-      it("should return fallback when flags not ready", () => {
+      it("delegates to native getVariantValueSync; native returns the fallback when not ready", () => {
         mockNativeModule.areFlagsReadySync.mockReturnValue(false);
+        mockNativeModule.getVariantValueSync.mockReturnValue("default");
 
         const value = mixpanel.flags.getVariantValueSync("test-flag", "default");
 
         expect(value).toBe("default");
-        expect(mockNativeModule.getVariantValueSync).not.toHaveBeenCalled();
+        expect(mockNativeModule.getVariantValueSync).toHaveBeenCalledWith(
+          testToken,
+          "test-flag",
+          "default"
+        );
       });
 
       it("should get value when flags are ready - iOS style", () => {
@@ -225,13 +235,18 @@ describe("Feature Flags", () => {
     });
 
     describe("isEnabledSync", () => {
-      it("should return fallback when flags not ready", () => {
+      it("delegates to native isEnabledSync; native returns the fallback when not ready", () => {
         mockNativeModule.areFlagsReadySync.mockReturnValue(false);
+        mockNativeModule.isEnabledSync.mockReturnValue(false);
 
         const enabled = mixpanel.flags.isEnabledSync("test-flag", false);
 
         expect(enabled).toBe(false);
-        expect(mockNativeModule.isEnabledSync).not.toHaveBeenCalled();
+        expect(mockNativeModule.isEnabledSync).toHaveBeenCalledWith(
+          testToken,
+          "test-flag",
+          false
+        );
       });
 
       it("should check if enabled when flags are ready", () => {
@@ -1080,8 +1095,10 @@ describe("Feature Flags", () => {
       });
 
       jsMixpanel.reset();
-      await jsMixpanel.flags.jsFlags.initialLoadPromise;
+      // reset() is fire-and-forget; yield so the reset chain reaches the
+      // post-reset fetch, then await it via whenReady().
       await new Promise((r) => setTimeout(r, 10));
+      await jsMixpanel.flags.whenReady();
 
       expect(mockStorage.removeItem).toHaveBeenCalledWith(
         `persisted_variants_for_${jsToken}`

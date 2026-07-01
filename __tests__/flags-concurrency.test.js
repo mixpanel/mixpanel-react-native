@@ -106,9 +106,10 @@ describe("Feature Flags - Concurrency", () => {
       // Start loading (don't await)
       const loadPromise = mixpanel.flags.loadFlags();
 
-      // Read immediately - should return fallback since flags aren't ready
+      // Read immediately - should return wrapped fallback since flags aren't ready
       const variant = mixpanel.flags.getVariantSync("delayed", "fallback");
-      expect(variant).toBe("fallback");
+      expect(variant.value).toBe("fallback");
+      expect(variant.variant_source).toBe("fallback");
 
       // Complete load
       resolveLoad();
@@ -319,7 +320,8 @@ describe("Feature Flags - Concurrency", () => {
       await new Promise((r) => setTimeout(r, 0));
       const asyncReadPromise = mixpanel.flags.getVariant("interleaved", false);
       const syncValue = mixpanel.flags.getVariantSync("interleaved", false);
-      expect(syncValue).toBe(false);
+      expect(syncValue.value).toBe(false);
+      expect(syncValue.variant_source).toBe("fallback");
 
       resolveLoad();
 

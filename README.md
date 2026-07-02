@@ -55,13 +55,28 @@ npm install @react-native-async-storage/async-storage
 
 > **Note:** Starting from v3.2.0, `@react-native-async-storage/async-storage` is a peer dependency. This allows your project to use either v1.x or v2.x, avoiding conflicts with frameworks like Expo 52+.
 
-3. Under your application's ios folder, run
+3. **iOS Setup**
 
-```
-pod install
+#### Option A: Swift Package Manager (Recommended for React Native 0.84+)
+
+Swift Package Manager is the modern dependency manager for iOS and is now the recommended approach. The library will be automatically linked via React Native's autolinking system.
+
+```bash
+# Prepare iOS dependencies using the new unified command
+npx react-native prepare-ios-dependencies
 ```
 
-Please note: You do not need to update your Podfile to add Mixpanel.
+That's it! The Mixpanel SDK will be automatically integrated via Swift Package Manager.
+
+#### Option B: CocoaPods (React Native < 0.84 or legacy projects)
+
+If you're using React Native < 0.84 or have an existing CocoaPods-based project:
+
+```bash
+cd ios && pod install
+```
+
+> **Note:** You do not need to update your Podfile to add Mixpanel - it's automatically linked. CocoaPods support will be maintained for backward compatibility, but Swift Package Manager is the recommended approach going forward.
 
 4. Since Xcode 12.5, there is a known swift compile issue, please refer to this **[workaround](https://github.com/mixpanel/mixpanel-react-native/issues/43#issuecomment-829599732)**. However the compile issue has been resolved in Xcode 13.2.1+, there is no extra step required as long as you upgrade to Xcode 13.2.1+.
 

@@ -207,7 +207,7 @@ export class MixpanelFlagsJS {
       authHeaders.traceparent = this._traceparent;
     }
 
-    this.fetchPromise = MixpanelNetwork.sendRequest({
+    const myPromise = MixpanelNetwork.sendRequest({
       token: this.token,
       endpoint: endpoint,
       data: null,
@@ -216,9 +216,15 @@ export class MixpanelFlagsJS {
       headers: authHeaders,
     })
       .then((response) => {
-        // Abandoned by _invalidateInFlightFetch() (reset/updateContext/
-        // identify). Discard so this fetch can't overwrite fresh state.
-        if (this._fetchStartTime === null) {
+        // Guard by promise identity so a fetch abandoned by
+        // _invalidateInFlightFetch() (reset/updateContext/identify) can't
+        // install its stale result, even after a replacement fetch is in
+        // flight or has completed.
+        if (this.fetchPromise !== myPromise) {
+          MixpanelLogger.log(
+            this.token,
+            'Fetch was superseded and is not stale. Ignoring result'
+          );
           return;
         }
         this.markFetchComplete();
@@ -303,28 +309,25 @@ export class MixpanelFlagsJS {
           });
       })
       .catch((error) => {
-        if (this._fetchStartTime !== null) {
-          this.markFetchComplete();
+        if (this.fetchPromise !== myPromise) {
+          MixpanelLogger.log(
+            this.token,
+            'Fetch was superseded and is not stale. Ignoring result'
+          );
+          return;
         }
+        this.markFetchComplete();
         MixpanelLogger.log(this.token, 'Error loading feature flags:', error);
         throw error;
       });
 
-    return this.fetchPromise;
+    this.fetchPromise = myPromise;
+    return myPromise;
   }
 
   areFlagsReady() {
     if (this._loadedPersistenceIsStale()) return false;
     return !!this.flags;
-  }
-
-  /**
-   * Resolves with the current in-flight fetch (if one is running) or
-   * immediately with the current state.
-   */
-  whenReady() {
-    if (this.fetchPromise) return this.fetchPromise;
-    return Promise.resolve();
   }
 
   /**
@@ -764,10 +767,6 @@ export class MixpanelFlagsJS {
 
   load_flags() {
     return this.loadFlags();
-  }
-
-  when_ready() {
-    return this.whenReady();
   }
 
   update_context(newContext, options) {

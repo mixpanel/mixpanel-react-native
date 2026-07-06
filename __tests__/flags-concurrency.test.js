@@ -61,7 +61,7 @@ describe("Feature Flags - Concurrency", () => {
       expect(callCount).toBe(1);
       resolvers[0]();
       await mixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await mixpanel.flags.whenReady();
+      await mixpanel.flags.loadFlags();
 
       callCount = 0;
       resolvers = [];
@@ -170,7 +170,7 @@ describe("Feature Flags - Concurrency", () => {
       await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
       void mixpanel.flags;
       await mixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await mixpanel.flags.whenReady();
+      await mixpanel.flags.loadFlags();
       const fetchesAfterInit = fetchCallCount;
 
       // Update context multiple times concurrently. Each call mutates the
@@ -278,7 +278,7 @@ describe("Feature Flags - Concurrency", () => {
       await new Promise((r) => setTimeout(r, 0));
       resolvers[0]();
       await mixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await mixpanel.flags.whenReady();
+      await mixpanel.flags.loadFlags();
       resolveCount = 0;
       resolvers = [];
 
@@ -360,7 +360,7 @@ describe("Feature Flags - Concurrency", () => {
       await new Promise((r) => setTimeout(r, 0));
       if (resolvers[0]) resolvers[0]();
       await mixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await mixpanel.flags.whenReady();
+      await mixpanel.flags.loadFlags();
       callCount = 0;
       resolvers = [];
 

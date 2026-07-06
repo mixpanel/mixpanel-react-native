@@ -14,7 +14,7 @@ export type FallbackReason = "FLAG_NOT_FOUND" | "NOT_READY" | "BACKEND_ERROR";
 export interface MixpanelFlagVariant {
   key: string;
   value: any;
-  experiment_id?: string | number;
+  experiment_id?: string;
   is_experiment_active?: boolean;
   is_qa_tester?: boolean;
   variant_source?: VariantSource;
@@ -60,7 +60,6 @@ export interface Flags {
   // Synchronous methods
   loadFlags(): Promise<void>;
   areFlagsReady(): boolean;
-  whenReady(): Promise<void>;
   getVariantSync(featureName: string, fallback: MixpanelFlagVariant): MixpanelFlagVariant;
   getVariantValueSync(featureName: string, fallbackValue: any): any;
   isEnabledSync(featureName: string, fallbackValue?: boolean): boolean;
@@ -99,7 +98,6 @@ export interface Flags {
   get_all_variants(): Promise<Map<string, MixpanelFlagVariant>>;
   get_all_variants_sync(): Map<string, MixpanelFlagVariant>;
   load_flags(): Promise<void>;
-  when_ready(): Promise<void>;
   update_context(newContext: MixpanelProperties, options?: UpdateContextOptions): Promise<void>;
   check_first_time_events(eventName: string, properties?: MixpanelProperties): void;
 }

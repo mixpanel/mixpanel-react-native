@@ -97,7 +97,7 @@ describe("Feature Flags - Network Operations", () => {
       await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
       void mixpanel.flags;
       await mixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await mixpanel.flags.whenReady();
+      await mixpanel.flags.loadFlags();
 
       global.fetch.mockClear();
       await mixpanel.flags.updateContext({ plan: "premium", feature_set: "advanced" });
@@ -120,7 +120,7 @@ describe("Feature Flags - Network Operations", () => {
       await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
       void mixpanel.flags;
       await mixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await expect(mixpanel.flags.whenReady()).rejects.toBeDefined();
+      await expect(mixpanel.flags.loadFlags()).rejects.toBeDefined();
 
       global.fetch.mockClear();
       await expect(mixpanel.flags.loadFlags()).rejects.toBeDefined();
@@ -139,7 +139,7 @@ describe("Feature Flags - Network Operations", () => {
       await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
       void mixpanel.flags;
       await mixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await expect(mixpanel.flags.whenReady()).rejects.toBeDefined();
+      await expect(mixpanel.flags.loadFlags()).rejects.toBeDefined();
 
       await expect(mixpanel.flags.loadFlags()).rejects.toBeDefined();
 
@@ -158,7 +158,7 @@ describe("Feature Flags - Network Operations", () => {
       await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
       void mixpanel.flags;
       await mixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await expect(mixpanel.flags.whenReady()).rejects.toBeDefined();
+      await expect(mixpanel.flags.loadFlags()).rejects.toBeDefined();
 
       await expect(mixpanel.flags.loadFlags()).rejects.toBeDefined();
 
@@ -175,7 +175,7 @@ describe("Feature Flags - Network Operations", () => {
       await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
       void mixpanel.flags;
       await mixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await expect(mixpanel.flags.whenReady()).rejects.toBeDefined();
+      await expect(mixpanel.flags.loadFlags()).rejects.toBeDefined();
 
       await expect(mixpanel.flags.loadFlags()).rejects.toBeDefined();
 
@@ -192,7 +192,7 @@ describe("Feature Flags - Network Operations", () => {
       await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
       void mixpanel.flags;
       await mixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await mixpanel.flags.whenReady();
+      await mixpanel.flags.loadFlags();
 
       global.fetch.mockClear();
       global.fetch.mockResolvedValueOnce({

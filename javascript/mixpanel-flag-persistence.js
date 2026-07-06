@@ -1,6 +1,6 @@
 import { MixpanelLogger } from './mixpanel-logger';
+import { getPersistedVariantsKey } from './mixpanel-constants';
 
-const PERSISTED_VARIANTS_KEY_PREFIX = 'persisted_variants_for_';
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
 
 const VariantLookupPolicy = Object.freeze({
@@ -23,7 +23,7 @@ const VALID_POLICIES = [
 export class MixpanelFlagPersistence {
   constructor(persistence, token, storage) {
     this.persistence = persistence;
-    this.persistedVariantsKey = PERSISTED_VARIANTS_KEY_PREFIX + token;
+    this.persistedVariantsKey = getPersistedVariantsKey(token);
     this.storage = storage;
     this.token = token;
   }
@@ -187,4 +187,4 @@ export class MixpanelFlagPersistence {
   }
 }
 
-export { VariantLookupPolicy, PERSISTED_VARIANTS_KEY_PREFIX, DEFAULT_TTL_MS };
+export { VariantLookupPolicy, DEFAULT_TTL_MS };

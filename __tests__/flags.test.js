@@ -2,6 +2,7 @@ import { Mixpanel } from "mixpanel-react-native";
 import { NativeModules } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger";
+import { MixpanelPersistent } from "mixpanel-react-native/javascript/mixpanel-persistent";
 
 const mockNativeModule = NativeModules.MixpanelReactNative;
 
@@ -15,6 +16,10 @@ describe("Feature Flags", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     AsyncStorage.clear();
+    // Flags now shares MixpanelPersistent's AsyncStorageAdapter, so reset the
+    // singleton between tests to prevent per-test mockStorage references from
+    // leaking into subsequent tests.
+    MixpanelPersistent.instance = null;
     if (global.fetch.mockClear) {
       global.fetch.mockClear();
     }
@@ -844,13 +849,7 @@ describe("Feature Flags", () => {
     });
   });
 
-  describe("whenReady + snake_case aliases", () => {
-    it("native mode: whenReady() resolves immediately", async () => {
-      mixpanel = new Mixpanel(testToken, false);
-      await mixpanel.init();
-      await expect(mixpanel.flags.whenReady()).resolves.toBeUndefined();
-    });
-
+  describe("load_flags snake_case alias", () => {
     it("native mode: load_flags() invokes the native bridge", async () => {
       mockNativeModule.loadFlags.mockClear();
       mockNativeModule.loadFlags.mockResolvedValueOnce(true);
@@ -860,44 +859,7 @@ describe("Feature Flags", () => {
       expect(mockNativeModule.loadFlags).toHaveBeenCalledWith(testToken);
     });
 
-    it("native mode: when_ready() resolves immediately", async () => {
-      mixpanel = new Mixpanel(testToken, false);
-      await mixpanel.init();
-      await expect(mixpanel.flags.when_ready()).resolves.toBeUndefined();
-    });
-
-    it("JS-fallback: whenReady() returns the in-flight fetchPromise during a load", async () => {
-      const mockStorage = {
-        getItem: jest.fn().mockResolvedValue(null),
-        setItem: jest.fn().mockResolvedValue(undefined),
-        removeItem: jest.fn().mockResolvedValue(undefined),
-      };
-      let resolveLoad;
-      global.fetch = jest.fn().mockImplementation(
-        () =>
-          new Promise((resolve) => {
-            resolveLoad = () =>
-              resolve({
-                status: 200,
-                json: () => Promise.resolve({ flags: {} }),
-              });
-          })
-      );
-
-      const jsMixpanel = new Mixpanel("js-when-ready", false, false, mockStorage);
-      jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
-      void jsMixpanel.flags;
-      await new Promise((r) => setTimeout(r, 0));
-
-      const ready = jsMixpanel.flags.whenReady();
-      expect(ready).toBe(jsMixpanel.flags.jsFlags.fetchPromise);
-
-      resolveLoad();
-      await ready;
-      await expect(jsMixpanel.flags.whenReady()).resolves.toBeUndefined();
-    });
-
-    it("JS-fallback: load_flags() and when_ready() aliases work", async () => {
+    it("JS-fallback: load_flags() alias works", async () => {
       const mockStorage = {
         getItem: jest.fn().mockResolvedValue(null),
         setItem: jest.fn().mockResolvedValue(undefined),
@@ -912,7 +874,6 @@ describe("Feature Flags", () => {
       await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
 
       await expect(jsMixpanel.flags.load_flags()).resolves.toBeUndefined();
-      await expect(jsMixpanel.flags.when_ready()).resolves.toBeUndefined();
     });
   });
 
@@ -941,7 +902,7 @@ describe("Feature Flags", () => {
       await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
       void jsMixpanel.flags;
       await jsMixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await jsMixpanel.flags.whenReady();
+      await jsMixpanel.flags.loadFlags();
 
       jsMixpanel.flags.jsFlags._loadedPersistedAtMs = Date.now() - 1_000_000;
       jsMixpanel.flags.jsFlags._loadedTtlMs = 1;
@@ -968,7 +929,7 @@ describe("Feature Flags", () => {
       await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
       void jsMixpanel.flags;
       await jsMixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await jsMixpanel.flags.whenReady();
+      await jsMixpanel.flags.loadFlags();
 
       jsMixpanel.flags.jsFlags._loadedPersistedAtMs = Date.now() - 1_000_000;
       jsMixpanel.flags.jsFlags._loadedTtlMs = 1;
@@ -1000,7 +961,7 @@ describe("Feature Flags", () => {
       await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
       void jsMixpanel.flags;
       await jsMixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await jsMixpanel.flags.whenReady();
+      await jsMixpanel.flags.loadFlags();
 
       jsMixpanel.flags.jsFlags._loadedPersistedAtMs = Date.now() - 1_000_000;
       jsMixpanel.flags.jsFlags._loadedTtlMs = 1;
@@ -1025,7 +986,7 @@ describe("Feature Flags", () => {
       await jsMixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
       void jsMixpanel.flags;
       await jsMixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await jsMixpanel.flags.whenReady();
+      await jsMixpanel.flags.loadFlags();
 
       jsMixpanel.flags.jsFlags._loadedPersistedAtMs = Date.now() - 1_000_000;
       jsMixpanel.flags.jsFlags._loadedTtlMs = 1;
@@ -1096,12 +1057,12 @@ describe("Feature Flags", () => {
 
       jsMixpanel.reset();
       // reset() is fire-and-forget; yield so the reset chain reaches the
-      // post-reset fetch, then await it via whenReady().
+      // post-reset fetch, then await it via loadFlags().
       await new Promise((r) => setTimeout(r, 10));
-      await jsMixpanel.flags.whenReady();
+      await jsMixpanel.flags.loadFlags();
 
       expect(mockStorage.removeItem).toHaveBeenCalledWith(
-        `persisted_variants_for_${jsToken}`
+        `MIXPANEL_${jsToken}_PERSISTED_FLAG_VARIANTS`
       );
       expect(global.fetch).toHaveBeenCalled();
 
@@ -1445,7 +1406,7 @@ describe("Feature Flags", () => {
       // Touch flags to trigger lazy construction + init.
       void ftMixpanel.flags;
       await ftMixpanel.flags.jsFlags.persistenceLoadedPromise;
-      await ftMixpanel.flags.whenReady();
+      await ftMixpanel.flags.loadFlags();
     }
 
     afterEach(() => {

@@ -68,17 +68,19 @@ import { MixpanelLogger } from './mixpanel-logger';
  * @see Mixpanel#flags
  */
 export class Flags {
-  constructor(token, mixpanelImpl, storage) {
+  constructor(token, mixpanelImpl) {
     this.token = token;
     this.mixpanelImpl = mixpanelImpl;
-    this.storage = storage;
     this.isNativeMode = typeof mixpanelImpl.loadFlags === 'function';
 
-    if (!this.isNativeMode && storage) {
+    if (!this.isNativeMode) {
+      // Reuse the adapter MixpanelPersistent already built so flags inherit
+      // the same "user-supplied storage → auto-required AsyncStorage →
+      // InMemoryStorage fallback" resolution the rest of persistence uses.
       this.jsFlags = new MixpanelFlagsJS(
         token,
         mixpanelImpl,
-        storage,
+        mixpanelImpl.mixpanelPersistent.storageAdapter,
         mixpanelImpl.getFeatureFlagsOptions()
       );
       this.jsFlags.init();
@@ -699,22 +701,6 @@ export class Flags {
     }
   }
 
-  /**
-   * Resolves when the next/in-flight flag fetch settles. In native mode this
-   * resolves immediately (the native SDK doesn't expose an equivalent
-   * primitive). In JS-fallback mode, returns the in-flight fetch promise if
-   * one is running.
-   */
-  whenReady() {
-    if (this.isNativeMode) {
-      return Promise.resolve();
-    }
-    if (this.jsFlags) {
-      return this.jsFlags.whenReady();
-    }
-    return Promise.resolve();
-  }
-
   /** Alias for {@link getAllVariants}. */
   get_all_variants(callback) {
     return this.getAllVariants(callback);
@@ -728,11 +714,6 @@ export class Flags {
   /** Alias for {@link loadFlags}. */
   load_flags() {
     return this.loadFlags();
-  }
-
-  /** Alias for {@link whenReady}. */
-  when_ready() {
-    return this.whenReady();
   }
 
   /**

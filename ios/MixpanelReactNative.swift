@@ -719,17 +719,8 @@ open class MixpanelReactNative: NSObject {
         case .persistence(let persistedAt):
             dict["variant_source"] = "persistence"
             dict["persisted_at_in_ms"] = Int64(persistedAt.timeIntervalSince1970 * 1000)
-        case .fallback(let reason):
+        case .fallback:
             dict["variant_source"] = "fallback"
-            // The SDK's `.fallback` associated value is optional
-            // (`FallbackReason?`); nil when the SDK didn't populate a reason.
-            if let reason = reason {
-                switch reason {
-                case .flagNotFound: dict["fallback_reason"] = "FLAG_NOT_FOUND"
-                case .notReady:     dict["fallback_reason"] = "NOT_READY"
-                case .backendError: dict["fallback_reason"] = "BACKEND_ERROR"
-                }
-            }
         }
 
         return dict

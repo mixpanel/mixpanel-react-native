@@ -9,11 +9,23 @@ jest.mock("react-native-get-random-values", () => {
 
 jest.mock("mixpanel-react-native/javascript/mixpanel-storage", () => {
   return {
-    AsyncStorageAdapter: jest.fn().mockImplementation(() => ({
-      getItem: jest.fn().mockResolvedValue(null),
-      setItem: jest.fn().mockResolvedValue(undefined),
-      removeItem: jest.fn().mockResolvedValue(undefined),
-    })),
+    AsyncStorageAdapter: jest.fn().mockImplementation((storage) => {
+      // Delegate to the caller-supplied storage when one is provided so tests
+      // that pass a mock and then assert on its calls (e.g. flags-storage
+      // tests) see the writes.
+      if (storage) {
+        return {
+          getItem: (k) => storage.getItem(k),
+          setItem: (k, v) => storage.setItem(k, v),
+          removeItem: (k) => storage.removeItem(k),
+        };
+      }
+      return {
+        getItem: jest.fn().mockResolvedValue(null),
+        setItem: jest.fn().mockResolvedValue(undefined),
+        removeItem: jest.fn().mockResolvedValue(undefined),
+      };
+    }),
   };
 });
 jest.mock("uuid", () => ({

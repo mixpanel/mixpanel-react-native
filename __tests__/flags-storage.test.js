@@ -4,10 +4,11 @@ import {
   MixpanelFlagPersistence,
   VariantLookupPolicy,
 } from "../javascript/mixpanel-flag-persistence";
+import { MixpanelPersistent } from "../javascript/mixpanel-persistent";
 
 global.fetch = jest.fn();
 
-const persistedKey = (token) => `persisted_variants_for_${token}`;
+const persistedKey = (token) => `MIXPANEL_${token}_PERSISTED_FLAG_VARIANTS`;
 
 const POLICY_PERSIST_UNTIL_NET = {
   variantLookupPolicy: VariantLookupPolicy.PERSISTENCE_UNTIL_NETWORK_SUCCESS,
@@ -23,6 +24,9 @@ describe("Feature Flags - JS-fallback Persistence (end-to-end)", () => {
     jest.clearAllMocks();
     jest.useRealTimers();
     AsyncStorage.clear();
+    // Reset the MixpanelPersistent singleton so each test's fresh mockStorage
+    // is wired through to the shared adapter that Flags now reuses.
+    MixpanelPersistent.instance = null;
     const store = {};
     mockStorage = {
       getItem: jest.fn((k) => Promise.resolve(store[k] ?? null)),

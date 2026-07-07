@@ -1360,6 +1360,7 @@ describe("Feature Flags", () => {
               variant_value: true,
               experiment_id: 123,
               is_experiment_active: true,
+              is_qa_tester: true,
             },
           },
           {
@@ -1466,6 +1467,8 @@ describe("Feature Flags", () => {
         expect(flag.key).toBe("treatment");
         expect(flag.value).toBe(true);
         expect(flag.experiment_id).toBe(123);
+        expect(flag.variant_source).toBe("network");
+        expect(flag.is_qa_tester).toBe(true);
       });
 
       it("does not match event with a different name", () => {

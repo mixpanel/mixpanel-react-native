@@ -656,6 +656,8 @@ export class MixpanelFlagsJS {
         value: pendingEvent.pending_variant.variant_value,
         experiment_id: pendingEvent.pending_variant.experiment_id,
         is_experiment_active: pendingEvent.pending_variant.is_experiment_active,
+        is_qa_tester: pendingEvent.pending_variant.is_qa_tester,
+        variant_source: NETWORK_SOURCE,
       };
 
       this.flags.set(flagKey, newVariant);

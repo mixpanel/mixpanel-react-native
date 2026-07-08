@@ -123,4 +123,10 @@ RCT_EXTERN_METHOD(getVariantValue:(NSString *)token featureName:(NSString *)feat
 
 RCT_EXTERN_METHOD(isEnabled:(NSString *)token featureName:(NSString *)featureName fallbackValue:(BOOL)fallbackValue resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(getAllVariants:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(getAllVariantsSync:(NSString *)token)
+
+RCT_EXTERN_METHOD(updateFlagsContext:(NSString *)token context:(NSDictionary *)context resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
 @end

@@ -7,13 +7,39 @@ export type MixpanelAsyncStorage = {
   removeItem(key: string): Promise<void>;
 };
 
+export type VariantSource = "network" | "persistence" | "fallback";
+
+export type FallbackReason = "FLAG_NOT_FOUND" | "NOT_READY" | "BACKEND_ERROR";
+
 export interface MixpanelFlagVariant {
   key: string;
   value: any;
-  experiment_id?: string | number;  // Updated to match mixpanel-js format
-  is_experiment_active?: boolean;    // Updated to match mixpanel-js format
-  is_qa_tester?: boolean;            // Updated to match mixpanel-js format
+  experiment_id?: string;
+  is_experiment_active?: boolean;
+  is_qa_tester?: boolean;
+  variant_source?: VariantSource;
+  fallback_reason?: FallbackReason;
+  persisted_at_in_ms?: number;
 }
+
+export interface NetworkOnlyFlagsPolicy {
+  variantLookupPolicy: "networkOnly";
+}
+
+export interface NetworkFirstFlagsPolicy {
+  variantLookupPolicy: "networkFirst";
+  persistenceTtlMs?: number;
+}
+
+export interface PersistenceUntilNetworkSuccessFlagsPolicy {
+  variantLookupPolicy: "persistenceUntilNetworkSuccess";
+  persistenceTtlMs?: number;
+}
+
+export type FlagsPersistencePolicy =
+  | NetworkOnlyFlagsPolicy
+  | NetworkFirstFlagsPolicy
+  | PersistenceUntilNetworkSuccessFlagsPolicy;
 
 export interface FeatureFlagsOptions {
   enabled?: boolean;
@@ -23,6 +49,7 @@ export interface FeatureFlagsOptions {
       [key: string]: any;
     };
   };
+  persistence?: FlagsPersistencePolicy;
 }
 
 export interface UpdateContextOptions {
@@ -36,6 +63,7 @@ export interface Flags {
   getVariantSync(featureName: string, fallback: MixpanelFlagVariant): MixpanelFlagVariant;
   getVariantValueSync(featureName: string, fallbackValue: any): any;
   isEnabledSync(featureName: string, fallbackValue?: boolean): boolean;
+  getAllVariantsSync(): Map<string, MixpanelFlagVariant>;
 
   // Asynchronous methods with overloads for callback and Promise patterns
   getVariant(featureName: string, fallback: MixpanelFlagVariant): Promise<MixpanelFlagVariant>;
@@ -47,12 +75,16 @@ export interface Flags {
   isEnabled(featureName: string, fallbackValue?: boolean): Promise<boolean>;
   isEnabled(featureName: string, fallbackValue: boolean, callback: (isEnabled: boolean) => void): void;
 
-  // Context management (NEW - aligned with mixpanel-js)
-  // NOTE: Only available in JavaScript mode (Expo/React Native Web)
-  // In native mode, throws an error - context must be set during initialization
+  getAllVariants(): Promise<Map<string, MixpanelFlagVariant>>;
+  getAllVariants(callback: (variants: Map<string, MixpanelFlagVariant>) => void): void;
+
+  // Context management — available in both native and JavaScript modes.
   updateContext(newContext: MixpanelProperties, options?: UpdateContextOptions): Promise<void>;
 
-  // snake_case aliases (NEW - aligned with mixpanel-js)
+  // First-time event hook (JavaScript mode only; native mode is a no-op).
+  checkFirstTimeEvents(eventName: string, properties?: MixpanelProperties): void;
+
+  // snake_case aliases
   are_flags_ready(): boolean;
   get_variant(featureName: string, fallback: MixpanelFlagVariant): Promise<MixpanelFlagVariant>;
   get_variant(featureName: string, fallback: MixpanelFlagVariant, callback: (result: MixpanelFlagVariant) => void): void;
@@ -63,8 +95,11 @@ export interface Flags {
   is_enabled(featureName: string, fallbackValue?: boolean): Promise<boolean>;
   is_enabled(featureName: string, fallbackValue: boolean, callback: (isEnabled: boolean) => void): void;
   is_enabled_sync(featureName: string, fallbackValue?: boolean): boolean;
-  // NOTE: Only available in JavaScript mode (Expo/React Native Web)
+  get_all_variants(): Promise<Map<string, MixpanelFlagVariant>>;
+  get_all_variants_sync(): Map<string, MixpanelFlagVariant>;
+  load_flags(): Promise<void>;
   update_context(newContext: MixpanelProperties, options?: UpdateContextOptions): Promise<void>;
+  check_first_time_events(eventName: string, properties?: MixpanelProperties): void;
 }
 
 export class Mixpanel {

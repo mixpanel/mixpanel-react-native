@@ -98,7 +98,7 @@ export class Mixpanel {
       }
       // Lazy load the Flags instance with proper dependencies
       const Flags = require("./javascript/mixpanel-flags").Flags;
-      this._flags = new Flags(this.token, this.mixpanelImpl, this.storage);
+      this._flags = new Flags(this.token, this.mixpanelImpl);
     }
     return this._flags;
   }
@@ -635,7 +635,13 @@ export class Mixpanel {
       Useful for clearing data when a user logs out.
      */
   reset() {
-    this.mixpanelImpl.reset(this.token);
+    this.mixpanelImpl.reset(this.token).then(() => {
+      if (this._flags) {
+        this._flags.reset().catch((error) => {
+          MixpanelLogger.log(this.token, "Flags reset failed:", error);
+        });
+      }
+    });
   }
 
   /**

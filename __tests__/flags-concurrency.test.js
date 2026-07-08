@@ -30,8 +30,7 @@ describe("Feature Flags - Concurrency", () => {
   });
 
   describe("Concurrent Loading", () => {
-    it("should handle multiple simultaneous loadFlags() calls", async () => {
-      // Don't use fake timers for this test as it can cause issues
+    it("should dedupe simultaneous loadFlags() calls into one fetch", async () => {
       let resolvers = [];
       let callCount = 0;
 
@@ -53,18 +52,27 @@ describe("Feature Flags - Concurrency", () => {
       });
 
       mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
-      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+      mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
 
-      // Start multiple loads simultaneously
+      // Force materialization of the flags lazy getter, then settle the init
+      // fetch (the one triggered by jsFlags.init()).
+      void mixpanel.flags;
+      await new Promise((r) => setTimeout(r, 0));
+      expect(callCount).toBe(1);
+      resolvers[0]();
+      await mixpanel.flags.jsFlags.persistenceLoadedPromise;
+      await mixpanel.flags.loadFlags();
+
+      callCount = 0;
+      resolvers = [];
+
       const load1 = mixpanel.flags.loadFlags();
       const load2 = mixpanel.flags.loadFlags();
       const load3 = mixpanel.flags.loadFlags();
 
-      // All three should trigger network requests (no deduplication currently)
-      expect(callCount).toBe(3);
+      expect(callCount).toBe(1);
 
-      // Resolve all loads
-      resolvers.forEach(resolve => resolve && resolve());
+      resolvers[0]();
       await Promise.all([load1, load2, load3]);
 
       expect(mixpanel.flags.areFlagsReady()).toBe(true);
@@ -98,9 +106,10 @@ describe("Feature Flags - Concurrency", () => {
       // Start loading (don't await)
       const loadPromise = mixpanel.flags.loadFlags();
 
-      // Read immediately - should return fallback since flags aren't ready
+      // Read immediately - should return wrapped fallback since flags aren't ready
       const variant = mixpanel.flags.getVariantSync("delayed", "fallback");
-      expect(variant).toBe("fallback");
+      expect(variant.value).toBe("fallback");
+      expect(variant.variant_source).toBe("fallback");
 
       // Complete load
       resolveLoad();
@@ -114,7 +123,7 @@ describe("Feature Flags - Concurrency", () => {
     });
 
     it("should trigger its own load if needed when using async read", async () => {
-      global.fetch.mockResolvedValueOnce({
+      global.fetch.mockResolvedValue({
         status: 200,
         json: () => Promise.resolve({
           flags: {
@@ -129,10 +138,8 @@ describe("Feature Flags - Concurrency", () => {
       mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
       await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
 
-      // Don't load flags initially - let async read trigger it
-      expect(mixpanel.flags.areFlagsReady()).toBe(false);
-
-      // Async read should trigger load
+      // Async read serves whatever the init-triggered fetch populated, or
+      // re-triggers one if the memory isn't usable.
       const variant = await mixpanel.flags.getVariant("auto-load", "fallback");
 
       expect(global.fetch).toHaveBeenCalled();
@@ -161,22 +168,23 @@ describe("Feature Flags - Concurrency", () => {
 
       mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
       await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
-
-      // Load initial flags
+      void mixpanel.flags;
+      await mixpanel.flags.jsFlags.persistenceLoadedPromise;
       await mixpanel.flags.loadFlags();
-      expect(fetchCallCount).toBe(1);
+      const fetchesAfterInit = fetchCallCount;
 
-      // Update context multiple times concurrently
+      // Update context multiple times concurrently. Each call mutates the
+      // context, invalidates any in-flight fetch, and starts a fresh fetch
+      // under the just-updated context — otherwise the second and third
+      // callers would await the first fetch (built with a stale context)
+      // and silently receive flags for the wrong targeting.
       const update1 = mixpanel.flags.updateContext({ plan: "free" });
       const update2 = mixpanel.flags.updateContext({ plan: "premium" });
       const update3 = mixpanel.flags.updateContext({ plan: "enterprise" });
 
       await Promise.all([update1, update2, update3]);
 
-      // Each update should trigger a new load
-      expect(fetchCallCount).toBe(4); // Initial + 3 updates
-
-      // Flags should be ready after all updates
+      expect(fetchCallCount).toBe(fetchesAfterInit + 3);
       expect(mixpanel.flags.areFlagsReady()).toBe(true);
     });
 
@@ -243,7 +251,7 @@ describe("Feature Flags - Concurrency", () => {
   });
 
   describe("Race Conditions", () => {
-    it("should handle read during concurrent loads correctly", async () => {
+    it("concurrent loadFlags() callers share a single fetch and resolve to the same value", async () => {
       let resolveCount = 0;
       let resolvers = [];
 
@@ -265,36 +273,29 @@ describe("Feature Flags - Concurrency", () => {
       });
 
       mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
-      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+      mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+      void mixpanel.flags;
+      await new Promise((r) => setTimeout(r, 0));
+      resolvers[0]();
+      await mixpanel.flags.jsFlags.persistenceLoadedPromise;
+      await mixpanel.flags.loadFlags();
+      resolveCount = 0;
+      resolvers = [];
 
-      // Start two loads
       const load1 = mixpanel.flags.loadFlags();
       const load2 = mixpanel.flags.loadFlags();
+      expect(resolveCount).toBe(1);
 
-      // Try to read while loads are in progress
-      const variantDuringLoad = mixpanel.flags.getVariantSync("race-flag", "fallback");
-      expect(variantDuringLoad).toBe("fallback");
-
-      // Complete first load
       resolvers[0]();
-      await load1;
+      await Promise.all([load1, load2]);
 
-      // Read should now get first load's value
-      const variantAfterFirst = mixpanel.flags.getVariantSync("race-flag", "fallback");
-      expect(variantAfterFirst.value).toBe("value-0");
-
-      // Complete second load
-      resolvers[1]();
-      await load2;
-
-      // Read should now get second load's value (last one wins)
-      const variantAfterSecond = mixpanel.flags.getVariantSync("race-flag", "fallback");
-      expect(variantAfterSecond.value).toBe("value-1");
+      const variant = mixpanel.flags.getVariantSync("race-flag", "fallback");
+      expect(variant.value).toBe("value-0");
     });
 
     it("should handle interleaved async and sync reads", async () => {
       let resolveLoad;
-      global.fetch.mockImplementationOnce(() =>
+      global.fetch.mockImplementation(() =>
         new Promise(resolve => {
           resolveLoad = () => resolve({
             status: 200,
@@ -311,23 +312,22 @@ describe("Feature Flags - Concurrency", () => {
       );
 
       mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
-      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+      mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+      void mixpanel.flags;
 
-      // Start async read (will trigger load)
+      // While init's fetch is still in flight, an async read joins the same
+      // promise and a sync read sees nothing yet.
+      await new Promise((r) => setTimeout(r, 0));
       const asyncReadPromise = mixpanel.flags.getVariant("interleaved", false);
-
-      // Immediately do sync read (should return fallback)
       const syncValue = mixpanel.flags.getVariantSync("interleaved", false);
-      expect(syncValue).toBe(false);
+      expect(syncValue.value).toBe(false);
+      expect(syncValue.variant_source).toBe("fallback");
 
-      // Complete load
       resolveLoad();
 
-      // Wait for async read to complete
       const asyncValue = await asyncReadPromise;
       expect(asyncValue.value).toBe(true);
 
-      // Now sync read should also return loaded value
       const syncValueAfter = mixpanel.flags.getVariantSync("interleaved", false);
       expect(syncValueAfter.value).toBe(true);
     });
@@ -354,7 +354,15 @@ describe("Feature Flags - Concurrency", () => {
       });
 
       mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
-      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+      mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+      void mixpanel.flags;
+      // Drain init's fetch first so the test's operations stand on their own.
+      await new Promise((r) => setTimeout(r, 0));
+      if (resolvers[0]) resolvers[0]();
+      await mixpanel.flags.jsFlags.persistenceLoadedPromise;
+      await mixpanel.flags.loadFlags();
+      callCount = 0;
+      resolvers = [];
 
       // Start multiple concurrent operations
       operations.push(mixpanel.flags.loadFlags());

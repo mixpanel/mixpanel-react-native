@@ -106,7 +106,8 @@ describe('Feature Flags - JavaScript Mode', () => {
 
       it('should return fallback from getVariantSync', () => {
         const variant = mixpanel.flags.getVariantSync('test-flag', 'fallback-value');
-        expect(variant).toBe('fallback-value');
+        expect(variant.value).toBe('fallback-value');
+        expect(variant.variant_source).toBe('fallback');
       });
 
       it('should return fallback from getVariantValueSync', () => {
@@ -137,7 +138,13 @@ describe('Feature Flags - JavaScript Mode', () => {
 
       it('should return fallback from getVariant', async () => {
         const variant = await mixpanel.flags.getVariant('async-test', 'async-fallback');
-        expect(variant).toBe('async-fallback');
+        // Primitive fallbacks are wrapped to match mixpanel-js parity.
+        // Test's fetch mock returns 404 → fetch rejects, no cache → BACKEND_ERROR.
+        expect(variant).toEqual({
+          value: 'async-fallback',
+          variant_source: 'fallback',
+          fallback_reason: 'BACKEND_ERROR',
+        });
       });
 
       it('should return fallback from getVariantValue', async () => {
@@ -152,7 +159,13 @@ describe('Feature Flags - JavaScript Mode', () => {
 
       it('should support callback pattern', (done) => {
         mixpanel.flags.getVariant('callback-test', 'callback-fallback', (variant) => {
-          expect(variant).toBe('callback-fallback');
+          // Primitive fallbacks are wrapped to match mixpanel-js parity.
+          // Same 404 fetch mock → BACKEND_ERROR.
+          expect(variant).toEqual({
+            value: 'callback-fallback',
+            variant_source: 'fallback',
+            fallback_reason: 'BACKEND_ERROR',
+          });
           done();
         });
       });
@@ -196,7 +209,8 @@ describe('Feature Flags - JavaScript Mode', () => {
     it('should handle null feature names gracefully', () => {
       expect(() => mixpanel.flags.getVariantSync(null, 'fallback')).not.toThrow();
       const result = mixpanel.flags.getVariantSync(null, 'fallback');
-      expect(result).toBe('fallback');
+      expect(result.value).toBe('fallback');
+      expect(result.variant_source).toBe('fallback');
     });
 
     it('should handle undefined callbacks', async () => {

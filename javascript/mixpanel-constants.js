@@ -16,6 +16,8 @@ export const getSuperPropertiesKey = (token) =>
 export const getTimeEventsKey = (token) => `MIXPANEL_${token}_TIME_EVENTS`;
 export const getAppHasOpenedBeforeKey = (token) =>
   `MIXPANEL_${token}_APP_HAS_OPENED_BEFORE`;
+export const getPersistedVariantsKey = (token) =>
+  `MIXPANEL_${token}_PERSISTED_FLAG_VARIANTS`;
 
 export const defaultServerURL = `https://api.mixpanel.com`;
 export const defaultBatchSize = 50;

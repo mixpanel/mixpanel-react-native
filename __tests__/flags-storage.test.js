@@ -1,422 +1,344 @@
 import { Mixpanel } from "mixpanel-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  MixpanelFlagPersistence,
+  VariantLookupPolicy,
+} from "../javascript/mixpanel-flag-persistence";
+import { MixpanelPersistent } from "../javascript/mixpanel-persistent";
 
-// Mock fetch globally
 global.fetch = jest.fn();
 
-describe("Feature Flags - Storage", () => {
-  const testToken = "test-token-123";
+const persistedKey = (token) => `MIXPANEL_${token}_PERSISTED_FLAG_VARIANTS`;
+
+const POLICY_PERSIST_UNTIL_NET = {
+  variantLookupPolicy: VariantLookupPolicy.PERSISTENCE_UNTIL_NETWORK_SUCCESS,
+  persistenceTtlMs: 60 * 60 * 1000,
+};
+
+describe("Feature Flags - JS-fallback Persistence (end-to-end)", () => {
+  const token = "test-token-123";
   let mixpanel;
-  let mockAsyncStorage;
+  let mockStorage;
 
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useRealTimers();
     AsyncStorage.clear();
-
-    // Create a mock AsyncStorage for JavaScript mode
-    mockAsyncStorage = {
-      getItem: jest.fn().mockResolvedValue(null),
-      setItem: jest.fn().mockResolvedValue(undefined),
-      removeItem: jest.fn().mockResolvedValue(undefined),
-      clear: jest.fn().mockResolvedValue(undefined),
+    // Reset the MixpanelPersistent singleton so each test's fresh mockStorage
+    // is wired through to the shared adapter that Flags now reuses.
+    MixpanelPersistent.instance = null;
+    const store = {};
+    mockStorage = {
+      getItem: jest.fn((k) => Promise.resolve(store[k] ?? null)),
+      setItem: jest.fn((k, v) => {
+        store[k] = v;
+        return Promise.resolve();
+      }),
+      removeItem: jest.fn((k) => {
+        delete store[k];
+        return Promise.resolve();
+      }),
+      clear: jest.fn(() => {
+        for (const k of Object.keys(store)) delete store[k];
+        return Promise.resolve();
+      }),
     };
-
-    global.fetch.mockClear();
+    global.fetch.mockReset();
   });
 
   afterEach(() => {
     jest.useRealTimers();
   });
 
-  describe("Cache Persistence", () => {
-    it("should cache flags after successful load", async () => {
-      const mockFlags = {
-        flags: {
-          "cached-feature": {
-            variant_key: "treatment",
-            variant_value: "cached-value",
-            experiment_id: 456
-          }
-        }
-      };
-
-      global.fetch.mockResolvedValueOnce({
-        status: 200,
-        json: () => Promise.resolve(mockFlags)
-      });
-
-      mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
-      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
-
-      await mixpanel.flags.loadFlags();
-
-      // Check that flags were cached
-      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-        `MIXPANEL_${testToken}_FLAGS_CACHE`,
-        expect.stringContaining("cached-feature")
-      );
-
-      // Verify the cached data format (serialized as array)
-      const cachedData = mockAsyncStorage.setItem.mock.calls[0][1];
-      const parsed = JSON.parse(cachedData);
-      expect(Array.isArray(parsed)).toBe(true);
-      expect(parsed[0][0]).toBe("cached-feature");
-      expect(parsed[0][1].value).toBe("cached-value");
-    });
-
-    // Test removed - cache loading from initialization not reliably testable in current implementation
-
-    it("should fall back to cached flags when network fails", async () => {
-      // Pre-populate cache
-      const cachedFlags = JSON.stringify([
-        ["stale-flag", {
-          key: "v1",
-          value: "stale",
-          experiment_id: 123
-        }]
-      ]);
-
-      mockAsyncStorage.getItem.mockImplementation((key) => {
-        if (key === `MIXPANEL_${testToken}_FLAGS_CACHE`) {
-          return Promise.resolve(cachedFlags);
-        }
-        return Promise.resolve(null);
-      });
-
-      // Network fails
-      global.fetch.mockRejectedValueOnce({ code: 500, message: "Server error" });
-
-      mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
-      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
-
-      // Wait for cache to load
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // Try to load fresh (will fail)
-      await mixpanel.flags.loadFlags();
-
-      // Should still have cached flags
-      expect(mixpanel.flags.areFlagsReady()).toBe(true);
-      const variant = mixpanel.flags.getVariantSync("stale-flag", "fallback");
-      expect(variant.value).toBe("stale");
-    });
-
-    it("should update cache when fresh flags are loaded", async () => {
-      // Start with cached flags
-      const oldCachedFlags = JSON.stringify([
-        ["updated-flag", {
-          key: "old",
-          value: "old-value"
-        }]
-      ]);
-
-      mockAsyncStorage.getItem.mockImplementation((key) => {
-        if (key === `MIXPANEL_${testToken}_FLAGS_CACHE`) {
-          return Promise.resolve(oldCachedFlags);
-        }
-        return Promise.resolve(null);
-      });
-
-      // Fresh flags from network
-      const freshFlags = {
-        flags: {
-          "updated-flag": {
-            variant_key: "new",
-            variant_value: "new-value"
-          },
-          "additional-flag": {
-            variant_key: "extra",
-            variant_value: true
-          }
-        }
-      };
-
-      global.fetch.mockResolvedValueOnce({
-        status: 200,
-        json: () => Promise.resolve(freshFlags)
-      });
-
-      mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
-      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
-
-      // Wait for cache to load
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // Load fresh flags
-      await mixpanel.flags.loadFlags();
-
-      // Cache should be updated with new flags
-      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-        `MIXPANEL_${testToken}_FLAGS_CACHE`,
-        expect.stringContaining("new-value")
-      );
-
-      // Verify updated values are accessible
-      const variant = mixpanel.flags.getVariantSync("updated-flag", "fallback");
-      expect(variant.value).toBe("new-value");
-
-      const additional = mixpanel.flags.getVariantSync("additional-flag", "fallback");
-      expect(additional.value).toBe(true);
-    });
-  });
-
-  describe("Error Handling", () => {
-    it("should handle corrupted cache data gracefully", async () => {
-      // Return corrupted data from storage
-      mockAsyncStorage.getItem.mockImplementation((key) => {
-        if (key === `MIXPANEL_${testToken}_FLAGS_CACHE`) {
-          return Promise.resolve("not-valid-json{[}");
-        }
-        return Promise.resolve(null);
-      });
-
-      // Provide valid flags from network
-      global.fetch.mockResolvedValueOnce({
-        status: 200,
-        json: () => Promise.resolve({
+  it("writes the persisted blob under the mixpanel-js key after a successful fetch", async () => {
+    global.fetch.mockResolvedValueOnce({
+      status: 200,
+      json: () =>
+        Promise.resolve({
           flags: {
-            "valid-flag": {
-              variant_key: "working",
-              variant_value: "from-network"
-            }
-          }
-        })
-      });
-
-      mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
-      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
-
-      // Wait for cache attempt
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // Load fresh flags
-      await mixpanel.flags.loadFlags();
-
-      // Should work despite corrupted cache
-      expect(mixpanel.flags.areFlagsReady()).toBe(true);
-      const variant = mixpanel.flags.getVariantSync("valid-flag", "fallback");
-      expect(variant.value).toBe("from-network");
-    });
-
-    it("should continue working if storage read fails", async () => {
-      // Storage read fails
-      mockAsyncStorage.getItem.mockRejectedValue(new Error("Storage unavailable"));
-
-      // Network provides flags
-      global.fetch.mockResolvedValueOnce({
-        status: 200,
-        json: () => Promise.resolve({
-          flags: {
-            "no-cache-flag": {
+            "cached-feature": {
               variant_key: "treatment",
-              variant_value: "works-without-cache"
-            }
-          }
-        })
-      });
-
-      mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
-      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
-
-      // Wait for failed cache attempt
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      // Load flags from network
-      await mixpanel.flags.loadFlags();
-
-      // Should work despite storage failure
-      expect(mixpanel.flags.areFlagsReady()).toBe(true);
-      const variant = mixpanel.flags.getVariantSync("no-cache-flag", "fallback");
-      expect(variant.value).toBe("works-without-cache");
+              variant_value: "cached-value",
+              experiment_id: 456,
+            },
+          },
+        }),
     });
 
-    it("should continue working if storage write fails", async () => {
-      // Storage write fails
-      mockAsyncStorage.setItem.mockRejectedValue(new Error("Storage full"));
+    mixpanel = new Mixpanel(token, false, false, mockStorage);
+    await mixpanel.init(false, {}, "https://api.mixpanel.com", false, {
+      enabled: true,
+      persistence: POLICY_PERSIST_UNTIL_NET,
+    });
+    await mixpanel.flags.loadFlags();
 
-      global.fetch.mockResolvedValueOnce({
+    const writes = mockStorage.setItem.mock.calls.filter(
+      ([key]) => key === persistedKey(token)
+    );
+    expect(writes.length).toBeGreaterThanOrEqual(1);
+    const payload = JSON.parse(writes[writes.length - 1][1]);
+    expect(payload.flagVariants["cached-feature"].variant_key).toBe("treatment");
+    expect(payload.flagVariants["cached-feature"].variant_value).toBe("cached-value");
+    expect(payload.flagVariants["cached-feature"].experiment_id).toBe(456);
+    expect(typeof payload.persistedAt).toBe("number");
+  });
+
+  it("does NOT persist when variantLookupPolicy is unset (default networkOnly)", async () => {
+    global.fetch.mockResolvedValueOnce({
+      status: 200,
+      json: () => Promise.resolve({ flags: { a: { variant_key: "k", variant_value: 1 } } }),
+    });
+
+    mixpanel = new Mixpanel(token, false, false, mockStorage);
+    await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+    await mixpanel.flags.loadFlags();
+
+    const writesToFlagsKey = mockStorage.setItem.mock.calls.filter(
+      ([key]) => key === persistedKey(token)
+    );
+    expect(writesToFlagsKey).toHaveLength(0);
+  });
+
+  it("stamps freshly loaded variants with variant_source='network'", async () => {
+    global.fetch.mockResolvedValueOnce({
+      status: 200,
+      json: () =>
+        Promise.resolve({
+          flags: { "fresh-flag": { variant_key: "v1", variant_value: "new" } },
+        }),
+    });
+
+    mixpanel = new Mixpanel(token, false, false, mockStorage);
+    await mixpanel.init(false, {}, "https://api.mixpanel.com", false, {
+      enabled: true,
+      persistence: POLICY_PERSIST_UNTIL_NET,
+    });
+    await mixpanel.flags.loadFlags();
+
+    const v = mixpanel.flags.getVariantSync("fresh-flag", { key: "k", value: null });
+    expect(v.value).toBe("new");
+    expect(v.variant_source).toBe("network");
+  });
+
+  it("isolates persisted blobs per token", async () => {
+    const t1 = "token-1";
+    const t2 = "token-2";
+
+    global.fetch
+      .mockResolvedValueOnce({
         status: 200,
-        json: () => Promise.resolve({
+        json: () => Promise.resolve({ flags: { a: { variant_key: "k", variant_value: "v1" } } }),
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        json: () => Promise.resolve({ flags: { a: { variant_key: "k", variant_value: "v1" } } }),
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        json: () => Promise.resolve({ flags: { b: { variant_key: "k", variant_value: "v2" } } }),
+      })
+      .mockResolvedValueOnce({
+        status: 200,
+        json: () => Promise.resolve({ flags: { b: { variant_key: "k", variant_value: "v2" } } }),
+      });
+
+    const mp1 = new Mixpanel(t1, false, false, mockStorage);
+    await mp1.init(false, {}, "https://api.mixpanel.com", false, {
+      enabled: true,
+      persistence: POLICY_PERSIST_UNTIL_NET,
+    });
+    await mp1.flags.loadFlags();
+
+    const mp2 = new Mixpanel(t2, false, false, mockStorage);
+    await mp2.init(false, {}, "https://api.mixpanel.com", false, {
+      enabled: true,
+      persistence: POLICY_PERSIST_UNTIL_NET,
+    });
+    await mp2.flags.loadFlags();
+
+    const keys = mockStorage.setItem.mock.calls.map(([k]) => k);
+    expect(keys).toContain(persistedKey(t1));
+    expect(keys).toContain(persistedKey(t2));
+  });
+
+  it("networkFirst falls back to the persisted variant when the network fetch fails", async () => {
+    // First session: fetch succeeds and writes a persisted blob under the runtime distinct_id.
+    global.fetch.mockResolvedValue({
+      status: 200,
+      json: () =>
+        Promise.resolve({
           flags: {
-            "no-persist-flag": {
+            "cached-only": {
               variant_key: "treatment",
-              variant_value: "in-memory-only"
-            }
-          }
-        })
-      });
-
-      mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
-      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
-
-      await mixpanel.flags.loadFlags();
-
-      // Should work despite storage write failure
-      expect(mixpanel.flags.areFlagsReady()).toBe(true);
-      const variant = mixpanel.flags.getVariantSync("no-persist-flag", "fallback");
-      expect(variant.value).toBe("in-memory-only");
-
-      // Verify write was attempted
-      expect(mockAsyncStorage.setItem).toHaveBeenCalled();
+              variant_value: "from-persistence",
+              experiment_id: 99,
+            },
+          },
+        }),
     });
 
-    it("should handle invalid cache format (not an array)", async () => {
-      // Return object instead of array
-      mockAsyncStorage.getItem.mockImplementation((key) => {
-        if (key === `MIXPANEL_${testToken}_FLAGS_CACHE`) {
-          return Promise.resolve(JSON.stringify({
-            "not": "an array"
-          }));
-        }
-        return Promise.resolve(null);
-      });
+    const POLICY_NETWORK_FIRST = {
+      variantLookupPolicy: VariantLookupPolicy.NETWORK_FIRST,
+      persistenceTtlMs: 60 * 60 * 1000,
+    };
 
-      global.fetch.mockResolvedValueOnce({
-        status: 200,
-        json: () => Promise.resolve({
-          flags: {
-            "recovered-flag": {
-              variant_key: "working",
-              variant_value: "recovered"
-            }
-          }
-        })
-      });
-
-      mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
-      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
-
-      // Wait for cache attempt
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      await mixpanel.flags.loadFlags();
-
-      // Should recover from invalid cache format
-      expect(mixpanel.flags.areFlagsReady()).toBe(true);
-      const variant = mixpanel.flags.getVariantSync("recovered-flag", "fallback");
-      expect(variant.value).toBe("recovered");
+    const mp = new Mixpanel(token, false, false, mockStorage);
+    await mp.init(false, {}, "https://api.mixpanel.com", false, {
+      enabled: true,
+      persistence: POLICY_NETWORK_FIRST,
     });
+    await mp.flags.loadFlags();
+    expect(
+      mockStorage.setItem.mock.calls.some(([k]) => k === persistedKey(token))
+    ).toBe(true);
+
+    // Drive a second fetch attempt that fails; in-memory variants should survive.
+    global.fetch.mockReset();
+    global.fetch.mockRejectedValue(new Error("offline"));
+
+    await expect(mp.flags.loadFlags()).rejects.toBeDefined();
+
+    const variant = await mp.flags.getVariant("cached-only", {
+      key: "fb",
+      value: "fallback-value",
+    });
+
+    expect(variant.value).toBe("from-persistence");
+    // In-memory variant retains its origin from the original successful fetch.
+    expect(["network", "persistence"]).toContain(variant.variant_source);
+  });
+});
+
+describe("MixpanelFlagPersistence — direct unit coverage", () => {
+  let storage;
+  const token = "unit-test-token";
+  const ttlMs = 60 * 60 * 1000;
+
+  beforeEach(() => {
+    let store = {};
+    storage = {
+      getItem: jest.fn((k) => Promise.resolve(store[k] ?? null)),
+      setItem: jest.fn((k, v) => {
+        store[k] = v;
+        return Promise.resolve();
+      }),
+      removeItem: jest.fn((k) => {
+        delete store[k];
+        return Promise.resolve();
+      }),
+    };
   });
 
-  describe("Cache Key Management", () => {
-    it("should use correct cache key format", async () => {
-      global.fetch.mockResolvedValueOnce({
-        status: 200,
-        json: () => Promise.resolve({
-          flags: {
-            "test": { variant_key: "a", variant_value: 1 }
-          }
-        })
-      });
+  function makePersistence(policy = VariantLookupPolicy.PERSISTENCE_UNTIL_NETWORK_SUCCESS, ttl = ttlMs) {
+    return new MixpanelFlagPersistence(
+      { variantLookupPolicy: policy, persistenceTtlMs: ttl },
+      token,
+      storage
+    );
+  }
 
-      mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
-      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+  it("round-trips all variant fields including variant_source and persisted_at_in_ms", async () => {
+    const p = makePersistence();
+    const context = { distinct_id: "u1" };
+    const flagsMap = new Map([
+      [
+        "flag-a",
+        {
+          key: "treatment",
+          value: { theme: "dark" },
+          experiment_id: 42,
+          is_experiment_active: true,
+          is_qa_tester: false,
+        },
+      ],
+    ]);
 
-      await mixpanel.flags.loadFlags();
-
-      // Verify correct cache key format
-      expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-        `MIXPANEL_${testToken}_FLAGS_CACHE`,
-        expect.any(String)
-      );
-    });
-
-    it("should isolate cache by token", async () => {
-      const token1 = "token-1";
-      const token2 = "token-2";
-
-      // Different flags for different tokens
-      global.fetch
-        .mockResolvedValueOnce({
-          status: 200,
-          json: () => Promise.resolve({
-            flags: {
-              "flag1": { variant_key: "a", variant_value: "token1-value" }
-            }
-          })
-        })
-        .mockResolvedValueOnce({
-          status: 200,
-          json: () => Promise.resolve({
-            flags: {
-              "flag2": { variant_key: "b", variant_value: "token2-value" }
-            }
-          })
-        });
-
-      // Create two mixpanel instances with different tokens
-      const mixpanel1 = new Mixpanel(token1, false, false, mockAsyncStorage);
-      await mixpanel1.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
-      await mixpanel1.flags.loadFlags();
-
-      const mixpanel2 = new Mixpanel(token2, false, false, mockAsyncStorage);
-      await mixpanel2.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
-      await mixpanel2.flags.loadFlags();
-
-      // Verify different cache keys were used
-      const setCalls = mockAsyncStorage.setItem.mock.calls;
-      const keys = setCalls.map(call => call[0]);
-
-      expect(keys).toContain(`MIXPANEL_${token1}_FLAGS_CACHE`);
-      expect(keys).toContain(`MIXPANEL_${token2}_FLAGS_CACHE`);
-    });
+    await p.save(context, flagsMap, {});
+    const loaded = await p.loadFlagsFromStorage(context);
+    expect(loaded).not.toBeNull();
+    const v = loaded.flags.get("flag-a");
+    expect(v.key).toBe("treatment");
+    expect(v.value).toEqual({ theme: "dark" });
+    expect(v.experiment_id).toBe(42);
+    expect(v.is_experiment_active).toBe(true);
+    expect(v.is_qa_tester).toBe(false);
+    expect(v.variant_source).toBe("persistence");
+    expect(typeof v.persisted_at_in_ms).toBe("number");
   });
 
-  describe("Cache Serialization", () => {
-    it("should correctly serialize Map to array format", async () => {
-      const complexFlags = {
-        flags: {
-          "string-flag": {
-            variant_key: "v1",
-            variant_value: "text"
-          },
-          "number-flag": {
-            variant_key: "v2",
-            variant_value: 42.5
-          },
-          "boolean-flag": {
-            variant_key: "v3",
-            variant_value: true
-          },
-          "object-flag": {
-            variant_key: "v4",
-            variant_value: { nested: "object", count: 5 }
-          },
-          "array-flag": {
-            variant_key: "v5",
-            variant_value: [1, 2, 3]
-          }
-        }
-      };
+  it("returns null on TTL expiry without auto-deleting the blob", async () => {
+    const p = makePersistence();
+    const context = { distinct_id: "u1" };
+    await p.save(context, new Map([["a", { key: "k", value: 1 }]]), {});
 
-      global.fetch.mockResolvedValueOnce({
-        status: 200,
-        json: () => Promise.resolve(complexFlags)
-      });
+    const raw = await storage.getItem(persistedKey(token));
+    const parsed = JSON.parse(raw);
+    parsed.persistedAt = Date.now() - ttlMs - 1000;
+    await storage.setItem(persistedKey(token), JSON.stringify(parsed));
 
-      mixpanel = new Mixpanel(testToken, false, false, mockAsyncStorage);
-      await mixpanel.init(false, {}, "https://api.mixpanel.com", false, { enabled: true });
+    const loaded = await p.loadFlagsFromStorage(context);
+    expect(loaded).toBeNull();
 
-      await mixpanel.flags.loadFlags();
+    const stillThere = await storage.getItem(persistedKey(token));
+    expect(stillThere).not.toBeNull();
+  });
 
-      // Get cached data
-      const cachedData = mockAsyncStorage.setItem.mock.calls[0][1];
-      const parsed = JSON.parse(cachedData);
+  it("clears the blob when the persisted distinct_id no longer matches", async () => {
+    const p = makePersistence();
+    await p.save({ distinct_id: "user-A" }, new Map([["a", { key: "k", value: 1 }]]), {});
+    const loaded = await p.loadFlagsFromStorage({ distinct_id: "user-B" });
+    expect(loaded).toBeNull();
+    expect(await storage.getItem(persistedKey(token))).toBeNull();
+  });
 
-      // Verify array format and data preservation
-      expect(Array.isArray(parsed)).toBe(true);
-      expect(parsed.length).toBe(5);
+  it("networkOnly policy wipes any existing blob on load", async () => {
+    const persisting = makePersistence();
+    await persisting.save({ distinct_id: "u1" }, new Map([["a", { key: "k", value: 1 }]]), {});
+    expect(await storage.getItem(persistedKey(token))).not.toBeNull();
 
-      // Check each flag type is preserved
-      const flagsMap = new Map(parsed);
-      expect(flagsMap.get("string-flag").value).toBe("text");
-      expect(flagsMap.get("number-flag").value).toBe(42.5);
-      expect(flagsMap.get("boolean-flag").value).toBe(true);
-      expect(flagsMap.get("object-flag").value).toEqual({ nested: "object", count: 5 });
-      expect(flagsMap.get("array-flag").value).toEqual([1, 2, 3]);
-    });
+    const networkOnly = makePersistence(VariantLookupPolicy.NETWORK_ONLY);
+    const loaded = await networkOnly.loadFlagsFromStorage({ distinct_id: "u1" });
+    expect(loaded).toBeNull();
+    expect(await storage.getItem(persistedKey(token))).toBeNull();
+  });
 
-    // Test removed - deserialization from cache not reliably testable without loadFlags call
+  it("save() is a no-op when policy is networkOnly", async () => {
+    const p = makePersistence(VariantLookupPolicy.NETWORK_ONLY);
+    await p.save({ distinct_id: "u1" }, new Map([["a", { key: "k", value: 1 }]]), {});
+    expect(await storage.getItem(persistedKey(token))).toBeNull();
+  });
+
+  it("rejects an invalid policy string by falling back to networkOnly", async () => {
+    const p = new MixpanelFlagPersistence(
+      { variantLookupPolicy: "totallyNotAPolicy" },
+      token,
+      storage
+    );
+    expect(p.getPolicy()).toBe(VariantLookupPolicy.NETWORK_ONLY);
+  });
+
+  it("round-trips pendingFirstTimeEvents through save() and loadFlagsFromStorage()", async () => {
+    const p = makePersistence();
+    const context = { distinct_id: "u1" };
+    const flagsMap = new Map([
+      ["onboarding", { key: "control", value: false }],
+    ]);
+    const pendingFirstTimeEvents = {
+      "onboarding:abc123": {
+        flag_key: "onboarding",
+        flag_id: "flag-1",
+        project_id: 7,
+        first_time_event_hash: "abc123",
+        event_name: "Dashboard Viewed",
+        property_filters: { ">": [{ var: "x" }, 0] },
+        pending_variant: { variant_key: "treatment", variant_value: true },
+      },
+    };
+
+    await p.save(context, flagsMap, pendingFirstTimeEvents);
+    const loaded = await p.loadFlagsFromStorage(context);
+
+    expect(loaded).not.toBeNull();
+    expect(loaded.pendingFirstTimeEvents).toEqual(pendingFirstTimeEvents);
   });
 });

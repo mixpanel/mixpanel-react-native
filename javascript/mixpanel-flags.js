@@ -68,17 +68,22 @@ import { MixpanelLogger } from './mixpanel-logger';
  * @see Mixpanel#flags
  */
 export class Flags {
-  constructor(token, mixpanelImpl, storage) {
+  constructor(token, mixpanelImpl) {
     this.token = token;
     this.mixpanelImpl = mixpanelImpl;
-    this.storage = storage;
     this.isNativeMode = typeof mixpanelImpl.loadFlags === 'function';
 
-    // For JavaScript mode, create the JS implementation
-    if (!this.isNativeMode && storage) {
-      // Get the initial context from mixpanelImpl (always MixpanelMain in JS mode)
-      const initialContext = mixpanelImpl.getFeatureFlagsContext();
-      this.jsFlags = new MixpanelFlagsJS(token, mixpanelImpl, storage, initialContext);
+    if (!this.isNativeMode) {
+      // Reuse the adapter MixpanelPersistent already built so flags inherit
+      // the same "user-supplied storage → auto-required AsyncStorage →
+      // InMemoryStorage fallback" resolution the rest of persistence uses.
+      this.jsFlags = new MixpanelFlagsJS(
+        token,
+        mixpanelImpl,
+        mixpanelImpl.mixpanelPersistent.storageAdapter,
+        mixpanelImpl.getFeatureFlagsOptions()
+      );
+      this.jsFlags.init();
     }
   }
 
@@ -198,13 +203,10 @@ export class Flags {
    * @see getVariantValueSync to get only the value (not the full variant object)
    */
   getVariantSync(featureName, fallback) {
-    if (!this.areFlagsReady()) {
-      return fallback;
-    }
-
     if (this.isNativeMode) {
       return this.mixpanelImpl.getVariantSync(this.token, featureName, fallback);
-    } else if (this.jsFlags) {
+    }
+    if (this.jsFlags) {
       return this.jsFlags.getVariantSync(featureName, fallback);
     }
     return fallback;
@@ -252,10 +254,6 @@ export class Flags {
    * @see getVariantSync to get the full variant object including key and metadata
    */
   getVariantValueSync(featureName, fallbackValue) {
-    if (!this.areFlagsReady()) {
-      return fallbackValue;
-    }
-
     if (this.isNativeMode) {
       // Android returns a wrapped object due to React Native limitations
       const result = this.mixpanelImpl.getVariantValueSync(this.token, featureName, fallbackValue);
@@ -307,10 +305,6 @@ export class Flags {
    * @see getVariantValueSync for non-boolean flag values
    */
   isEnabledSync(featureName, fallbackValue = false) {
-    if (!this.areFlagsReady()) {
-      return fallbackValue;
-    }
-
     if (this.isNativeMode) {
       return this.mixpanelImpl.isEnabledSync(this.token, featureName, fallbackValue);
     } else if (this.jsFlags) {
@@ -584,58 +578,57 @@ export class Flags {
     });
   }
 
+  /** Get all loaded variants as a Map keyed by feature name. Resolves to an empty Map on failure. */
+  getAllVariants(callback) {
+    const run = (resolve) => {
+      const handleError = (error) => {
+        MixpanelLogger.error(this.token, "Failed to get all variants:", error);
+        resolve(new Map());
+      };
+      if (this.isNativeMode) {
+        this.mixpanelImpl
+          .getAllVariants(this.token)
+          .then((obj) => resolve(new Map(Object.entries(obj || {}))))
+          .catch(handleError);
+      } else if (this.jsFlags) {
+        this.jsFlags.getAllVariants().then(resolve).catch(handleError);
+      } else {
+        resolve(new Map());
+      }
+    };
+    if (typeof callback === 'function') {
+      run((variants) => callback(variants));
+      return;
+    }
+    return new Promise(run);
+  }
+
+  /** Synchronous variant of {@link getAllVariants}; returns whatever is in memory. */
+  getAllVariantsSync() {
+    if (this.isNativeMode) {
+      return new Map(
+        Object.entries(this.mixpanelImpl.getAllVariantsSync(this.token) || {})
+      );
+    } else if (this.jsFlags) {
+      return this.jsFlags.getAllVariantsSync();
+    }
+    return new Map();
+  }
+
   /**
    * Update the context used for feature flag evaluation.
    *
-   * <p>Context properties are used to determine which feature flag variants a user should receive
-   * based on targeting rules configured in your Mixpanel project. This allows for personalized
-   * feature experiences based on user attributes, device properties, or custom criteria.
-   *
-   * <p><b>IMPORTANT LIMITATION:</b> This method is <b>only available in JavaScript mode</b>
-   * (Expo/React Native Web). In native mode (iOS/Android), context must be set during initialization
-   * via {@link Mixpanel#init} and cannot be updated at runtime.
-   *
-   * <p>By default, the new context properties are merged with existing context. Set
-   * <code>options.replace = true</code> to completely replace the context instead.
-   *
-   * @param {object} newContext New context properties to add or update. Can include any
-   *     JSON-serializable properties that are used in your feature flag targeting rules.
-   *     Common examples include user tier, region, platform version, etc.
-   * @param {object} [options={replace: false}] Configuration options for the update
-   * @param {boolean} [options.replace=false] If true, replaces the entire context instead of merging.
-   *     If false (default), merges new properties with existing context.
-   * @returns {Promise<void>} A promise that resolves when the context has been updated and
-   *     flags have been re-evaluated with the new context
-   * @throws {Error} if called in native mode (iOS/Android)
-   *
-   * @example
-   * // Merge new properties into existing context (JavaScript mode only)
-   * await mixpanel.flags.updateContext({
-   *   user_tier: 'premium',
-   *   region: 'us-west'
-   * });
-   *
-   * @example
-   * // Replace entire context (JavaScript mode only)
-   * await mixpanel.flags.updateContext({
-   *   device_type: 'tablet',
-   *   os_version: '14.0'
-   * }, { replace: true });
-   *
-   * @example
-   * // This will throw an error in native mode
-   * try {
-   *   await mixpanel.flags.updateContext({ tier: 'premium' });
-   * } catch (error) {
-   *   console.error('Context updates not supported in native mode');
-   * }
+   * In JavaScript mode, `options.replace` controls merge vs. replace semantics
+   * (merge by default). In native mode, the underlying iOS/Android SDKs always
+   * merge context and do not currently expose a replace toggle, so `options` is
+   * accepted for forward compatibility but ignored — not forwarded across the
+   * bridge. Requires Mixpanel-swift 6.4+ / mixpanel-android 8.8+ on native.
    */
   async updateContext(newContext, options = { replace: false }) {
     if (this.isNativeMode) {
-      throw new Error(
-        "updateContext() is not supported in native mode. " +
-        "Context must be set during initialization via FeatureFlagsOptions. " +
-        "This feature is only available in JavaScript mode (Expo/React Native Web)."
+      return await this.mixpanelImpl.updateFlagsContext(
+        this.token,
+        newContext || {}
       );
     } else if (this.jsFlags) {
       return await this.jsFlags.updateContext(newContext, options);
@@ -643,70 +636,96 @@ export class Flags {
     throw new Error("Feature flags are not initialized");
   }
 
-  // snake_case aliases for API consistency with mixpanel-js
-
   /**
-   * Alias for {@link areFlagsReady}. Provided for API consistency with mixpanel-js.
-   * @see areFlagsReady
+   * Notify the flags system of a tracked event so any matching first-time-event
+   * activations are recorded. No-op on native (handled by the iOS/Android SDKs).
    */
+  checkFirstTimeEvents(eventName, properties) {
+    if (this.isNativeMode) {
+      return;
+    }
+    if (this.jsFlags) {
+      this.jsFlags.checkFirstTimeEvents(eventName, properties);
+    }
+  }
+
+  // snake_case aliases
+
+  /** Alias for {@link areFlagsReady}. */
   are_flags_ready() {
     return this.areFlagsReady();
   }
 
-  /**
-   * Alias for {@link getVariant}. Provided for API consistency with mixpanel-js.
-   * @see getVariant
-   */
+  /** Alias for {@link getVariant}. */
   get_variant(featureName, fallback, callback) {
     return this.getVariant(featureName, fallback, callback);
   }
 
-  /**
-   * Alias for {@link getVariantSync}. Provided for API consistency with mixpanel-js.
-   * @see getVariantSync
-   */
+  /** Alias for {@link getVariantSync}. */
   get_variant_sync(featureName, fallback) {
     return this.getVariantSync(featureName, fallback);
   }
 
-  /**
-   * Alias for {@link getVariantValue}. Provided for API consistency with mixpanel-js.
-   * @see getVariantValue
-   */
+  /** Alias for {@link getVariantValue}. */
   get_variant_value(featureName, fallbackValue, callback) {
     return this.getVariantValue(featureName, fallbackValue, callback);
   }
 
-  /**
-   * Alias for {@link getVariantValueSync}. Provided for API consistency with mixpanel-js.
-   * @see getVariantValueSync
-   */
+  /** Alias for {@link getVariantValueSync}. */
   get_variant_value_sync(featureName, fallbackValue) {
     return this.getVariantValueSync(featureName, fallbackValue);
   }
 
-  /**
-   * Alias for {@link isEnabled}. Provided for API consistency with mixpanel-js.
-   * @see isEnabled
-   */
+  /** Alias for {@link isEnabled}. */
   is_enabled(featureName, fallbackValue, callback) {
     return this.isEnabled(featureName, fallbackValue, callback);
   }
 
-  /**
-   * Alias for {@link isEnabledSync}. Provided for API consistency with mixpanel-js.
-   * @see isEnabledSync
-   */
+  /** Alias for {@link isEnabledSync}. */
   is_enabled_sync(featureName, fallbackValue) {
     return this.isEnabledSync(featureName, fallbackValue);
   }
 
   /**
-   * Alias for {@link updateContext}. Provided for API consistency with mixpanel-js.
-   * JavaScript mode only.
+   * Clear feature flag state. Native mode is a no-op — the native SDKs handle
+   * flag re-fetch on their own reset. JS-fallback mode clears the in-memory
+   * map, removes the persisted blob, and triggers a fresh fetch under the
+   * new identity.
+   */
+  async reset() {
+    if (this.isNativeMode) {
+      return;
+    }
+    if (this.jsFlags) {
+      return this.jsFlags.reset();
+    }
+  }
+
+  /** Alias for {@link getAllVariants}. */
+  get_all_variants(callback) {
+    return this.getAllVariants(callback);
+  }
+
+  /** Alias for {@link getAllVariantsSync}. */
+  get_all_variants_sync() {
+    return this.getAllVariantsSync();
+  }
+
+  /** Alias for {@link loadFlags}. */
+  load_flags() {
+    return this.loadFlags();
+  }
+
+  /**
+   * Alias for {@link updateContext}.
    * @see updateContext
    */
   update_context(newContext, options) {
     return this.updateContext(newContext, options);
+  }
+
+  /** Alias for {@link checkFirstTimeEvents}. */
+  check_first_time_events(eventName, properties) {
+    return this.checkFirstTimeEvents(eventName, properties);
   }
 }

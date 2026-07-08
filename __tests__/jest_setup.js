@@ -1,5 +1,4 @@
 import * as ReactNative from "react-native";
-import { jest } from "@jest/globals";
 
 // Mock react-native-get-random-values polyfill
 jest.mock("react-native-get-random-values", () => {

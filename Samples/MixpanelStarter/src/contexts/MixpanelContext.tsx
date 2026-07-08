@@ -21,6 +21,7 @@ interface MixpanelProviderProps {
   token: string;
   trackAutomaticEvents?: boolean;
   useNative?: boolean;
+  serverURL?: string;
 }
 
 export const MixpanelProvider: React.FC<MixpanelProviderProps> = ({
@@ -28,6 +29,7 @@ export const MixpanelProvider: React.FC<MixpanelProviderProps> = ({
   token,
   trackAutomaticEvents = true,
   useNative = true,
+  serverURL,
 }) => {
   const [mixpanel, setMixpanel] = useState<Mixpanel | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -46,7 +48,7 @@ export const MixpanelProvider: React.FC<MixpanelProviderProps> = ({
           : new Mixpanel(token, trackAutomaticEvents, false, AsyncStorage);
 
         // Initialize with feature flags enabled
-        await instance.init(false, {}, undefined, false, {
+        await instance.init(false, {}, serverURL, false, {
           enabled: true,
         });
 

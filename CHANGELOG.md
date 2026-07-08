@@ -1,3 +1,43 @@
+# Changelog
+
+## [v3.4.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.4.0) (2026-06-15)
+
+### Enhancements
+
+- Updated Mixpanel-swift SDK from 5.2.0 to 6.4.1 [\#421](https://github.com/mixpanel/mixpanel-react-native/pull/421)
+- Updated mixpanel-android SDK from 8.3.0 to 8.7.0 [\#420](https://github.com/mixpanel/mixpanel-react-native/pull/420)
+
+[Full Changelog](https://github.com/mixpanel/mixpanel-react-native/compare/v3.3.0...v3.4.0)
+
+#
+
+## [v3.3.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.3.0) (2026-02-17)
+
+### Enhancements
+
+- Set server URL during initialization using MixpanelOptions [\#368](https://github.com/mixpanel/mixpanel-react-native/pull/368)
+
+#
+
+## [v3.2.2](https://github.com/mixpanel/mixpanel-react-native/tree/v3.2.2) (2026-01-17)
+
+#
+
+## [v3.2.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.2.1) (2026-01-17)
+
+### Enhancements
+
+- bump android to 8.2.5 [\#355](https://github.com/mixpanel/mixpanel-react-native/pull/355)
+
+#
+
+## [v3.2.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.2.0) (2026-01-17)
+
+### Enhancements
+
+- feat: move async-storage to peerDependencies [\#354](https://github.com/mixpanel/mixpanel-react-native/pull/354)
+- Security: Update dev dependencies and fix npm packaging [\#353](https://github.com/mixpanel/mixpanel-react-native/pull/353)
+
 #
 
 ## [v3.2.0-beta.3](https://github.com/mixpanel/mixpanel-react-native/tree/v3.2.0-beta.3) (2025-12-15)
@@ -535,6 +575,14 @@ This major release removes all remaining calls to Mixpanel's `/decide` API endpo
   Report issues or give us any feedback is appreciated!
 - integration guide: https://developer.mixpanel.com/docs/react-native
 - full API reference: https://mixpanel.github.io/mixpanel-react-native
+
+
+
+
+
+
+
+
 
 
 

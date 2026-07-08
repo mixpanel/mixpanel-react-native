@@ -1,6 +1,4 @@
 import { MixpanelType } from "mixpanel-react-native/javascript/mixpanel-constants";
-import { exp } from "react-native/Libraries/Animated/src/Easing";
-import { get } from "react-native/Libraries/Utilities/PixelRatio";
 
 jest.mock("mixpanel-react-native/javascript/mixpanel-core", () => ({
   MixpanelCore: jest.fn().mockImplementation(() => ({

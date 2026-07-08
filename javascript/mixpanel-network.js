@@ -112,6 +112,7 @@ export const MixpanelNetwork = (() => {
             data,
             serverURL,
             useIPAddressForGeoLocation,
+            headers,
             retryCount: retryCount + 1,
           });
         }

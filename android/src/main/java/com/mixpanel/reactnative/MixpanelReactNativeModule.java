@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
@@ -112,7 +113,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         if (policyMap.hasKey("persistenceTtlMs") && !policyMap.isNull("persistenceTtlMs")) {
             return (long) policyMap.getDouble("persistenceTtlMs");
         }
-        return java.util.concurrent.TimeUnit.HOURS.toMillis(24);
+        return TimeUnit.HOURS.toMillis(24);
     }
 
     @ReactMethod
@@ -683,10 +684,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.reject("Instance Error", "Failed to get Mixpanel instance");
             return;
         }
-        synchronized (instance) {
-            instance.getFlags().loadFlags();
-            promise.resolve(null);
-        }
+        instance.getFlags().loadFlags();
+        promise.resolve(null);
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
@@ -695,9 +694,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         if (instance == null) {
             return false;
         }
-        synchronized (instance) {
-            return instance.getFlags().areFlagsReady();
-        }
+        return instance.getFlags().areFlagsReady();
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
@@ -707,11 +704,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             return convertVariantToMap(fallback);
         }
 
-        synchronized (instance) {
-            MixpanelFlagVariant fallbackVariant = convertMapToVariant(fallback);
-            MixpanelFlagVariant variant = instance.getFlags().getVariantSync(featureName, fallbackVariant);
-            return convertVariantToWritableMap(variant);
-        }
+        MixpanelFlagVariant fallbackVariant = convertMapToVariant(fallback);
+        MixpanelFlagVariant variant = instance.getFlags().getVariantSync(featureName, fallbackVariant);
+        return convertVariantToWritableMap(variant);
     }
 
     // Note: For getVariantValueSync, we'll return the full variant and extract value in JS
@@ -727,31 +722,29 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             return result;
         }
 
-        synchronized (instance) {
-            Object value = instance.getFlags().getVariantValueSync(featureName, ReactNativeHelper.dynamicToObject(fallbackValue));
-            result.putString("type", "value");
+        Object value = instance.getFlags().getVariantValueSync(featureName, ReactNativeHelper.dynamicToObject(fallbackValue));
+        result.putString("type", "value");
 
-            // Convert value to appropriate type
-            if (value == null) {
-                result.putNull("value");
-            } else if (value instanceof String) {
-                result.putString("value", (String) value);
-            } else if (value instanceof Boolean) {
-                result.putBoolean("value", (Boolean) value);
-            } else if (value instanceof Integer) {
-                result.putInt("value", (Integer) value);
-            } else if (value instanceof Double) {
-                result.putDouble("value", (Double) value);
-            } else if (value instanceof Float) {
-                result.putDouble("value", ((Float) value).doubleValue());
-            } else if (value instanceof Long) {
-                result.putDouble("value", ((Long) value).doubleValue());
-            } else {
-                result.putString("value", value.toString());
-            }
-
-            return result;
+        // Convert value to appropriate type
+        if (value == null) {
+            result.putNull("value");
+        } else if (value instanceof String) {
+            result.putString("value", (String) value);
+        } else if (value instanceof Boolean) {
+            result.putBoolean("value", (Boolean) value);
+        } else if (value instanceof Integer) {
+            result.putInt("value", (Integer) value);
+        } else if (value instanceof Double) {
+            result.putDouble("value", (Double) value);
+        } else if (value instanceof Float) {
+            result.putDouble("value", ((Float) value).doubleValue());
+        } else if (value instanceof Long) {
+            result.putDouble("value", ((Long) value).doubleValue());
+        } else {
+            result.putString("value", value.toString());
         }
+
+        return result;
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
@@ -761,9 +754,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             return fallbackValue;
         }
 
-        synchronized (instance) {
-            return instance.getFlags().isEnabledSync(featureName, fallbackValue);
-        }
+        return instance.getFlags().isEnabledSync(featureName, fallbackValue);
     }
 
     @ReactMethod
@@ -774,15 +765,13 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        synchronized (instance) {
-            MixpanelFlagVariant fallbackVariant = convertMapToVariant(fallback);
-            instance.getFlags().getVariant(featureName, fallbackVariant, new FlagCompletionCallback<MixpanelFlagVariant>() {
-                @Override
-                public void onComplete(MixpanelFlagVariant variant) {
-                    promise.resolve(convertVariantToWritableMap(variant));
-                }
-            });
-        }
+        MixpanelFlagVariant fallbackVariant = convertMapToVariant(fallback);
+        instance.getFlags().getVariant(featureName, fallbackVariant, new FlagCompletionCallback<MixpanelFlagVariant>() {
+            @Override
+            public void onComplete(MixpanelFlagVariant variant) {
+                promise.resolve(convertVariantToWritableMap(variant));
+            }
+        });
     }
 
     @ReactMethod
@@ -793,40 +782,38 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        synchronized (instance) {
-            Object fallbackObj = ReactNativeHelper.dynamicToObject(fallbackValue);
-            instance.getFlags().getVariantValue(featureName, fallbackObj, new FlagCompletionCallback<Object>() {
-                @Override
-                public void onComplete(Object value) {
-                    // Convert the value back to a format React Native can handle
-                    if (value == null) {
-                        promise.resolve(null);
-                    } else if (value instanceof String) {
-                        promise.resolve((String) value);
-                    } else if (value instanceof Boolean) {
-                        promise.resolve((Boolean) value);
-                    } else if (value instanceof Number) {
-                        promise.resolve(((Number) value).doubleValue());
-                    } else if (value instanceof JSONObject) {
-                        try {
-                            WritableMap map = ReactNativeHelper.convertJsonToMap((JSONObject) value);
-                            promise.resolve(map);
-                        } catch (Exception e) {
-                            promise.resolve(value.toString());
-                        }
-                    } else if (value instanceof JSONArray) {
-                        try {
-                            WritableArray array = ReactNativeHelper.convertJsonToArray((JSONArray) value);
-                            promise.resolve(array);
-                        } catch (Exception e) {
-                            promise.resolve(value.toString());
-                        }
-                    } else {
+        Object fallbackObj = ReactNativeHelper.dynamicToObject(fallbackValue);
+        instance.getFlags().getVariantValue(featureName, fallbackObj, new FlagCompletionCallback<Object>() {
+            @Override
+            public void onComplete(Object value) {
+                // Convert the value back to a format React Native can handle
+                if (value == null) {
+                    promise.resolve(null);
+                } else if (value instanceof String) {
+                    promise.resolve((String) value);
+                } else if (value instanceof Boolean) {
+                    promise.resolve((Boolean) value);
+                } else if (value instanceof Number) {
+                    promise.resolve(((Number) value).doubleValue());
+                } else if (value instanceof JSONObject) {
+                    try {
+                        WritableMap map = ReactNativeHelper.convertJsonToMap((JSONObject) value);
+                        promise.resolve(map);
+                    } catch (Exception e) {
                         promise.resolve(value.toString());
                     }
+                } else if (value instanceof JSONArray) {
+                    try {
+                        WritableArray array = ReactNativeHelper.convertJsonToArray((JSONArray) value);
+                        promise.resolve(array);
+                    } catch (Exception e) {
+                        promise.resolve(value.toString());
+                    }
+                } else {
+                    promise.resolve(value.toString());
                 }
-            });
-        }
+            }
+        });
     }
 
     @ReactMethod
@@ -837,14 +824,12 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        synchronized (instance) {
-            instance.getFlags().isEnabled(featureName, fallbackValue, new FlagCompletionCallback<Boolean>() {
-                @Override
-                public void onComplete(Boolean isEnabled) {
-                    promise.resolve(isEnabled);
-                }
-            });
-        }
+        instance.getFlags().isEnabled(featureName, fallbackValue, new FlagCompletionCallback<Boolean>() {
+            @Override
+            public void onComplete(Boolean isEnabled) {
+                promise.resolve(isEnabled);
+            }
+        });
     }
 
     @ReactMethod
@@ -854,20 +839,18 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             promise.resolve(new WritableNativeMap());
             return;
         }
-        synchronized (instance) {
-            instance.getFlags().getAllVariants(new FlagCompletionCallback<Map<String, MixpanelFlagVariant>>() {
-                @Override
-                public void onComplete(Map<String, MixpanelFlagVariant> variants) {
-                    WritableMap result = new WritableNativeMap();
-                    if (variants != null) {
-                        for (Map.Entry<String, MixpanelFlagVariant> entry : variants.entrySet()) {
-                            result.putMap(entry.getKey(), convertVariantToWritableMap(entry.getValue()));
-                        }
+        instance.getFlags().getAllVariants(new FlagCompletionCallback<Map<String, MixpanelFlagVariant>>() {
+            @Override
+            public void onComplete(Map<String, MixpanelFlagVariant> variants) {
+                WritableMap result = new WritableNativeMap();
+                if (variants != null) {
+                    for (Map.Entry<String, MixpanelFlagVariant> entry : variants.entrySet()) {
+                        result.putMap(entry.getKey(), convertVariantToWritableMap(entry.getValue()));
                     }
-                    promise.resolve(result);
                 }
-            });
-        }
+                promise.resolve(result);
+            }
+        });
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
@@ -877,12 +860,10 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         if (instance == null) {
             return result;
         }
-        synchronized (instance) {
-            Map<String, MixpanelFlagVariant> variants = instance.getFlags().getAllVariantsSync();
-            if (variants != null) {
-                for (Map.Entry<String, MixpanelFlagVariant> entry : variants.entrySet()) {
-                    result.putMap(entry.getKey(), convertVariantToWritableMap(entry.getValue()));
-                }
+        Map<String, MixpanelFlagVariant> variants = instance.getFlags().getAllVariantsSync();
+        if (variants != null) {
+            for (Map.Entry<String, MixpanelFlagVariant> entry : variants.entrySet()) {
+                result.putMap(entry.getKey(), convertVariantToWritableMap(entry.getValue()));
             }
         }
         return result;
@@ -896,14 +877,12 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             return;
         }
         final Map<String, Object> contextMap = context == null ? new HashMap<String, Object>() : ReactNativeHelper.toMap(context);
-        synchronized (instance) {
-            instance.getFlags().setContext(contextMap, new FlagCompletionCallback<Boolean>() {
-                @Override
-                public void onComplete(Boolean success) {
-                    promise.resolve(null);
-                }
-            });
-        }
+        instance.getFlags().setContext(contextMap, new FlagCompletionCallback<Boolean>() {
+            @Override
+            public void onComplete(Boolean success) {
+                promise.resolve(null);
+            }
+        });
     }
 
     private MixpanelFlagVariant convertMapToVariant(ReadableMap map) {

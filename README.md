@@ -123,34 +123,9 @@ const SampleApp = () => {
 export default SampleApp;
 ```
 
-### Feature Flags (Beta - 3.2.0-beta.3)
+### Feature Flags 
 
-Control features dynamically and run A/B tests with Mixpanel Feature Flags. **Native mode only** (iOS/Android) in beta.
-
-#### Quick Start
-
-```js
-// Enable during initialization
-await mixpanel.init(false, {}, 'https://api.mixpanel.com', true, {
-  enabled: true,
-  context: { custom_properties: { platform: 'mobile' } }  // Optional targeting context
-});
-
-// Check if feature is enabled
-if (mixpanel.flags.areFlagsReady()) {
-  const showNewUI = mixpanel.flags.isEnabledSync('new-feature', false);
-  const buttonColor = mixpanel.flags.getVariantValueSync('button-color', 'blue');
-}
-```
-
-#### Key Methods
-
-- `areFlagsReady()` - Check if flags are loaded
-- `isEnabledSync(name, fallback)` - Check if feature is enabled
-- `getVariantValueSync(name, fallback)` - Get variant value
-- `getVariantSync(name, fallback)` - Get full variant object with metadata
-
-All methods support async versions and snake_case aliases. See **[Feature Flags Quick Start Guide](FEATURE_FLAGS_QUICKSTART.md)** for complete documentation.
+Please see the [documentation](https://docs.mixpanel.com/docs/tracking-methods/sdks/react-native/react-native-flags) for how to integrate with Mixpanel feature flags.
 
 ### Expo and React Native for Web support (3.0.2 and above)
 

@@ -1,3 +1,5 @@
+import "react-native-get-random-values"; // Polyfill for crypto.getRandomValues
+import { v4 as uuidv4 } from "uuid";
 import { encode as base64Encode } from 'base-64';
 import jsonLogic from 'json-logic-js';
 import { MixpanelLogger } from './mixpanel-logger';
@@ -131,12 +133,15 @@ export class MixpanelFlagsJS {
     return Date.now() - this._loadedPersistedAtMs >= this._loadedTtlMs;
   }
 
+  isSystemEnabled() {
+    return !!this.featureFlagsOptions.enabled;
+  }
+
   /**
    * Generate W3C traceparent header. Format: 00-{traceID}-{parentID}-{flags}.
    * Callers wrap in try/catch; this method does not — failures bubble.
    */
   generateTraceparent() {
-    const uuidv4 = require('uuid/v4');
     const traceID = uuidv4().replace(/-/g, '');
     const parentID = uuidv4().replace(/-/g, '').substring(0, 16);
     return `00-${traceID}-${parentID}-01`;
@@ -167,6 +172,9 @@ export class MixpanelFlagsJS {
   }
 
   fetchFlags() {
+    if (!this.isSystemEnabled()) {
+      return Promise.resolve();
+    }
     this._fetchStartTime = Date.now();
 
     // Generate traceparent if possible (graceful degradation if UUID unavailable)

@@ -39,14 +39,11 @@ open class MixpanelReactNative: NSObject {
 
         let options = MixpanelOptions(
             token: token,
-            flushInterval: Constants.DEFAULT_FLUSH_INTERVAL,
             instanceName: token,
             trackAutomaticEvents: trackAutomaticEvents,
             optOutTrackingByDefault: optOutTrackingByDefault,
-            useUniqueDistinctId: false,
             superProperties: propsProcessed,
             serverURL: serverURL,
-            proxyServerConfig: nil,
             useGzipCompression: useGzipCompression,
             featureFlagOptions: resolvedFeatureFlagOptions
         )

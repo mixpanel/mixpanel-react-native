@@ -88,6 +88,25 @@ describe('Feature Flags - JavaScript Mode', () => {
       // This should not throw an error with JavaScript mode enabled
       expect(() => mixpanel.flags).not.toThrow();
     });
+
+    it('should not fetch flags when featureFlagsOptions.enabled is false', async () => {
+      mixpanel = new Mixpanel('js-test-token', false, false, mockAsyncStorage);
+
+      await mixpanel.init(false, {}, 'https://api.mixpanel.com', false, {
+        enabled: false,
+      });
+
+      // Accessing .flags triggers the Flags constructor → jsFlags.init() chain,
+      // and loadFlags() is the public entry point callers might invoke anyway.
+      await mixpanel.flags.loadFlags();
+      // Let any async init chain settle.
+      await new Promise((resolve) => setImmediate(resolve));
+
+      const flagsFetches = global.fetch.mock.calls.filter(([url]) =>
+        typeof url === 'string' && url.includes('/flags')
+      );
+      expect(flagsFetches).toEqual([]);
+    });
   });
 
   describe('JavaScript Mode Flag Methods', () => {

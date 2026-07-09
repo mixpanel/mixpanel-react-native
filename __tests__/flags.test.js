@@ -1839,19 +1839,6 @@ describe("Feature Flags", () => {
     });
 
     // ----------------------------------------------------------------------
-    // dynamic targeting loading — mixpanel-js lines 952-1070 (NOT PORTED).
-    // ----------------------------------------------------------------------
-    describe("dynamic targeting loading", () => {
-      // eslint-disable-next-line jest/no-disabled-tests
-      xit("N/A in RN — json-logic-js imports synchronously, no async targeting bundle", () => {
-        // The RN port replaces ~/mixpanel-js/src/targeting/loader.js
-        // (loadExtraBundle/getTargetingPromise/__mp_targeting) with a
-        // synchronous `import jsonLogic from 'json-logic-js'`. There is no
-        // script-tag injection path to test.
-      });
-    });
-
-    // ----------------------------------------------------------------------
     // RN-specific: native-mode passthrough.
     // ----------------------------------------------------------------------
     describe("native-mode passthrough", () => {

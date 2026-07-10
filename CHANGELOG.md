@@ -1,5 +1,12 @@
 # Changelog
 
+## [v3.5.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.5.0) (2026-07-10)
+
+### Features
+- Adds feature flag support to main SDK ([#434](https://github.com/mixpanel/mixpanel-react-native/pull/434))
+
+[Full Changelog](https://github.com/mixpanel/mixpanel-react-native/compare/v3.4.0...v3.5.0)
+
 ## [v3.4.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.4.0) (2026-06-15)
 
 ### Enhancements

@@ -33,16 +33,23 @@ target 'MixpanelExample' do
     )
 
     # Both C++ libs FMT and GLOG are pulled in by React Native. GLOG has a
-    # dependency on FMT. However FMT has a language feature that requires
-    # C++20. React Native includes this Clang compiler hint to compile it
-    # with C++20, but it does not include it for GLOG. Though this has been
-    # the case for a while, a newly shipped XCode version now moves that
-    # compiler version mismatch failure from a warn to a hard error causing
-    # CI failure. The workaround below adds the hint for glog as well.
+    # dependency on FMT. However FMT has a language feature (consteval) that
+    # requires C++20. React Native compiles FMT itself with C++20 but does
+    # not do the same for GLOG, which compiles at C++17 and calls into FMT.
+    # A newly shipped XCode version now moves that compiler version mismatch
+    # from a warn to a hard error causing CI failure. Forcing GLOG to C++20
+    # via CLANG_CXX_LANGUAGE_STANDARD doesn't take effect reliably (xcconfig
+    # precedence), so instead we tell FMT to skip the consteval codepath via
+    # its own opt-out macro. GLOG then compiles cleanly at C++17.
+    #
+    # Community reference (same workaround, same root cause):
+    #   https://github.com/expo/expo/pull/44919
+    # Upstream fix (RN 0.83.9+ bundles fmt 12.1.0 which no longer needs this):
+    #   https://github.com/facebook/react-native/pull/56099
     installer.pods_project.targets.each do |target|
-      if %w[fmt glog React-logger].include?(target.name)
+      if target.name == 'fmt'
         target.build_configurations.each do |config|
-          config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
+          config.build_settings['OTHER_CPLUSPLUSFLAGS'] = '$(inherited) -DFMT_USE_CONSTEVAL=0'
         end
       end
     end

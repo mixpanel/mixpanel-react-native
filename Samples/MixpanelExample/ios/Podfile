@@ -31,5 +31,20 @@ target 'MixpanelExample' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # Both C++ libs FMT and GLOG are pulled in by React Native. GLOG has a
+    # dependency on FMT. However FMT has a language feature that requires
+    # C++20. React Native includes this Clang compiler hint to compile it
+    # with C++20, but it does not include it for GLOG. Though this has been
+    # the case for a while, a newly shipped XCode version now moves that
+    # compiler version mismatch failure from a warn to a hard error causing
+    # CI failure. The workaround below adds the hint for glog as well.
+    installer.pods_project.targets.each do |target|
+      if %w[fmt glog React-logger].include?(target.name)
+        target.build_configurations.each do |config|
+          config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++20'
+        end
+      end
+    end
   end
 end

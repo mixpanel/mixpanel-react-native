@@ -21,9 +21,16 @@ export default class MixpanelMain {
     trackAutomaticEvents = false,
     optOutTrackingDefault = false,
     superProperties = null,
-    serverURL = "https://api.mixpanel.com"
+    serverURL = "https://api.mixpanel.com",
+    useGzipCompression = false,
+    featureFlagsOptions = {}
   ) {
     MixpanelLogger.log(token, `Initializing Mixpanel`);
+
+    // Store feature flags options for later use
+    this.featureFlagsOptions = featureFlagsOptions;
+    this.featureFlagsEnabled = featureFlagsOptions.enabled || false;
+    this.featureFlagsContext = featureFlagsOptions.context || {};
 
     await this.mixpanelPersistent.initializationCompletePromise(token);
     if (optOutTrackingDefault) {
@@ -37,6 +44,11 @@ export default class MixpanelMain {
     await this.registerSuperProperties(token, {
       ...superProperties,
     });
+
+    // Initialize feature flags if enabled
+    if (this.featureFlagsEnabled) {
+      MixpanelLogger.log(token, "Feature flags enabled during initialization");
+    }
   }
 
   getMetaData() {
@@ -68,6 +80,24 @@ export default class MixpanelMain {
 
   async reset(token) {
     await this.mixpanelPersistent.reset(token);
+  }
+
+  /**
+   * Get the feature flags context that was provided during initialization
+   * @returns {object} The feature flags context object
+   */
+  getFeatureFlagsContext() {
+    return this.featureFlagsContext || {};
+  }
+
+  /**
+   * Get the full feature flags options object that was provided during
+   * initialization. Used by the JS-fallback Flags impl to read the
+   * variantLookupPolicy and any other persistence-related configuration.
+   * @returns {object}
+   */
+  getFeatureFlagsOptions() {
+    return this.featureFlagsOptions || {};
   }
 
   async track(token, eventName, properties) {
@@ -114,6 +144,19 @@ export default class MixpanelMain {
       this.mixpanelPersistent.updateTimeEvents(token, timeEvents);
       await this.mixpanelPersistent.persistTimeEvents(token);
     }
+
+    // Notify the JS-fallback flags subsystem so it can activate any
+    // matching first-time event and switch the corresponding variant.
+    // Self-registered as `_flagsJS` by MixpanelFlagsJS.init(); absent in
+    // native mode (the platform SDK handles this internally).
+    if (this._flagsJS) {
+      try {
+        this._flagsJS.checkFirstTimeEvents(eventName, properties);
+      } catch (e) {
+        MixpanelLogger.log(token, "checkFirstTimeEvents error:", e);
+      }
+    }
+
     await this.core.addToMixpanelQueue(token, MixpanelType.EVENTS, eventData);
   }
 
@@ -176,12 +219,24 @@ export default class MixpanelMain {
     const deviceId = this.mixpanelPersistent.getDeviceId(token);
     await this.mixpanelPersistent.persistIdentity(token);
     await this.core.identifyUserQueue(token);
+
     await this.track(token, "$identify", {
       distinctId: newDistinctId,
       $user_id: newDistinctId,
       $anon_distinct_id: oldDistinctId,
       $device_id: deviceId,
     });
+
+    if (this._flagsJS) {
+      this._flagsJS._invalidateInFlightFetch();
+      this._flagsJS.loadFlags().catch(() => {
+        MixpanelLogger.log(
+          token,
+          `Failed to load flags for distinct Id ${newDistinctId}.`
+        );
+      });
+    }
+
   }
 
   async alias(token, alias, distinctId) {

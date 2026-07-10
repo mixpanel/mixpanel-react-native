@@ -123,6 +123,10 @@ const SampleApp = () => {
 export default SampleApp;
 ```
 
+### Feature Flags 
+
+Please see the [documentation](https://docs.mixpanel.com/docs/tracking-methods/sdks/react-native/react-native-flags) for how to integrate with Mixpanel feature flags.
+
 ### Expo and React Native for Web support (3.0.2 and above)
 
 Starting from version 3.0.2, we have introduced support for Expo, React Native for Web, and other platforms utilizing React Native that do not support iOS and Android directly.

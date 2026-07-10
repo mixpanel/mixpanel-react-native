@@ -1,6 +1,6 @@
 {
   "name": "mixpanel-react-native",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "description": "Official React Native Tracking Library for Mixpanel Analytics",
   "main": "index.js",
   "files": [
@@ -73,6 +73,8 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "base-64": "^1.0.0",
+    "json-logic-js": "^2.0.5",
     "react-native-get-random-values": "^1.9.0",
     "uuid": "^9.0.1"
   },

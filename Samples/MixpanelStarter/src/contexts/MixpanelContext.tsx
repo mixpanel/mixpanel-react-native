@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import {Mixpanel} from 'mixpanel-react-native';
 import {Platform} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {MixpanelContextValue} from '../types/mixpanel.types';
 import {SuperProperties} from '../constants/tracking';
 
@@ -44,10 +45,12 @@ export const MixpanelProvider: React.FC<MixpanelProviderProps> = ({
         // Create Mixpanel instance
         const instance = useNative
           ? new Mixpanel(token, trackAutomaticEvents, true)
-          : new Mixpanel(token, trackAutomaticEvents, false);
+          : new Mixpanel(token, trackAutomaticEvents, false, AsyncStorage);
 
-        // Initialize
-        await instance.init(false, {}, serverURL);
+        // Initialize with feature flags enabled
+        await instance.init(false, {}, serverURL, false, {
+          enabled: true,
+        });
 
         // Set up default super properties
         instance.registerSuperProperties({

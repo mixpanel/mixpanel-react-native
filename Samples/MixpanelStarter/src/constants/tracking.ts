@@ -21,6 +21,16 @@ export const Events = {
   TRACKING_OPTED_OUT: 'Tracking Opted Out',
   DATA_RESET: 'Data Reset',
   EVENTS_FLUSHED: 'Events Flushed',
+
+  // Feature Flags
+  FLAGS_LOADED: 'Feature Flags Loaded',
+  FLAG_CHECKED: 'Feature Flag Checked',
+  FLAG_CONTEXT_UPDATED: 'Feature Flag Context Updated',
+  FLAG_TEST_SYNC: 'Flag Test Sync',
+  FLAG_TEST_ASYNC: 'Flag Test Async',
+  FLAG_TEST_CALLBACK: 'Flag Test Callback',
+  FLAG_TEST_EDGE_CASE: 'Flag Test Edge Case',
+  FLAG_TEST_COERCION: 'Flag Test Type Coercion',
 } as const;
 
 // Property Names
@@ -43,6 +53,15 @@ export const Properties = {
   // Settings properties
   DARK_MODE_ENABLED: 'dark_mode_enabled',
   NOTIFICATIONS_ENABLED: 'notifications_enabled',
+
+  // Feature Flag properties
+  FLAG_KEY: 'flag_key',
+  FLAG_ENABLED: 'flag_enabled',
+  FLAG_VALUE: 'flag_value',
+  FLAG_METHOD: 'flag_method',
+  FLAG_EXECUTION_TIME: 'flag_execution_time',
+  FLAG_USED_FALLBACK: 'flag_used_fallback',
+  FLAG_RESULT_TYPE: 'flag_result_type',
 
   // Metadata
   TIMESTAMP: 'timestamp',

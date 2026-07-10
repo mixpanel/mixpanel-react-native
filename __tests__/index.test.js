@@ -8,7 +8,9 @@ test(`it calls MixpanelReactNative initialize`, async () => {
     true,
     false,
     { $lib_version: expect.any(String), mp_lib: "react-native" },
-    "https://api.mixpanel.com"
+    "https://api.mixpanel.com",
+    false,
+    {}
   );
 });
 
@@ -25,7 +27,8 @@ test(`it calls MixpanelReactNative initialize with optOut, superProperties and u
       super: "property",
     },
     "https://api.mixpanel.com",
-    false
+    false,
+    {}
   );
 });
 
@@ -41,7 +44,8 @@ test(`it passes useGzipCompression parameter to native modules when enabled`, as
       mp_lib: "react-native",
     },
     "https://api.mixpanel.com",
-    true
+    true,
+    {}
   );
 });
 

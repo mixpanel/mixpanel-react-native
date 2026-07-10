@@ -11,7 +11,7 @@ PODS:
   - Mixpanel-swift (5.1.3):
     - Mixpanel-swift/Complete (= 5.1.3)
   - Mixpanel-swift/Complete (5.1.3)
-  - MixpanelReactNative (3.1.3):
+  - MixpanelReactNative (3.1.2):
     - Mixpanel-swift (= 5.1.3)
     - React-Core
   - RCT-Folly (2024.11.18.00):
@@ -2761,7 +2761,7 @@ SPEC CHECKSUMS:
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   hermes-engine: 273e30e7fb618279934b0b95ffab60ecedb7acf5
   Mixpanel-swift: 630484a1b61cb90820aa34492798d542d9f1d0f1
-  MixpanelReactNative: 8763a117bec1e41484843c5f233e08d9b75d327e
+  MixpanelReactNative: 30f767dd9aab033e24821454874afaa35c20e293
   RCT-Folly: 59ec0ac1f2f39672a0c6e6cecdd39383b764646f
   RCTDeprecation: f17e2ebc07876ca9ab8eb6e4b0a4e4647497ae3a
   RCTRequired: e2c574c1b45231f7efb0834936bd609d75072b63

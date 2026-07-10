@@ -45,3 +45,49 @@ buck-out/
 
 # DemoApp
 /MixpanelDemo
+
+# Sample Apps
+Samples/
+
+# Tests
+__tests__/
+__mocks__/
+*.test.js
+jest.config.js
+
+# Documentation (generated)
+docs/
+generate_docs.sh
+
+# Build artifacts
+*.log
+*.tgz
+
+# AI Assistant Files
+.claude/
+claude/
+.cursor/
+.github/copilot-*
+.github/instructions/
+.github/prompts/
+.github/workflows/
+CLAUDE.md
+
+# IDE
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Python scripts
+*.py
+
+# Misc
+.editorconfig
+.prettierrc*
+.eslintrc*
+.babelrc*
+.flowconfig

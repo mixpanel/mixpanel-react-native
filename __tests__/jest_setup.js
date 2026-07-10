@@ -1,5 +1,4 @@
 import * as ReactNative from "react-native";
-import { jest } from "@jest/globals";
 
 // Mock react-native-get-random-values polyfill
 jest.mock("react-native-get-random-values", () => {
@@ -9,21 +8,40 @@ jest.mock("react-native-get-random-values", () => {
 
 jest.mock("mixpanel-react-native/javascript/mixpanel-storage", () => {
   return {
-    AsyncStorageAdapter: jest.fn().mockImplementation(() => ({
-      getItem: jest.fn().mockResolvedValue(null),
-      setItem: jest.fn().mockResolvedValue(undefined),
-      removeItem: jest.fn().mockResolvedValue(undefined),
-    })),
+    AsyncStorageAdapter: jest.fn().mockImplementation((storage) => {
+      // Delegate to the caller-supplied storage when one is provided so tests
+      // that pass a mock and then assert on its calls (e.g. flags-storage
+      // tests) see the writes.
+      if (storage) {
+        return {
+          getItem: (k) => storage.getItem(k),
+          setItem: (k, v) => storage.setItem(k, v),
+          removeItem: (k) => storage.removeItem(k),
+        };
+      }
+      return {
+        getItem: jest.fn().mockResolvedValue(null),
+        setItem: jest.fn().mockResolvedValue(undefined),
+        removeItem: jest.fn().mockResolvedValue(undefined),
+      };
+    }),
   };
 });
 jest.mock("uuid", () => ({
-  v4: jest.fn(() => "polyfilled-uuid-1234"),
+  v4: jest.fn(),
 }));
 
 jest.mock("@react-native-async-storage/async-storage", () => ({
+  default: {
+    getItem: jest.fn().mockResolvedValue(null),
+    setItem: jest.fn().mockResolvedValue(undefined),
+    removeItem: jest.fn().mockResolvedValue(undefined),
+    clear: jest.fn().mockResolvedValue(undefined),
+  },
   getItem: jest.fn().mockResolvedValue(null),
   setItem: jest.fn().mockResolvedValue(undefined),
   removeItem: jest.fn().mockResolvedValue(undefined),
+  clear: jest.fn().mockResolvedValue(undefined),
 }));
 
 jest.doMock("react-native", () => {
@@ -68,8 +86,9 @@ jest.doMock("react-native", () => {
           clearSuperProperties: jest.fn(),
           timeEvent: jest.fn(),
           eventElapsedTime: jest.fn(),
-          reset: jest.fn(),
+          reset: jest.fn().mockResolvedValue(undefined),
           getDistinctId: jest.fn(),
+          getDeviceId: jest.fn(),
           set: jest.fn(),
           setOnce: jest.fn(),
           increment: jest.fn(),
@@ -85,6 +104,20 @@ jest.doMock("react-native", () => {
           groupUnsetProperty: jest.fn(),
           groupRemovePropertyValue: jest.fn(),
           groupUnionProperty: jest.fn(),
+          // Feature Flags native module mocks
+          loadFlags: jest.fn().mockResolvedValue(true),
+          areFlagsReadySync: jest.fn().mockReturnValue(false),
+          getVariantSync: jest.fn(),
+          getVariantValueSync: jest.fn(),
+          isEnabledSync: jest.fn(),
+          getVariant: jest.fn().mockResolvedValue({ key: 'control', value: 'default' }),
+          getVariantValue: jest.fn().mockResolvedValue('default'),
+          isEnabled: jest.fn().mockResolvedValue(false),
+          getAllVariants: jest.fn().mockResolvedValue({}),
+          getAllVariantsSync: jest.fn().mockReturnValue({}),
+          updateContext: jest.fn().mockResolvedValue(undefined),  // legacy alias, retained
+          updateFlagsContext: jest.fn().mockResolvedValue(true),
+          checkFirstTimeEvents: jest.fn(),
         },
       },
     },

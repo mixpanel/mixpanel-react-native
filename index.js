@@ -105,6 +105,20 @@ export class Mixpanel {
   }
 
   /**
+   * Returns the Autocapture instance for screen view tracking operations.
+   *
+   * @return {Autocapture} an instance of Autocapture that provides access to screen view tracking
+   *
+   * @see Autocapture
+   */
+  get autocapture() {
+    if (!this._autocapture) {
+      this._autocapture = new Autocapture(this.token, this.mixpanelImpl);
+    }
+    return this._autocapture;
+  }
+
+  /**
    * Initializes Mixpanel with optional configuration for tracking, super properties, and feature flags.
    *
    * <p>This method must be called before using any other Mixpanel functionality. It sets up
@@ -690,20 +704,6 @@ export class Mixpanel {
    * need to call flush() to let the Mixpanel library know it should
    * send all remaining messages to the server.
    */
-  /**
-   * Returns the Autocapture instance for screen view tracking operations.
-   *
-   * @return {Autocapture} an instance of Autocapture that provides access to screen view tracking
-   *
-   * @see Autocapture
-   */
-  get autocapture() {
-    if (!this._autocapture) {
-      this._autocapture = new Autocapture(this.token, this.mixpanelImpl);
-    }
-    return this._autocapture;
-  }
-
   flush() {
     this.mixpanelImpl.flush(this.token);
   }

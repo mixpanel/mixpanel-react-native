@@ -102,8 +102,14 @@ export interface Flags {
   check_first_time_events(eventName: string, properties?: MixpanelProperties): void;
 }
 
+export class Autocapture {
+  trackScreenView(screenName: string, properties?: MixpanelProperties): void;
+  trackScreenLeave(screenName: string, properties?: MixpanelProperties): void;
+}
+
 export class Mixpanel {
   readonly flags: Flags;
+  readonly autocapture: Autocapture;
 
   constructor(token: string, trackAutoMaticEvents: boolean);
   constructor(token: string, trackAutoMaticEvents: boolean, useNative: true);

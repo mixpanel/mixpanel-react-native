@@ -559,6 +559,30 @@ export default class MixpanelMain {
     });
   }
 
+  async trackScreenView(token, screenName, properties) {
+    if (typeof screenName !== "string" || !screenName.trim()) {
+      return;
+    }
+    const mergedProperties = {
+      ...properties,
+      current_page_title: screenName,
+      $mp_autocapture: true,
+    };
+    await this.track(token, "$mp_page_view", mergedProperties);
+  }
+
+  async trackScreenLeave(token, screenName, properties) {
+    if (typeof screenName !== "string" || !screenName.trim()) {
+      return;
+    }
+    const mergedProperties = {
+      ...properties,
+      current_page_title: screenName,
+      $mp_autocapture: true,
+    };
+    await this.track(token, "$mp_page_leave", mergedProperties);
+  }
+
   async trackWithGroups(token, eventName, properties, groups) {
     MixpanelLogger.log(
       token,

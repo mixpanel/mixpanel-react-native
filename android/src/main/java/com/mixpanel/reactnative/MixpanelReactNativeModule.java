@@ -260,6 +260,36 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void trackScreenView(final String token, final String screenName, ReadableMap properties, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            promise.reject("Instance Error", "Failed to get Mixpanel instance");
+            return;
+        }
+        synchronized (instance) {
+            JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
+            AutomaticProperties.appendLibraryProperties(eventProperties);
+            instance.getAutocapture().trackScreenView(screenName, eventProperties);
+            promise.resolve(null);
+        }
+    }
+
+    @ReactMethod
+    public void trackScreenLeave(final String token, final String screenName, ReadableMap properties, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            promise.reject("Instance Error", "Failed to get Mixpanel instance");
+            return;
+        }
+        synchronized (instance) {
+            JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
+            AutomaticProperties.appendLibraryProperties(eventProperties);
+            instance.getAutocapture().trackScreenLeave(screenName, eventProperties);
+            promise.resolve(null);
+        }
+    }
+
+    @ReactMethod
     public void registerSuperProperties(final String token, ReadableMap properties, Promise promise) throws JSONException {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         if (instance == null) {

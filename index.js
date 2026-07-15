@@ -48,6 +48,7 @@ export class Mixpanel {
     this.token = token;
     this.trackAutomaticEvents = trackAutomaticEvents;
     this._flags = null; // Lazy-loaded flags instance
+    this._autocapture = null; // Lazy-loaded autocapture instance
     this.storage = storage; // Store for JavaScript mode
 
     if (useNative && MixpanelReactNative) {
@@ -689,8 +690,81 @@ export class Mixpanel {
    * need to call flush() to let the Mixpanel library know it should
    * send all remaining messages to the server.
    */
+  /**
+   * Returns the Autocapture instance for screen view tracking operations.
+   *
+   * @return {Autocapture} an instance of Autocapture that provides access to screen view tracking
+   *
+   * @see Autocapture
+   */
+  get autocapture() {
+    if (!this._autocapture) {
+      this._autocapture = new Autocapture(this.token, this.mixpanelImpl);
+    }
+    return this._autocapture;
+  }
+
   flush() {
     this.mixpanelImpl.flush(this.token);
+  }
+}
+
+/**
+ * Core class for using Mixpanel Autocapture features.
+ *
+ * <p>The Autocapture object is used to track screen views and screen leaves.
+ */
+export class Autocapture {
+  constructor(token, mixpanelImpl) {
+    if (!StringHelper.isValid(token)) {
+      StringHelper.raiseError(PARAMS.TOKEN);
+    }
+    this.token = token;
+    this.mixpanelImpl = mixpanelImpl;
+  }
+
+  /**
+   * Track a screen view event.
+   *
+   * @param {string} screenName The name of the screen being viewed
+   * @param {object} properties Optional additional properties to include with the event
+   */
+  trackScreenView(screenName, properties) {
+    if (!StringHelper.isValid(screenName)) {
+      return;
+    }
+    if (!ObjectHelper.isValidOrUndefined(properties)) {
+      ObjectHelper.raiseError(PARAMS.PROPERTIES);
+    }
+    const mergedProperties = {
+      ...Helper.getMetaData(),
+      ...properties,
+      current_page_title: screenName,
+      $mp_autocapture: true,
+    };
+    this.mixpanelImpl.trackScreenView(this.token, screenName, mergedProperties);
+  }
+
+  /**
+   * Track a screen leave event.
+   *
+   * @param {string} screenName The name of the screen being left
+   * @param {object} properties Optional additional properties to include with the event
+   */
+  trackScreenLeave(screenName, properties) {
+    if (!StringHelper.isValid(screenName)) {
+      return;
+    }
+    if (!ObjectHelper.isValidOrUndefined(properties)) {
+      ObjectHelper.raiseError(PARAMS.PROPERTIES);
+    }
+    const mergedProperties = {
+      ...Helper.getMetaData(),
+      ...properties,
+      current_page_title: screenName,
+      $mp_autocapture: true,
+    };
+    this.mixpanelImpl.trackScreenLeave(this.token, screenName, mergedProperties);
   }
 }
 

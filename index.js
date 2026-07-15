@@ -739,8 +739,6 @@ export class Autocapture {
     const mergedProperties = {
       ...Helper.getMetaData(),
       ...properties,
-      current_page_title: screenName,
-      $mp_autocapture: true,
     };
     this.mixpanelImpl.trackScreenView(this.token, screenName, mergedProperties);
   }
@@ -761,8 +759,6 @@ export class Autocapture {
     const mergedProperties = {
       ...Helper.getMetaData(),
       ...properties,
-      current_page_title: screenName,
-      $mp_autocapture: true,
     };
     this.mixpanelImpl.trackScreenLeave(this.token, screenName, mergedProperties);
   }

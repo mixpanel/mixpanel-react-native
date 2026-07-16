@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   NavigationContainer,
   useNavigationContainerRef,
@@ -23,6 +23,24 @@ function AppNavigator(): React.JSX.Element {
   const {mixpanel, isInitialized} = useMixpanel();
   const navigationRef = useNavigationContainerRef();
   const previousRouteNameRef = useRef<string | undefined>();
+  const isNavigationReadyRef = useRef(false);
+  const initialScreenTrackedRef = useRef(false);
+
+  // Track initial screen view once both navigation and Mixpanel are ready
+  useEffect(() => {
+    if (
+      isInitialized &&
+      mixpanel &&
+      isNavigationReadyRef.current &&
+      !initialScreenTrackedRef.current
+    ) {
+      const currentRoute = navigationRef.getCurrentRoute()?.name;
+      if (currentRoute) {
+        mixpanel.autocapture.trackScreenView(currentRoute);
+        initialScreenTrackedRef.current = true;
+      }
+    }
+  }, [isInitialized, mixpanel, navigationRef]);
 
   return (
     <NavigationContainer
@@ -30,8 +48,10 @@ function AppNavigator(): React.JSX.Element {
       onReady={() => {
         const initialRouteName = navigationRef.getCurrentRoute()?.name;
         previousRouteNameRef.current = initialRouteName;
+        isNavigationReadyRef.current = true;
         if (isInitialized && mixpanel && initialRouteName) {
           mixpanel.autocapture.trackScreenView(initialRouteName);
+          initialScreenTrackedRef.current = true;
         }
       }}
       onStateChange={() => {

@@ -269,7 +269,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         synchronized (instance) {
             JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
             AutomaticProperties.appendLibraryProperties(eventProperties);
-            instance.getAutocapture().trackScreenView(screenName, eventProperties);
+            if (instance.getAutocapture() != null) {
+                instance.getAutocapture().trackScreenView(screenName, eventProperties);
+            }
             promise.resolve(null);
         }
     }
@@ -284,7 +286,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         synchronized (instance) {
             JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
             AutomaticProperties.appendLibraryProperties(eventProperties);
-            instance.getAutocapture().trackScreenLeave(screenName, eventProperties);
+            if (instance.getAutocapture() != null) {
+                instance.getAutocapture().trackScreenLeave(screenName, eventProperties);
+            }
             promise.resolve(null);
         }
     }

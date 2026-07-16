@@ -19,8 +19,9 @@ const config = {
   resolver: {
     // Prevent multiple copies of React Native
     blockList: [
-      // Exclude node_modules from parent package to prevent conflicts
-      new RegExp(`${parentPackage.replace(/[/\\]/g, '[/\\\\]')}/node_modules/.*`),
+      // Exclude node_modules from parent package to prevent conflicts,
+      // but allow SDK-only dependencies (json-logic-js, base-64) through
+      new RegExp(`${parentPackage.replace(/[/\\]/g, '[/\\\\]')}/node_modules/(?!json-logic-js|base-64).*`),
     ],
     extraNodeModules: {
       // Ensure react-native and other deps resolve from sample app's node_modules
@@ -29,6 +30,9 @@ const config = {
       '@react-native-async-storage/async-storage': path.resolve(__dirname, 'node_modules/@react-native-async-storage/async-storage'),
       'react-native-get-random-values': path.resolve(__dirname, 'node_modules/react-native-get-random-values'),
       'uuid': path.resolve(__dirname, 'node_modules/uuid'),
+      // SDK dependencies that live in the parent package's node_modules
+      'json-logic-js': path.resolve(parentPackage, 'node_modules/json-logic-js'),
+      'base-64': path.resolve(parentPackage, 'node_modules/base-64'),
       // Resolve mixpanel-react-native to parent package
       'mixpanel-react-native': parentPackage,
     },

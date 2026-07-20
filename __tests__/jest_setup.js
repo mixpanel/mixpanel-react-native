@@ -118,6 +118,8 @@ jest.doMock("react-native", () => {
           updateContext: jest.fn().mockResolvedValue(undefined),  // legacy alias, retained
           updateFlagsContext: jest.fn().mockResolvedValue(true),
           checkFirstTimeEvents: jest.fn(),
+          trackScreenView: jest.fn(),
+          trackScreenLeave: jest.fn(),
         },
       },
     },

@@ -21,8 +21,7 @@ const config = {
     blockList: [
       // Exclude node_modules from parent package to prevent conflicts,
       // but allow SDK-only dependencies (json-logic-js, base-64) through
-      new RegExp(`${parentPackage.replace(/[/\\]/g, '[/\\\\]')}/node_modules/(?!json-logic-js|base-64).*`),
-    ],
+      new RegExp(`${parentPackage.replace(/[/\\]/g, '[/\\\\]')}/node_modules/(?!((json-logic-js|base-64)(/|$))).*`),
     extraNodeModules: {
       // Ensure react-native and other deps resolve from sample app's node_modules
       'react-native': path.resolve(__dirname, 'node_modules/react-native'),

@@ -731,6 +731,10 @@ export class Autocapture {
    */
   trackScreenView(screenName, properties) {
     if (!StringHelper.isValid(screenName)) {
+      MixpanelLogger.warn(
+        this.token,
+        `trackScreenView failed: screenName cannot be blank`
+      );
       return;
     }
     if (!ObjectHelper.isValidOrUndefined(properties)) {
@@ -751,6 +755,10 @@ export class Autocapture {
    */
   trackScreenLeave(screenName, properties) {
     if (!StringHelper.isValid(screenName)) {
+      MixpanelLogger.warn(
+        this.token,
+        `trackScreenLeave failed: screenName cannot be blank`
+      );
       return;
     }
     if (!ObjectHelper.isValidOrUndefined(properties)) {

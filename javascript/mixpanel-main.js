@@ -560,13 +560,6 @@ export default class MixpanelMain {
   }
 
   async trackScreenView(token, screenName, properties) {
-    if (typeof screenName !== "string" || !screenName.trim()) {
-      MixpanelLogger.warn(
-        token,
-        `trackScreenView failed: screenName cannot be blank`
-      );
-      return;
-    }
     const mergedProperties = {
       ...properties,
       current_page_title: screenName,
@@ -576,13 +569,6 @@ export default class MixpanelMain {
   }
 
   async trackScreenLeave(token, screenName, properties) {
-    if (typeof screenName !== "string" || !screenName.trim()) {
-      MixpanelLogger.warn(
-        token,
-        `trackScreenLeave failed: screenName cannot be blank`
-      );
-      return;
-    }
     const mergedProperties = {
       ...properties,
       current_page_title: screenName,

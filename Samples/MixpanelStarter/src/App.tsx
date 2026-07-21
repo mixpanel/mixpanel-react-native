@@ -1,8 +1,11 @@
-import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import React, {useEffect, useRef} from 'react';
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Text} from 'react-native';
-import {MixpanelProvider} from './contexts/MixpanelContext';
+import {MixpanelProvider, useMixpanel} from './contexts/MixpanelContext';
 import {ErrorBoundary} from './components/ErrorBoundary';
 import {OnboardingScreen} from './screens/OnboardingScreen';
 import {HomeScreen} from './screens/HomeScreen';
@@ -16,12 +19,58 @@ const Tab = createBottomTabNavigator();
 const DEMO_TOKEN = 'YOUR_TOKEN_HERE';
 const token = MIXPANEL_TOKEN || DEMO_TOKEN;
 
-function App(): React.JSX.Element {
+function AppNavigator(): React.JSX.Element {
+  const {mixpanel, isInitialized} = useMixpanel();
+  const navigationRef = useNavigationContainerRef();
+  const previousRouteNameRef = useRef<string | undefined>();
+  const isNavigationReadyRef = useRef(false);
+  const initialScreenTrackedRef = useRef(false);
+
+  // Track initial screen view once both navigation and Mixpanel are ready
+  useEffect(() => {
+    if (
+      isInitialized &&
+      mixpanel &&
+      isNavigationReadyRef.current &&
+      !initialScreenTrackedRef.current
+    ) {
+      const currentRoute = navigationRef.getCurrentRoute()?.name;
+      if (currentRoute) {
+        mixpanel.autocapture.trackScreenView(currentRoute);
+        initialScreenTrackedRef.current = true;
+      }
+    }
+  }, [isInitialized, mixpanel, navigationRef]);
+
   return (
-    <ErrorBoundary>
-      <MixpanelProvider token={token} trackAutomaticEvents={true} useNative={true} serverURL="https://api-eu.mixpanel.com">
-        <NavigationContainer>
-          <Tab.Navigator
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={() => {
+        const initialRouteName = navigationRef.getCurrentRoute()?.name;
+        previousRouteNameRef.current = initialRouteName;
+        isNavigationReadyRef.current = true;
+        if (isInitialized && mixpanel && initialRouteName) {
+          mixpanel.autocapture.trackScreenView(initialRouteName);
+          initialScreenTrackedRef.current = true;
+        }
+      }}
+      onStateChange={() => {
+        const currentRouteName = navigationRef.getCurrentRoute()?.name;
+        const previousRouteName = previousRouteNameRef.current;
+
+        if (currentRouteName !== previousRouteName) {
+          if (isInitialized && mixpanel) {
+            if (previousRouteName) {
+              mixpanel.autocapture.trackScreenLeave(previousRouteName);
+            }
+            if (currentRouteName) {
+              mixpanel.autocapture.trackScreenView(currentRouteName);
+            }
+          }
+          previousRouteNameRef.current = currentRouteName;
+        }
+      }}>
+      <Tab.Navigator
             screenOptions={{
               tabBarActiveTintColor: '#007AFF',
               tabBarInactiveTintColor: '#8E8E93',
@@ -74,7 +123,15 @@ function App(): React.JSX.Element {
               }}
             />
           </Tab.Navigator>
-        </NavigationContainer>
+    </NavigationContainer>
+  );
+}
+
+function App(): React.JSX.Element {
+  return (
+    <ErrorBoundary>
+      <MixpanelProvider token={token} trackAutomaticEvents={true} useNative={true} serverURL="https://api-eu.mixpanel.com">
+        <AppNavigator />
       </MixpanelProvider>
     </ErrorBoundary>
   );

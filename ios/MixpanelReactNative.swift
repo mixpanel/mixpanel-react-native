@@ -165,6 +165,30 @@ open class MixpanelReactNative: NSObject {
         resolve(nil)
     }
 
+    // MARK: - Autocapture
+
+    @objc
+    func trackScreenView(_ token: String, screenName: String,
+                         properties: [String: Any]? = nil,
+                         resolver resolve: RCTPromiseResolveBlock,
+                         rejecter reject: RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        let mpProperties = MixpanelTypeHandler.processProperties(properties: properties)
+        instance?.autocapture.trackScreenView(screenName: screenName, properties: mpProperties)
+        resolve(nil)
+    }
+
+    @objc
+    func trackScreenLeave(_ token: String, screenName: String,
+                          properties: [String: Any]? = nil,
+                          resolver resolve: RCTPromiseResolveBlock,
+                          rejecter reject: RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        let mpProperties = MixpanelTypeHandler.processProperties(properties: properties)
+        instance?.autocapture.trackScreenLeave(screenName: screenName, properties: mpProperties)
+        resolve(nil)
+    }
+
     // MARK: - Timing Events
 
     @objc

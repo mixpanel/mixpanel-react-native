@@ -896,4 +896,80 @@ describe("MixpanelMain", () => {
       })
     );
   });
+
+  describe("trackScreenView", () => {
+    it("should track $mp_page_view with current_page_title and $mp_autocapture", async () => {
+      const screenName = "HomeScreen";
+      const properties = { prop1: "value1" };
+
+      await mixpanelMain.trackScreenView(token, screenName, properties);
+
+      expect(mixpanelMain.core.addToMixpanelQueue).toHaveBeenCalledWith(
+        token,
+        MixpanelType.EVENTS,
+        expect.objectContaining({
+          event: "$mp_page_view",
+          properties: expect.objectContaining({
+            token: token,
+            current_page_title: screenName,
+            $mp_autocapture: true,
+            prop1: "value1",
+          }),
+        })
+      );
+    });
+
+    it("should return early when screenName is not a string", async () => {
+      await mixpanelMain.trackScreenView(token, 123, {});
+      expect(mixpanelMain.core.addToMixpanelQueue).not.toHaveBeenCalled();
+    });
+
+    it("should return early when screenName is an empty string", async () => {
+      await mixpanelMain.trackScreenView(token, "", {});
+      expect(mixpanelMain.core.addToMixpanelQueue).not.toHaveBeenCalled();
+    });
+
+    it("should return early when screenName is a whitespace-only string", async () => {
+      await mixpanelMain.trackScreenView(token, "   ", {});
+      expect(mixpanelMain.core.addToMixpanelQueue).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("trackScreenLeave", () => {
+    it("should track $mp_page_leave with current_page_title and $mp_autocapture", async () => {
+      const screenName = "HomeScreen";
+      const properties = { prop1: "value1" };
+
+      await mixpanelMain.trackScreenLeave(token, screenName, properties);
+
+      expect(mixpanelMain.core.addToMixpanelQueue).toHaveBeenCalledWith(
+        token,
+        MixpanelType.EVENTS,
+        expect.objectContaining({
+          event: "$mp_page_leave",
+          properties: expect.objectContaining({
+            token: token,
+            current_page_title: screenName,
+            $mp_autocapture: true,
+            prop1: "value1",
+          }),
+        })
+      );
+    });
+
+    it("should return early when screenName is not a string", async () => {
+      await mixpanelMain.trackScreenLeave(token, null, {});
+      expect(mixpanelMain.core.addToMixpanelQueue).not.toHaveBeenCalled();
+    });
+
+    it("should return early when screenName is an empty string", async () => {
+      await mixpanelMain.trackScreenLeave(token, "", {});
+      expect(mixpanelMain.core.addToMixpanelQueue).not.toHaveBeenCalled();
+    });
+
+    it("should return early when screenName is a whitespace-only string", async () => {
+      await mixpanelMain.trackScreenLeave(token, "   ", {});
+      expect(mixpanelMain.core.addToMixpanelQueue).not.toHaveBeenCalled();
+    });
+  });
 });

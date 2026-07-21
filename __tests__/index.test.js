@@ -476,3 +476,84 @@ test(`it calls MixpanelReactNative group union property`, async () => {
     NativeModules.MixpanelReactNative.groupRemovePropertyValue
   ).toBeCalledWith("token", "company_id", 12345, "prop_key", "334");
 });
+
+test(`autocapture getter returns an Autocapture instance and is lazily initialized`, async () => {
+  const mixpanel = new Mixpanel("token", true);
+  mixpanel.init();
+  const autocapture1 = mixpanel.autocapture;
+  const autocapture2 = mixpanel.autocapture;
+  expect(autocapture1).toBeDefined();
+  expect(autocapture1).toBe(autocapture2);
+});
+
+test(`autocapture.trackScreenView calls MixpanelReactNative trackScreenView with token and merged metadata`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  mixpanel.autocapture.trackScreenView("HomeScreen", { custom_prop: "value" });
+  expect(NativeModules.MixpanelReactNative.trackScreenView).toBeCalledWith(
+    "token",
+    "HomeScreen",
+    {
+      $lib_version: expect.any(String),
+      mp_lib: "react-native",
+      custom_prop: "value",
+    }
+  );
+});
+
+test(`autocapture.trackScreenView calls MixpanelReactNative trackScreenView with only metadata when no extra properties given`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  mixpanel.autocapture.trackScreenView("HomeScreen");
+  expect(NativeModules.MixpanelReactNative.trackScreenView).toBeCalledWith(
+    "token",
+    "HomeScreen",
+    {
+      $lib_version: expect.any(String),
+      mp_lib: "react-native",
+    }
+  );
+});
+
+test(`autocapture.trackScreenView does not call native module when screenName is invalid`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  NativeModules.MixpanelReactNative.trackScreenView.mockClear();
+  mixpanel.autocapture.trackScreenView("");
+  expect(NativeModules.MixpanelReactNative.trackScreenView).not.toBeCalled();
+  mixpanel.autocapture.trackScreenView(null);
+  expect(NativeModules.MixpanelReactNative.trackScreenView).not.toBeCalled();
+});
+
+test(`autocapture.trackScreenLeave calls MixpanelReactNative trackScreenLeave with token and merged metadata`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  mixpanel.autocapture.trackScreenLeave("HomeScreen", { custom_prop: "value" });
+  expect(NativeModules.MixpanelReactNative.trackScreenLeave).toBeCalledWith(
+    "token",
+    "HomeScreen",
+    {
+      $lib_version: expect.any(String),
+      mp_lib: "react-native",
+      custom_prop: "value",
+    }
+  );
+});
+
+test(`autocapture.trackScreenLeave calls MixpanelReactNative trackScreenLeave with only metadata when no extra properties given`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  mixpanel.autocapture.trackScreenLeave("HomeScreen");
+  expect(NativeModules.MixpanelReactNative.trackScreenLeave).toBeCalledWith(
+    "token",
+    "HomeScreen",
+    {
+      $lib_version: expect.any(String),
+      mp_lib: "react-native",
+    }
+  );
+});
+
+test(`autocapture.trackScreenLeave does not call native module when screenName is invalid`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  NativeModules.MixpanelReactNative.trackScreenLeave.mockClear();
+  mixpanel.autocapture.trackScreenLeave("");
+  expect(NativeModules.MixpanelReactNative.trackScreenLeave).not.toBeCalled();
+  mixpanel.autocapture.trackScreenLeave(null);
+  expect(NativeModules.MixpanelReactNative.trackScreenLeave).not.toBeCalled();
+});

@@ -1,5 +1,12 @@
 # Changelog
 
+## [v3.6.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.6.0) (2026-07-27)
+
+### Features
+- add trackScreenView and trackScreenLeave public APIs ([#439](https://github.com/mixpanel/mixpanel-react-native/pull/439))
+
+[Full Changelog](https://github.com/mixpanel/mixpanel-react-native/compare/v3.5.0...v3.6.0)
+
 ## [v3.5.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.5.0) (2026-07-10)
 
 ### Features

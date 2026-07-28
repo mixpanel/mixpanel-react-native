@@ -1,10 +1,10 @@
 "use strict";
 
-import {Platform, NativeModules} from "react-native";
+import { Platform, NativeModules } from "react-native";
 import packageJson from "./package.json";
-const {MixpanelReactNative} = NativeModules;
-import MixpanelMain from "mixpanel-react-native/javascript/mixpanel-main"
-import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger"
+const { MixpanelReactNative } = NativeModules;
+import MixpanelMain from "mixpanel-react-native/javascript/mixpanel-main";
+import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger";
 
 const DevicePlatform = {
   Unknown: "Unknown",
@@ -56,7 +56,7 @@ export class Mixpanel {
       return;
     } else if (useNative) {
       console.warn(
-        "MixpanelReactNative is not available; using JavaScript mode. If you prefer not to use the JavaScript mode, please follow the guide in the GitHub repository: https://github.com/mixpanel/mixpanel-react-native."
+        "MixpanelReactNative is not available; using JavaScript mode. If you prefer not to use the JavaScript mode, please follow the guide in the GitHub repository: https://github.com/mixpanel/mixpanel-react-native.",
       );
     }
 
@@ -93,8 +93,8 @@ export class Mixpanel {
         MixpanelLogger.warn(
           this.token,
           "Accessing feature flags API but flags are not enabled. " +
-          "Call init() with featureFlagsOptions.enabled = true to enable feature flags. " +
-          "Flag methods will return fallback values."
+            "Call init() with featureFlagsOptions.enabled = true to enable feature flags. " +
+            "Flag methods will return fallback values.",
         );
       }
       // Lazy load the Flags instance with proper dependencies
@@ -175,7 +175,7 @@ export class Mixpanel {
     superProperties = {},
     serverURL = "https://api.mixpanel.com",
     useGzipCompression = false,
-    featureFlagsOptions = {}
+    featureFlagsOptions = {},
   ) {
     // Store feature flags options for later use
     this.featureFlagsOptions = featureFlagsOptions;
@@ -184,16 +184,19 @@ export class Mixpanel {
       this.token,
       this.trackAutomaticEvents,
       optOutTrackingDefault,
-      {...Helper.getMetaData(), ...superProperties},
+      { ...Helper.getMetaData(), ...superProperties },
       serverURL,
       useGzipCompression,
-      featureFlagsOptions
+      featureFlagsOptions,
     );
 
     // If flags are enabled AND we're in native mode, initialize them
-    if (featureFlagsOptions.enabled && this.mixpanelImpl === MixpanelReactNative) {
+    if (
+      featureFlagsOptions.enabled &&
+      this.mixpanelImpl === MixpanelReactNative
+    ) {
       await this.flags.loadFlags();
-  }
+    }
   }
 
   /**
@@ -215,7 +218,7 @@ export class Mixpanel {
   static async init(
     token,
     trackAutomaticEvents,
-    optOutTrackingDefault = DEFAULT_OPT_OUT
+    optOutTrackingDefault = DEFAULT_OPT_OUT,
   ) {
     await MixpanelReactNative.initialize(
       token,
@@ -224,7 +227,7 @@ export class Mixpanel {
       Helper.getMetaData(),
       "https://api.mixpanel.com",
       false,
-      {}
+      {},
     );
     return new Mixpanel(token, trackAutomaticEvents);
   }
@@ -267,7 +270,7 @@ export class Mixpanel {
       MixpanelReactNative.setFlushOnBackground(this.token, flushOnBackground);
     } else {
       console.warn(
-        "Mixpanel setFlushOnBackground was called and ignored because this method only works on iOS."
+        "Mixpanel setFlushOnBackground was called and ignored because this method only works on iOS.",
       );
     }
   }
@@ -284,7 +287,7 @@ export class Mixpanel {
   setUseIpAddressForGeolocation(useIpAddressForGeolocation) {
     this.mixpanelImpl.setUseIpAddressForGeolocation(
       this.token,
-      useIpAddressForGeolocation
+      useIpAddressForGeolocation,
     );
   }
 
@@ -459,7 +462,7 @@ export class Mixpanel {
         ...Helper.getMetaData(),
         ...properties,
       },
-      groups
+      groups,
     );
   }
 
@@ -493,7 +496,7 @@ export class Mixpanel {
         this.token,
         groupKey,
         groupID,
-        this.mixpanelImpl
+        this.mixpanelImpl,
       );
       return this.group;
     }
@@ -734,7 +737,7 @@ export class Autocapture {
     if (!StringHelper.isValid(screenName)) {
       MixpanelLogger.warn(
         this.token,
-        `trackScreenView failed: screenName cannot be blank`
+        `trackScreenView failed: screenName cannot be blank`,
       );
       return;
     }
@@ -759,7 +762,7 @@ export class Autocapture {
     if (!StringHelper.isValid(screenName)) {
       MixpanelLogger.warn(
         this.token,
-        `trackScreenLeave failed: screenName cannot be blank`
+        `trackScreenLeave failed: screenName cannot be blank`,
       );
       return;
     }
@@ -770,7 +773,11 @@ export class Autocapture {
       ...Helper.getMetaData(),
       ...properties,
     };
-    this.mixpanelImpl.trackScreenLeave(this.token, screenName, mergedProperties);
+    this.mixpanelImpl.trackScreenLeave(
+      this.token,
+      screenName,
+      mergedProperties,
+    );
   }
 }
 
@@ -851,7 +858,7 @@ export class People {
         var val = prop[key];
         if (isNaN(parseFloat(val))) {
           throw new Error(
-            `${PARAMS.PROPERTY_VALUE}${ERROR_MESSAGE.REQUIRED_DOUBLE}`
+            `${PARAMS.PROPERTY_VALUE}${ERROR_MESSAGE.REQUIRED_DOUBLE}`,
           );
         }
         add[key] = val;
@@ -860,7 +867,7 @@ export class People {
       by = by || 1;
       if (isNaN(parseFloat(by))) {
         throw new Error(
-          `${PARAMS.PROPERTY_VALUE}${ERROR_MESSAGE.REQUIRED_DOUBLE}`
+          `${PARAMS.PROPERTY_VALUE}${ERROR_MESSAGE.REQUIRED_DOUBLE}`,
         );
       }
 
@@ -911,8 +918,8 @@ export class People {
     value = Array.isArray(value) ? value : [value];
 
     if (DevicePlatform.iOS === Helper.getDevicePlatform()) {
-      this.mixpanelImpl.union(this.token, {[name]: value});
-      this.mixpanelImpl.union(this.token, {[name]: value});
+      this.mixpanelImpl.union(this.token, { [name]: value });
+      this.mixpanelImpl.union(this.token, { [name]: value });
     } else {
       this.mixpanelImpl.union(this.token, name, value);
     }
@@ -1024,7 +1031,7 @@ export class MixpanelGroup {
       this.token,
       this.groupKey,
       this.groupID,
-      properties
+      properties,
     );
   }
 
@@ -1048,7 +1055,7 @@ export class MixpanelGroup {
       this.token,
       this.groupKey,
       this.groupID,
-      properties
+      properties,
     );
   }
 
@@ -1065,7 +1072,7 @@ export class MixpanelGroup {
       this.token,
       this.groupKey,
       this.groupID,
-      prop
+      prop,
     );
   }
 
@@ -1087,7 +1094,7 @@ export class MixpanelGroup {
       this.groupKey,
       this.groupID,
       name,
-      value
+      value,
     );
   }
 
@@ -1109,7 +1116,7 @@ export class MixpanelGroup {
       this.groupKey,
       this.groupID,
       name,
-      value
+      value,
     );
   }
 }

@@ -1,5 +1,5 @@
 type MixpanelType = any;
-type MixpanelProperties = {[key: string]: MixpanelType};
+type MixpanelProperties = { [key: string]: MixpanelType };
 
 export type MixpanelAsyncStorage = {
   getItem(key: string): Promise<string | null>;
@@ -60,46 +60,96 @@ export interface Flags {
   // Synchronous methods
   loadFlags(): Promise<void>;
   areFlagsReady(): boolean;
-  getVariantSync(featureName: string, fallback: MixpanelFlagVariant): MixpanelFlagVariant;
+  getVariantSync(
+    featureName: string,
+    fallback: MixpanelFlagVariant,
+  ): MixpanelFlagVariant;
   getVariantValueSync(featureName: string, fallbackValue: any): any;
   isEnabledSync(featureName: string, fallbackValue?: boolean): boolean;
   getAllVariantsSync(): Map<string, MixpanelFlagVariant>;
 
   // Asynchronous methods with overloads for callback and Promise patterns
-  getVariant(featureName: string, fallback: MixpanelFlagVariant): Promise<MixpanelFlagVariant>;
-  getVariant(featureName: string, fallback: MixpanelFlagVariant, callback: (result: MixpanelFlagVariant) => void): void;
+  getVariant(
+    featureName: string,
+    fallback: MixpanelFlagVariant,
+  ): Promise<MixpanelFlagVariant>;
+  getVariant(
+    featureName: string,
+    fallback: MixpanelFlagVariant,
+    callback: (result: MixpanelFlagVariant) => void,
+  ): void;
 
   getVariantValue(featureName: string, fallbackValue: any): Promise<any>;
-  getVariantValue(featureName: string, fallbackValue: any, callback: (value: any) => void): void;
+  getVariantValue(
+    featureName: string,
+    fallbackValue: any,
+    callback: (value: any) => void,
+  ): void;
 
   isEnabled(featureName: string, fallbackValue?: boolean): Promise<boolean>;
-  isEnabled(featureName: string, fallbackValue: boolean, callback: (isEnabled: boolean) => void): void;
+  isEnabled(
+    featureName: string,
+    fallbackValue: boolean,
+    callback: (isEnabled: boolean) => void,
+  ): void;
 
   getAllVariants(): Promise<Map<string, MixpanelFlagVariant>>;
-  getAllVariants(callback: (variants: Map<string, MixpanelFlagVariant>) => void): void;
+  getAllVariants(
+    callback: (variants: Map<string, MixpanelFlagVariant>) => void,
+  ): void;
 
   // Context management — available in both native and JavaScript modes.
-  updateContext(newContext: MixpanelProperties, options?: UpdateContextOptions): Promise<void>;
+  updateContext(
+    newContext: MixpanelProperties,
+    options?: UpdateContextOptions,
+  ): Promise<void>;
 
   // First-time event hook (JavaScript mode only; native mode is a no-op).
-  checkFirstTimeEvents(eventName: string, properties?: MixpanelProperties): void;
+  checkFirstTimeEvents(
+    eventName: string,
+    properties?: MixpanelProperties,
+  ): void;
 
   // snake_case aliases
   are_flags_ready(): boolean;
-  get_variant(featureName: string, fallback: MixpanelFlagVariant): Promise<MixpanelFlagVariant>;
-  get_variant(featureName: string, fallback: MixpanelFlagVariant, callback: (result: MixpanelFlagVariant) => void): void;
-  get_variant_sync(featureName: string, fallback: MixpanelFlagVariant): MixpanelFlagVariant;
+  get_variant(
+    featureName: string,
+    fallback: MixpanelFlagVariant,
+  ): Promise<MixpanelFlagVariant>;
+  get_variant(
+    featureName: string,
+    fallback: MixpanelFlagVariant,
+    callback: (result: MixpanelFlagVariant) => void,
+  ): void;
+  get_variant_sync(
+    featureName: string,
+    fallback: MixpanelFlagVariant,
+  ): MixpanelFlagVariant;
   get_variant_value(featureName: string, fallbackValue: any): Promise<any>;
-  get_variant_value(featureName: string, fallbackValue: any, callback: (value: any) => void): void;
+  get_variant_value(
+    featureName: string,
+    fallbackValue: any,
+    callback: (value: any) => void,
+  ): void;
   get_variant_value_sync(featureName: string, fallbackValue: any): any;
   is_enabled(featureName: string, fallbackValue?: boolean): Promise<boolean>;
-  is_enabled(featureName: string, fallbackValue: boolean, callback: (isEnabled: boolean) => void): void;
+  is_enabled(
+    featureName: string,
+    fallbackValue: boolean,
+    callback: (isEnabled: boolean) => void,
+  ): void;
   is_enabled_sync(featureName: string, fallbackValue?: boolean): boolean;
   get_all_variants(): Promise<Map<string, MixpanelFlagVariant>>;
   get_all_variants_sync(): Map<string, MixpanelFlagVariant>;
   load_flags(): Promise<void>;
-  update_context(newContext: MixpanelProperties, options?: UpdateContextOptions): Promise<void>;
-  check_first_time_events(eventName: string, properties?: MixpanelProperties): void;
+  update_context(
+    newContext: MixpanelProperties,
+    options?: UpdateContextOptions,
+  ): Promise<void>;
+  check_first_time_events(
+    eventName: string,
+    properties?: MixpanelProperties,
+  ): void;
 }
 
 export class Autocapture {
@@ -131,19 +181,19 @@ export class Mixpanel {
     token: string,
     trackAutomaticEvents: boolean,
     useNative: false,
-    storage?: MixpanelAsyncStorage
+    storage?: MixpanelAsyncStorage,
   );
   static init(
     token: string,
     trackAutomaticEvents: boolean,
-    optOutTrackingDefault?: boolean
+    optOutTrackingDefault?: boolean,
   ): Promise<Mixpanel>;
   init(
     optOutTrackingDefault?: boolean,
     superProperties?: MixpanelProperties,
     serverURL?: string,
     useGzipCompression?: boolean,
-    featureFlagsOptions?: FeatureFlagsOptions
+    featureFlagsOptions?: FeatureFlagsOptions,
   ): Promise<void>;
   setServerURL(serverURL: string): void;
   setLoggingEnabled(loggingEnabled: boolean): void;
@@ -160,7 +210,7 @@ export class Mixpanel {
   trackWithGroups(
     eventName: string,
     properties?: MixpanelProperties,
-    groups?: MixpanelProperties
+    groups?: MixpanelProperties,
   ): void;
   setGroup(groupKey: string, groupID: MixpanelType): void;
   getGroup(groupKey: string, groupID: MixpanelType): MixpanelGroup;
@@ -202,7 +252,7 @@ export class MixpanelGroup {
     token: string,
     groupKey: string,
     groupID: MixpanelType,
-    mixpanelInstance: any
+    mixpanelInstance: any,
   );
   set(prop: string, to: MixpanelType): void;
   setOnce(prop: string, to: MixpanelType): void;

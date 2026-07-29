@@ -726,7 +726,8 @@ export class Autocapture {
   /**
    * Track a screen view event.
    *
-   * @param {string} screenName The name of the screen being viewed
+   * @param {string} screenName The name of the screen being viewed. Must be non-empty;
+   *   if an empty or whitespace-only string is passed, the event is silently dropped.
    * @param {object} properties Optional additional properties to include with the event
    */
   trackScreenView(screenName, properties) {
@@ -750,7 +751,8 @@ export class Autocapture {
   /**
    * Track a screen leave event.
    *
-   * @param {string} screenName The name of the screen being left
+   * @param {string} screenName The name of the screen being left. Must be non-empty;
+   *   if an empty or whitespace-only string is passed, the event is silently dropped.
    * @param {object} properties Optional additional properties to include with the event
    */
   trackScreenLeave(screenName, properties) {

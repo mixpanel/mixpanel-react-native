@@ -5,7 +5,7 @@
 
 // MARK: - Mixpanel Instance
 
-RCT_EXTERN_METHOD(initialize:(NSString *)token trackAutomaticEvents:(BOOL)trackAutomaticEvents optOutTrackingByDefault:(BOOL)optOutTrackingByDefault properties:(NSDictionary *)properties serverURL:(NSString *)serverURL useGzipCompression:(BOOL)useGzipCompression featureFlagsOptions:(NSDictionary *)featureFlagsOptions resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(initialize:(NSString *)token trackAutomaticEvents:(BOOL)trackAutomaticEvents optOutTrackingByDefault:(BOOL)optOutTrackingByDefault properties:(NSDictionary *)properties serverURL:(NSString *)serverURL useGzipCompression:(BOOL)useGzipCompression featureFlagsOptions:(NSDictionary *)featureFlagsOptions autocaptureConfig:(NSDictionary *)autocaptureConfig resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
 // Mark: - Settings
 RCT_EXTERN_METHOD(setServerURL:(NSString *)token serverURL:(NSString *)serverURL resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)

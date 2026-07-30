@@ -19,6 +19,7 @@ open class MixpanelReactNative: NSObject {
                     serverURL: String,
                     useGzipCompression: Bool = false,
                     featureFlagsOptions: [String: Any]?,
+                    autocaptureConfig: [String: Any]?,
                     resolver resolve: RCTPromiseResolveBlock,
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         let autoProps = properties // copy
@@ -37,6 +38,11 @@ open class MixpanelReactNative: NSObject {
             )
         }
 
+        var resolvedAutocaptureOptions: AutocaptureOptions? = nil
+        if let config = autocaptureConfig {
+            resolvedAutocaptureOptions = buildAutocaptureOptions(from: config)
+        }
+
         let options = MixpanelOptions(
             token: token,
             instanceName: token,
@@ -45,11 +51,47 @@ open class MixpanelReactNative: NSObject {
             superProperties: propsProcessed,
             serverURL: serverURL,
             useGzipCompression: useGzipCompression,
-            featureFlagOptions: resolvedFeatureFlagOptions
+            featureFlagOptions: resolvedFeatureFlagOptions,
+            autocaptureOptions: resolvedAutocaptureOptions
         )
 
         Mixpanel.initialize(options: options)
         resolve(true)
+    }
+
+    private func buildAutocaptureOptions(from config: [String: Any]) -> AutocaptureOptions {
+        var clickOpts = ClickOptions()
+        var rageClickOpts = RageClickOptions()
+        var deadClickOpts = DeadClickOptions()
+
+        if let clickConfig = config["click"] as? [String: Any] {
+            clickOpts = ClickOptions(
+                enabled: clickConfig["enabled"] as? Bool ?? true,
+                walkUpToClickableParent: true
+            )
+        }
+
+        if let rageConfig = config["rageClick"] as? [String: Any] {
+            rageClickOpts = RageClickOptions(
+                enabled: rageConfig["enabled"] as? Bool ?? true,
+                clickThreshold: rageConfig["clickThreshold"] as? Int ?? 4,
+                timeWindowMs: rageConfig["timeWindowMs"] as? Int64 ?? 1000,
+                radius: rageConfig["radius"] as? CGFloat ?? 44
+            )
+        }
+
+        if let deadConfig = config["deadClick"] as? [String: Any] {
+            deadClickOpts = DeadClickOptions(
+                enabled: deadConfig["enabled"] as? Bool ?? true,
+                timeWindowMs: deadConfig["timeWindowMs"] as? Int ?? 500
+            )
+        }
+
+        return AutocaptureOptions(
+            clickOptions: clickOpts,
+            rageClickOptions: rageClickOpts,
+            deadClickOptions: deadClickOpts
+        )
     }
 
     private func parseVariantLookupPolicy(_ policyMap: [String: Any]?) -> VariantLookupPolicy {

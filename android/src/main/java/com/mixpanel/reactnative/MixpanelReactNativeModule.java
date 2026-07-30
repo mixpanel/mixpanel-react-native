@@ -1,10 +1,14 @@
 package com.mixpanel.reactnative;
 
+import com.mixpanel.android.mpmetrics.AutocaptureOptions;
+import com.mixpanel.android.mpmetrics.ClickOptions;
+import com.mixpanel.android.mpmetrics.DeadClickOptions;
 import com.mixpanel.android.mpmetrics.FeatureFlagOptions;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.mixpanel.android.mpmetrics.MixpanelOptions;
 import com.mixpanel.android.mpmetrics.MixpanelFlagVariant;
 import com.mixpanel.android.mpmetrics.FlagCompletionCallback;
+import com.mixpanel.android.mpmetrics.RageClickOptions;
 import com.mixpanel.android.mpmetrics.VariantLookupPolicy;
 
 import com.facebook.react.bridge.Promise;
@@ -44,7 +48,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
 
     @ReactMethod
-    public void initialize(String token, boolean trackAutomaticEvents, boolean optOutTrackingDefault, ReadableMap metadata, String serverURL, boolean useGzipCompression, ReadableMap featureFlagsOptions, Promise promise) throws JSONException {
+    public void initialize(String token, boolean trackAutomaticEvents, boolean optOutTrackingDefault, ReadableMap metadata, String serverURL, boolean useGzipCompression, ReadableMap featureFlagsOptions, ReadableMap autocaptureConfig, Promise promise) throws JSONException {
         JSONObject mixpanelProperties = ReactNativeHelper.reactToJSON(metadata);
         AutomaticProperties.setAutomaticProperties(mixpanelProperties);
 
@@ -81,11 +85,69 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             optionsBuilder.featureFlagOptions(ffBuilder.build());
         }
 
+        // Configure autocapture if provided
+        if (autocaptureConfig != null) {
+            AutocaptureOptions autocaptureOptions = buildAutocaptureOptions(autocaptureConfig);
+            optionsBuilder.autocaptureOptions(autocaptureOptions);
+        }
+
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, trackAutomaticEvents, optionsBuilder.build());
         if (useGzipCompression) {
             instance.setShouldGzipRequestPayload(true);
         }
         promise.resolve(null);
+    }
+
+    private AutocaptureOptions buildAutocaptureOptions(ReadableMap config) {
+        AutocaptureOptions.Builder builder = new AutocaptureOptions.Builder();
+
+        if (config.hasKey("click")) {
+            ReadableMap clickConfig = config.getMap("click");
+            if (clickConfig != null) {
+                ClickOptions.Builder clickBuilder = new ClickOptions.Builder();
+                if (clickConfig.hasKey("enabled")) {
+                    clickBuilder.enabled(clickConfig.getBoolean("enabled"));
+                }
+                clickBuilder.walkUpToClickableParent(true);
+                builder.clickOptions(clickBuilder.build());
+            }
+        }
+
+        if (config.hasKey("rageClick")) {
+            ReadableMap rageConfig = config.getMap("rageClick");
+            if (rageConfig != null) {
+                RageClickOptions.Builder rageBuilder = new RageClickOptions.Builder();
+                if (rageConfig.hasKey("enabled")) {
+                    rageBuilder.enabled(rageConfig.getBoolean("enabled"));
+                }
+                if (rageConfig.hasKey("clickThreshold")) {
+                    rageBuilder.clickThreshold(rageConfig.getInt("clickThreshold"));
+                }
+                if (rageConfig.hasKey("timeWindowMs")) {
+                    rageBuilder.timeWindowMs((long) rageConfig.getDouble("timeWindowMs"));
+                }
+                if (rageConfig.hasKey("radius")) {
+                    rageBuilder.radius((float) rageConfig.getDouble("radius"));
+                }
+                builder.rageClickOptions(rageBuilder.build());
+            }
+        }
+
+        if (config.hasKey("deadClick")) {
+            ReadableMap deadConfig = config.getMap("deadClick");
+            if (deadConfig != null) {
+                DeadClickOptions.Builder deadBuilder = new DeadClickOptions.Builder();
+                if (deadConfig.hasKey("enabled")) {
+                    deadBuilder.enabled(deadConfig.getBoolean("enabled"));
+                }
+                if (deadConfig.hasKey("timeWindowMs")) {
+                    deadBuilder.timeWindowMs((long) deadConfig.getDouble("timeWindowMs"));
+                }
+                builder.deadClickOptions(deadBuilder.build());
+            }
+        }
+
+        return builder.build();
     }
 
     private VariantLookupPolicy parseVariantLookupPolicy(ReadableMap policyMap) {

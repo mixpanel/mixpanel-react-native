@@ -19,5 +19,6 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 
   s.dependency "React-Core"
-  s.dependency "Mixpanel-swift", '6.5.0'
+  # Local mixpanel-swift with autocapture support
+  s.dependency "Mixpanel-swift", '~> 6.5'
 end

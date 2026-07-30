@@ -102,6 +102,29 @@ export interface Flags {
   check_first_time_events(eventName: string, properties?: MixpanelProperties): void;
 }
 
+export interface AutocaptureClickOptions {
+  enabled?: boolean;
+}
+
+export interface AutocaptureRageClickOptions {
+  enabled?: boolean;
+  clickThreshold?: number;
+  timeWindowMs?: number;
+  /** Spatial threshold. Unit: dp on Android, pt on iOS. */
+  radius?: number;
+}
+
+export interface AutocaptureDeadClickOptions {
+  enabled?: boolean;
+  timeWindowMs?: number;
+}
+
+export interface AutocaptureOptions {
+  click?: boolean | AutocaptureClickOptions;
+  rageClick?: boolean | AutocaptureRageClickOptions;
+  deadClick?: boolean | AutocaptureDeadClickOptions;
+}
+
 export class Autocapture {
   trackScreenView(screenName: string, properties?: MixpanelProperties): void;
   trackScreenLeave(screenName: string, properties?: MixpanelProperties): void;
@@ -129,7 +152,8 @@ export class Mixpanel {
     superProperties?: MixpanelProperties,
     serverURL?: string,
     useGzipCompression?: boolean,
-    featureFlagsOptions?: FeatureFlagsOptions
+    featureFlagsOptions?: FeatureFlagsOptions,
+    autocaptureOptions?: AutocaptureOptions | null
   ): Promise<void>;
   setServerURL(serverURL: string): void;
   setLoggingEnabled(loggingEnabled: boolean): void;

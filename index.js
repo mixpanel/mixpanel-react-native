@@ -141,6 +141,13 @@ export class Mixpanel {
    *     Use the `custom_properties` key to nest targeting properties
    *     (e.g., `context: { custom_properties: { user_tier: 'premium' } }`).
    *     Note: In native mode, context must be set during initialization and cannot be updated later.
+   * @param {object} [autocaptureOptions=null] Autocapture configuration. Pass an object to enable autocapture.
+   *     Requires native mode (useNative: true). Pass null or omit to disable autocapture.
+   * @param {boolean|object} [autocaptureOptions.click=true] Enable click tracking. Pass boolean or {enabled: boolean}.
+   * @param {boolean|object} [autocaptureOptions.rageClick=true] Enable rage click detection.
+   *     Object form: {enabled, clickThreshold, timeWindowMs, radius}
+   * @param {boolean|object} [autocaptureOptions.deadClick=true] Enable dead click detection.
+   *     Object form: {enabled, timeWindowMs}
    * @returns {Promise<void>} A promise that resolves when initialization is complete
    *
    * @example
@@ -175,10 +182,23 @@ export class Mixpanel {
     superProperties = {},
     serverURL = "https://api.mixpanel.com",
     useGzipCompression = false,
-    featureFlagsOptions = {}
+    featureFlagsOptions = {},
+    autocaptureOptions = null
   ) {
     // Store feature flags options for later use
     this.featureFlagsOptions = featureFlagsOptions;
+
+    // Normalize autocapture options
+    let resolvedAutocaptureOptions = null;
+    if (autocaptureOptions != null) {
+      if (this.mixpanelImpl !== MixpanelReactNative) {
+        console.warn(
+          "Mixpanel autocapture requires native mode (useNative: true). Autocapture config will be ignored in JavaScript mode."
+        );
+      } else {
+        resolvedAutocaptureOptions = AutocaptureHelper.normalizeOptions(autocaptureOptions);
+      }
+    }
 
     await this.mixpanelImpl.initialize(
       this.token,
@@ -187,7 +207,8 @@ export class Mixpanel {
       {...Helper.getMetaData(), ...superProperties},
       serverURL,
       useGzipCompression,
-      featureFlagsOptions
+      featureFlagsOptions,
+      resolvedAutocaptureOptions
     );
 
     // If flags are enabled AND we're in native mode, initialize them
@@ -224,7 +245,8 @@ export class Mixpanel {
       Helper.getMetaData(),
       "https://api.mixpanel.com",
       false,
-      {}
+      {},
+      null
     );
     return new Mixpanel(token, trackAutomaticEvents);
   }
@@ -1157,6 +1179,47 @@ class StringHelper {
      */
   static raiseError(paramName) {
     throw new Error(`${paramName}${ERROR_MESSAGE.INVALID_STRING}`);
+  }
+}
+
+class AutocaptureHelper {
+  static normalizeOptions(options) {
+    const normalized = {};
+
+    // Click options
+    if (options.click !== undefined) {
+      if (typeof options.click === "boolean") {
+        normalized.click = { enabled: options.click };
+      } else if (typeof options.click === "object") {
+        normalized.click = { enabled: true, ...options.click };
+      }
+    } else {
+      normalized.click = { enabled: true };
+    }
+
+    // Rage click options
+    if (options.rageClick !== undefined) {
+      if (typeof options.rageClick === "boolean") {
+        normalized.rageClick = { enabled: options.rageClick };
+      } else if (typeof options.rageClick === "object") {
+        normalized.rageClick = { enabled: true, ...options.rageClick };
+      }
+    } else {
+      normalized.rageClick = { enabled: true };
+    }
+
+    // Dead click options
+    if (options.deadClick !== undefined) {
+      if (typeof options.deadClick === "boolean") {
+        normalized.deadClick = { enabled: options.deadClick };
+      } else if (typeof options.deadClick === "object") {
+        normalized.deadClick = { enabled: true, ...options.deadClick };
+      }
+    } else {
+      normalized.deadClick = { enabled: true };
+    }
+
+    return normalized;
   }
 }
 

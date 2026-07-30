@@ -125,9 +125,29 @@ export interface AutocaptureOptions {
   deadClick?: boolean | AutocaptureDeadClickOptions;
 }
 
+export interface ClickEventData {
+  /** Touch X coordinate. */
+  x: number;
+  /** Touch Y coordinate. */
+  y: number;
+  /** Stable identifier for the tapped element. */
+  elementId: string;
+  /** Class name or component type of the tapped element. */
+  tagName?: string;
+  /** Accessibility label of the element. */
+  accessibleLabel?: string;
+  /** Semantic role (e.g., "button", "link", "switch"). */
+  role?: string;
+  /** View hierarchy path, ">" separated. */
+  elements?: string;
+}
+
 export class Autocapture {
   trackScreenView(screenName: string, properties?: MixpanelProperties): void;
   trackScreenLeave(screenName: string, properties?: MixpanelProperties): void;
+  trackClick(clickEvent: ClickEventData, properties?: MixpanelProperties): void;
+  trackRageClick(clickEvent: ClickEventData, properties?: MixpanelProperties): void;
+  trackDeadClick(clickEvent: ClickEventData, properties?: MixpanelProperties): void;
 }
 
 export class Mixpanel {

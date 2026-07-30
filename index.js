@@ -792,6 +792,101 @@ export class Autocapture {
     };
     this.mixpanelImpl.trackScreenLeave(this.token, screenName, mergedProperties);
   }
+
+  /**
+   * Track a click event with element metadata.
+   *
+   * Use this when your app implements its own click detection and you want to
+   * track click events with full element metadata in the Mixpanel autocapture format.
+   *
+   * @param {object} clickEvent The click event data.
+   * @param {number} clickEvent.x Touch X coordinate.
+   * @param {number} clickEvent.y Touch Y coordinate.
+   * @param {string} clickEvent.elementId Stable identifier for the tapped element.
+   * @param {string} [clickEvent.tagName] Class name or component type.
+   * @param {string} [clickEvent.accessibleLabel] Accessibility label.
+   * @param {string} [clickEvent.role] Semantic role (e.g., "button", "link").
+   * @param {string} [clickEvent.elements] View hierarchy path, ">" separated.
+   * @param {object} [properties] Optional additional properties.
+   */
+  trackClick(clickEvent, properties) {
+    if (!this._validateClickEvent(clickEvent, "trackClick")) return;
+    if (!ObjectHelper.isValidOrUndefined(properties)) {
+      ObjectHelper.raiseError(PARAMS.PROPERTIES);
+    }
+    const mergedProperties = {
+      ...Helper.getMetaData(),
+      ...properties,
+    };
+    this.mixpanelImpl.trackClick(this.token, clickEvent, mergedProperties);
+  }
+
+  /**
+   * Track a rage click event with element metadata.
+   *
+   * Use this when your app implements its own rage click detection.
+   * A rage click typically indicates a user rapidly tapping an unresponsive element.
+   *
+   * @param {object} clickEvent The click event data (same shape as trackClick).
+   * @param {object} [properties] Optional additional properties.
+   */
+  trackRageClick(clickEvent, properties) {
+    if (!this._validateClickEvent(clickEvent, "trackRageClick")) return;
+    if (!ObjectHelper.isValidOrUndefined(properties)) {
+      ObjectHelper.raiseError(PARAMS.PROPERTIES);
+    }
+    const mergedProperties = {
+      ...Helper.getMetaData(),
+      ...properties,
+    };
+    this.mixpanelImpl.trackRageClick(this.token, clickEvent, mergedProperties);
+  }
+
+  /**
+   * Track a dead click event with element metadata.
+   *
+   * Use this when your app implements its own dead click detection.
+   * A dead click indicates a user tapped an interactive element but no UI change occurred.
+   *
+   * @param {object} clickEvent The click event data (same shape as trackClick).
+   * @param {object} [properties] Optional additional properties.
+   */
+  trackDeadClick(clickEvent, properties) {
+    if (!this._validateClickEvent(clickEvent, "trackDeadClick")) return;
+    if (!ObjectHelper.isValidOrUndefined(properties)) {
+      ObjectHelper.raiseError(PARAMS.PROPERTIES);
+    }
+    const mergedProperties = {
+      ...Helper.getMetaData(),
+      ...properties,
+    };
+    this.mixpanelImpl.trackDeadClick(this.token, clickEvent, mergedProperties);
+  }
+
+  _validateClickEvent(clickEvent, methodName) {
+    if (clickEvent == null || typeof clickEvent !== "object") {
+      MixpanelLogger.warn(
+        this.token,
+        `${methodName} failed: clickEvent must be an object`
+      );
+      return false;
+    }
+    if (typeof clickEvent.x !== "number" || typeof clickEvent.y !== "number") {
+      MixpanelLogger.warn(
+        this.token,
+        `${methodName} failed: clickEvent.x and clickEvent.y must be numbers`
+      );
+      return false;
+    }
+    if (!StringHelper.isValid(clickEvent.elementId)) {
+      MixpanelLogger.warn(
+        this.token,
+        `${methodName} failed: clickEvent.elementId cannot be blank`
+      );
+      return false;
+    }
+    return true;
+  }
 }
 
 /**

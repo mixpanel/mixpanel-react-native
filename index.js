@@ -1326,6 +1326,12 @@ class AutocaptureHelper {
       normalized.deadClick = { enabled: true };
     }
 
+    // walkUpToClickableParent — default true for React Native
+    normalized.walkUpToClickableParent =
+      options.walkUpToClickableParent !== undefined
+        ? !!options.walkUpToClickableParent
+        : true;
+
     return normalized;
   }
 }

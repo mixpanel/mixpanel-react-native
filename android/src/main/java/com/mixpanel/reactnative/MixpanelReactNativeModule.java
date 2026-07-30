@@ -100,7 +100,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
     private AutocaptureOptions buildAutocaptureOptions(ReadableMap config) {
         AutocaptureOptions.Builder builder = new AutocaptureOptions.Builder();
-        builder.walkUpToClickableParent(true);
+        boolean walkUp = !config.hasKey("walkUpToClickableParent") || config.getBoolean("walkUpToClickableParent");
+        builder.walkUpToClickableParent(walkUp);
 
         if (config.hasKey("click")) {
             ReadableMap clickConfig = config.getMap("click");

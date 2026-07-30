@@ -90,11 +90,13 @@ open class MixpanelReactNative: NSObject {
             )
         }
 
+        let walkUp = config["walkUpToClickableParent"] as? Bool ?? true
+
         return AutocaptureOptions(
             clickOptions: clickOpts,
             rageClickOptions: rageClickOpts,
             deadClickOptions: deadClickOpts,
-            walkUpToClickableParent: true
+            walkUpToClickableParent: walkUp
         )
     }
 

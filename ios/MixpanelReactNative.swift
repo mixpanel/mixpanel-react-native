@@ -60,6 +60,10 @@ open class MixpanelReactNative: NSObject {
     }
 
     private func buildAutocaptureOptions(from config: [String: Any]) -> AutocaptureOptions {
+        // Start with native defaults so we don't hardcode values that may change in the SDK
+        let defaults = RageClickOptions()
+        let deadDefaults = DeadClickOptions()
+
         var clickOpts = ClickOptions()
         var rageClickOpts = RageClickOptions()
         var deadClickOpts = DeadClickOptions()
@@ -73,16 +77,16 @@ open class MixpanelReactNative: NSObject {
         if let rageConfig = config["rageClick"] as? [String: Any] {
             rageClickOpts = RageClickOptions(
                 enabled: rageConfig["enabled"] as? Bool ?? true,
-                clickThreshold: rageConfig["clickThreshold"] as? Int ?? 4,
-                timeWindowMs: rageConfig["timeWindowMs"] as? Int64 ?? 1000,
-                radius: rageConfig["radius"] as? CGFloat ?? 44
+                clickThreshold: rageConfig["clickThreshold"] as? Int ?? defaults.clickThreshold,
+                timeWindowMs: rageConfig["timeWindowMs"] as? Int64 ?? defaults.timeWindowMs,
+                radius: rageConfig["radius"] as? CGFloat ?? defaults.radius
             )
         }
 
         if let deadConfig = config["deadClick"] as? [String: Any] {
             deadClickOpts = DeadClickOptions(
                 enabled: deadConfig["enabled"] as? Bool ?? true,
-                timeWindowMs: deadConfig["timeWindowMs"] as? Int ?? 500
+                timeWindowMs: deadConfig["timeWindowMs"] as? Int ?? deadDefaults.timeWindowMs
             )
         }
 

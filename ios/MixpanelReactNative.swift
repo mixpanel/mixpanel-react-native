@@ -66,8 +66,7 @@ open class MixpanelReactNative: NSObject {
 
         if let clickConfig = config["click"] as? [String: Any] {
             clickOpts = ClickOptions(
-                enabled: clickConfig["enabled"] as? Bool ?? true,
-                walkUpToClickableParent: true
+                enabled: clickConfig["enabled"] as? Bool ?? true
             )
         }
 
@@ -90,7 +89,8 @@ open class MixpanelReactNative: NSObject {
         return AutocaptureOptions(
             clickOptions: clickOpts,
             rageClickOptions: rageClickOpts,
-            deadClickOptions: deadClickOpts
+            deadClickOptions: deadClickOpts,
+            walkUpToClickableParent: true
         )
     }
 

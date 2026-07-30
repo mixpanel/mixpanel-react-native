@@ -749,7 +749,7 @@ export class Autocapture {
    * Track a screen view event.
    *
    * @param {string} screenName The name of the screen being viewed
-   * @param {object} properties Optional additional properties to include with the event
+   * @param {object} [properties] Optional additional properties to include with the event
    */
   trackScreenView(screenName, properties) {
     if (!StringHelper.isValid(screenName)) {
@@ -762,18 +762,17 @@ export class Autocapture {
     if (!ObjectHelper.isValidOrUndefined(properties)) {
       ObjectHelper.raiseError(PARAMS.PROPERTIES);
     }
-    const mergedProperties = {
-      ...Helper.getMetaData(),
+    this._trackAutocaptureEvent("$mp_page_view", {
+      current_page_title: screenName,
       ...properties,
-    };
-    this.mixpanelImpl.trackScreenView(this.token, screenName, mergedProperties);
+    });
   }
 
   /**
    * Track a screen leave event.
    *
    * @param {string} screenName The name of the screen being left
-   * @param {object} properties Optional additional properties to include with the event
+   * @param {object} [properties] Optional additional properties to include with the event
    */
   trackScreenLeave(screenName, properties) {
     if (!StringHelper.isValid(screenName)) {
@@ -786,11 +785,10 @@ export class Autocapture {
     if (!ObjectHelper.isValidOrUndefined(properties)) {
       ObjectHelper.raiseError(PARAMS.PROPERTIES);
     }
-    const mergedProperties = {
-      ...Helper.getMetaData(),
+    this._trackAutocaptureEvent("$mp_page_leave", {
+      current_page_title: screenName,
       ...properties,
-    };
-    this.mixpanelImpl.trackScreenLeave(this.token, screenName, mergedProperties);
+    });
   }
 
   /**
@@ -811,14 +809,7 @@ export class Autocapture {
    */
   trackClick(clickEvent, properties) {
     if (!this._validateClickEvent(clickEvent, "trackClick")) return;
-    if (!ObjectHelper.isValidOrUndefined(properties)) {
-      ObjectHelper.raiseError(PARAMS.PROPERTIES);
-    }
-    const mergedProperties = {
-      ...Helper.getMetaData(),
-      ...properties,
-    };
-    this.mixpanelImpl.trackClick(this.token, clickEvent, mergedProperties);
+    this._trackClickEvent("$mp_click", clickEvent, properties);
   }
 
   /**
@@ -832,14 +823,7 @@ export class Autocapture {
    */
   trackRageClick(clickEvent, properties) {
     if (!this._validateClickEvent(clickEvent, "trackRageClick")) return;
-    if (!ObjectHelper.isValidOrUndefined(properties)) {
-      ObjectHelper.raiseError(PARAMS.PROPERTIES);
-    }
-    const mergedProperties = {
-      ...Helper.getMetaData(),
-      ...properties,
-    };
-    this.mixpanelImpl.trackRageClick(this.token, clickEvent, mergedProperties);
+    this._trackClickEvent("$mp_rage_click", clickEvent, properties);
   }
 
   /**
@@ -853,14 +837,42 @@ export class Autocapture {
    */
   trackDeadClick(clickEvent, properties) {
     if (!this._validateClickEvent(clickEvent, "trackDeadClick")) return;
+    this._trackClickEvent("$mp_dead_click", clickEvent, properties);
+  }
+
+  _trackClickEvent(eventName, clickEvent, properties) {
     if (!ObjectHelper.isValidOrUndefined(properties)) {
       ObjectHelper.raiseError(PARAMS.PROPERTIES);
     }
-    const mergedProperties = {
-      ...Helper.getMetaData(),
-      ...properties,
+    const clickProperties = {
+      $x: clickEvent.x,
+      $y: clickEvent.y,
+      $el_id: clickEvent.elementId,
     };
-    this.mixpanelImpl.trackDeadClick(this.token, clickEvent, mergedProperties);
+    if (clickEvent.tagName != null) {
+      clickProperties.$el_tag_name = clickEvent.tagName;
+    }
+    if (clickEvent.accessibleLabel != null) {
+      clickProperties["$attr-aria-label"] = clickEvent.accessibleLabel;
+    }
+    if (clickEvent.role != null) {
+      clickProperties["$attr-role"] = clickEvent.role;
+    }
+    if (clickEvent.elements != null) {
+      clickProperties.$elements = clickEvent.elements;
+    }
+    this._trackAutocaptureEvent(eventName, {
+      ...clickProperties,
+      ...properties,
+    });
+  }
+
+  _trackAutocaptureEvent(eventName, properties) {
+    this.mixpanelImpl.track(this.token, eventName, {
+      ...Helper.getMetaData(),
+      $mp_autocapture: true,
+      ...properties,
+    });
   }
 
   _validateClickEvent(clickEvent, methodName) {

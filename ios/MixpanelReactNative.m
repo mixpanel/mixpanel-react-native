@@ -30,18 +30,6 @@ RCT_EXTERN_METHOD(optInTracking:(NSString *)token resolver:(RCTPromiseResolveBlo
 
 RCT_EXTERN_METHOD(track:(NSString *)token event:(NSString *)event properties:(NSDictionary *)properties resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
-// MARK: - Autocapture
-
-RCT_EXTERN_METHOD(trackScreenView:(NSString *)token screenName:(NSString *)screenName properties:(NSDictionary *)properties resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(trackScreenLeave:(NSString *)token screenName:(NSString *)screenName properties:(NSDictionary *)properties resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(trackClick:(NSString *)token clickEvent:(NSDictionary *)clickEvent properties:(NSDictionary *)properties resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(trackRageClick:(NSString *)token clickEvent:(NSDictionary *)clickEvent properties:(NSDictionary *)properties resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-
-RCT_EXTERN_METHOD(trackDeadClick:(NSString *)token clickEvent:(NSDictionary *)clickEvent properties:(NSDictionary *)properties resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-
 // MARK: - Timing Events
 
 RCT_EXTERN_METHOD(timeEvent:(NSString *)token event:(NSString *)event resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)

@@ -1,6 +1,5 @@
 package com.mixpanel.reactnative;
 
-import com.mixpanel.android.autocapture.ClickEvent;
 import com.mixpanel.android.mpmetrics.AutocaptureOptions;
 import com.mixpanel.android.mpmetrics.ClickOptions;
 import com.mixpanel.android.mpmetrics.DeadClickOptions;
@@ -320,114 +319,6 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             instance.track(eventName, eventProperties);
             promise.resolve(null);
         }
-    }
-
-    @ReactMethod
-    public void trackScreenView(final String token, final String screenName, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
-        if (instance == null) {
-            promise.reject("Instance Error", "Failed to get Mixpanel instance");
-            return;
-        }
-        synchronized (instance) {
-            JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
-            AutomaticProperties.appendLibraryProperties(eventProperties);
-            if (instance.getAutocapture() != null) {
-                instance.getAutocapture().trackScreenView(screenName, eventProperties);
-            }
-            promise.resolve(null);
-        }
-    }
-
-    @ReactMethod
-    public void trackScreenLeave(final String token, final String screenName, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
-        if (instance == null) {
-            promise.reject("Instance Error", "Failed to get Mixpanel instance");
-            return;
-        }
-        synchronized (instance) {
-            JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
-            AutomaticProperties.appendLibraryProperties(eventProperties);
-            if (instance.getAutocapture() != null) {
-                instance.getAutocapture().trackScreenLeave(screenName, eventProperties);
-            }
-            promise.resolve(null);
-        }
-    }
-
-    @ReactMethod
-    public void trackClick(final String token, ReadableMap clickEventMap, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
-        if (instance == null) {
-            promise.reject("Instance Error", "Failed to get Mixpanel instance");
-            return;
-        }
-        synchronized (instance) {
-            ClickEvent clickEvent = buildClickEvent(clickEventMap);
-            JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
-            AutomaticProperties.appendLibraryProperties(eventProperties);
-            if (instance.getAutocapture() != null) {
-                instance.getAutocapture().trackClick(clickEvent, eventProperties);
-            }
-            promise.resolve(null);
-        }
-    }
-
-    @ReactMethod
-    public void trackRageClick(final String token, ReadableMap clickEventMap, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
-        if (instance == null) {
-            promise.reject("Instance Error", "Failed to get Mixpanel instance");
-            return;
-        }
-        synchronized (instance) {
-            ClickEvent clickEvent = buildClickEvent(clickEventMap);
-            JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
-            AutomaticProperties.appendLibraryProperties(eventProperties);
-            if (instance.getAutocapture() != null) {
-                instance.getAutocapture().trackRageClick(clickEvent, eventProperties);
-            }
-            promise.resolve(null);
-        }
-    }
-
-    @ReactMethod
-    public void trackDeadClick(final String token, ReadableMap clickEventMap, ReadableMap properties, Promise promise) throws JSONException {
-        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
-        if (instance == null) {
-            promise.reject("Instance Error", "Failed to get Mixpanel instance");
-            return;
-        }
-        synchronized (instance) {
-            ClickEvent clickEvent = buildClickEvent(clickEventMap);
-            JSONObject eventProperties = ReactNativeHelper.reactToJSON(properties);
-            AutomaticProperties.appendLibraryProperties(eventProperties);
-            if (instance.getAutocapture() != null) {
-                instance.getAutocapture().trackDeadClick(clickEvent, eventProperties);
-            }
-            promise.resolve(null);
-        }
-    }
-
-    private ClickEvent buildClickEvent(ReadableMap map) {
-        float x = (float) map.getDouble("x");
-        float y = (float) map.getDouble("y");
-        String elementId = map.getString("elementId");
-        ClickEvent.Builder builder = new ClickEvent.Builder(x, y, elementId);
-        if (map.hasKey("tagName")) {
-            builder.tagName(map.getString("tagName"));
-        }
-        if (map.hasKey("accessibleLabel")) {
-            builder.accessibleLabel(map.getString("accessibleLabel"));
-        }
-        if (map.hasKey("role")) {
-            builder.role(map.getString("role"));
-        }
-        if (map.hasKey("elements")) {
-            builder.elements(map.getString("elements"));
-        }
-        return builder.build();
     }
 
     @ReactMethod

@@ -148,6 +148,9 @@ export class Mixpanel {
    *     Object form: {enabled, clickThreshold, timeWindowMs, radius}
    * @param {boolean|object} [autocaptureOptions.deadClick=true] Enable dead click detection.
    *     Object form: {enabled, timeWindowMs}
+   * @param {boolean} [autocaptureOptions.walkUpToClickableParent=true] When the tapped view has no
+   *     meaningful identifier, walk up the view hierarchy to the nearest clickable ancestor and use
+   *     its identity for $el_id. Affects all autocapture click events.
    * @returns {Promise<void>} A promise that resolves when initialization is complete
    *
    * @example
@@ -176,6 +179,16 @@ export class Mixpanel {
    *   'https://api-eu.mixpanel.com',
    *   true
    * );
+   *
+   * @example
+   * // Initialize with autocapture enabled (native mode required)
+   * const mixpanel = new Mixpanel('YOUR_TOKEN', true, true);
+   * await mixpanel.init(false, {}, 'https://api.mixpanel.com', false, {}, {
+   *   click: true,
+   *   rageClick: { enabled: true, clickThreshold: 5, timeWindowMs: 2000 },
+   *   deadClick: { enabled: true, timeWindowMs: 1000 },
+   *   walkUpToClickableParent: true,
+   * });
    */
   async init(
     optOutTrackingDefault = DEFAULT_OPT_OUT,
@@ -750,6 +763,10 @@ export class Autocapture {
    *
    * @param {string} screenName The name of the screen being viewed
    * @param {object} [properties] Optional additional properties to include with the event
+   *
+   * @example
+   * mixpanel.autocapture.trackScreenView('HomeScreen');
+   * mixpanel.autocapture.trackScreenView('ProductDetail', { product_id: '123' });
    */
   trackScreenView(screenName, properties) {
     if (!StringHelper.isValid(screenName)) {
@@ -773,6 +790,10 @@ export class Autocapture {
    *
    * @param {string} screenName The name of the screen being left
    * @param {object} [properties] Optional additional properties to include with the event
+   *
+   * @example
+   * mixpanel.autocapture.trackScreenLeave('HomeScreen');
+   * mixpanel.autocapture.trackScreenLeave('ProductDetail', { time_spent_ms: 5000 });
    */
   trackScreenLeave(screenName, properties) {
     if (!StringHelper.isValid(screenName)) {
@@ -806,6 +827,17 @@ export class Autocapture {
    * @param {string} [clickEvent.role] Semantic role (e.g., "button", "link").
    * @param {string} [clickEvent.elements] View hierarchy path, ">" separated.
    * @param {object} [properties] Optional additional properties.
+   *
+   * @example
+   * mixpanel.autocapture.trackClick({
+   *   x: 150,
+   *   y: 300,
+   *   elementId: 'submit_button',
+   *   tagName: 'Button',
+   *   accessibleLabel: 'Submit Order',
+   *   role: 'button',
+   *   elements: 'Screen > Form > Button',
+   * });
    */
   trackClick(clickEvent, properties) {
     if (!this._validateClickEvent(clickEvent, "trackClick")) return;
@@ -820,6 +852,15 @@ export class Autocapture {
    *
    * @param {object} clickEvent The click event data (same shape as trackClick).
    * @param {object} [properties] Optional additional properties.
+   *
+   * @example
+   * mixpanel.autocapture.trackRageClick({
+   *   x: 150,
+   *   y: 300,
+   *   elementId: 'checkout_button',
+   *   tagName: 'Button',
+   *   role: 'button',
+   * });
    */
   trackRageClick(clickEvent, properties) {
     if (!this._validateClickEvent(clickEvent, "trackRageClick")) return;
@@ -834,6 +875,16 @@ export class Autocapture {
    *
    * @param {object} clickEvent The click event data (same shape as trackClick).
    * @param {object} [properties] Optional additional properties.
+   *
+   * @example
+   * mixpanel.autocapture.trackDeadClick({
+   *   x: 200,
+   *   y: 400,
+   *   elementId: 'disabled_link',
+   *   tagName: 'Text',
+   *   accessibleLabel: 'Learn More',
+   *   role: 'link',
+   * });
    */
   trackDeadClick(clickEvent, properties) {
     if (!this._validateClickEvent(clickEvent, "trackDeadClick")) return;

@@ -86,8 +86,9 @@ export function WalkUpTestScreen() {
       {/* 5. Leaf with own identity */}
       <SectionHeader title="Leaf Has Own Identity" />
       <Text style={styles.description}>
-        Tap the text. It has its own accessibilityLabel ("inner_label"), so
-        walk-up should NOT activate. $el_id = "inner_label".
+        Tap the text. Even though it has its own accessibilityLabel
+        ("inner_label"), walk-up still activates and takes the clickable
+        parent's identity. $el_id = "outer_button".
       </Text>
       <Pressable
         style={styles.btn}

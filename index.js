@@ -148,9 +148,6 @@ export class Mixpanel {
    *     Object form: {enabled, clickThreshold, timeWindowMs, radius}
    * @param {boolean|object} [autocaptureOptions.deadClick=true] Enable dead click detection.
    *     Object form: {enabled, timeWindowMs}
-   * @param {boolean} [autocaptureOptions.walkUpToClickableParent=true] When the tapped view has no
-   *     meaningful identifier, walk up the view hierarchy to the nearest clickable ancestor and use
-   *     its identity for $el_id. Affects all autocapture click events.
    * @returns {Promise<void>} A promise that resolves when initialization is complete
    *
    * @example
@@ -187,7 +184,6 @@ export class Mixpanel {
    *   click: true,
    *   rageClick: { enabled: true, clickThreshold: 5, timeWindowMs: 2000 },
    *   deadClick: { enabled: true, timeWindowMs: 1000 },
-   *   walkUpToClickableParent: true,
    * });
    */
   async init(
@@ -1376,12 +1372,6 @@ class AutocaptureHelper {
     } else {
       normalized.deadClick = { enabled: true };
     }
-
-    // walkUpToClickableParent — default true for React Native
-    normalized.walkUpToClickableParent =
-      options.walkUpToClickableParent !== undefined
-        ? !!options.walkUpToClickableParent
-        : true;
 
     return normalized;
   }

@@ -123,13 +123,6 @@ export interface AutocaptureOptions {
   click?: boolean | AutocaptureClickOptions;
   rageClick?: boolean | AutocaptureRageClickOptions;
   deadClick?: boolean | AutocaptureDeadClickOptions;
-  /**
-   * When enabled, if the tapped view has no meaningful identifier, the SDK
-   * walks up the view hierarchy to the nearest clickable ancestor and uses
-   * its identity instead. Affects `$el_id` on all autocapture events.
-   * Defaults to `true`.
-   */
-  walkUpToClickableParent?: boolean;
 }
 
 export interface ClickEventData {

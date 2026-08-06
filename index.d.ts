@@ -143,7 +143,21 @@ export interface ClickEventData {
 }
 
 export class Autocapture {
+  /**
+   * Track a screen view event.
+   *
+   * @param screenName The name of the screen being viewed. Must be non-empty;
+   *   if an empty or whitespace-only string is passed, the event is silently dropped.
+   * @param properties Optional additional properties to include with the event
+   */
   trackScreenView(screenName: string, properties?: MixpanelProperties): void;
+  /**
+   * Track a screen leave event.
+   *
+   * @param screenName The name of the screen being left. Must be non-empty;
+   *   if an empty or whitespace-only string is passed, the event is silently dropped.
+   * @param properties Optional additional properties to include with the event
+   */
   trackScreenLeave(screenName: string, properties?: MixpanelProperties): void;
   trackClick(clickEvent: ClickEventData, properties?: MixpanelProperties): void;
   trackRageClick(clickEvent: ClickEventData, properties?: MixpanelProperties): void;

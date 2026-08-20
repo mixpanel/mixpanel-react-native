@@ -102,10 +102,20 @@ export interface Flags {
   check_first_time_events(eventName: string, properties?: MixpanelProperties): void;
 }
 
+/**
+ * @experimental Autocapture is in **beta**. It may contain issues, and its API and the properties it
+ * captures may change in a future release before general availability. Pin your SDK version if you
+ * build reports on autocaptured events.
+ */
 export interface AutocaptureClickOptions {
   enabled?: boolean;
 }
 
+/**
+ * @experimental Autocapture is in **beta**. It may contain issues, and its API and the properties it
+ * captures may change in a future release before general availability. Pin your SDK version if you
+ * build reports on autocaptured events.
+ */
 export interface AutocaptureRageClickOptions {
   enabled?: boolean;
   clickThreshold?: number;
@@ -114,17 +124,32 @@ export interface AutocaptureRageClickOptions {
   radius?: number;
 }
 
+/**
+ * @experimental Autocapture is in **beta**. It may contain issues, and its API and the properties it
+ * captures may change in a future release before general availability. Pin your SDK version if you
+ * build reports on autocaptured events.
+ */
 export interface AutocaptureDeadClickOptions {
   enabled?: boolean;
   timeWindowMs?: number;
 }
 
+/**
+ * @experimental Autocapture is in **beta**. It may contain issues, and its API and the properties it
+ * captures may change in a future release before general availability. Pin your SDK version if you
+ * build reports on autocaptured events.
+ */
 export interface AutocaptureOptions {
   click?: boolean | AutocaptureClickOptions;
   rageClick?: boolean | AutocaptureRageClickOptions;
   deadClick?: boolean | AutocaptureDeadClickOptions;
 }
 
+/**
+ * @experimental Autocapture is in **beta**. It may contain issues, and its API and the properties it
+ * captures may change in a future release before general availability. Pin your SDK version if you
+ * build reports on autocaptured events.
+ */
 export interface ClickEventData {
   /** Touch X coordinate. */
   x: number;
@@ -142,6 +167,11 @@ export interface ClickEventData {
   elements?: string;
 }
 
+/**
+ * @experimental Autocapture is in **beta**. It may contain issues, and its API and the properties it
+ * captures may change in a future release before general availability. Pin your SDK version if you
+ * build reports on autocaptured events.
+ */
 export class Autocapture {
   /**
    * Track a screen view event.
@@ -166,6 +196,10 @@ export class Autocapture {
 
 export class Mixpanel {
   readonly flags: Flags;
+  /**
+   * @experimental Autocapture is in **beta** — see {@link Autocapture}. Its API and captured
+   * properties may change before general availability.
+   */
   readonly autocapture: Autocapture;
 
   constructor(token: string, trackAutoMaticEvents: boolean);

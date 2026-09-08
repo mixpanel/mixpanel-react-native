@@ -54,29 +54,69 @@ await mixpanel.init(
 
 ## Element Identification (`$el_id`)
 
+### Resolution Order
+
+| Priority | iOS | Android |
+|---|---|---|
+| 1 | `nativeID` | `nativeID` |
+| 2 | `accessibilityIdentifier` (React Native's `testID`) | resource entry name — React Native's ids are generated at runtime and have none, so `testID` never resolves here |
+| 3 | `<ClassName>_<hash>` | `<SimpleClassName>_<hash>` |
+
+**`accessibilityLabel` is never used as identity, on either platform.** It is user-facing
+text: localized, so the same element would report a different id per language, and capable
+of carrying personal data. It is not reported as a property either.
+
+The hash is not random — it is derived from the element's position in the view hierarchy, so
+it is stable across launches for the same layout. It identifies a *position*, not a row:
+reordering siblings changes it, and so does wrapping the screen in a navigator.
+
 ### Walk-Up to Clickable Parent
 
-When a non-interactive leaf view (e.g., `<Text>` inside a `<Pressable>`) is tapped, the native SDK walks up the view hierarchy to the nearest clickable ancestor and uses its `accessibilityLabel` for `$el_id`. This is always-on behavior — not configurable.
+Hit-testing returns the deepest view, so tapping a `<Pressable>` usually reports its `<Text>`
+child, which carries no identity of its own. The native SDK therefore walks up to the nearest
+clickable ancestor and resolves the id from there. This is always-on — not configurable.
 
-- The walk-up always takes the clickable parent's identity, even if the leaf has its own `accessibilityLabel`.
+- The clickable parent's identity wins, even when the leaf has one of its own.
 - Stops at the first clickable ancestor (nested clickables: inner wins).
-- Max ancestor search depth: **10 levels**.
-- If no clickable ancestor is found within 10 levels, the leaf's own identity (or hash fallback) is used.
+- Max ancestor search depth: **10 levels**; beyond that the leaf's own identity (or hash) is used.
+- On iOS, if no *clickable* ancestor is found, the nearest ancestor carrying a `nativeID` or
+  `testID` is used instead, so a named pressable is still attributed correctly.
 
-React Native's view flattening compounds this — intermediate `<View>` wrappers are removed from the native tree, so the platform's hit-test often returns a leaf `Text` node even when the developer intended the tap for the parent `Pressable`.
+### Dead Clicks Need an Explicit Role on iOS
+
+`$mp_dead_click` is only reported for elements the platform can recognise as interactive.
+
+On Android that is automatic: React Native sets `focusable` on `Pressable` and the
+`Touchable*` family, which attaches an `OnClickListener`, and the SDK keys off
+`hasOnClickListeners()` / `isClickable()`.
+
+iOS has no equivalent. React Native dispatches every touch from a single recognizer on the
+surface root, so a pressable has no `UIControl`, no gesture recognizer, and no accessibility
+trait — it is indistinguishable from a plain `<View>`. A `nativeID` does not help: identifiers
+are applied to layout wrappers and test hooks as often as to buttons, so treating one as proof
+of clickability would report dead clicks on elements that were never meant to respond.
+
+**Set `accessibilityRole="button"` on interactive wrappers to get dead click detection on
+iOS.** It is also what VoiceOver needs in order to announce the element as actionable. Note
+that `accessible={true}` does *not* substitute for it — that only marks the view as an
+accessibility element and is already the default for `Pressable` and `Touchable*`.
 
 ### Best Practice
 
-Set `accessibilityLabel` on interactive wrappers (`Pressable`, `TouchableOpacity`):
+Set both on the *same* element: `nativeID` for a stable `$el_id`, `accessibilityRole` for dead
+click detection.
 
 ```tsx
 <Pressable
   onPress={handlePress}
-  accessible={true}
-  accessibilityLabel="add_to_cart">
+  nativeID="add_to_cart"
+  accessibilityRole="button">
   <Text>Add to Cart</Text>
 </Pressable>
 ```
+
+If the role sits on a wrapper and the `nativeID` on an inner element, the clickable ancestor
+wins for attribution and the inner identifier is dropped — hence "same element".
 
 ## Configuration Options
 

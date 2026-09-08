@@ -784,8 +784,8 @@ export class Autocapture {
       ObjectHelper.raiseError(PARAMS.PROPERTIES);
     }
     this._trackAutocaptureEvent("$mp_page_view", {
-      current_page_title: screenName,
       ...properties,
+      current_page_title: screenName,
     });
   }
 
@@ -812,8 +812,8 @@ export class Autocapture {
       ObjectHelper.raiseError(PARAMS.PROPERTIES);
     }
     this._trackAutocaptureEvent("$mp_page_leave", {
-      current_page_title: screenName,
       ...properties,
+      current_page_title: screenName,
     });
   }
 
@@ -917,17 +917,22 @@ export class Autocapture {
     if (clickEvent.elements != null) {
       clickProperties.$elements = clickEvent.elements;
     }
+    // Derived fields last: `$el_id`, `$x` and `$y` come from the validated ClickEvent and
+    // define the event, so a caller-supplied property must not replace them.
     this._trackAutocaptureEvent(eventName, {
-      ...clickProperties,
       ...properties,
+      ...clickProperties,
     });
   }
 
   _trackAutocaptureEvent(eventName, properties) {
+    // Order matters. Metadata stays overridable, matching `MixpanelMain.track`, but
+    // `$mp_autocapture` is what routes the event into autocapture reporting, so it is applied
+    // last and cannot be replaced by a caller-supplied property.
     this.mixpanelImpl.track(this.token, eventName, {
       ...Helper.getMetaData(),
-      $mp_autocapture: true,
       ...properties,
+      $mp_autocapture: true,
     });
   }
 

@@ -557,3 +557,64 @@ test(`autocapture.trackScreenLeave does not call native module when screenName i
   mixpanel.autocapture.trackScreenLeave(null);
   expect(NativeModules.MixpanelReactNative.trackScreenLeave).not.toBeCalled();
 });
+
+// Autocapture property precedence.
+//
+// `MixpanelMain.track` applies identity fields after caller properties so they cannot be
+// replaced, and both the native and JavaScript-mode screen-view paths did the same for
+// `current_page_title` and `$mp_autocapture`. These pin that ordering for the JS emitter.
+
+test(`autocapture derived click fields outrank caller properties`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  NativeModules.MixpanelReactNative.track.mockClear();
+
+  mixpanel.autocapture.trackClick(
+    { x: 10, y: 20, elementId: "checkout_button" },
+    { $el_id: "spoofed", $x: 999, custom: "kept" }
+  );
+
+  const [, eventName, props] = NativeModules.MixpanelReactNative.track.mock.calls[0];
+  expect(eventName).toBe("$mp_click");
+  expect(props.$el_id).toBe("checkout_button");
+  expect(props.$x).toBe(10);
+  expect(props.custom).toBe("kept");
+});
+
+test(`$mp_autocapture cannot be turned off by a caller property`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  NativeModules.MixpanelReactNative.track.mockClear();
+
+  mixpanel.autocapture.trackClick(
+    { x: 1, y: 2, elementId: "btn" },
+    { $mp_autocapture: false }
+  );
+
+  const [, , props] = NativeModules.MixpanelReactNative.track.mock.calls[0];
+  expect(props.$mp_autocapture).toBe(true);
+});
+
+test(`current_page_title comes from the screenName argument, not caller properties`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  NativeModules.MixpanelReactNative.track.mockClear();
+
+  mixpanel.autocapture.trackScreenView("Checkout", {
+    current_page_title: "spoofed",
+    custom: "kept",
+  });
+
+  const [, eventName, props] = NativeModules.MixpanelReactNative.track.mock.calls[0];
+  expect(eventName).toBe("$mp_page_view");
+  expect(props.current_page_title).toBe("Checkout");
+  expect(props.custom).toBe("kept");
+});
+
+test(`metadata stays overridable, matching MixpanelMain.track`, async () => {
+  const mixpanel = await Mixpanel.init("token", true);
+  NativeModules.MixpanelReactNative.track.mockClear();
+
+  mixpanel.autocapture.trackScreenLeave("Checkout", { mp_lib: "custom" });
+
+  const [, , props] = NativeModules.MixpanelReactNative.track.mock.calls[0];
+  expect(props.mp_lib).toBe("custom");
+  expect(props.current_page_title).toBe("Checkout");
+});

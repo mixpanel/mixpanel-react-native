@@ -102,6 +102,46 @@ export interface Flags {
   check_first_time_events(eventName: string, properties?: MixpanelProperties): void;
 }
 
+export interface AutocaptureClickOptions {
+  enabled?: boolean;
+}
+
+export interface AutocaptureRageClickOptions {
+  enabled?: boolean;
+  clickThreshold?: number;
+  timeWindowMs?: number;
+  /** Spatial threshold. Unit: dp on Android, pt on iOS. */
+  radius?: number;
+}
+
+export interface AutocaptureDeadClickOptions {
+  enabled?: boolean;
+  timeWindowMs?: number;
+}
+
+export interface AutocaptureOptions {
+  click?: boolean | AutocaptureClickOptions;
+  rageClick?: boolean | AutocaptureRageClickOptions;
+  deadClick?: boolean | AutocaptureDeadClickOptions;
+}
+
+export interface ClickEventData {
+  /** Touch X coordinate. */
+  x: number;
+  /** Touch Y coordinate. */
+  y: number;
+  /** Stable identifier for the tapped element. */
+  elementId: string;
+  /** Class name or component type of the tapped element. */
+  tagName?: string;
+  /** Accessibility label of the element. */
+  accessibleLabel?: string;
+  /** Semantic role (e.g., "button", "link", "switch"). */
+  role?: string;
+  /** View hierarchy path, ">" separated. */
+  elements?: string;
+}
+
 export class Autocapture {
   /**
    * Track a screen view event.
@@ -119,6 +159,9 @@ export class Autocapture {
    * @param properties Optional additional properties to include with the event
    */
   trackScreenLeave(screenName: string, properties?: MixpanelProperties): void;
+  trackClick(clickEvent: ClickEventData, properties?: MixpanelProperties): void;
+  trackRageClick(clickEvent: ClickEventData, properties?: MixpanelProperties): void;
+  trackDeadClick(clickEvent: ClickEventData, properties?: MixpanelProperties): void;
 }
 
 export class Mixpanel {
@@ -143,7 +186,8 @@ export class Mixpanel {
     superProperties?: MixpanelProperties,
     serverURL?: string,
     useGzipCompression?: boolean,
-    featureFlagsOptions?: FeatureFlagsOptions
+    featureFlagsOptions?: FeatureFlagsOptions,
+    autocaptureOptions?: AutocaptureOptions | null
   ): Promise<void>;
   setServerURL(serverURL: string): void;
   setLoggingEnabled(loggingEnabled: boolean): void;

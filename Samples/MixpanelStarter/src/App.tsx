@@ -11,6 +11,8 @@ import {OnboardingScreen} from './screens/OnboardingScreen';
 import {HomeScreen} from './screens/HomeScreen';
 import {FeatureFlagsScreen} from './screens/FeatureFlagsScreen';
 import {SettingsScreen} from './screens/SettingsScreen';
+import {AutocaptureTestScreen} from './screens/AutocaptureTestScreen';
+import {WalkUpTestScreen} from './screens/WalkUpTestScreen';
 import {MIXPANEL_TOKEN} from '@env';
 
 const Tab = createBottomTabNavigator();
@@ -113,6 +115,26 @@ function AppNavigator(): React.JSX.Element {
               }}
             />
             <Tab.Screen
+              name="Autocapture"
+              component={AutocaptureTestScreen}
+              options={{
+                tabBarLabel: 'Autocapture',
+                tabBarIcon: ({color}) => (
+                  <Text style={{fontSize: 20, color}}>tap</Text>
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="WalkUp"
+              component={WalkUpTestScreen}
+              options={{
+                tabBarLabel: 'Walk-Up',
+                tabBarIcon: ({color}) => (
+                  <Text style={{fontSize: 20, color}}>🔍</Text>
+                ),
+              }}
+            />
+            <Tab.Screen
               name="Settings"
               component={SettingsScreen}
               options={{
@@ -130,7 +152,7 @@ function AppNavigator(): React.JSX.Element {
 function App(): React.JSX.Element {
   return (
     <ErrorBoundary>
-      <MixpanelProvider token={token} trackAutomaticEvents={true} useNative={true} serverURL="https://api-eu.mixpanel.com">
+      <MixpanelProvider token={token} trackAutomaticEvents={true} useNative={true} serverURL="https://api.mixpanel.com">
         <AppNavigator />
       </MixpanelProvider>
     </ErrorBoundary>

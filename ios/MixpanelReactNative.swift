@@ -19,6 +19,7 @@ open class MixpanelReactNative: NSObject {
                     serverURL: String,
                     useGzipCompression: Bool = false,
                     featureFlagsOptions: [String: Any]?,
+                    autocaptureConfig: [String: Any]?,
                     resolver resolve: RCTPromiseResolveBlock,
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         let autoProps = properties // copy
@@ -37,6 +38,11 @@ open class MixpanelReactNative: NSObject {
             )
         }
 
+        var resolvedAutocaptureOptions: AutocaptureOptions? = nil
+        if let config = autocaptureConfig {
+            resolvedAutocaptureOptions = buildAutocaptureOptions(from: config)
+        }
+
         let options = MixpanelOptions(
             token: token,
             instanceName: token,
@@ -45,11 +51,50 @@ open class MixpanelReactNative: NSObject {
             superProperties: propsProcessed,
             serverURL: serverURL,
             useGzipCompression: useGzipCompression,
-            featureFlagOptions: resolvedFeatureFlagOptions
+            featureFlagOptions: resolvedFeatureFlagOptions,
+            autocaptureOptions: resolvedAutocaptureOptions
         )
 
         Mixpanel.initialize(options: options)
         resolve(true)
+    }
+
+    private func buildAutocaptureOptions(from config: [String: Any]) -> AutocaptureOptions {
+        // Start with native defaults so we don't hardcode values that may change in the SDK
+        let defaults = RageClickOptions()
+        let deadDefaults = DeadClickOptions()
+
+        var clickOpts = ClickOptions()
+        var rageClickOpts = RageClickOptions()
+        var deadClickOpts = DeadClickOptions()
+
+        if let clickConfig = config["click"] as? [String: Any] {
+            clickOpts = ClickOptions(
+                enabled: clickConfig["enabled"] as? Bool ?? true
+            )
+        }
+
+        if let rageConfig = config["rageClick"] as? [String: Any] {
+            rageClickOpts = RageClickOptions(
+                enabled: rageConfig["enabled"] as? Bool ?? true,
+                clickThreshold: rageConfig["clickThreshold"] as? Int ?? defaults.clickThreshold,
+                timeWindowMs: rageConfig["timeWindowMs"] as? Int64 ?? defaults.timeWindowMs,
+                radius: rageConfig["radius"] as? CGFloat ?? defaults.radius
+            )
+        }
+
+        if let deadConfig = config["deadClick"] as? [String: Any] {
+            deadClickOpts = DeadClickOptions(
+                enabled: deadConfig["enabled"] as? Bool ?? true,
+                timeWindowMs: deadConfig["timeWindowMs"] as? Int ?? deadDefaults.timeWindowMs
+            )
+        }
+
+        return AutocaptureOptions(
+            clickOptions: clickOpts,
+            rageClickOptions: rageClickOpts,
+            deadClickOptions: deadClickOpts
+        )
     }
 
     private func parseVariantLookupPolicy(_ policyMap: [String: Any]?) -> VariantLookupPolicy {
@@ -166,28 +211,6 @@ open class MixpanelReactNative: NSObject {
     }
 
     // MARK: - Autocapture
-
-    @objc
-    func trackScreenView(_ token: String, screenName: String,
-                         properties: [String: Any]? = nil,
-                         resolver resolve: RCTPromiseResolveBlock,
-                         rejecter reject: RCTPromiseRejectBlock) -> Void {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-        let mpProperties = MixpanelTypeHandler.processProperties(properties: properties)
-        instance?.autocapture.trackScreenView(screenName: screenName, properties: mpProperties)
-        resolve(nil)
-    }
-
-    @objc
-    func trackScreenLeave(_ token: String, screenName: String,
-                          properties: [String: Any]? = nil,
-                          resolver resolve: RCTPromiseResolveBlock,
-                          rejecter reject: RCTPromiseRejectBlock) -> Void {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-        let mpProperties = MixpanelTypeHandler.processProperties(properties: properties)
-        instance?.autocapture.trackScreenLeave(screenName: screenName, properties: mpProperties)
-        resolve(nil)
-    }
 
     // MARK: - Timing Events
 

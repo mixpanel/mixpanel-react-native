@@ -15,7 +15,21 @@ import {
  * the native SDK walks up to the nearest clickable ancestor (Pressable,
  * TouchableOpacity) for $el_id resolution.
  *
- * Run on both iOS and Android. Inspect Mixpanel event stream to verify.
+ * Two props matter, and each does a different job:
+ *
+ *   id                 supplies the identity. It becomes the view's nativeID, which both
+ *                      SDKs read first. `accessibilityLabel` is NEVER used as identity on
+ *                      either platform — it is localized and can carry user data — so a
+ *                      wrapper carrying only a label reports a structural hash.
+ *
+ *   accessibilityRole  makes the wrapper discoverable on iOS. React Native dispatches
+ *                      touches from a single recognizer on the surface root, so a
+ *                      Pressable has no UIControl, no gesture recognizer and no trait of
+ *                      its own; without the role the walk-up finds nothing and the tap
+ *                      resolves to the <Text>. Android needs neither, because React
+ *                      Native sets `focusable` there.
+ *
+ * Run on both iOS and Android, on a release build. Inspect the Mixpanel event stream.
  */
 export function WalkUpTestScreen() {
   return (
@@ -23,7 +37,7 @@ export function WalkUpTestScreen() {
       <Text style={styles.title}>Walk-Up Test Screen</Text>
       <Text style={styles.subtitle}>
         Tests that tapping a leaf view (Text/Image) inside a clickable wrapper
-        reports the wrapper's identity as $el_id, not the leaf's hash.
+        reports the wrapper's id as $el_id, not the leaf's hash.
       </Text>
 
       {/* 1. Basic Walk-Up */}
@@ -34,8 +48,8 @@ export function WalkUpTestScreen() {
       <Pressable
         style={styles.btn}
         onPress={() => {}}
-        accessible={true}
-        accessibilityLabel="add_to_cart">
+        id="add_to_cart"
+        accessibilityRole="button">
         <Text style={styles.btnText}>Add to Cart</Text>
       </Pressable>
 
@@ -48,14 +62,14 @@ export function WalkUpTestScreen() {
       <Pressable
         style={styles.card}
         onPress={() => {}}
-        accessible={true}
-        accessibilityLabel="product_card">
+        id="product_card"
+        accessibilityRole="button">
         <Text style={styles.cardTitle}>Product Name</Text>
         <Pressable
           style={styles.deleteBtn}
           onPress={() => {}}
-          accessible={true}
-          accessibilityLabel="delete_item">
+          id="delete_item"
+          accessibilityRole="button">
           <Text style={styles.deleteBtnText}>Delete</Text>
         </Pressable>
       </Pressable>
@@ -68,8 +82,8 @@ export function WalkUpTestScreen() {
       <Pressable
         style={styles.row}
         onPress={() => {}}
-        accessible={true}
-        accessibilityLabel="checkout_action">
+        id="checkout_action"
+        accessibilityRole="button">
         <Text style={styles.icon}>🛒</Text>
         <Text style={styles.rowText}>Proceed to Checkout</Text>
       </Pressable>
@@ -86,19 +100,16 @@ export function WalkUpTestScreen() {
       {/* 5. Leaf with own identity */}
       <SectionHeader title="Leaf Has Own Identity" />
       <Text style={styles.description}>
-        Tap the text. Even though it has its own accessibilityLabel
-        ("inner_label"), walk-up still activates and takes the clickable
-        parent's identity. $el_id = "outer_button".
+        Tap the text. Even though it has its own id ("inner_label"), walk-up
+        still activates and takes the clickable parent's identity.
+        $el_id = "outer_button".
       </Text>
       <Pressable
         style={styles.btn}
         onPress={() => {}}
-        accessible={true}
-        accessibilityLabel="outer_button">
-        <Text
-          style={styles.btnText}
-          accessible={true}
-          accessibilityLabel="inner_label">
+        id="outer_button"
+        accessibilityRole="button">
+        <Text style={styles.btnText} id="inner_label">
           I have my own identity
         </Text>
       </Pressable>
@@ -112,8 +123,8 @@ export function WalkUpTestScreen() {
       <Pressable
         style={styles.btn}
         onPress={() => {}}
-        accessible={true}
-        accessibilityLabel="flattened_pressable">
+        id="flattened_pressable"
+        accessibilityRole="button">
         <View>
           <Text style={styles.btnText}>Text inside flattened View</Text>
         </View>
@@ -128,8 +139,8 @@ export function WalkUpTestScreen() {
       <TouchableOpacity
         style={styles.btn}
         onPress={() => {}}
-        accessible={true}
-        accessibilityLabel="touchable_btn">
+        id="touchable_btn"
+        accessibilityRole="button">
         <Text style={styles.btnText}>TouchableOpacity Button</Text>
       </TouchableOpacity>
     </ScrollView>

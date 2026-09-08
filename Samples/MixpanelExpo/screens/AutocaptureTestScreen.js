@@ -53,6 +53,16 @@ export function AutocaptureTestScreen() {
           The one prop that behaves identically on both platforms is
           nativeID. testID diverges: stable $el_id on iOS, hash on Android.
 
+          NOTE: on iOS the tap must reach the pressable itself. React Native
+          dispatches touches from a single recognizer on the surface root, so
+          a Pressable carries no UIControl, no gesture recognizer and no
+          accessibility trait — hit-testing returns the <Text> inside it, and
+          the walk-up finds no clickable ancestor to resolve from. Tap the
+          button's padding rather than its label, or add
+          accessibilityRole="button" to the wrapper, and the iOS ids below
+          resolve for any tap. Android needs neither: React Native sets
+          `focusable` there, which becomes a real OnClickListener.
+
           NOTE: in a React Native *debug* build every tap resolves to RN's
           full-screen DebuggingOverlay, so none of these are observable —
           verify against a release build.

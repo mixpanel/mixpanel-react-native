@@ -79,12 +79,16 @@ clickable ancestor and resolves the id from there. This is always-on — not con
 - The clickable parent's identity wins, even when the leaf has one of its own.
 - Stops at the first clickable ancestor (nested clickables: inner wins).
 - Max ancestor search depth: **10 levels**; beyond that the leaf's own identity (or hash) is used.
-- On iOS, if no *clickable* ancestor is found, the nearest ancestor carrying a `nativeID` or
-  `testID` is used instead, so a named pressable is still attributed correctly.
+- If no clickable ancestor is found, the tapped element's own identity is used. The walk-up keys
+  off interactivity only — a named but non-clickable wrapper never absorbs a click that landed on
+  its child. This is identical on both platforms.
 
-### Dead Clicks Need an Explicit Role on iOS
+### iOS Pressables Need an Explicit Role
 
-`$mp_dead_click` is only reported for elements the platform can recognise as interactive.
+On iOS the walk-up finds nothing for a React Native pressable, which costs you both halves: the
+tap resolves to the `<Text>` inside the button rather than to the button, so `$el_id` is a hash
+rather than your `nativeID`; and `$mp_dead_click` is only reported for elements the platform can
+recognise as interactive, so none is reported at all.
 
 On Android that is automatic: React Native sets `focusable` on `Pressable` and the
 `Touchable*` family, which attaches an `OnClickListener`, and the SDK keys off
@@ -96,15 +100,22 @@ trait — it is indistinguishable from a plain `<View>`. A `nativeID` does not h
 are applied to layout wrappers and test hooks as often as to buttons, so treating one as proof
 of clickability would report dead clicks on elements that were never meant to respond.
 
-**Set `accessibilityRole="button"` on interactive wrappers to get dead click detection on
-iOS.** It is also what VoiceOver needs in order to announce the element as actionable. Note
-that `accessible={true}` does *not* substitute for it — that only marks the view as an
-accessibility element and is already the default for `Pressable` and `Touchable*`.
+**Set `accessibilityRole="button"` on interactive wrappers.** It sets the underlying
+`UIAccessibilityTraitButton`, which makes the pressable discoverable: the walk-up then finds it,
+resolves its `nativeID`, and dead click detection applies to it. It is also what VoiceOver needs
+in order to announce the element as actionable.
+
+Note that `accessible={true}` does *not* substitute for it — that only marks the view as an
+accessibility element, and is already the default for `Pressable` and `Touchable*`.
+
+Android needs none of this: React Native sets `focusable` there, so the pressable is genuinely
+clickable and both `$el_id` and dead clicks work without the role. Until you add it, expect the
+same app to report ids and dead clicks on Android that it does not report on iOS.
 
 ### Best Practice
 
-Set both on the *same* element: `nativeID` for a stable `$el_id`, `accessibilityRole` for dead
-click detection.
+Set both on the *same* element. `nativeID` supplies the identity; on iOS `accessibilityRole`
+is what lets the SDK reach it, and it enables dead click detection on both counts.
 
 ```tsx
 <Pressable

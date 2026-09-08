@@ -2,6 +2,7 @@ import "react-native-get-random-values"; // Polyfill for crypto.getRandomValues
 import { v4 as uuidv4 } from "uuid";
 import { encode as base64Encode } from 'base-64';
 import jsonLogic from 'json-logic-js';
+import { registerCustomOperators } from './mixpanel-custom-operators';
 import { MixpanelLogger } from './mixpanel-logger';
 import { MixpanelNetwork } from './mixpanel-network';
 import { MixpanelPersistent } from './mixpanel-persistent';
@@ -10,6 +11,16 @@ import {
   VariantLookupPolicy,
 } from './mixpanel-flag-persistence';
 import packageJson from 'mixpanel-react-native/package.json';
+
+// Register typed runtime-targeting operators (semver_compare, datetime_compare) into the JsonLogic
+// engine. Mirrors ~/mixpanel-js/src/targeting/event-matcher.js, and runs before any rule can be
+// evaluated: eventMatchesCriteria below is only reachable through this module.
+//
+// json-logic-js exports a singleton whose operation table add_operation writes into, so a host app
+// sharing the same copy also gains these two operators. That is additive and harmless unless the
+// host registers its own operator under either name, in which case the last writer silently wins.
+// mixpanel-js carries the same exposure; diverging here would break cross-SDK parity.
+registerCustomOperators(jsonLogic);
 
 const NETWORK_SOURCE = 'network';
 const FALLBACK_SOURCE = 'fallback';
@@ -46,7 +57,7 @@ function getFlagKeyFromPendingEventKey(eventKey) {
  * Direct port of ~/mixpanel-js/src/targeting/event-matcher.js. Replaces the
  * window.__mp_targeting bundle dance with a synchronous json-logic-js import.
  */
-function eventMatchesCriteria(eventName, properties, criteria) {
+export function eventMatchesCriteria(eventName, properties, criteria) {
   if (eventName !== criteria.event_name) {
     return { matches: false };
   }

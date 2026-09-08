@@ -20,5 +20,6 @@ Pod::Spec.new do |s|
 
   s.dependency "React-Core"
   # 6.6.1 is the first release that resolves a React Native `nativeID` into `$el_id`.
-  s.dependency "Mixpanel-swift", '6.6.1'
+  # `~> 6.6.1` picks up 6.6.x patches without an SDK release; 6.7.0 needs a deliberate bump.
+  s.dependency "Mixpanel-swift", '~> 6.6.1'
 end

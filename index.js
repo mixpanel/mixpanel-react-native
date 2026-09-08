@@ -109,6 +109,9 @@ export class Mixpanel {
    *
    * @return {Autocapture} an instance of Autocapture that provides access to screen view tracking
    *
+   * @experimental Autocapture is in **beta**; its API and captured properties may change before
+   * general availability.
+   *
    * @see Autocapture
    */
   get autocapture() {
@@ -744,6 +747,10 @@ export class Mixpanel {
  * Core class for using Mixpanel Autocapture features.
  *
  * <p>The Autocapture object is used to track screen views and screen leaves.
+ *
+ * @experimental Autocapture is in **beta**. It may contain issues, and its API and the properties
+ * it captures may change in a future release before general availability. Pin your SDK version if
+ * you build reports on autocaptured events.
  */
 export class Autocapture {
   constructor(token, mixpanelImpl) {

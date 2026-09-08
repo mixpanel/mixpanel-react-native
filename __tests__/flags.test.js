@@ -1499,6 +1499,60 @@ describe("Feature Flags", () => {
         expect(flag.key).toBe("control");
       });
 
+      // Swap the pending event's filter for one using a custom operator. Exhaustive operator
+      // behavior lives in flags-custom-operators.test.js against the shared golden vectors; these
+      // two only prove the operators are reachable from the real evaluation path.
+      function usePremiumFilter(propertyFilters) {
+        const eventKey = "premium-welcome:xyz789";
+        ftMixpanel.flags.jsFlags.pendingFirstTimeEvents[eventKey].property_filters =
+          propertyFilters;
+      }
+
+      it("evaluates a semver_compare property filter", async () => {
+        usePremiumFilter({
+          semver_compare: [{ var: "app_version" }, ">=", "1.2.3"],
+        });
+
+        ftMixpanel.flags.checkFirstTimeEvents("Purchase Complete", {
+          app_version: "1.0.0",
+        });
+        await flushPromises();
+        expect(ftMixpanel.flags.jsFlags.flags.get("premium-welcome").key).toBe(
+          "control"
+        );
+
+        ftMixpanel.flags.checkFirstTimeEvents("Purchase Complete", {
+          app_version: "1.5.0",
+        });
+        await flushPromises();
+        expect(ftMixpanel.flags.jsFlags.flags.get("premium-welcome").key).toBe(
+          "premium"
+        );
+      });
+
+      it("evaluates a datetime_compare property filter", async () => {
+        // 2026-07-16T00:00:00Z, as epoch milliseconds.
+        usePremiumFilter({
+          datetime_compare: [{ var: "signup" }, "<", 1784160000000],
+        });
+
+        ftMixpanel.flags.checkFirstTimeEvents("Purchase Complete", {
+          signup: "2026-07-17T00:00:00Z",
+        });
+        await flushPromises();
+        expect(ftMixpanel.flags.jsFlags.flags.get("premium-welcome").key).toBe(
+          "control"
+        );
+
+        ftMixpanel.flags.checkFirstTimeEvents("Purchase Complete", {
+          signup: "2026-07-15T00:00:00Z",
+        });
+        await flushPromises();
+        expect(ftMixpanel.flags.jsFlags.flags.get("premium-welcome").key).toBe(
+          "premium"
+        );
+      });
+
       it("handles undefined properties in filters", () => {
         ftMixpanel.flags.checkFirstTimeEvents("Purchase Complete", {});
         const flag = ftMixpanel.flags.jsFlags.flags.get("premium-welcome");
@@ -1620,6 +1674,33 @@ describe("Feature Flags", () => {
         expect(ftMixpanel.flags.jsFlags.flags.get("onboarding-checklist").key).toBe(
           "control"
         );
+      });
+
+      // Contrast case to the one above, and the strongest guard against registration regressing.
+      // A registered operator handed a bad subject fails closed and silently. If registration ever
+      // breaks, json-logic throws "Unrecognized operation semver_compare" instead and this flips --
+      // whereas the bogus-operator test above would keep passing either way.
+      it("fails closed rather than throwing for a registered custom operator", () => {
+        const eventKey = "onboarding-checklist:abc123def456";
+        ftMixpanel.flags.jsFlags.pendingFirstTimeEvents[eventKey].property_filters = {
+          semver_compare: [{ var: "app_version" }, "===", "1.2.3"],
+        };
+        const errorSpy = jest.spyOn(MixpanelLogger, "error").mockImplementation(() => {});
+
+        try {
+          expect(() => {
+            ftMixpanel.flags.checkFirstTimeEvents("Dashboard Viewed", {
+              app_version: "not-a-version",
+            });
+          }).not.toThrow();
+
+          expect(errorSpy).not.toHaveBeenCalled();
+          expect(ftMixpanel.flags.jsFlags.flags.get("onboarding-checklist").key).toBe(
+            "control"
+          );
+        } finally {
+          errorSpy.mockRestore();
+        }
       });
 
       it("handles multiple events for the same flag independently", async () => {

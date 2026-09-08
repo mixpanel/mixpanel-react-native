@@ -12,6 +12,26 @@ Autocapture captures three types of events:
 | Rage Click | `$mp_rage_click` | Fired when a user taps rapidly (4+ times) in the same area |
 | Dead Click | `$mp_dead_click` | Fired when a tap produces no visible UI response |
 
+## Requirements
+
+**Autocapture requires native mode.** It is implemented entirely in the native Android and
+iOS SDKs; the JavaScript layer only forwards configuration to them. In JavaScript mode there
+is nothing to forward to, so `autocaptureOptions` is ignored and `init` logs:
+
+> Mixpanel autocapture requires native mode (useNative: true). Autocapture config will be
+> ignored in JavaScript mode.
+
+`useNative` is the third argument to the constructor and defaults to `true`, so most apps get
+it for free. Passing `false` — as an app targeting Expo Go must, since it cannot load custom
+native modules — silently disables autocapture. No events are captured, and no error is
+raised beyond that one warning at startup.
+
+```typescript
+new Mixpanel('YOUR_TOKEN', true);              // native mode, autocapture works
+new Mixpanel('YOUR_TOKEN', true, true);        // explicit, same thing
+new Mixpanel('YOUR_TOKEN', true, false);       // JavaScript mode — autocapture does nothing
+```
+
 ## Quick Start
 
 ```typescript

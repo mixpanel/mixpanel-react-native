@@ -31,6 +31,12 @@ const App = () => {
   useEffect(() => {
     const initMixpanel = async () => {
       const trackAutomaticEvents = false;
+      // Autocapture requires native mode. It lives entirely in the native Android and iOS
+      // SDKs, so with useNative = false there is nothing to forward configuration to: the
+      // autocaptureOptions argument to init() is ignored and only a startup warning is
+      // logged. Set this to true — and pass autocaptureOptions below — to exercise the
+      // autocapture test screen. Doing so rules out Expo Go, which cannot load custom
+      // native modules; a development build or prebuild is required.
       const useNative = false;
       // Pass AsyncStorage for JavaScript mode feature flags support
       const mp = new Mixpanel(MIXPANEL_TOKEN, trackAutomaticEvents, useNative, AsyncStorage);

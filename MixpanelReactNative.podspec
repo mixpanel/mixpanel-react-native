@@ -19,6 +19,7 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 
   s.dependency "React-Core"
-  # Local mixpanel-swift with autocapture support
-  s.dependency "Mixpanel-swift", '~> 6.5'
+  # 6.6.1 is the first release that resolves a React Native `nativeID` into `$el_id`.
+  # 6.6.0 shipped autocapture but not that fix, so it is deliberately excluded.
+  s.dependency "Mixpanel-swift", '>= 6.6.1', '< 7.0'
 end

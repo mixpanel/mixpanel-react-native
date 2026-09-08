@@ -13,8 +13,16 @@ import { Mixpanel } from "mixpanel-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MIXPANEL_TOKEN } from "@env";
 
+import { AutocaptureTestScreen } from "./screens/AutocaptureTestScreen";
+
 const App = () => {
   const [isInitialized, setIsInitialized] = useState(false);
+  // Swaps the SDK action list for the autocapture test screen. A plain toggle rather than a
+  // navigator: this sample has no navigation stack, and adding one would pull in four
+  // dependencies and change the view hierarchy that autocapture reports — the structural
+  // hash behind `$el_id` is derived from a view's ancestors, so wrapping the screen in a
+  // navigator would re-key every hash-based id this screen documents.
+  const [showAutocaptureTests, setShowAutocaptureTests] = useState(false);
   const mixpanelRef = useRef(null);
 
   // Test flag name - replace with your actual flag from Mixpanel
@@ -23,6 +31,12 @@ const App = () => {
   useEffect(() => {
     const initMixpanel = async () => {
       const trackAutomaticEvents = false;
+      // Autocapture requires native mode. It lives entirely in the native Android and iOS
+      // SDKs, so with useNative = false there is nothing to forward configuration to: the
+      // autocaptureOptions argument to init() is ignored and only a startup warning is
+      // logged. Set this to true — and pass autocaptureOptions below — to exercise the
+      // autocapture test screen. Doing so rules out Expo Go, which cannot load custom
+      // native modules; a development build or prebuild is required.
       const useNative = false;
       // Pass AsyncStorage for JavaScript mode feature flags support
       const mp = new Mixpanel(MIXPANEL_TOKEN, trackAutomaticEvents, useNative, AsyncStorage);
@@ -444,8 +458,30 @@ const App = () => {
     <Text style={styles.header}>{title}</Text>
   );
 
+  if (showAutocaptureTests) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.item}>
+          <Button
+            title="← Back to SDK actions"
+            onPress={() => setShowAutocaptureTests(false)}
+            color="#8A2BE2"
+          />
+        </View>
+        <AutocaptureTestScreen />
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.item}>
+        <Button
+          title="Autocapture test screen →"
+          onPress={() => setShowAutocaptureTests(true)}
+          color="#8A2BE2"
+        />
+      </View>
       <SectionList
         sections={DATA}
         keyExtractor={(item, index) => item.id}

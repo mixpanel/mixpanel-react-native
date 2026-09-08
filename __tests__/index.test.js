@@ -10,7 +10,8 @@ test(`it calls MixpanelReactNative initialize`, async () => {
     { $lib_version: expect.any(String), mp_lib: "react-native" },
     "https://api.mixpanel.com",
     false,
-    {}
+    {},
+    null
   );
 });
 
@@ -28,7 +29,8 @@ test(`it calls MixpanelReactNative initialize with optOut, superProperties and u
     },
     "https://api.mixpanel.com",
     false,
-    {}
+    {},
+    null
   );
 });
 
@@ -45,7 +47,8 @@ test(`it passes useGzipCompression parameter to native modules when enabled`, as
     },
     "https://api.mixpanel.com",
     true,
-    {}
+    {},
+    null
   );
 });
 
@@ -486,76 +489,88 @@ test(`autocapture getter returns an Autocapture instance and is lazily initializ
   expect(autocapture1).toBe(autocapture2);
 });
 
-test(`autocapture.trackScreenView calls MixpanelReactNative trackScreenView with token and merged metadata`, async () => {
+test(`autocapture.trackScreenView emits $mp_page_view with merged metadata`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
+  NativeModules.MixpanelReactNative.track.mockClear();
   mixpanel.autocapture.trackScreenView("HomeScreen", { custom_prop: "value" });
-  expect(NativeModules.MixpanelReactNative.trackScreenView).toBeCalledWith(
+  expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
     "token",
-    "HomeScreen",
+    "$mp_page_view",
     {
       $lib_version: expect.any(String),
       mp_lib: "react-native",
       custom_prop: "value",
+      current_page_title: "HomeScreen",
+      $mp_autocapture: true,
     }
   );
 });
 
-test(`autocapture.trackScreenView calls MixpanelReactNative trackScreenView with only metadata when no extra properties given`, async () => {
+test(`autocapture.trackScreenView emits $mp_page_view with only metadata when no extra properties given`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
+  NativeModules.MixpanelReactNative.track.mockClear();
   mixpanel.autocapture.trackScreenView("HomeScreen");
-  expect(NativeModules.MixpanelReactNative.trackScreenView).toBeCalledWith(
+  expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
     "token",
-    "HomeScreen",
+    "$mp_page_view",
     {
       $lib_version: expect.any(String),
       mp_lib: "react-native",
+      current_page_title: "HomeScreen",
+      $mp_autocapture: true,
     }
   );
 });
 
-test(`autocapture.trackScreenView does not call native module when screenName is invalid`, async () => {
+test(`autocapture.trackScreenView emits nothing when screenName is invalid`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
-  NativeModules.MixpanelReactNative.trackScreenView.mockClear();
+  NativeModules.MixpanelReactNative.track.mockClear();
   mixpanel.autocapture.trackScreenView("");
-  expect(NativeModules.MixpanelReactNative.trackScreenView).not.toBeCalled();
+  expect(NativeModules.MixpanelReactNative.track).not.toBeCalled();
   mixpanel.autocapture.trackScreenView(null);
-  expect(NativeModules.MixpanelReactNative.trackScreenView).not.toBeCalled();
+  expect(NativeModules.MixpanelReactNative.track).not.toBeCalled();
 });
 
-test(`autocapture.trackScreenLeave calls MixpanelReactNative trackScreenLeave with token and merged metadata`, async () => {
+test(`autocapture.trackScreenLeave emits $mp_page_leave with merged metadata`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
+  NativeModules.MixpanelReactNative.track.mockClear();
   mixpanel.autocapture.trackScreenLeave("HomeScreen", { custom_prop: "value" });
-  expect(NativeModules.MixpanelReactNative.trackScreenLeave).toBeCalledWith(
+  expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
     "token",
-    "HomeScreen",
+    "$mp_page_leave",
     {
       $lib_version: expect.any(String),
       mp_lib: "react-native",
       custom_prop: "value",
+      current_page_title: "HomeScreen",
+      $mp_autocapture: true,
     }
   );
 });
 
-test(`autocapture.trackScreenLeave calls MixpanelReactNative trackScreenLeave with only metadata when no extra properties given`, async () => {
+test(`autocapture.trackScreenLeave emits $mp_page_leave with only metadata when no extra properties given`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
+  NativeModules.MixpanelReactNative.track.mockClear();
   mixpanel.autocapture.trackScreenLeave("HomeScreen");
-  expect(NativeModules.MixpanelReactNative.trackScreenLeave).toBeCalledWith(
+  expect(NativeModules.MixpanelReactNative.track).toBeCalledWith(
     "token",
-    "HomeScreen",
+    "$mp_page_leave",
     {
       $lib_version: expect.any(String),
       mp_lib: "react-native",
+      current_page_title: "HomeScreen",
+      $mp_autocapture: true,
     }
   );
 });
 
-test(`autocapture.trackScreenLeave does not call native module when screenName is invalid`, async () => {
+test(`autocapture.trackScreenLeave emits nothing when screenName is invalid`, async () => {
   const mixpanel = await Mixpanel.init("token", true);
-  NativeModules.MixpanelReactNative.trackScreenLeave.mockClear();
+  NativeModules.MixpanelReactNative.track.mockClear();
   mixpanel.autocapture.trackScreenLeave("");
-  expect(NativeModules.MixpanelReactNative.trackScreenLeave).not.toBeCalled();
+  expect(NativeModules.MixpanelReactNative.track).not.toBeCalled();
   mixpanel.autocapture.trackScreenLeave(null);
-  expect(NativeModules.MixpanelReactNative.trackScreenLeave).not.toBeCalled();
+  expect(NativeModules.MixpanelReactNative.track).not.toBeCalled();
 });
 
 // Autocapture property precedence.
@@ -617,4 +632,61 @@ test(`metadata stays overridable, matching MixpanelMain.track`, async () => {
   const [, , props] = NativeModules.MixpanelReactNative.track.mock.calls[0];
   expect(props.mp_lib).toBe("custom");
   expect(props.current_page_title).toBe("Checkout");
+});
+
+// Autocapture option normalization.
+//
+// `autocaptureOptions` accepts a boolean shorthand or an options object per signal, and any
+// signal left out keeps its default. These assert on the eighth `initialize` argument, which is
+// what actually reaches the native SDKs.
+
+const initArgs = () =>
+  NativeModules.MixpanelReactNative.initialize.mock.calls.at(-1)[7];
+
+test(`autocapture options are omitted entirely when not requested`, async () => {
+  NativeModules.MixpanelReactNative.initialize.mockClear();
+  await Mixpanel.init("token", true);
+  expect(initArgs()).toBeNull();
+});
+
+test(`boolean shorthand expands to { enabled }`, async () => {
+  NativeModules.MixpanelReactNative.initialize.mockClear();
+  const mixpanel = new Mixpanel("token", true);
+  await mixpanel.init(false, {}, undefined, false, {}, { click: true, deadClick: false });
+  expect(initArgs()).toEqual({
+    click: { enabled: true },
+    rageClick: { enabled: true },
+    deadClick: { enabled: false },
+  });
+});
+
+test(`omitted signals default to enabled`, async () => {
+  NativeModules.MixpanelReactNative.initialize.mockClear();
+  const mixpanel = new Mixpanel("token", true);
+  await mixpanel.init(false, {}, undefined, false, {}, { click: true });
+  const opts = initArgs();
+  expect(opts.rageClick).toEqual({ enabled: true });
+  expect(opts.deadClick).toEqual({ enabled: true });
+});
+
+test(`object form keeps tuning values and defaults enabled`, async () => {
+  NativeModules.MixpanelReactNative.initialize.mockClear();
+  const mixpanel = new Mixpanel("token", true);
+  await mixpanel.init(false, {}, undefined, false, {}, {
+    rageClick: { clickThreshold: 5, timeWindowMs: 800 },
+  });
+  expect(initArgs().rageClick).toEqual({
+    enabled: true,
+    clickThreshold: 5,
+    timeWindowMs: 800,
+  });
+});
+
+test(`an explicit enabled:false in the object form wins`, async () => {
+  NativeModules.MixpanelReactNative.initialize.mockClear();
+  const mixpanel = new Mixpanel("token", true);
+  await mixpanel.init(false, {}, undefined, false, {}, {
+    deadClick: { enabled: false, timeWindowMs: 900 },
+  });
+  expect(initArgs().deadClick).toEqual({ enabled: false, timeWindowMs: 900 });
 });

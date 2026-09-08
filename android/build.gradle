@@ -32,7 +32,6 @@ android {
 }
 
 repositories {
-    mavenLocal() // Local builds of mixpanel-android with autocapture support
     mavenCentral()
     maven {
         url 'https://maven.google.com/'
@@ -42,6 +41,6 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    // Local mixpanel-android with autocapture support (publish locally with: ./gradlew :analytics:publishToMavenLocal -x signReleasePublication)
-    implementation 'com.mixpanel.android:mixpanel-android:9.0.0-beta'
+    // 8.10.0 is the first release carrying autocapture.
+    implementation 'com.mixpanel.android:mixpanel-android:8.10.0'
 }

@@ -109,6 +109,9 @@ export class Mixpanel {
    *
    * @return {Autocapture} an instance of Autocapture that provides access to screen view tracking
    *
+   * @experimental Autocapture is in **beta**; its API and captured properties may change before
+   * general availability.
+   *
    * @see Autocapture
    */
   get autocapture() {
@@ -141,6 +144,13 @@ export class Mixpanel {
    *     Use the `custom_properties` key to nest targeting properties
    *     (e.g., `context: { custom_properties: { user_tier: 'premium' } }`).
    *     Note: In native mode, context must be set during initialization and cannot be updated later.
+   * @param {object} [autocaptureOptions=null] Autocapture configuration. Pass an object to enable autocapture.
+   *     Requires native mode (useNative: true). Pass null or omit to disable autocapture.
+   * @param {boolean|object} [autocaptureOptions.click=true] Enable click tracking. Pass boolean or {enabled: boolean}.
+   * @param {boolean|object} [autocaptureOptions.rageClick=true] Enable rage click detection.
+   *     Object form: {enabled, clickThreshold, timeWindowMs, radius}
+   * @param {boolean|object} [autocaptureOptions.deadClick=true] Enable dead click detection.
+   *     Object form: {enabled, timeWindowMs}
    * @returns {Promise<void>} A promise that resolves when initialization is complete
    *
    * @example
@@ -169,16 +179,38 @@ export class Mixpanel {
    *   'https://api-eu.mixpanel.com',
    *   true
    * );
+   *
+   * @example
+   * // Initialize with autocapture enabled (native mode required)
+   * const mixpanel = new Mixpanel('YOUR_TOKEN', true, true);
+   * await mixpanel.init(false, {}, 'https://api.mixpanel.com', false, {}, {
+   *   click: true,
+   *   rageClick: { enabled: true, clickThreshold: 5, timeWindowMs: 2000 },
+   *   deadClick: { enabled: true, timeWindowMs: 1000 },
+   * });
    */
   async init(
     optOutTrackingDefault = DEFAULT_OPT_OUT,
     superProperties = {},
     serverURL = "https://api.mixpanel.com",
     useGzipCompression = false,
-    featureFlagsOptions = {}
+    featureFlagsOptions = {},
+    autocaptureOptions = null
   ) {
     // Store feature flags options for later use
     this.featureFlagsOptions = featureFlagsOptions;
+
+    // Normalize autocapture options
+    let resolvedAutocaptureOptions = null;
+    if (autocaptureOptions != null) {
+      if (this.mixpanelImpl !== MixpanelReactNative) {
+        console.warn(
+          "Mixpanel autocapture requires native mode (useNative: true). Autocapture config will be ignored in JavaScript mode."
+        );
+      } else {
+        resolvedAutocaptureOptions = AutocaptureHelper.normalizeOptions(autocaptureOptions);
+      }
+    }
 
     await this.mixpanelImpl.initialize(
       this.token,
@@ -187,7 +219,8 @@ export class Mixpanel {
       {...Helper.getMetaData(), ...superProperties},
       serverURL,
       useGzipCompression,
-      featureFlagsOptions
+      featureFlagsOptions,
+      resolvedAutocaptureOptions
     );
 
     // If flags are enabled AND we're in native mode, initialize them
@@ -224,7 +257,8 @@ export class Mixpanel {
       Helper.getMetaData(),
       "https://api.mixpanel.com",
       false,
-      {}
+      {},
+      null
     );
     return new Mixpanel(token, trackAutomaticEvents);
   }
@@ -713,6 +747,10 @@ export class Mixpanel {
  * Core class for using Mixpanel Autocapture features.
  *
  * <p>The Autocapture object is used to track screen views and screen leaves.
+ *
+ * @experimental Autocapture is in **beta**. It may contain issues, and its API and the properties
+ * it captures may change in a future release before general availability. Pin your SDK version if
+ * you build reports on autocaptured events.
  */
 export class Autocapture {
   constructor(token, mixpanelImpl) {
@@ -729,6 +767,10 @@ export class Autocapture {
    * @param {string} screenName The name of the screen being viewed. Must be non-empty;
    *   if an empty or whitespace-only string is passed, the event is silently dropped.
    * @param {object} properties Optional additional properties to include with the event
+   *
+   * @example
+   * mixpanel.autocapture.trackScreenView('HomeScreen');
+   * mixpanel.autocapture.trackScreenView('ProductDetail', { product_id: '123' });
    */
   trackScreenView(screenName, properties) {
     if (!StringHelper.isValid(screenName)) {
@@ -741,11 +783,10 @@ export class Autocapture {
     if (!ObjectHelper.isValidOrUndefined(properties)) {
       ObjectHelper.raiseError(PARAMS.PROPERTIES);
     }
-    const mergedProperties = {
-      ...Helper.getMetaData(),
+    this._trackAutocaptureEvent("$mp_page_view", {
       ...properties,
-    };
-    this.mixpanelImpl.trackScreenView(this.token, screenName, mergedProperties);
+      current_page_title: screenName,
+    });
   }
 
   /**
@@ -754,6 +795,10 @@ export class Autocapture {
    * @param {string} screenName The name of the screen being left. Must be non-empty;
    *   if an empty or whitespace-only string is passed, the event is silently dropped.
    * @param {object} properties Optional additional properties to include with the event
+   *
+   * @example
+   * mixpanel.autocapture.trackScreenLeave('HomeScreen');
+   * mixpanel.autocapture.trackScreenLeave('ProductDetail', { time_spent_ms: 5000 });
    */
   trackScreenLeave(screenName, properties) {
     if (!StringHelper.isValid(screenName)) {
@@ -766,11 +811,154 @@ export class Autocapture {
     if (!ObjectHelper.isValidOrUndefined(properties)) {
       ObjectHelper.raiseError(PARAMS.PROPERTIES);
     }
-    const mergedProperties = {
+    this._trackAutocaptureEvent("$mp_page_leave", {
+      ...properties,
+      current_page_title: screenName,
+    });
+  }
+
+  /**
+   * Track a click event with element metadata.
+   *
+   * Use this when your app implements its own click detection and you want to
+   * track click events with full element metadata in the Mixpanel autocapture format.
+   *
+   * @param {object} clickEvent The click event data.
+   * @param {number} clickEvent.x Touch X coordinate.
+   * @param {number} clickEvent.y Touch Y coordinate.
+   * @param {string} clickEvent.elementId Stable identifier for the tapped element.
+   * @param {string} [clickEvent.tagName] Class name or component type.
+   * @param {string} [clickEvent.accessibleLabel] Accessibility label.
+   * @param {string} [clickEvent.role] Semantic role (e.g., "button", "link").
+   * @param {string} [clickEvent.elements] View hierarchy path, ">" separated.
+   * @param {object} [properties] Optional additional properties.
+   *
+   * @example
+   * mixpanel.autocapture.trackClick({
+   *   x: 150,
+   *   y: 300,
+   *   elementId: 'submit_button',
+   *   tagName: 'Button',
+   *   accessibleLabel: 'Submit Order',
+   *   role: 'button',
+   *   elements: 'Screen > Form > Button',
+   * });
+   */
+  trackClick(clickEvent, properties) {
+    if (!this._validateClickEvent(clickEvent, "trackClick")) return;
+    this._trackClickEvent("$mp_click", clickEvent, properties);
+  }
+
+  /**
+   * Track a rage click event with element metadata.
+   *
+   * Use this when your app implements its own rage click detection.
+   * A rage click typically indicates a user rapidly tapping an unresponsive element.
+   *
+   * @param {object} clickEvent The click event data (same shape as trackClick).
+   * @param {object} [properties] Optional additional properties.
+   *
+   * @example
+   * mixpanel.autocapture.trackRageClick({
+   *   x: 150,
+   *   y: 300,
+   *   elementId: 'checkout_button',
+   *   tagName: 'Button',
+   *   role: 'button',
+   * });
+   */
+  trackRageClick(clickEvent, properties) {
+    if (!this._validateClickEvent(clickEvent, "trackRageClick")) return;
+    this._trackClickEvent("$mp_rage_click", clickEvent, properties);
+  }
+
+  /**
+   * Track a dead click event with element metadata.
+   *
+   * Use this when your app implements its own dead click detection.
+   * A dead click indicates a user tapped an interactive element but no UI change occurred.
+   *
+   * @param {object} clickEvent The click event data (same shape as trackClick).
+   * @param {object} [properties] Optional additional properties.
+   *
+   * @example
+   * mixpanel.autocapture.trackDeadClick({
+   *   x: 200,
+   *   y: 400,
+   *   elementId: 'disabled_link',
+   *   tagName: 'Text',
+   *   accessibleLabel: 'Learn More',
+   *   role: 'link',
+   * });
+   */
+  trackDeadClick(clickEvent, properties) {
+    if (!this._validateClickEvent(clickEvent, "trackDeadClick")) return;
+    this._trackClickEvent("$mp_dead_click", clickEvent, properties);
+  }
+
+  _trackClickEvent(eventName, clickEvent, properties) {
+    if (!ObjectHelper.isValidOrUndefined(properties)) {
+      ObjectHelper.raiseError(PARAMS.PROPERTIES);
+    }
+    const clickProperties = {
+      $x: clickEvent.x,
+      $y: clickEvent.y,
+      $el_id: clickEvent.elementId,
+    };
+    if (clickEvent.tagName != null) {
+      clickProperties.$el_tag_name = clickEvent.tagName;
+    }
+    if (clickEvent.accessibleLabel != null) {
+      clickProperties["$attr-aria-label"] = clickEvent.accessibleLabel;
+    }
+    if (clickEvent.role != null) {
+      clickProperties["$attr-role"] = clickEvent.role;
+    }
+    if (clickEvent.elements != null) {
+      clickProperties.$elements = clickEvent.elements;
+    }
+    // Derived fields last: `$el_id`, `$x` and `$y` come from the validated ClickEvent and
+    // define the event, so a caller-supplied property must not replace them.
+    this._trackAutocaptureEvent(eventName, {
+      ...properties,
+      ...clickProperties,
+    });
+  }
+
+  _trackAutocaptureEvent(eventName, properties) {
+    // Order matters. Metadata stays overridable, matching `MixpanelMain.track`, but
+    // `$mp_autocapture` is what routes the event into autocapture reporting, so it is applied
+    // last and cannot be replaced by a caller-supplied property.
+    this.mixpanelImpl.track(this.token, eventName, {
       ...Helper.getMetaData(),
       ...properties,
-    };
-    this.mixpanelImpl.trackScreenLeave(this.token, screenName, mergedProperties);
+      $mp_autocapture: true,
+    });
+  }
+
+  _validateClickEvent(clickEvent, methodName) {
+    if (clickEvent == null || typeof clickEvent !== "object") {
+      MixpanelLogger.warn(
+        this.token,
+        `${methodName} failed: clickEvent must be an object`
+      );
+      return false;
+    }
+    if (typeof clickEvent.x !== "number" || typeof clickEvent.y !== "number") {
+      MixpanelLogger.warn(
+        this.token,
+        `${methodName} failed: clickEvent.x and clickEvent.y must be numbers`
+      );
+      return false;
+    }
+    if (!StringHelper.isValid(clickEvent.elementId)) {
+      MixpanelLogger.warn(
+        this.token,
+        `${methodName} failed: clickEvent.elementId cannot be blank`
+      );
+      return false;
+    }
+    return true;
   }
 }
 
@@ -1159,6 +1347,47 @@ class StringHelper {
      */
   static raiseError(paramName) {
     throw new Error(`${paramName}${ERROR_MESSAGE.INVALID_STRING}`);
+  }
+}
+
+class AutocaptureHelper {
+  static normalizeOptions(options) {
+    const normalized = {};
+
+    // Click options
+    if (options.click !== undefined) {
+      if (typeof options.click === "boolean") {
+        normalized.click = { enabled: options.click };
+      } else if (typeof options.click === "object") {
+        normalized.click = { enabled: true, ...options.click };
+      }
+    } else {
+      normalized.click = { enabled: true };
+    }
+
+    // Rage click options
+    if (options.rageClick !== undefined) {
+      if (typeof options.rageClick === "boolean") {
+        normalized.rageClick = { enabled: options.rageClick };
+      } else if (typeof options.rageClick === "object") {
+        normalized.rageClick = { enabled: true, ...options.rageClick };
+      }
+    } else {
+      normalized.rageClick = { enabled: true };
+    }
+
+    // Dead click options
+    if (options.deadClick !== undefined) {
+      if (typeof options.deadClick === "boolean") {
+        normalized.deadClick = { enabled: options.deadClick };
+      } else if (typeof options.deadClick === "object") {
+        normalized.deadClick = { enabled: true, ...options.deadClick };
+      }
+    } else {
+      normalized.deadClick = { enabled: true };
+    }
+
+    return normalized;
   }
 }
 

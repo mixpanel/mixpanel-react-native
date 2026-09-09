@@ -41,5 +41,6 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.mixpanel.android:mixpanel-android:8.9.0'
+    // 8.10.0 is the first release carrying autocapture.
+    implementation 'com.mixpanel.android:mixpanel-android:8.10.0'
 }

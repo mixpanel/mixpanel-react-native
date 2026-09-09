@@ -20,6 +20,11 @@
 
 <!-- /MarkdownTOC -->
 
+> **Autocapture is in beta.** Autocapture — `$mp_click`, `$mp_rage_click` and `$mp_dead_click`, and
+> the `mixpanel.autocapture` API — may contain issues, and its API and the properties it captures may
+> change in a future release before general availability. Pin your SDK version if you build reports
+> on autocaptured events.
+
 ## Introduction
 
 Welcome to the official Mixpanel React Native library.

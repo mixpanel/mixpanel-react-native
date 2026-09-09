@@ -12,14 +12,8 @@ import {
 } from './mixpanel-flag-persistence';
 import packageJson from 'mixpanel-react-native/package.json';
 
-// Register typed runtime-targeting operators (semver_compare, datetime_compare) into the JsonLogic
-// engine. Mirrors ~/mixpanel-js/src/targeting/event-matcher.js, and runs before any rule can be
-// evaluated: eventMatchesCriteria below is only reachable through this module.
-//
-// json-logic-js exports a singleton whose operation table add_operation writes into, so a host app
-// sharing the same copy also gains these two operators. That is additive and harmless unless the
-// host registers its own operator under either name, in which case the last writer silently wins.
-// mixpanel-js carries the same exposure; diverging here would break cross-SDK parity.
+// Registered at module scope so the operators are in place before eventMatchesCriteria below can
+// evaluate a rule.
 registerCustomOperators(jsonLogic);
 
 const NETWORK_SOURCE = 'network';

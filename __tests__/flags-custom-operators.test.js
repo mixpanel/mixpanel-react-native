@@ -1,10 +1,9 @@
 /**
  * Tests for the custom JsonLogic operators (semver_compare, datetime_compare).
  *
- * Port of ~/mixpanel-js/tests/unit/custom-operators.js. The golden vectors in test-data/ are the
- * cross-SDK contract for these operators; the canonical copy and its README live in the analytics
- * monorepo. Cases run through jsonLogic.apply so that operator registration is covered alongside
- * the comparison itself.
+ * The golden vectors in test-data/ are shared across the SDKs to keep operator behavior in parity,
+ * so they are adopted as-is rather than hand-edited. Cases run through jsonLogic.apply so that
+ * operator registration is covered alongside the comparison itself.
  */
 
 import fs from "fs";

@@ -1,6 +1,5 @@
-// Direct port of ~/mixpanel-js/src/targeting/custom-operators.js. Keep this file in lockstep with
-// that one -- the golden vectors in __tests__/test-data/ are the cross-SDK contract shared with
-// mixpanel-js, Android and Swift, so a change here that is not mirrored there is a bug.
+// Custom JsonLogic operators for feature-flag runtime targeting: semantic version and RFC 3339
+// datetime comparison. Both fail closed -- a malformed operand yields false rather than throwing.
 
 // Strict RFC3339 guard for datetime strings. The date and hour fields are captured so the calendar
 // can be validated separately; the regex only constrains their shape.
@@ -244,8 +243,8 @@ function convertUnixMillisecondsToSeconds(v) {
     if (typeof v !== 'number' || !isFinite(v)) {
         return null;
     }
-    // A value int64 cannot represent is not a real timestamp; treating one as a bound would let a
-    // nonsense target define a rollout window.
+    // The other SDKs hold this target in an int64, so anything outside that range cannot be a real
+    // timestamp. Reject it rather than let it stand in as a rollout bound.
     if (v >= MAX_EPOCH_MS || v <= -MAX_EPOCH_MS) {
         return null;
     }

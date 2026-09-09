@@ -1,5 +1,15 @@
 # Changelog
 
+## [v3.7.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.7.0) (2026-09-09)
+
+### Features
+- autocapture (beta) — clicks, rage clicks and dead clicks ([#460](https://github.com/mixpanel/mixpanel-react-native/pull/460))
+
+### Chores
+- document that screenName must be non-empty in trackScreenView/trackScreenLeave ([#446](https://github.com/mixpanel/mixpanel-react-native/pull/446))
+
+[Full Changelog](https://github.com/mixpanel/mixpanel-react-native/compare/v3.6.0...v3.7.0)
+
 ## [v3.6.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.6.0) (2026-07-27)
 
 ### Features

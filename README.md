@@ -2,7 +2,7 @@
   <img src="https://user-images.githubusercontent.com/71290498/231855346-12c8fc52-5f24-485c-b9e6-24468599fb87.png" alt="Mixpanel React Native Library" height="150"/>
 </div>
 
-##### _July 27, 2026_ - [v3.6.0](https://github.com/mixpanel/mixpanel-react-native/releases/tag/v3.6.0)
+##### _September 09, 2026_ - [v3.7.0](https://github.com/mixpanel/mixpanel-react-native/releases/tag/v3.7.0)
 
 ## Table of Contents
 
@@ -19,6 +19,11 @@
 - [I want to know more!](#i-want-to-know-more)
 
 <!-- /MarkdownTOC -->
+
+> **Autocapture is in beta.** Autocapture — `$mp_click`, `$mp_rage_click` and `$mp_dead_click`, and
+> the `mixpanel.autocapture` API — may contain issues, and its API and the properties it captures may
+> change in a future release before general availability. Pin your SDK version if you build reports
+> on autocaptured events.
 
 ## Introduction
 

@@ -554,7 +554,8 @@ describe("Feature Flags", () => {
         expect.any(Object),
         "https://api.mixpanel.com",
         true,
-        featureFlagsOptions
+        featureFlagsOptions,
+        null
       );
       expect(mockNativeModule.loadFlags).toHaveBeenCalledWith(testToken);
     });

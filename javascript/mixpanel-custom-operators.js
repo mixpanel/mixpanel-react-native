@@ -203,13 +203,10 @@ function normalizeSemver(version) {
     return parts.join('.') + suffix;
 }
 
-// The regex constrains each field to two digits, which still admits a date that cannot exist, such as
-// 2026-02-30 or 29 February in a common year. Writing the fields into a Date and reading them back
-// settles it: out-of-range fields are normalized into a real instant, so a date that does not exist
-// comes back carrying different fields than it went in with. The three-argument setUTCFullYear sets
-// all three at once, which judges 29 February against the year given rather than a placeholder, and
-// leaves years 0 through 99 alone where Date.UTC would map them into the 1900s. The hour is checked
-// separately because it is not part of the round trip; RFC 3339 section 5.6 allows hours 00 through 23.
+// The regex only constrains each field to two digits, so dates that cannot exist still get through
+// (2026-02-30, 29 February in a common year). Writing the fields into a Date and reading them back
+// rejects those, since an impossible date normalizes to a real instant and comes back with
+// different fields. The hour is not part of that comparison, so it is checked separately.
 function isRealCalendarDate(year, month, day, hour) {
     if (hour > 23) {
         return false;

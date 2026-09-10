@@ -2,6 +2,7 @@ import "react-native-get-random-values"; // Polyfill for crypto.getRandomValues
 import { v4 as uuidv4 } from "uuid";
 import { encode as base64Encode } from 'base-64';
 import jsonLogic from 'json-logic-js';
+import { registerCustomOperators } from './mixpanel-custom-operators';
 import { MixpanelLogger } from './mixpanel-logger';
 import { MixpanelNetwork } from './mixpanel-network';
 import { MixpanelPersistent } from './mixpanel-persistent';
@@ -10,6 +11,10 @@ import {
   VariantLookupPolicy,
 } from './mixpanel-flag-persistence';
 import packageJson from 'mixpanel-react-native/package.json';
+
+// Registered at module scope so the operators are in place before eventMatchesCriteria below can
+// evaluate a rule.
+registerCustomOperators(jsonLogic);
 
 const NETWORK_SOURCE = 'network';
 const FALLBACK_SOURCE = 'fallback';
@@ -46,7 +51,7 @@ function getFlagKeyFromPendingEventKey(eventKey) {
  * Direct port of ~/mixpanel-js/src/targeting/event-matcher.js. Replaces the
  * window.__mp_targeting bundle dance with a synchronous json-logic-js import.
  */
-function eventMatchesCriteria(eventName, properties, criteria) {
+export function eventMatchesCriteria(eventName, properties, criteria) {
   if (eventName !== criteria.event_name) {
     return { matches: false };
   }

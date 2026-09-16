@@ -1,5 +1,12 @@
 # Changelog
 
+## [v3.8.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.8.0) (2026-09-16)
+
+### Features
+- Implement semver and date custom operators for flags runtime events ([#461](https://github.com/mixpanel/mixpanel-react-native/pull/461))
+
+[Full Changelog](https://github.com/mixpanel/mixpanel-react-native/compare/v3.7.0...v3.8.0)
+
 ## [v3.7.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.7.0) (2026-09-09)
 
 ### Features

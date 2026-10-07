@@ -21,5 +21,5 @@ Pod::Spec.new do |s|
   s.dependency "React-Core"
   # 6.6.1 is the first release that resolves a React Native `nativeID` into `$el_id`;
   # 6.7.0 is the first carrying the custom operators.
-  s.dependency "Mixpanel-swift", '6.7.0'
+  s.dependency "Mixpanel-swift", '6.8.0'
 end

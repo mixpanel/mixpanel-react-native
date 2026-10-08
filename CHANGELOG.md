@@ -1,5 +1,11 @@
 # Changelog
 
+## [v3.8.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.8.1) (2026-10-08)
+### Chores
+- Updated Mixpanel-swift SDK to 6.8.0 [\#421](https://github.com/mixpanel/mixpanel-react-native/pull/464)
+
+[Full Changelog](https://github.com/mixpanel/mixpanel-react-native/compare/v3.8.0...v3.8.1)
+
 ## [v3.8.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.8.0) (2026-09-16)
 
 ### Features

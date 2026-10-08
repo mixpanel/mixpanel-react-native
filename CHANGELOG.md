@@ -1,5 +1,9 @@
 # Changelog
 
+## [v3.8.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.8.1) (2026-10-08)
+
+[Full Changelog](https://github.com/mixpanel/mixpanel-react-native/compare/v3.8.0...v3.8.1)
+
 ## [v3.8.0](https://github.com/mixpanel/mixpanel-react-native/tree/v3.8.0) (2026-09-16)
 
 ### Features

@@ -113,13 +113,23 @@ jobs:
             npx react-native run-android --no-packager
 
   test_ios:
-    runs-on: macos-latest
+    name: iOS (Xcode ${{ matrix.xcode }})
+    runs-on: ${{ matrix.runner }}
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [24.15.0]
+        include:
+          # Latest Xcode 26.x
+          - { xcode: '26', runner: macos-26, node-version: 24.15.0, simulator: "iPhone 17 Pro" }
+          # Xcode 27
+          - { xcode: '27.0', runner: xcode-27, node-version: 24.15.0, simulator: "iPhone 18 Pro" }
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - name: Select Xcode ${{ matrix.xcode }}
+        uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90  # v1
+        with:
+          xcode-version: ${{ matrix.xcode }}
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
         with:
@@ -136,4 +146,4 @@ jobs:
           pod install --repo-update
       - name: Test iOS
         working-directory: ./Samples/MixpanelExample
-        run: react-native run-ios
+        run: react-native run-ios --simulator "${{ matrix.simulator }}"

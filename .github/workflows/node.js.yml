@@ -9,6 +9,9 @@ on:
   pull_request:
     branches: [master]
 
+permissions:
+  contents: read
+
 jobs:
   test_main_code:
     runs-on: macos-latest
@@ -113,19 +116,28 @@ jobs:
             npx react-native run-android --no-packager
 
   test_ios:
-    runs-on: macos-latest
+    name: iOS (Xcode ${{ matrix.xcode }})
+    runs-on: ${{ matrix.runner }}
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [24.15.0]
+        include:
+          # Latest Xcode 26.x
+          - { xcode: '26', runner: macos-26, node-version: 24.15.0, ios: '26', simulator: "iPhone 17 Pro" }
+          # Xcode 27
+          - { xcode: '27.0', runner: xcode-27, node-version: 24.15.0, ios: '27', simulator: "iPhone 18 Pro" }
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - name: Select Xcode ${{ matrix.xcode }}
+        uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90  # v1
+        with:
+          xcode-version: ${{ matrix.xcode }}
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
-      - run: npm install -g react-native-cli
       - name: Test Integration - Install dependencies
         working-directory: ./Samples/MixpanelExample
         run: npm install
@@ -134,6 +146,25 @@ jobs:
         run: |
           rm -f Podfile.lock
           pod install --repo-update
-      - name: Test iOS
+      - name: Select iOS ${{ matrix.ios }} simulator
+        run: |
+          UDID=$(xcrun simctl list devices available -j \
+            | jq -r --arg n "${{ matrix.simulator }}" --arg os "${{ matrix.ios }}" \
+              '[.devices | to_entries[] | select(.key | test("SimRuntime\\.iOS-" + $os + "-")) | .value[] | select(.name == $n)][0].udid // empty')
+          if [ -z "$UDID" ]; then
+            echo "Simulator '${{ matrix.simulator }}' (iOS ${{ matrix.ios }}) not found"; xcrun simctl list devices available; exit 1
+          fi
+          echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
+      # @react-native-community/cli >= 20.2.0 is required for Xcode 27 (Simulator.app was
+      # replaced by DeviceHub.app).
+      - name: Test iOS (Xcode ${{ matrix.xcode }})
         working-directory: ./Samples/MixpanelExample
-        run: react-native run-ios
+        run: npx react-native run-ios --udid "$SIM_UDID"
+      - name: Verify app is still running
+        run: |
+          BUNDLE_ID=org.reactjs.native.example.MixpanelExample
+          # Fail if the app terminated after launch (e.g. missing UIScene lifecycle on iOS 27).
+          sleep 15
+          if ! xcrun simctl spawn "$SIM_UDID" launchctl list | grep -Eq "^[0-9]+[[:space:]]+[-0-9]+[[:space:]]+UIKitApplication:$BUNDLE_ID"; then
+            echo "$BUNDLE_ID is not running after launch"; exit 1
+          fi

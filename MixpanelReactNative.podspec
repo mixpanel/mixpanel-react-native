@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.license = package['license']
   s.author = { 'Mixpanel, Inc' => 'support@mixpanel.com' }
   s.homepage = package['homepage']
-  s.platform = :ios, "12.0"
+  s.platform = :ios, "15.0"
   s.swift_version = '5.0'
   s.source = { :git => "https://github.com/mixpanel/mixpanel-react-native.git", :tag => s.version }
   s.source_files = "ios/*.{swift,h,m}"
@@ -21,5 +21,6 @@ Pod::Spec.new do |s|
   s.dependency "React-Core"
   # 6.6.1 is the first release that resolves a React Native `nativeID` into `$el_id`;
   # 6.7.0 is the first carrying the custom operators.
-  s.dependency "Mixpanel-swift", '6.8.0'
+  # 7.0.0 raises deployment target to iOS 15.0 for Xcode 27 compatibility.
+  s.dependency "Mixpanel-swift", '7.0.0'
 end

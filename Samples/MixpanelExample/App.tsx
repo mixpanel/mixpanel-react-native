@@ -20,6 +20,7 @@ function App(): React.JSX.Element {
     const initializeMixpanel = async () => {
       try {
         await mixpanel.init();
+        mixpanel.setLoggingEnabled(true);
         setIsInitialized(true);
       } catch (error) {
         console.error('Failed to initialize Mixpanel:', error);

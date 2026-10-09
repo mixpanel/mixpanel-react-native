@@ -9,6 +9,9 @@ on:
   pull_request:
     branches: [master]
 
+permissions:
+  contents: read
+
 jobs:
   test_main_code:
     runs-on: macos-latest

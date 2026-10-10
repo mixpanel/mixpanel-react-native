@@ -181,4 +181,32 @@ describe("MixpanelMain super properties ordering", () => {
       superProp2: "value2",
     });
   });
+
+  it("keeps every registration made before the initial load finishes", async () => {
+    const storage = createControllableStorage({
+      [getSuperPropertiesKey(token)]: JSON.stringify({
+        superProp1: "value1",
+      }),
+    });
+
+    const mixpanelMain = new MixpanelMain(token, false, storage);
+
+    // Both calls wait for the same initial load; the second must build on
+    // the first instead of on the state the load returned.
+    const first = mixpanelMain.registerSuperProperties(token, {
+      superProp2: "value2",
+    });
+    const second = mixpanelMain.registerSuperProperties(token, {
+      superProp3: "value3",
+    });
+    storage._releaseReads();
+    await Promise.all([first, second]);
+    await flushAsync();
+
+    expect(await mixpanelMain.getSuperProperties(token)).toEqual({
+      superProp1: "value1",
+      superProp2: "value2",
+      superProp3: "value3",
+    });
+  });
 });

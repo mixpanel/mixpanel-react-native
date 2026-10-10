@@ -67,6 +67,7 @@ export class MixpanelPersistent {
 
     this.storageAdapter = storageAdapter;
     this._superProperties = {};
+    this._superPropertiesVersion = {};
     this._timeEvents = {};
     this._identity = {};
     this._optedOut = {};
@@ -218,9 +219,15 @@ export class MixpanelPersistent {
   }
 
   async loadSuperProperties(token) {
+    const version = this._superPropertiesVersion[token] || 0;
     const superPropertiesString = await this.storageAdapter.getItem(
       getSuperPropertiesKey(token)
     );
+    // A mutation made while this read was in flight is newer than the
+    // stored value, so assigning it here would silently undo that update.
+    if ((this._superPropertiesVersion[token] || 0) !== version) {
+      return;
+    }
     this._superProperties[token] = superPropertiesString
       ? JSON.parse(superPropertiesString)
       : {};
@@ -231,6 +238,8 @@ export class MixpanelPersistent {
   }
 
   updateSuperProperties(token, superProperties) {
+    this._superPropertiesVersion[token] =
+      (this._superPropertiesVersion[token] || 0) + 1;
     this._superProperties = {
       ...this._superProperties,
       [token]: { ...superProperties },
@@ -347,6 +356,7 @@ export class MixpanelPersistent {
     await this.storageAdapter.removeItem(getUserIdKey(token));
     await this.storageAdapter.removeItem(getSuperPropertiesKey(token));
     await this.storageAdapter.removeItem(getTimeEventsKey(token));
+    this.updateSuperProperties(token, {});
     await this.loadIdentity(token);
     await this.loadSuperProperties(token);
     await this.loadTimeEvents(token);

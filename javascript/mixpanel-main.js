@@ -269,8 +269,11 @@ export default class MixpanelMain {
 
   async registerSuperProperties(token, properties) {
     MixpanelLogger.log(token, `Register super properties:`, properties);
-    const currentSuperProperties =
+    let currentSuperProperties =
       this.mixpanelPersistent.getSuperProperties(token);
+    if (!currentSuperProperties) {
+      currentSuperProperties = await this.getSuperProperties(token);
+    }
     MixpanelLogger.log(
       token,
       `Current Super Properties:`,
@@ -291,8 +294,11 @@ export default class MixpanelMain {
 
   async registerSuperPropertiesOnce(token, properties) {
     MixpanelLogger.log(token, `Register super properties once`, properties);
-    const currentSuperProperties =
+    let currentSuperProperties =
       this.mixpanelPersistent.getSuperProperties(token);
+    if (!currentSuperProperties) {
+      currentSuperProperties = await this.getSuperProperties(token);
+    }
 
     const updatedSuperProperties = {
       ...properties,
@@ -310,6 +316,9 @@ export default class MixpanelMain {
   async unregisterSuperProperty(token, propertyName) {
     MixpanelLogger.log(token, `Unregister super property '${propertyName}'`);
     let superProperties = this.mixpanelPersistent.getSuperProperties(token);
+    if (!superProperties) {
+      superProperties = await this.getSuperProperties(token);
+    }
     delete superProperties[propertyName];
     this._updateSuperProperties(token, superProperties);
     MixpanelLogger.log(token, `Updated Super Properties:`, superProperties);

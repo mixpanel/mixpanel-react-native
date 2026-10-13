@@ -1,5 +1,14 @@
 # Changelog
 
+## [v4.0.0](https://github.com/mixpanel/mixpanel-react-native/tree/v4.0.0) (2026-10-13)
+
+### Breaking Changes ([#466](https://github.com/mixpanel/mixpanel-react-native/pull/466))
+- **iOS 15.0 minimum.** `Mixpanel-swift` is now 7.0.0, which requires iOS 15.0 to meet Xcode 27's minimum deployment target. Your app's iOS deployment target (`platform :ios` in `ios/Podfile`) must be 15.0 or higher. Need iOS 12–14? Stay on 3.x and build with Xcode 26.
+- **`MixpanelSwiftCommon` 2.0.** `Mixpanel-swift` 7.0.0 depends on `MixpanelSwiftCommon ~> 2.0`. Apps that also use `@mixpanel/react-native-session-replay` must upgrade it to 2.0.0; 1.x pins `MixpanelSwiftCommon` 1.x and `pod install` will fail to resolve.
+
+
+[Full Changelog](https://github.com/mixpanel/mixpanel-react-native/compare/v3.8.1...v4.0.0)
+
 ## [v3.8.1](https://github.com/mixpanel/mixpanel-react-native/tree/v3.8.1) (2026-10-08)
 ### Chores
 - Updated Mixpanel-swift SDK to 6.8.0 [\#421](https://github.com/mixpanel/mixpanel-react-native/pull/464)

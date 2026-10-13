@@ -2,7 +2,7 @@
   <img src="https://user-images.githubusercontent.com/71290498/231855346-12c8fc52-5f24-485c-b9e6-24468599fb87.png" alt="Mixpanel React Native Library" height="150"/>
 </div>
 
-##### _October 08, 2026_ - [v3.8.1](https://github.com/mixpanel/mixpanel-react-native/releases/tag/v3.8.1)
+##### _October 13, 2026_ - [v4.0.0](https://github.com/mixpanel/mixpanel-react-native/releases/tag/v4.0.0)
 
 ## Table of Contents
 
@@ -15,10 +15,13 @@
   - [Send Data](#3-send-data)
   - [Check for Success](#4-check-for-success)
   - [Complete Code Example](#complete-code-example)
+- [Version Support Policy](#version-support-policy)
 - [FAQ](#faq)
 - [I want to know more!](#i-want-to-know-more)
 
 <!-- /MarkdownTOC -->
+
+> **iOS 15+ from v4.0.0.** Starting with v4.0.0, the SDK supports iOS 15.0 and above (required by Xcode 27). Need iOS 12–14? Stay on v3.x with Xcode 26. See the [Version Support Policy](#version-support-policy).
 
 > **Autocapture is in beta.** Autocapture — `$mp_click`, `$mp_rage_click` and `$mp_dead_click`, and
 > the `mixpanel.autocapture` API — may contain issues, and its API and the properties it captures may
@@ -42,6 +45,7 @@ Mixpanel's React Native SDK is a wrapper around Mixpanel’s native iOS and Andr
 #### Prerequisites
 
 - React Native v0.6+
+- iOS 15.0+ deployment target. Xcode 27 rejects any target below iOS 15, so this SDK's minimum is iOS 15.0 from v4.0.0. Need to support iOS 12–14? Stay on v3.x with Xcode 26 (see [Version Support Policy](#version-support-policy)).
 - [Setup development environment for React Native](https://reactnative.dev/docs/environment-setup)
 
 #### Steps
@@ -60,6 +64,21 @@ npm install @react-native-async-storage/async-storage
 
 > **Note:** Starting from v3.2.0, `@react-native-async-storage/async-storage` is a peer dependency. This allows your project to use either v1.x or v2.x, avoiding conflicts with frameworks like Expo 52+.
 
+> **Building with Xcode 27 and AsyncStorage installed?** Mixpanel only uses AsyncStorage in JavaScript mode, but AsyncStorage ships its own iOS pod (`RNCAsyncStorage`), which CocoaPods builds whenever the package is installed. Its podspec declares a deployment target below iOS 15 (v1.x and v2.x declare 13.4 or lower), and Xcode 27 rejects that for its resource-bundle target with an error like `IPHONEOS_DEPLOYMENT_TARGET is set to 13.4, but the range of supported deployment target versions is 15.0 to ...`. Until AsyncStorage raises its floor, add this inside the `post_install` block of your app's `ios/Podfile`, after `react_native_post_install`:
+>
+> ```ruby
+> installer.pods_project.targets.each do |target|
+>   target.build_configurations.each do |config|
+>     current = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+>     if current.nil? || Gem::Version.new(current) < Gem::Version.new('15.0')
+>       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+>     end
+>   end
+> end
+> ```
+>
+> This does not apply if AsyncStorage is not installed (for example, native mode only).
+
 3. Under your application's ios folder, run
 
 ```
@@ -67,8 +86,6 @@ pod install
 ```
 
 Please note: You do not need to update your Podfile to add Mixpanel.
-
-4. Since Xcode 12.5, there is a known swift compile issue, please refer to this **[workaround](https://github.com/mixpanel/mixpanel-react-native/issues/43#issuecomment-829599732)**. However the compile issue has been resolved in Xcode 13.2.1+, there is no extra step required as long as you upgrade to Xcode 13.2.1+.
 
 ### 2. Initialize Mixpanel
 
@@ -169,6 +186,19 @@ const mixpanel = new Mixpanel(
 This will activate JavaScript mode.
 
 👋 👋 Tell us about the Mixpanel developer experience! [https://www.mixpanel.com/devnps](https://www.mixpanel.com/devnps) 👍 👎
+
+## Version Support Policy
+
+Xcode 27 requires every target in your build, including CocoaPods pod targets, to have a deployment target of iOS 15 or higher. Apple also requires App Store submissions to use the iOS 27 SDK starting April 2027, so apps will move to iOS 15+ regardless.
+
+| Version | Minimum iOS | Xcode | Status |
+| ------- | ----------- | ----- | ------ |
+| v4.x    | 15.0        | 26 and 27 | Current: new features and fixes |
+| v3.x    | 12.0        | 26    | Maintenance: security, crash and data-loss fixes only, through April 2027 |
+
+**Need iOS 12–14? Stay on v3.x with Xcode 26.** Existing `^3.x` ranges keep resolving to v3.x and receive its maintenance patches without any action. When you are ready to move, upgrade to v4.x and raise your app's deployment target to iOS 15.0 or higher.
+
+Our policy: we add support for each new Xcode's deployment-target floor promptly after its GM release, and we drop the old floor only when Apple's SDK submission requirement makes it necessary, not on the day Xcode ships. The v3.x maintenance window ends in April 2027, when Apple requires the iOS 27 SDK. At that point we publish a final v3.x release and stop backporting.
 
 ## FAQ
 

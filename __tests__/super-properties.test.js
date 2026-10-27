@@ -209,4 +209,120 @@ describe("MixpanelMain super properties ordering", () => {
       superProp3: "value3",
     });
   });
+
+  it("applies clearSuperProperties after a registration made while the initial load is in flight", async () => {
+    const storage = createControllableStorage({
+      [getSuperPropertiesKey(token)]: JSON.stringify({ plan: "free" }),
+    });
+    const mixpanelMain = new MixpanelMain(token, false, storage);
+
+    const register = mixpanelMain.registerSuperProperties(token, {
+      plan: "paid",
+    });
+    const clear = mixpanelMain.clearSuperProperties(token);
+    storage._releaseReads();
+    await Promise.all([register, clear]);
+    await flushAsync();
+
+    expect(mixpanelMain.mixpanelPersistent.getSuperProperties(token)).toEqual(
+      {}
+    );
+    expect(
+      JSON.parse(storage._map.get(getSuperPropertiesKey(token)))
+    ).toEqual({});
+  });
+
+  it("applies reset after a registration made while the initial load is in flight", async () => {
+    const storage = createControllableStorage({
+      [getSuperPropertiesKey(token)]: JSON.stringify({ plan: "free" }),
+    });
+    const mixpanelMain = new MixpanelMain(token, false, storage);
+
+    mixpanelMain.registerSuperProperties(token, { plan: "paid" });
+    let resetDone = false;
+    mixpanelMain.reset(token).then(() => {
+      resetDone = true;
+    });
+    while (!resetDone) {
+      storage._releaseReads();
+      await flushAsync();
+    }
+
+    expect(mixpanelMain.mixpanelPersistent.getSuperProperties(token)).toEqual(
+      {}
+    );
+    expect(storage._map.has(getSuperPropertiesKey(token))).toBe(false);
+  });
+
+  it("includes a registration made while the initial load is in flight in the next tracked event", async () => {
+    const storage = createControllableStorage({
+      [getSuperPropertiesKey(token)]: JSON.stringify({ plan: "free" }),
+    });
+    const mixpanelMain = new MixpanelMain(token, false, storage);
+
+    mixpanelMain.registerSuperProperties(token, { plan: "paid" });
+    const track = mixpanelMain.track(token, "Upgrade");
+    storage._releaseReads();
+    await flushAsync();
+    storage._releaseReads();
+    await track;
+
+    const [, , eventData] = mixpanelMain.core.addToMixpanelQueue.mock.calls[0];
+    expect(eventData.properties.plan).toBe("paid");
+  });
+
+  it("keeps a stored value when registerSuperPropertiesOnce runs before the initial load finishes", async () => {
+    const storage = createControllableStorage({
+      [getSuperPropertiesKey(token)]: JSON.stringify({ plan: "free" }),
+    });
+    const mixpanelMain = new MixpanelMain(token, false, storage);
+
+    const pending = mixpanelMain.registerSuperPropertiesOnce(token, {
+      plan: "paid",
+      source: "ad",
+    });
+    storage._releaseReads();
+    await pending;
+    await flushAsync();
+
+    expect(await mixpanelMain.getSuperProperties(token)).toEqual({
+      plan: "free",
+      source: "ad",
+    });
+  });
+
+  it("does not let a read started before reset restore the cleared properties", async () => {
+    const storage = createControllableStorage({
+      [getSuperPropertiesKey(token)]: JSON.stringify({ plan: "paid" }),
+    });
+    const mixpanelMain = new MixpanelMain(token, false, storage);
+    storage._releaseReads();
+    await flushAsync();
+
+    // This read sees the value from before reset but lands after it.
+    let resolveStaleRead;
+    storage.getItem.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveStaleRead = () => resolve(JSON.stringify({ plan: "paid" }));
+        })
+    );
+    const staleLoad =
+      mixpanelMain.mixpanelPersistent.loadSuperProperties(token);
+
+    let resetDone = false;
+    mixpanelMain.reset(token).then(() => {
+      resetDone = true;
+    });
+    while (!resetDone) {
+      storage._releaseReads();
+      await flushAsync();
+    }
+    resolveStaleRead();
+    await staleLoad;
+
+    expect(mixpanelMain.mixpanelPersistent.getSuperProperties(token)).toEqual(
+      {}
+    );
+  });
 });

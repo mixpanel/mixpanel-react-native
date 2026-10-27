@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {
   Button,
+  NativeModules,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -22,6 +23,11 @@ function App(): React.JSX.Element {
         await mixpanel.init();
         mixpanel.setLoggingEnabled(true);
         setIsInitialized(true);
+        // CI looks for this line in the device log: without the native module the SDK
+        // falls back to JavaScript mode, where init() still succeeds.
+        console.log(
+          `MixpanelExampleSpm ready: native=${NativeModules.MixpanelReactNative != null}`,
+        );
       } catch (error) {
         console.error('Failed to initialize Mixpanel:', error);
       }

@@ -253,10 +253,16 @@ jobs:
           disable-animations: true
           emulator-boot-timeout: 900
           working-directory: ./Samples/MixpanelExampleSpm
+          # Release, so the JavaScript bundle is built into the APK: a Debug build without
+          # Metro would launch without running the sample. The runner executes each line in
+          # its own shell, so the check after launch stays on one line.
           script: |
             echo "org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError" >> android/gradle.properties
             echo "org.gradle.daemon=false" >> android/gradle.properties
-            npx react-native run-android --no-packager
+            adb logcat -c
+            npx react-native run-android --no-packager --mode release --active-arch-only
+            sleep 20
+            adb logcat -d -s ReactNativeJS:V | grep -q "MixpanelExampleSpm ready: native=true" || { echo "Mixpanel did not initialize with the native module. JavaScript log:"; adb logcat -d -s ReactNativeJS:V | tail -50; exit 1; }
 
   # Same as test_ios, for the Swift Package Manager sample (React Native 0.88): builds
   # with the package's ios/Package.swift instead of the podspec, then launches the app.
@@ -302,9 +308,11 @@ jobs:
           echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
       # @react-native-community/cli >= 20.2.0 is required for Xcode 27 (Simulator.app was
       # replaced by DeviceHub.app).
+      # Release, so the JavaScript bundle is built into the app: Debug simulator builds skip
+      # bundling and would launch without running the sample.
       - name: Test iOS (Xcode ${{ matrix.xcode }})
         working-directory: ./Samples/MixpanelExampleSpm
-        run: npx react-native run-ios --udid "$SIM_UDID"
+        run: npx react-native run-ios --udid "$SIM_UDID" --mode Release
       - name: Verify app is still running
         run: |
           BUNDLE_ID=org.reactjs.native.example.MixpanelExampleSpm
@@ -312,4 +320,13 @@ jobs:
           sleep 15
           if ! xcrun simctl spawn "$SIM_UDID" launchctl list | grep -Eq "^[0-9]+[[:space:]]+[-0-9]+[[:space:]]+UIKitApplication:$BUNDLE_ID"; then
             echo "$BUNDLE_ID is not running after launch"; exit 1
+          fi
+      # The sample logs this line after init(); native=false means the SDK fell back to
+      # JavaScript mode because SwiftPM did not register the native module.
+      - name: Verify Mixpanel initialized with the native module
+        run: |
+          LOGS=$(xcrun simctl spawn "$SIM_UDID" log show --last 5m --info --debug \
+            --predicate 'subsystem == "com.facebook.react.log" AND category == "javascript"')
+          if ! grep -q "MixpanelExampleSpm ready: native=true" <<< "$LOGS"; then
+            echo "Mixpanel did not initialize with the native module. JavaScript log:"; echo "$LOGS" | tail -50; exit 1
           fi

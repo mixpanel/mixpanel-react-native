@@ -209,6 +209,8 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
+      # Its own key: test_android runs at the same time and would race this job to save
+      # the same entry.
       - name: AVD cache
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4
         id: avd-cache
@@ -216,7 +218,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ matrix.api-level }}-google-apis-x86_64-nexus5x
+          key: avd-${{ matrix.api-level }}-google-apis-x86_64-nexus5x-spm
 
       - name: Create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'

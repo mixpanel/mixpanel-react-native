@@ -197,10 +197,7 @@ jobs:
         uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947  # v4
 
       - name: Install dependencies
-        run: |
-          npm install
-          npm install -g react-native-cli
-          npm i react-native-gradle-plugin
+        run: npm install
 
       - name: Test Integration - Install dependencies
         working-directory: ./Samples/MixpanelExampleSpm

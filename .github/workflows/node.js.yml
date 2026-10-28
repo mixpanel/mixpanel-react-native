@@ -254,13 +254,14 @@ jobs:
           working-directory: ./Samples/MixpanelExampleSpm
           # Release, so the JavaScript bundle is built into the APK: a Debug build without
           # Metro would launch without running the sample. The runner executes each line in
-          # its own shell, so the check after launch stays on one line.
+          # its own shell, so the wait and the check after launch each stay on one line.
+          # The wait polls for up to two minutes rather than sleeping a fixed time.
           script: |
             echo "org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError" >> android/gradle.properties
             echo "org.gradle.daemon=false" >> android/gradle.properties
             adb logcat -c
             npx react-native run-android --no-packager --mode release --active-arch-only
-            sleep 20
+            for i in $(seq 60); do adb logcat -d -s ReactNativeJS:V | grep -q "MixpanelExampleSpm ready: native=" && break; sleep 2; done
             adb logcat -d -s ReactNativeJS:V | grep -q "MixpanelExampleSpm ready: native=true" || { echo "Mixpanel did not initialize with the native module. JavaScript log:"; adb logcat -d -s ReactNativeJS:V | tail -50; exit 1; }
 
   # Same as test_ios, for the Swift Package Manager sample (React Native 0.88): builds

@@ -49,8 +49,10 @@ let package = Package(
             name: "MixpanelReactNative",
             dependencies: ["MixpanelReactNativeSwift"] + reactNativeProducts,
             path: "Sources/MixpanelReactNative",
-            // No public headers, but without this SwiftPM looks for the default include/
-            // folder and fails to resolve the package.
+            // This target has no public headers, but SwiftPM requires an Objective-C
+            // target's public headers folder to exist, and it defaults to include/. An empty
+            // include/ wouldn't survive git or npm, so point it at the target's own folder,
+            // which holds only the .m file and so exports nothing.
             publicHeadersPath: "."
         ),
     ]

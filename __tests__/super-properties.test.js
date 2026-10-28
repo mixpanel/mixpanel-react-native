@@ -245,6 +245,35 @@ describe("MixpanelMain super properties ordering", () => {
     expect(await read).toEqual({ plan: "free", source: "ad" });
   });
 
+  it("resolves getSuperProperties with a queued change when storage reads resolve out of order", async () => {
+    const storage = createControllableStorage({
+      [getSuperPropertiesKey(token)]: JSON.stringify({ plan: "free" }),
+    });
+    const mixpanelMain = new MixpanelMain(token, false, storage);
+    storage._releaseReads();
+    await flushAsync();
+    // Put super properties back into the unloaded state so both calls below
+    // take the lazy-load path.
+    delete mixpanelMain.mixpanelPersistent._superProperties[token];
+
+    // Hold the registration's read; a reader's own getItem goes through the
+    // normal pending list and resolves first, like an out-of-order
+    // AsyncStorage resolution.
+    let resolveRegisterRead;
+    storage.getItem.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveRegisterRead = () => resolve(JSON.stringify({ plan: "free" }));
+        })
+    );
+    mixpanelMain.registerSuperProperties(token, { source: "ad" });
+    const read = mixpanelMain.getSuperProperties(token);
+    storage._releaseReads();
+    resolveRegisterRead();
+
+    expect(await read).toEqual({ plan: "free", source: "ad" });
+  });
+
   it("applies optOutTracking after a registration made while the initial load is in flight", async () => {
     const storage = createControllableStorage({
       [getSuperPropertiesKey(token)]: JSON.stringify({ plan: "free" }),
@@ -329,6 +358,30 @@ describe("MixpanelMain super properties ordering", () => {
       plan: "free",
       b: 2,
     });
+  });
+
+  it("keeps calls queued behind an earlier change whose storage read failed", async () => {
+    const storage = createControllableStorage({
+      [getSuperPropertiesKey(token)]: JSON.stringify({ plan: "free" }),
+    });
+    const mixpanelMain = new MixpanelMain(token, false, storage);
+
+    storage.getItem.mockImplementationOnce(() =>
+      Promise.reject(new Error("storage read failed"))
+    );
+    const first = mixpanelMain.registerSuperProperties(token, { a: 1 });
+    // Queued behind the failing change; the clear below must still run after
+    // this registration even though the queue entry it leaves behind could be
+    // mistaken for a finished one.
+    const second = mixpanelMain.registerSuperProperties(token, { b: 2 });
+    await expect(first).rejects.toThrow("storage read failed");
+
+    mixpanelMain.clearSuperProperties(token);
+    storage._releaseReads();
+    await second;
+    await flushAsync();
+
+    expect(await mixpanelMain.getSuperProperties(token)).toEqual({});
   });
 
   it("does not let a read started before reset restore the cleared properties", async () => {

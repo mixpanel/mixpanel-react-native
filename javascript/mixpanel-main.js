@@ -14,6 +14,32 @@ export default class MixpanelMain {
     this.core.initialize(token);
     this.core.startProcessingQueue(token);
     this.mixpanelPersistent = MixpanelPersistent.getInstance(storage, token);
+    this._superPropertiesQueue = {};
+  }
+
+  // The public wrappers fire super property changes without awaiting them.
+  // While storage is still loading or an earlier change is queued, queue the
+  // change so that changes apply in call order.
+  _queueSuperPropertiesChange(token, change, queueWhenLoaded = false) {
+    const previous = this._superPropertiesQueue[token];
+    if (
+      !queueWhenLoaded &&
+      !previous &&
+      this.mixpanelPersistent.getSuperProperties(token)
+    ) {
+      return change();
+    }
+    const queued = previous
+      ? previous.then(change)
+      : Promise.resolve(change());
+    const tail = queued.catch(() => {});
+    this._superPropertiesQueue[token] = tail;
+    tail.then(() => {
+      if (this._superPropertiesQueue[token] === tail) {
+        delete this._superPropertiesQueue[token];
+      }
+    });
+    return queued;
   }
 
   async initialize(
@@ -78,8 +104,14 @@ export default class MixpanelMain {
     return metadata;
   }
 
-  async reset(token) {
-    await this.mixpanelPersistent.reset(token);
+  reset(token) {
+    // reset is queued even when super properties are already loaded so that a
+    // later change waits for the in-flight wipe instead of being undone by it.
+    return this._queueSuperPropertiesChange(
+      token,
+      () => this.mixpanelPersistent.reset(token),
+      true
+    );
   }
 
   /**
@@ -114,12 +146,15 @@ export default class MixpanelMain {
       `Track '${eventName}' with properties`,
       properties
     );
-    const superProperties = this.mixpanelPersistent.getSuperProperties(token);
     const identityProps = {
       distinct_id: this.mixpanelPersistent.getDistinctId(token),
       $device_id: this.mixpanelPersistent.getDeviceId(token),
       $user_id: this.mixpanelPersistent.getUserId(token),
     };
+    if (this._superPropertiesQueue[token]) {
+      await this._superPropertiesQueue[token];
+    }
+    const superProperties = this.mixpanelPersistent.getSuperProperties(token);
     const eventElapsedTime = await this.eventElapsedTime(token, eventName);
     const eventProperties = Object.freeze({
       token,
@@ -186,7 +221,7 @@ export default class MixpanelMain {
   async optOutTracking(token) {
     await this._setOptedOutTrackingFlag(token, true);
     MixpanelLogger.log(token, "User has opted out of tracking");
-    await this.mixpanelPersistent.reset(token);
+    await this.reset(token);
   }
 
   async optInTracking(token) {
@@ -267,8 +302,17 @@ export default class MixpanelMain {
     await this.mixpanelPersistent.persistSuperProperties(token);
   }
 
-  async registerSuperProperties(token, properties) {
+  registerSuperProperties(token, properties) {
+    return this._queueSuperPropertiesChange(token, () =>
+      this._registerSuperProperties(token, properties)
+    );
+  }
+
+  async _registerSuperProperties(token, properties) {
     MixpanelLogger.log(token, `Register super properties:`, properties);
+    if (!this.mixpanelPersistent.getSuperProperties(token)) {
+      await this.mixpanelPersistent.loadSuperProperties(token);
+    }
     const currentSuperProperties =
       this.mixpanelPersistent.getSuperProperties(token);
     MixpanelLogger.log(
@@ -289,8 +333,17 @@ export default class MixpanelMain {
     );
   }
 
-  async registerSuperPropertiesOnce(token, properties) {
+  registerSuperPropertiesOnce(token, properties) {
+    return this._queueSuperPropertiesChange(token, () =>
+      this._registerSuperPropertiesOnce(token, properties)
+    );
+  }
+
+  async _registerSuperPropertiesOnce(token, properties) {
     MixpanelLogger.log(token, `Register super properties once`, properties);
+    if (!this.mixpanelPersistent.getSuperProperties(token)) {
+      await this.mixpanelPersistent.loadSuperProperties(token);
+    }
     const currentSuperProperties =
       this.mixpanelPersistent.getSuperProperties(token);
 
@@ -307,8 +360,17 @@ export default class MixpanelMain {
     );
   }
 
-  async unregisterSuperProperty(token, propertyName) {
+  unregisterSuperProperty(token, propertyName) {
+    return this._queueSuperPropertiesChange(token, () =>
+      this._unregisterSuperProperty(token, propertyName)
+    );
+  }
+
+  async _unregisterSuperProperty(token, propertyName) {
     MixpanelLogger.log(token, `Unregister super property '${propertyName}'`);
+    if (!this.mixpanelPersistent.getSuperProperties(token)) {
+      await this.mixpanelPersistent.loadSuperProperties(token);
+    }
     let superProperties = this.mixpanelPersistent.getSuperProperties(token);
     delete superProperties[propertyName];
     this._updateSuperProperties(token, superProperties);
@@ -316,13 +378,22 @@ export default class MixpanelMain {
   }
 
   async getSuperProperties(token) {
+    if (this._superPropertiesQueue[token]) {
+      await this._superPropertiesQueue[token];
+    }
     if (!this.mixpanelPersistent.getSuperProperties(token)) {
       await this.mixpanelPersistent.loadSuperProperties(token);
     }
     return this.mixpanelPersistent.getSuperProperties(token);
   }
 
-  async clearSuperProperties(token) {
+  clearSuperProperties(token) {
+    return this._queueSuperPropertiesChange(token, () =>
+      this._clearSuperProperties(token)
+    );
+  }
+
+  async _clearSuperProperties(token) {
     MixpanelLogger.log(token, `Clear super properties`);
     this._updateSuperProperties(token, {});
     MixpanelLogger.log(token, `Updated Super Properties:`, {});

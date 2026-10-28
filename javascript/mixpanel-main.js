@@ -136,15 +136,15 @@ export default class MixpanelMain {
       `Track '${eventName}' with properties`,
       properties
     );
-    if (this._superPropertiesQueue[token]) {
-      await this._superPropertiesQueue[token];
-    }
-    const superProperties = this.mixpanelPersistent.getSuperProperties(token);
     const identityProps = {
       distinct_id: this.mixpanelPersistent.getDistinctId(token),
       $device_id: this.mixpanelPersistent.getDeviceId(token),
       $user_id: this.mixpanelPersistent.getUserId(token),
     };
+    if (this._superPropertiesQueue[token]) {
+      await this._superPropertiesQueue[token];
+    }
+    const superProperties = this.mixpanelPersistent.getSuperProperties(token);
     const eventElapsedTime = await this.eventElapsedTime(token, eventName);
     const eventProperties = Object.freeze({
       token,

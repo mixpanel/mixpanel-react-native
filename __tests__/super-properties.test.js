@@ -271,6 +271,29 @@ describe("MixpanelMain super properties ordering", () => {
     expect(eventData.properties.plan).toBe("paid");
   });
 
+  it("keeps the anonymous identity on an event tracked before identify while super properties load", async () => {
+    const storage = createControllableStorage();
+    const mixpanelMain = new MixpanelMain(token, false, storage);
+    for (let i = 0; i < 5; i++) {
+      storage._releaseReads();
+      await flushAsync();
+    }
+    const anonymousId = mixpanelMain.mixpanelPersistent.getDistinctId(token);
+    // Identity is loaded but super properties are not.
+    delete mixpanelMain.mixpanelPersistent._superProperties[token];
+
+    mixpanelMain.registerSuperProperties(token, { plan: "paid" });
+    const track = mixpanelMain.track(token, "BeforeLogin");
+    const identify = mixpanelMain.identify(token, "new-user");
+    storage._releaseReads();
+    await Promise.all([track, identify]);
+
+    const [, , eventData] = mixpanelMain.core.addToMixpanelQueue.mock.calls[0];
+    expect(eventData.event).toBe("BeforeLogin");
+    expect(eventData.properties.distinct_id).toBe(anonymousId);
+    expect(eventData.properties.plan).toBe("paid");
+  });
+
   it("keeps a stored value when registerSuperPropertiesOnce runs before the initial load finishes", async () => {
     const storage = createControllableStorage({
       [getSuperPropertiesKey(token)]: JSON.stringify({ plan: "free" }),

@@ -49,8 +49,9 @@ let package = Package(
             name: "MixpanelReactNative",
             dependencies: ["MixpanelReactNativeSwift"] + reactNativeProducts,
             path: "Sources/MixpanelReactNative",
-            publicHeadersPath: ".",
-            linkerSettings: [.linkedFramework("UIKit"), .linkedFramework("Foundation")]
+            // No public headers, but without this SwiftPM looks for the default include/
+            // folder and fails to resolve the package.
+            publicHeadersPath: "."
         ),
     ]
 )

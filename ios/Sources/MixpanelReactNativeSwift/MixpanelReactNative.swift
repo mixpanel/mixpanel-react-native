@@ -177,6 +177,15 @@ open class MixpanelReactNative: NSObject {
         resolve(nil)
     }
 
+    // MARK: - Random IDs
+
+    // A secure random source for JavaScript mode in apps built with this module.
+    @objc
+    func randomUUID(_ resolve: RCTPromiseResolveBlock,
+                    rejecter reject: RCTPromiseRejectBlock) -> Void {
+        resolve(UUID().uuidString.lowercased())
+    }
+
     // MARK: - Opting Users Out of Tracking
 
     @objc

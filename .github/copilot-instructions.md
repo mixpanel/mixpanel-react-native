@@ -81,7 +81,7 @@ npm test
 
 ### Test Requirements
 - Tests use mocked react-native modules (`__tests__/jest_setup.js`)
-- AsyncStorage, uuid, and react-native-get-random-values are mocked
+- AsyncStorage is mocked
 
 ## Development Guidelines
 
@@ -104,8 +104,8 @@ npm test
 
 ### Runtime Dependencies
 - `@react-native-async-storage/async-storage` - Persistence (JavaScript mode)
-- `react-native-get-random-values` - UUID polyfill
-- `uuid@3.3.2` - UUID generation
+- `base-64`, `json-logic-js` - Feature flags (JavaScript mode)
+- Random IDs (device ID, traceparent) come from `javascript/mixpanel-random.js`, with no dependency
 
 ### Native SDK Dependencies
 - iOS: `Mixpanel-swift@6.4.1`

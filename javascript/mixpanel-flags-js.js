@@ -1,11 +1,10 @@
-import "react-native-get-random-values"; // Polyfill for crypto.getRandomValues
-import { v4 as uuidv4 } from "uuid";
 import { encode as base64Encode } from 'base-64';
 import jsonLogic from 'json-logic-js';
 import { registerCustomOperators } from './mixpanel-custom-operators';
 import { MixpanelLogger } from './mixpanel-logger';
 import { MixpanelNetwork } from './mixpanel-network';
 import { MixpanelPersistent } from './mixpanel-persistent';
+import { randomHex } from './mixpanel-random';
 import {
   MixpanelFlagPersistence,
   VariantLookupPolicy,
@@ -147,8 +146,8 @@ export class MixpanelFlagsJS {
    * Callers wrap in try/catch; this method does not — failures bubble.
    */
   generateTraceparent() {
-    const traceID = uuidv4().replace(/-/g, '');
-    const parentID = uuidv4().replace(/-/g, '').substring(0, 16);
+    const traceID = randomHex(16);
+    const parentID = randomHex(8);
     return `00-${traceID}-${parentID}-01`;
   }
 

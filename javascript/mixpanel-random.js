@@ -5,20 +5,20 @@ let warnedInsecure = false;
 /**
  * Fills bytes from the best source that doesn't need a native call: Web Crypto
  * (browsers, or an app that installed a crypto polyfill), then Expo's crypto
- * module (Expo Go, or apps with expo-crypto), then Math.random.
- * Returns false when it had to use Math.random.
+ * module (Expo Go, or apps with expo-crypto), then Math.random. A source that
+ * throws is skipped. Returns false when it had to use Math.random.
  */
 function fillRandomBytes(bytes) {
-  const webCrypto = globalThis.crypto;
-  if (webCrypto && typeof webCrypto.getRandomValues === "function") {
-    webCrypto.getRandomValues(bytes);
-    return true;
-  }
-
-  const expoCrypto = globalThis.expo?.modules?.ExpoCrypto;
-  if (expoCrypto && typeof expoCrypto.getRandomValues === "function") {
-    expoCrypto.getRandomValues(bytes);
-    return true;
+  const sources = [globalThis.crypto, globalThis.expo?.modules?.ExpoCrypto];
+  for (const source of sources) {
+    if (source && typeof source.getRandomValues === "function") {
+      try {
+        source.getRandomValues(bytes);
+        return true;
+      } catch (e) {
+        // Try the next source, e.g. a crypto polyfill without its native module
+      }
+    }
   }
 
   for (let i = 0; i < bytes.length; i++) {

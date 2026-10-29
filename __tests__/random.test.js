@@ -70,6 +70,39 @@ describe("mixpanel-random", () => {
     expect(uuid).toBe("6ba7b810-9dad-41d1-80b4-00c04fd430c8");
   });
 
+  it("skips a JavaScript crypto source that throws", async () => {
+    // react-native-get-random-values throws like this when its native module isn't linked
+    const throwing = jest.fn(() => {
+      throw new Error("Native module not found");
+    });
+    const nativeModule = {
+      randomUUID: jest.fn().mockResolvedValue("6ba7b810-9dad-41d1-80b4-00c04fd430c8"),
+    };
+    const { randomUUID, randomHex } = loadWithSources({
+      webCrypto: { getRandomValues: throwing },
+      nativeModule,
+    });
+
+    expect(await randomUUID()).toBe("6ba7b810-9dad-41d1-80b4-00c04fd430c8");
+    expect(throwing).toHaveBeenCalled();
+    expect(randomHex(8)).toMatch(/^[0-9a-f]{16}$/);
+  });
+
+  it("uses Expo's crypto module when Web Crypto throws", async () => {
+    const getRandomValues = fillWith(0x00);
+    const { randomUUID } = loadWithSources({
+      webCrypto: {
+        getRandomValues: () => {
+          throw new Error("Native module not found");
+        },
+      },
+      expoCrypto: { getRandomValues },
+    });
+
+    expect(await randomUUID()).toBe("00000000-0000-4000-8000-000000000000");
+    expect(getRandomValues).toHaveBeenCalled();
+  });
+
   it("falls back to Math.random when no other source works, warning once", async () => {
     const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
     const nativeModule = { randomUUID: jest.fn().mockRejectedValue(new Error("unavailable")) };

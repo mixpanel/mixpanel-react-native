@@ -18,7 +18,6 @@ let reactNativeProducts: [Target.Dependency] = [
     .product(name: "ReactHeaders", package: "ReactNative"),
     .product(name: "ReactNativeHeaders", package: "ReactNative"),
     .product(name: "ReactNativeDependenciesHeaders", package: "ReactNative"),
-    .product(name: "ReactAppHeaders", package: "React-GeneratedCode"),
 ]
 
 let package = Package(
@@ -34,7 +33,6 @@ let package = Package(
         // Keep in step with the Mixpanel-swift version in MixpanelReactNative.podspec.
         .package(url: "https://github.com/mixpanel/mixpanel-swift.git", exact: "7.0.0"),
         .package(name: "ReactNative", path: "../../../../xcframeworks"),
-        .package(name: "React-GeneratedCode", path: "../../../ios"),
     ],
     targets: [
         .target(

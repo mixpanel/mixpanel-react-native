@@ -17,11 +17,6 @@ jest.mock('react-native', () => ({
   NativeEventEmitter: jest.fn()
 }));
 
-// Mock uuid to return a consistent value for device ID generation
-jest.mock('uuid', () => ({
-  v4: jest.fn(() => 'test-device-id-1234')
-}));
-
 // Mock AsyncStorage
 const mockAsyncStorage = {
   getItem: jest.fn(() => Promise.resolve(null)),

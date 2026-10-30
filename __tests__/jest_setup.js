@@ -1,11 +1,5 @@
 import * as ReactNative from "react-native";
 
-// Mock react-native-get-random-values polyfill
-jest.mock("react-native-get-random-values", () => {
-  // Polyfill is imported for side effects, no need to mock specific functions
-  return {};
-});
-
 jest.mock("mixpanel-react-native/javascript/mixpanel-storage", () => {
   return {
     AsyncStorageAdapter: jest.fn().mockImplementation((storage) => {
@@ -27,10 +21,6 @@ jest.mock("mixpanel-react-native/javascript/mixpanel-storage", () => {
     }),
   };
 });
-jest.mock("uuid", () => ({
-  v4: jest.fn(),
-}));
-
 jest.mock("@react-native-async-storage/async-storage", () => ({
   default: {
     getItem: jest.fn().mockResolvedValue(null),

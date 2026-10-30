@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
@@ -46,6 +47,11 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         return "MixpanelReactNative";
     }
 
+    // A secure random source for JavaScript mode in apps built with this module.
+    @ReactMethod
+    public void randomUUID(Promise promise) {
+        promise.resolve(UUID.randomUUID().toString());
+    }
 
     @ReactMethod
     public void initialize(String token, boolean trackAutomaticEvents, boolean optOutTrackingDefault, ReadableMap metadata, String serverURL, boolean useGzipCompression, ReadableMap featureFlagsOptions, ReadableMap autocaptureConfig, Promise promise) throws JSONException {

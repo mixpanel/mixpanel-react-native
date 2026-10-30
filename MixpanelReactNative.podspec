@@ -22,5 +22,6 @@ Pod::Spec.new do |s|
   # 6.6.1 is the first release that resolves a React Native `nativeID` into `$el_id`;
   # 6.7.0 is the first carrying the custom operators.
   # 7.0.0 raises deployment target to iOS 15.0 for Xcode 27 compatibility.
-  s.dependency "Mixpanel-swift", '7.0.0'
+  # 7.1.0 is the first release with autocapture generally available.
+  s.dependency "Mixpanel-swift", '7.1.0'
 end

@@ -23,11 +23,6 @@
 
 > **iOS 15+ from v4.0.0.** Starting with v4.0.0, the SDK supports iOS 15.0 and above (required by Xcode 27). Need iOS 12–14? Stay on v3.x with Xcode 26. See the [Version Support Policy](#version-support-policy).
 
-> **Autocapture is in beta.** Autocapture — `$mp_click`, `$mp_rage_click` and `$mp_dead_click`, and
-> the `mixpanel.autocapture` API — may contain issues, and its API and the properties it captures may
-> change in a future release before general availability. Pin your SDK version if you build reports
-> on autocaptured events.
-
 ## Introduction
 
 Welcome to the official Mixpanel React Native library.

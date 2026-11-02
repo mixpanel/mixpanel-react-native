@@ -8,6 +8,9 @@
     "index.d.ts",
     "javascript/",
     "ios/",
+    "!ios/.build",
+    "!ios/.swiftpm",
+    "!ios/Package.resolved",
     "android/src/",
     "android/build.gradle",
     "MixpanelReactNative.podspec",
@@ -42,6 +45,9 @@
   "metadata": {
     "mp_lib": "react-native"
   },
+  "swiftpmConfig": {
+    "name": "MixpanelReactNative"
+  },
   "devDependencies": {
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@babel/core": "^7.26.0",
@@ -68,15 +74,13 @@
     "verbose": true,
     "preset": "react-native",
     "transformIgnorePatterns": [
-      "node_modules/(?!(@react-native|react-native|react-native-get-random-values|uuid)/)"
+      "node_modules/(?!(@react-native|react-native)/)"
     ],
     "testEnvironment": "node"
   },
   "dependencies": {
     "base-64": "^1.0.0",
-    "json-logic-js": "^2.0.5",
-    "react-native-get-random-values": "^1.9.0",
-    "uuid": "^9.0.1"
+    "json-logic-js": "^2.0.5"
   },
   "peerDependencies": {
     "@react-native-async-storage/async-storage": "^1.15.0 || ^2.0.0"

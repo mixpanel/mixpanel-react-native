@@ -8,7 +8,7 @@ PODS:
     - MixpanelSwiftCommon (~> 2.0.0)
   - Mixpanel-swift/Complete (7.0.0):
     - MixpanelSwiftCommon (~> 2.0.0)
-  - MixpanelReactNative (3.8.1):
+  - MixpanelReactNative (4.0.0):
     - Mixpanel-swift (= 7.0.0)
     - React-Core
   - MixpanelSwiftCommon (2.0.0)
@@ -2102,7 +2102,7 @@ SPEC CHECKSUMS:
   FBLazyVector: b3e7ad108f0d882e30445c5527d774e3fd432f3d
   hermes-engine: 8dee4d7360bb1bc1d5b51f41dc01eb94191617a6
   Mixpanel-swift: 827981e7c355c0e35f3940ccee122b372f85d975
-  MixpanelReactNative: 983402130e97d2a6d5fba5748ae1c2c78c3dca4d
+  MixpanelReactNative: ce15eeee2bc5d8cbee57d9aa101c41224f08c59b
   MixpanelSwiftCommon: ccfed9a4daa971d9cb0c32a39ee68d92dad1d838
   RCTDeprecation: 2a74a2c57675e64419bd89078efde81f7c1de90b
   RCTRequired: 30451112e6fef4e6f31b4e7eee0845156e35e4b0

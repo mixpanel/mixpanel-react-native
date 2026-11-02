@@ -9,42 +9,9 @@ import {
   getAppHasOpenedBeforeKey,
 } from "./mixpanel-constants";
 
-import "react-native-get-random-values"; // Polyfill for crypto.getRandomValues
 import { AsyncStorageAdapter } from "./mixpanel-storage";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "./mixpanel-random";
 import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger";
-
-/**
- * Generate a UUID v4, with cross-platform fallbacks
- * Tries: uuid package → Web Crypto API → manual generation
- */
-function generateUUID() {
-  // Try uuid package first (works in React Native with polyfill)
-  try {
-    const result = uuidv4();
-    if (result) return result;
-  } catch (e) {
-    // Fall through to alternatives
-  }
-
-  // Try Web Crypto API (modern browsers)
-  const cryptoObj =
-    (typeof globalThis !== "undefined" && globalThis.crypto) ||
-    (typeof window !== "undefined" && window.crypto) ||
-    (typeof crypto !== "undefined" && crypto);
-
-  if (cryptoObj && typeof cryptoObj.randomUUID === "function") {
-    return cryptoObj.randomUUID();
-  }
-
-  // Last resort: manual UUID v4 generation using Math.random
-  // Less secure but functional for device IDs
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0;
-    const v = c === "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
 
 export class MixpanelPersistent {
   static instance;
@@ -99,7 +66,7 @@ export class MixpanelPersistent {
     this._identity[token].deviceId = storageToken;
 
     if (!this._identity[token].deviceId) {
-      this._identity[token].deviceId = generateUUID();
+      this._identity[token].deviceId = await randomUUID();
       await this.storageAdapter.setItem(
         getDeviceIdKey(token),
         this._identity[token].deviceId

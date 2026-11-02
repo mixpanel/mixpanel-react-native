@@ -23,5 +23,6 @@ Pod::Spec.new do |s|
   # 6.7.0 is the first carrying the custom operators.
   # 7.0.0 raises deployment target to iOS 15.0 for Xcode 27 compatibility.
   # Keep in step with the mixpanel-swift version in ios/Package.swift.
-  s.dependency "Mixpanel-swift", '7.0.0'
+  # 7.1.0 is the first release with autocapture generally available.
+  s.dependency "Mixpanel-swift", '7.1.0'
 end

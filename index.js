@@ -609,50 +609,6 @@ export class Mixpanel {
    * @return an instance of MixpanelGroup that you can use to update
    *     records in Mixpanel Group Analytics
    */
-  /**
-   * Returns the identified user's company profile on a hierarchical groups project, as a
-   * MixpanelGroup to set properties on. This is `getGroup("$company_id", companyId)` with the
-   * company from the last identify.
-   *
-   * <pre><code>
-   * await mixpanel.identify({ userId: 'user_123', companyId: 'acme' });
-   * const company = await mixpanel.getCompany();
-   * company.set('tier', 'enterprise');
-   * </code></pre>
-   *
-   * <p>Only for projects that use hierarchical groups, enabled with the `hierarchicalGroups`
-   * argument of init(). On any other project, or before a company is identified, the returned
-   * group drops every update with an error log, so it is never null. The company is fixed when
-   * this is called.
-   *
-   * @return {Promise<MixpanelGroup>} A promise to the identified company's MixpanelGroup
-   */
-  async getCompany() {
-    if (!this.hierarchicalGroups) {
-      return new UnavailableGroup(
-        this.token,
-        this.mixpanelImpl,
-        "getCompany() is only for hierarchical groups projects, enabled with the " +
-          "hierarchicalGroups argument of init()."
-      );
-    }
-    const identity = await this.mixpanelImpl.getIdentity(this.token);
-    const companyId = identity ? identity.companyId : null;
-    if (companyId == null || companyId === "") {
-      return new UnavailableGroup(
-        this.token,
-        this.mixpanelImpl,
-        "getCompany() needs a company. Call identify({userId, companyId}) first."
-      );
-    }
-    return new MixpanelGroup(
-      this.token,
-      COMPANY_ID_GROUP_KEY,
-      companyId,
-      this.mixpanelImpl
-    );
-  }
-
   getGroup(groupKey, groupID) {
     if (this.group) {
       return this.group;
@@ -665,6 +621,50 @@ export class Mixpanel {
       );
       return this.group;
     }
+  }
+
+  /**
+   * Returns the identified user's company profile on a hierarchical groups project, as a
+   * MixpanelGroup to set properties on. This is `getGroup("$company_id", companyId)` with the
+   * company from the last identify.
+   *
+   * <pre><code>
+   * await mixpanel.identify({ userId: 'user_123', companyId: 'acme' });
+   * const company = await mixpanel.getCompany();
+   * company?.set('tier', 'enterprise');
+   * </code></pre>
+   *
+   * <p>Only for projects that use hierarchical groups, enabled with the `hierarchicalGroups`
+   * argument of init(). On any other project, or before a company is identified, this logs an
+   * error and resolves to null. The company is fixed when this is called.
+   *
+   * @return {Promise<MixpanelGroup|null>} A promise to the identified company's MixpanelGroup, or
+   *     to null when there is no company
+   */
+  async getCompany() {
+    if (!this.hierarchicalGroups) {
+      MixpanelLogger.error(
+        this.token,
+        "getCompany() is only for hierarchical groups projects, enabled with the " +
+          "hierarchicalGroups argument of init()."
+      );
+      return null;
+    }
+    const identity = await this.mixpanelImpl.getIdentity(this.token);
+    const companyId = identity ? identity.companyId : null;
+    if (companyId == null || companyId === "") {
+      MixpanelLogger.error(
+        this.token,
+        "getCompany() needs a company. Call identify({userId, companyId}) first."
+      );
+      return null;
+    }
+    return new MixpanelGroup(
+      this.token,
+      COMPANY_ID_GROUP_KEY,
+      companyId,
+      this.mixpanelImpl
+    );
   }
 
   /**
@@ -1478,40 +1478,6 @@ export class MixpanelGroup {
       name,
       value
     );
-  }
-}
-
-/**
- * A MixpanelGroup with nothing to update, from getCompany() when there is no company.
- */
-class UnavailableGroup extends MixpanelGroup {
-  constructor(token, mixpanelImpl, reason) {
-    super(token, COMPANY_ID_GROUP_KEY, null, mixpanelImpl);
-    this.reason = reason;
-  }
-
-  _drop() {
-    MixpanelLogger.error(this.token, `${this.reason} The update was dropped.`);
-  }
-
-  set() {
-    this._drop();
-  }
-
-  setOnce() {
-    this._drop();
-  }
-
-  unset() {
-    this._drop();
-  }
-
-  remove() {
-    this._drop();
-  }
-
-  union() {
-    this._drop();
   }
 }
 

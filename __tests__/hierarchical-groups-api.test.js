@@ -119,39 +119,35 @@ test(`getCompany is not cached across identities`, async () => {
   expect(second.groupID).toBe("globex");
 });
 
-test(`getCompany before identify drops updates`, async () => {
+test(`getCompany before identify resolves to null`, async () => {
   const mixpanel = await start(true);
-  const company = await mixpanel.getCompany();
-  company.set("tier", "enterprise");
-  company.setOnce("tier", "enterprise");
-  company.unset("tier");
-  company.remove("plans", "a");
-  company.union("plans", ["a"]);
 
-  expect(company).toBeInstanceOf(MixpanelGroup);
-  expect(native.groupSetProperties).not.toBeCalled();
-  expect(native.groupSetPropertyOnce).not.toBeCalled();
-  expect(native.groupUnsetProperty).not.toBeCalled();
-  expect(native.groupRemovePropertyValue).not.toBeCalled();
-  expect(native.groupUnionProperty).not.toBeCalled();
-  expect(errorSpy).toHaveBeenCalledTimes(5);
+  expect(await mixpanel.getCompany()).toBeNull();
+  expect(errorSpy).toHaveBeenCalledTimes(1);
   expect(errorSpy).toBeCalledWith(
     "token",
-    "getCompany() needs a company. Call identify({userId, companyId}) first. The update was dropped."
+    "getCompany() needs a company. Call identify({userId, companyId}) first."
   );
 });
 
-test(`getCompany when disabled drops updates`, async () => {
-  const mixpanel = await start(false);
-  const company = await mixpanel.getCompany();
-  company.set("tier", "enterprise");
+test(`getCompany resolves to null when the native identity is null`, async () => {
+  native.getIdentity.mockResolvedValueOnce(null);
+  const mixpanel = await start(true);
 
+  expect(await mixpanel.getCompany()).toBeNull();
+  expect(errorSpy).toHaveBeenCalledTimes(1);
+});
+
+test(`getCompany when disabled resolves to null`, async () => {
+  const mixpanel = await start(false);
+
+  expect(await mixpanel.getCompany()).toBeNull();
   expect(native.getIdentity).not.toBeCalled();
-  expect(native.groupSetProperties).not.toBeCalled();
+  expect(errorSpy).toHaveBeenCalledTimes(1);
   expect(errorSpy).toBeCalledWith(
     "token",
     "getCompany() is only for hierarchical groups projects, enabled with the " +
-      "hierarchicalGroups argument of init(). The update was dropped."
+      "hierarchicalGroups argument of init()."
   );
 });
 

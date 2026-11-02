@@ -625,26 +625,25 @@ describe("Mixpanel in JavaScript mode", () => {
     ]);
   });
 
-  it("getCompany before identify drops updates", async () => {
+  it("getCompany before identify resolves to null", async () => {
     const mixpanel = await startMixpanel(true);
-    const company = await mixpanel.getCompany();
-    company.set("tier", "enterprise");
-    company.union("plans", ["a"]);
 
+    expect(await mixpanel.getCompany()).toBeNull();
     expect(groups()).toHaveLength(0);
     expect(errors()).toEqual([
-      "getCompany() needs a company. Call identify({userId, companyId}) first. The update was dropped.",
-      "getCompany() needs a company. Call identify({userId, companyId}) first. The update was dropped.",
+      "getCompany() needs a company. Call identify({userId, companyId}) first.",
     ]);
   });
 
-  it("getCompany when disabled drops updates", async () => {
+  it("getCompany when disabled resolves to null", async () => {
     const mixpanel = await startMixpanel(false);
     await mixpanel.identify({ userId: "user_123" });
-    const company = await mixpanel.getCompany();
-    company.setOnce("tier", "enterprise");
 
+    expect(await mixpanel.getCompany()).toBeNull();
     expect(groups()).toHaveLength(0);
-    expect(errors()[0]).toMatch(/^getCompany\(\) is only for hierarchical groups projects/);
+    expect(errors()).toEqual([
+      "getCompany() is only for hierarchical groups projects, enabled with the " +
+        "hierarchicalGroups argument of init().",
+    ]);
   });
 });

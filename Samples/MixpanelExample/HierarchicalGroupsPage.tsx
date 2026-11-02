@@ -86,36 +86,37 @@ function HierarchicalGroupsPage({onBack}: Props): React.JSX.Element {
   const groupActions = (
     label: string,
     groupKey: string,
-    group: () => MixpanelGroup | Promise<MixpanelGroup>,
+    // getCompany() resolves to null when there is no company to update
+    group: () => MixpanelGroup | Promise<MixpanelGroup | null>,
     groupId: () => string | Promise<string | null>,
   ): Action[] => [
     {
       title: `${label}: Set Property`,
-      run: async () => (await group()).set('tier', 'enterprise'),
+      run: async () => (await group())?.set('tier', 'enterprise'),
     },
     {
       title: `${label}: Set Properties (Map)`,
       run: async () =>
-        ((await group()) as unknown as GroupWithSetMap).set({
+        ((await group()) as unknown as GroupWithSetMap | null)?.set({
           size: 12,
           region: 'us',
         }),
     },
     {
       title: `${label}: Set Property Once`,
-      run: async () => (await group()).setOnce('created', '2026-10-27'),
+      run: async () => (await group())?.setOnce('created', '2026-10-27'),
     },
     {
       title: `${label}: Union Property`,
-      run: async () => (await group()).union('tags', ['react-native']),
+      run: async () => (await group())?.union('tags', ['react-native']),
     },
     {
       title: `${label}: Remove Property`,
-      run: async () => (await group()).remove('tags', 'react-native'),
+      run: async () => (await group())?.remove('tags', 'react-native'),
     },
     {
       title: `${label}: Unset Property`,
-      run: async () => (await group()).unset('tier'),
+      run: async () => (await group())?.unset('tier'),
     },
     {
       title: `${label}: Delete Group`,

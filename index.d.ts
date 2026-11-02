@@ -266,7 +266,7 @@ export class Mixpanel {
   ): void;
   setGroup(groupKey: string, groupID: MixpanelType): void;
   getGroup(groupKey: string, groupID: MixpanelType): MixpanelGroup;
-  getCompany(): Promise<MixpanelGroup>;
+  getCompany(): Promise<MixpanelGroup | null>;
   addGroup(groupKey: string, groupID: MixpanelType): void;
   removeGroup(groupKey: string, groupID: MixpanelType): void;
   deleteGroup(groupKey: string, groupID: MixpanelType): void;

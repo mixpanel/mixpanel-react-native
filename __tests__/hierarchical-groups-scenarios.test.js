@@ -651,7 +651,7 @@ describe("Hierarchical groups scenarios", () => {
   });
 
   it("Set Company Property Before Identify (Unsupported)", async () => {
-    (await mixpanel.getCompany()).set("tier", "enterprise");
+    expect(await mixpanel.getCompany()).toBeNull();
     await settle();
 
     assertNothingSent();

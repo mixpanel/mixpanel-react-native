@@ -550,6 +550,9 @@ export class Mixpanel {
    * have a string name, and an optional set of name/value pairs that describe the properties of
    * that event. Group key/value pairs are upserted into the property map before tracking.
    *
+   * <p>On a hierarchical groups project a user belongs to one group per group key, so if any
+   * group value is an array the event is dropped with an error log.
+   *
    * @param {string} eventName The name of the event to send
    * @param {object} properties A Map containing the key value pairs of the properties to include in this event.
    *                   Pass null if no extra properties exist.
@@ -562,6 +565,18 @@ export class Mixpanel {
     }
     if (!ObjectHelper.isValidOrUndefined(properties)) {
       ObjectHelper.raiseError(PARAMS.PROPERTIES);
+    }
+    if (this.hierarchicalGroups && groups) {
+      // Checked here so native and JavaScript mode drop it the same way
+      const listKey = Object.keys(groups).find((key) => Array.isArray(groups[key]));
+      if (listKey !== undefined) {
+        MixpanelLogger.error(
+          this.token,
+          `trackWithGroups with a list is not supported for hierarchical groups projects, which ` +
+            `allow one ${listKey} per user. Use one group id per key. The event was dropped.`
+        );
+        return;
+      }
     }
     this.mixpanelImpl.trackWithGroups(
       this.token,

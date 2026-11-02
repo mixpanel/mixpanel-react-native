@@ -195,3 +195,38 @@ test(`setGroup with a list is unchanged when disabled`, async () => {
   mixpanel.setGroup("team_id", ["eng", "ops"]);
   expect(native.setGroup).toBeCalledWith("token", "team_id", ["eng", "ops"]);
 });
+
+test(`trackWithGroups with a list is dropped when enabled`, async () => {
+  const mixpanel = await start(true);
+  mixpanel.trackWithGroups("Opened", {}, { region: "emea", team_id: ["eng", "ops"] });
+  expect(native.trackWithGroups).not.toBeCalled();
+  expect(errorSpy).toBeCalledWith(
+    "token",
+    "trackWithGroups with a list is not supported for hierarchical groups projects, which " +
+      "allow one team_id per user. Use one group id per key. The event was dropped."
+  );
+});
+
+test(`trackWithGroups with one group reaches the SDK when enabled`, async () => {
+  const mixpanel = await start(true);
+  mixpanel.trackWithGroups("Opened", {}, { team_id: "eng" });
+  expect(native.trackWithGroups).toBeCalledWith(
+    "token",
+    "Opened",
+    expect.any(Object),
+    { team_id: "eng" }
+  );
+  expect(errorSpy).not.toBeCalled();
+});
+
+test(`trackWithGroups with a list is unchanged when disabled`, async () => {
+  const mixpanel = await start(false);
+  mixpanel.trackWithGroups("Opened", {}, { team_id: ["eng", "ops"] });
+  expect(native.trackWithGroups).toBeCalledWith(
+    "token",
+    "Opened",
+    expect.any(Object),
+    { team_id: ["eng", "ops"] }
+  );
+  expect(errorSpy).not.toBeCalled();
+});

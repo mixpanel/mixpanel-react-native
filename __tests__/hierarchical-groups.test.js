@@ -647,3 +647,173 @@ describe("Mixpanel in JavaScript mode", () => {
     ]);
   });
 });
+
+describe("flags in JavaScript mode", () => {
+  const {
+    MixpanelFlagsJS,
+  } = require("mixpanel-react-native/javascript/mixpanel-flags-js");
+  const {
+    MixpanelNetwork,
+  } = require("mixpanel-react-native/javascript/mixpanel-network");
+
+  let sendRequestSpy;
+  let fetchMock;
+  const originalFetch = global.fetch;
+
+  beforeEach(() => {
+    sendRequestSpy = jest.spyOn(MixpanelNetwork, "sendRequest").mockResolvedValue({
+      flags: {
+        checkout_flow: {
+          variant_key: "treatment",
+          variant_value: true,
+          experiment_id: "exp_1",
+          is_experiment_active: true,
+        },
+      },
+      pending_first_time_events: [
+        {
+          flag_key: "checkout_flow",
+          flag_id: "flag_1",
+          project_id: 123,
+          first_time_event_hash: "HASH",
+          event_name: "Signed Up",
+          pending_variant: { variant_key: "pending", variant_value: "pending" },
+        },
+      ],
+    });
+    fetchMock = jest.fn(() => Promise.resolve({ ok: true }));
+    global.fetch = fetchMock;
+  });
+
+  afterEach(() => {
+    sendRequestSpy.mockRestore();
+    global.fetch = originalFetch;
+  });
+
+  // Waits for the fetch init() starts, so later fetches are the ones under test
+  const startFlags = async ({ hierarchicalGroups = true, context } = {}) => {
+    const main = await start({ hierarchicalGroups });
+    const flags = new MixpanelFlagsJS(token, main, storage, { enabled: true, context });
+    await flags.init();
+    return { main, flags };
+  };
+
+  const lastContext = () => {
+    const endpoint = sendRequestSpy.mock.calls.at(-1)[0].endpoint;
+    const query = new URLSearchParams(endpoint.slice(endpoint.indexOf("?") + 1));
+    return JSON.parse(query.get("context"));
+  };
+
+  it("send the user and company in the context after identify", async () => {
+    const { main, flags } = await startFlags();
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+    await flags.fetchPromise;
+
+    expect(lastContext()).toEqual({
+      distinct_id: "user_123",
+      device_id: main.mixpanelPersistent.getDeviceId(token),
+      $user_id: "user_123",
+      $company_id: "company_123",
+    });
+  });
+
+  it("send no user or company in the context before identify", async () => {
+    const { main } = await startFlags();
+
+    expect(sendRequestSpy).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(lastContext())).toBe(
+      JSON.stringify({
+        distinct_id: main.mixpanelPersistent.getDistinctId(token),
+        device_id: main.mixpanelPersistent.getDeviceId(token),
+      })
+    );
+  });
+
+  it("refetch with the new company when it changes", async () => {
+    const { main, flags } = await startFlags();
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_456" });
+    await flags.fetchPromise;
+
+    expect(sendRequestSpy).toHaveBeenCalledTimes(3);
+    expect(lastContext().$company_id).toBe("company_456");
+    expect(lastContext().distinct_id).toBe("user_123");
+  });
+
+  it("let the configured context override the user and company", async () => {
+    const { main, flags } = await startFlags({ context: { $company_id: "configured" } });
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+    await flags.fetchPromise;
+
+    expect(lastContext().$company_id).toBe("configured");
+    expect(lastContext().$user_id).toBe("user_123");
+  });
+
+  it("send the context unchanged when disabled", async () => {
+    const { main, flags } = await startFlags({ hierarchicalGroups: false });
+    await main.identifyWithIdentity(token, { userId: "user_123" });
+    await flags.fetchPromise;
+
+    // The user id is stored after identify, but only hierarchical groups sends it
+    expect(main.mixpanelPersistent.getUserId(token)).toBe("user_123");
+    expect(JSON.stringify(lastContext())).toBe(
+      JSON.stringify({
+        distinct_id: "user_123",
+        device_id: main.mixpanelPersistent.getDeviceId(token),
+      })
+    );
+  });
+
+  const firstTimeEventBody = () => {
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, options] = fetchMock.mock.calls[0];
+    expect(url).toContain("/flags/flag_1/first-time-events");
+    expect(options.method).toBe("POST");
+    return options.body;
+  };
+
+  it("send the user and company when recording a first-time event", async () => {
+    const { main, flags } = await startFlags();
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+    await flags.fetchPromise;
+    await main.track(token, "Signed Up");
+
+    expect(firstTimeEventBody()).toBe(
+      JSON.stringify({
+        distinct_id: "user_123",
+        project_id: 123,
+        first_time_event_hash: "HASH",
+        $user_id: "user_123",
+        $company_id: "company_123",
+      })
+    );
+  });
+
+  it("record a first-time event unchanged when disabled", async () => {
+    const { main, flags } = await startFlags({ hierarchicalGroups: false });
+    await main.identifyWithIdentity(token, { userId: "user_123" });
+    await flags.fetchPromise;
+    await main.track(token, "Signed Up");
+
+    expect(firstTimeEventBody()).toBe(
+      JSON.stringify({
+        distinct_id: "user_123",
+        project_id: 123,
+        first_time_event_hash: "HASH",
+      })
+    );
+  });
+
+  it("track $experiment_started with the user and company", async () => {
+    const { main, flags } = await startFlags();
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+    await flags.fetchPromise;
+    await flags.trackExperimentStarted("checkout_flow", flags.getVariantSync("checkout_flow", null));
+
+    const exposure = events().find((e) => e.event === "$experiment_started");
+    expect(exposure.properties["Experiment name"]).toBe("checkout_flow");
+    expect(exposure.properties.$user_id).toBe("user_123");
+    expect(exposure.properties.$company_id).toBe("company_123");
+    expect(exposure.properties.distinct_id).toBe("user_123");
+  });
+});

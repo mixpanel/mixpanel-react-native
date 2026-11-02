@@ -31,7 +31,7 @@ let package = Package(
     ],
     dependencies: [
         // Keep in step with the Mixpanel-swift version in MixpanelReactNative.podspec.
-        .package(url: "https://github.com/mixpanel/mixpanel-swift.git", exact: "7.0.0"),
+        .package(url: "https://github.com/mixpanel/mixpanel-swift.git", exact: "7.1.0"),
         .package(name: "ReactNative", path: "../../../../xcframeworks"),
     ],
     targets: [

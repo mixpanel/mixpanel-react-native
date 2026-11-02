@@ -517,17 +517,7 @@ export class Mixpanel {
    *     records in Mixpanel Group Analytics
    */
   getGroup(groupKey, groupID) {
-    if (this.group) {
-      return this.group;
-    } else {
-      this.group = new MixpanelGroup(
-        this.token,
-        groupKey,
-        groupID,
-        this.mixpanelImpl
-      );
-      return this.group;
-    }
+    return new MixpanelGroup(this.token, groupKey, groupID, this.mixpanelImpl);
   }
 
   /**

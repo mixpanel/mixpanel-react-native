@@ -7,6 +7,24 @@ export type MixpanelAsyncStorage = {
   removeItem(key: string): Promise<void>;
 };
 
+/**
+ * Names who events and profile updates belong to.
+ *
+ * Pass `{userId, companyId}` to `identify()`. On a project that uses hierarchical groups,
+ * enabled with the `hierarchicalGroups` argument of `init()`, both are required, since Mixpanel
+ * builds the user's distinct id from `$company_id` and `$user_id`. Other projects take only a
+ * `userId`. The SDK owns the device id, so `deviceId` is ignored when identifying; it is reported
+ * by `getIdentity()`.
+ */
+export interface MixpanelIdentity {
+  /** The user's id. On a hierarchical groups project it only needs to be unique within the company. */
+  userId: string | null;
+  /** The id of the user's top-level company, on a hierarchical groups project. */
+  companyId?: string | null;
+  /** The device id the SDK assigned. Ignored by `identify()`. */
+  deviceId?: string | null;
+}
+
 export type VariantSource = "network" | "persistence" | "fallback";
 
 export type FallbackReason = "FLAG_NOT_FOUND" | "NOT_READY" | "BACKEND_ERROR";
@@ -221,7 +239,8 @@ export class Mixpanel {
     serverURL?: string,
     useGzipCompression?: boolean,
     featureFlagsOptions?: FeatureFlagsOptions,
-    autocaptureOptions?: AutocaptureOptions | null
+    autocaptureOptions?: AutocaptureOptions | null,
+    hierarchicalGroups?: boolean
   ): Promise<void>;
   setServerURL(serverURL: string): void;
   setLoggingEnabled(loggingEnabled: boolean): void;
@@ -230,8 +249,13 @@ export class Mixpanel {
   setFlushBatchSize(flushBatchSize: number): void;
   hasOptedOutTracking(): Promise<boolean>;
   optInTracking(): void;
+  optInTrackingWithIdentity(
+    identity?: MixpanelIdentity | null,
+    properties?: MixpanelProperties
+  ): void;
   optOutTracking(): void;
   identify(distinctId: string): Promise<void>;
+  identify(identity: MixpanelIdentity): Promise<void>;
   alias(alias: string, distinctId: string): void;
   track(eventName: string, properties?: MixpanelProperties): void;
   getPeople(): People;
@@ -242,6 +266,7 @@ export class Mixpanel {
   ): void;
   setGroup(groupKey: string, groupID: MixpanelType): void;
   getGroup(groupKey: string, groupID: MixpanelType): MixpanelGroup;
+  getCompany(): Promise<MixpanelGroup>;
   addGroup(groupKey: string, groupID: MixpanelType): void;
   removeGroup(groupKey: string, groupID: MixpanelType): void;
   deleteGroup(groupKey: string, groupID: MixpanelType): void;
@@ -253,7 +278,9 @@ export class Mixpanel {
   timeEvent(eventName: string): void;
   eventElapsedTime(eventName: string): Promise<number>;
   reset(): void;
+  /** @deprecated Use getIdentity() instead. */
   getDistinctId(): Promise<string>;
+  getIdentity(): Promise<Readonly<Required<MixpanelIdentity>>>;
   getDeviceId(): Promise<string>;
   flush(): void;
 }

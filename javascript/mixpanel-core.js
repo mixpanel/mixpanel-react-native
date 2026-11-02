@@ -87,7 +87,10 @@ export const MixpanelCore = (storage) => {
     );
   };
 
-  const flush = async (token) => {
+  const flush = async (
+    token,
+    types = [MixpanelType.EVENTS, MixpanelType.USER, MixpanelType.GROUPS]
+  ) => {
     if (mixpanelPersistent.getOptedOut(token)) {
       MixpanelLogger.log(
         token,
@@ -95,9 +98,9 @@ export const MixpanelCore = (storage) => {
       );
       return;
     }
-    await processQueue(token, MixpanelType.EVENTS);
-    await processQueue(token, MixpanelType.USER);
-    await processQueue(token, MixpanelType.GROUPS);
+    for (const type of types) {
+      await processQueue(token, type);
+    }
   };
 
   const processQueue = async (token, type) => {

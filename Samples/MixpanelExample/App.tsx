@@ -9,12 +9,14 @@ import {
   View,
 } from 'react-native';
 import {Mixpanel} from 'mixpanel-react-native';
+import HierarchicalGroupsPage from './HierarchicalGroupsPage';
 
 const trackAutomaticEvents = true;
 const mixpanel = new Mixpanel('Your Project Token', trackAutomaticEvents);
 
 function App(): React.JSX.Element {
   const [isInitialized, setIsInitialized] = useState(false);
+  const [showHierarchicalGroups, setShowHierarchicalGroups] = useState(false);
 
   useEffect(() => {
     const initializeMixpanel = async () => {
@@ -60,6 +62,12 @@ function App(): React.JSX.Element {
     mixpanel.reset();
   };
 
+  if (showHierarchicalGroups) {
+    return (
+      <HierarchicalGroupsPage onBack={() => setShowHierarchicalGroups(false)} />
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -91,6 +99,11 @@ function App(): React.JSX.Element {
             title="Reset User" 
             onPress={resetUser} 
             disabled={!isInitialized}
+          />
+          <View style={styles.spacer} />
+          <Button
+            title="Hierarchical Groups"
+            onPress={() => setShowHierarchicalGroups(true)}
           />
         </View>
         

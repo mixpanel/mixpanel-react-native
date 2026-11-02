@@ -5,7 +5,7 @@
 
 // MARK: - Mixpanel Instance
 
-RCT_EXTERN_METHOD(initialize:(NSString *)token trackAutomaticEvents:(BOOL)trackAutomaticEvents optOutTrackingByDefault:(BOOL)optOutTrackingByDefault properties:(NSDictionary *)properties serverURL:(NSString *)serverURL useGzipCompression:(BOOL)useGzipCompression featureFlagsOptions:(NSDictionary *)featureFlagsOptions autocaptureConfig:(NSDictionary *)autocaptureConfig resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+RCT_EXTERN_METHOD(initialize:(NSString *)token trackAutomaticEvents:(BOOL)trackAutomaticEvents optOutTrackingByDefault:(BOOL)optOutTrackingByDefault properties:(NSDictionary *)properties serverURL:(NSString *)serverURL useGzipCompression:(BOOL)useGzipCompression featureFlagsOptions:(NSDictionary *)featureFlagsOptions autocaptureConfig:(NSDictionary *)autocaptureConfig hierarchicalGroups:(BOOL)hierarchicalGroups resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
 // Mark: - Settings
 RCT_EXTERN_METHOD(setServerURL:(NSString *)token serverURL:(NSString *)serverURL resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
@@ -26,6 +26,8 @@ RCT_EXTERN_METHOD(hasOptedOutTracking:(NSString *)token resolver:(RCTPromiseReso
 
 RCT_EXTERN_METHOD(optInTracking:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(optInTrackingWithIdentity:(NSString *)token identity:(NSDictionary *)identity properties:(NSDictionary *)properties resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
 // MARK: - Track Events
 
 RCT_EXTERN_METHOD(track:(NSString *)token event:(NSString *)event properties:(NSDictionary *)properties resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
@@ -39,6 +41,10 @@ RCT_EXTERN_METHOD(eventElapsedTime:(NSString *)token event:(NSString *)event res
 // MARK: - Managing User Identity
 
 RCT_EXTERN_METHOD(identify:(NSString *)token distinctId:(NSString *)distinctId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(identifyWithIdentity:(NSString *)token identity:(NSDictionary *)identity resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(getIdentity:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
 RCT_EXTERN_METHOD(alias:(NSString *)token alias:(NSString *)alias distinctId:(NSString *)distinctId resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 

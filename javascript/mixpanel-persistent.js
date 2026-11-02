@@ -6,6 +6,7 @@ import {
   getOptedOutKey as getOutedOutKey,
   getQueueKey,
   getUserIdKey,
+  getCompanyIdKey,
   getAppHasOpenedBeforeKey,
 } from "./mixpanel-constants";
 
@@ -138,16 +139,27 @@ export class MixpanelPersistent {
     MixpanelLogger.log(token, "userId:", this._identity[token].userId);
   }
 
+  async loadCompanyId(token) {
+    const companyId = await this.storageAdapter.getItem(getCompanyIdKey(token));
+    if (!this._identity[token]) {
+      this._identity[token] = {};
+    }
+    this._identity[token].companyId = companyId;
+    MixpanelLogger.log(token, "companyId:", this._identity[token].companyId);
+  }
+
   async loadIdentity(token) {
     await this.loadDeviceId(token);
     await this.loadDistinctId(token);
     await this.loadUserId(token);
+    await this.loadCompanyId(token);
   }
 
   async persistIdentity(token) {
     await this.persistDeviceId(token);
     await this.persistDistinctId(token);
     await this.persistUserId(token);
+    await this.persistCompanyId(token);
   }
 
   getDeviceId(token) {
@@ -214,6 +226,28 @@ export class MixpanelPersistent {
     await this.storageAdapter.setItem(
       getUserIdKey(token),
       this._identity[token].userId
+    );
+  }
+
+  // The company of a hierarchical groups project, stored with the identity
+  getCompanyId(token) {
+    if (!this._identity[token]) {
+      return null;
+    }
+    return this._identity[token].companyId || null;
+  }
+
+  updateCompanyId(token, companyId) {
+    this._identity[token].companyId = companyId;
+  }
+
+  async persistCompanyId(token) {
+    if (!this._identity[token] || this._identity[token].companyId == null) {
+      return;
+    }
+    await this.storageAdapter.setItem(
+      getCompanyIdKey(token),
+      this._identity[token].companyId
     );
   }
 
@@ -345,6 +379,7 @@ export class MixpanelPersistent {
     await this.storageAdapter.removeItem(getDeviceIdKey(token));
     await this.storageAdapter.removeItem(getDistinctIdKey(token));
     await this.storageAdapter.removeItem(getUserIdKey(token));
+    await this.storageAdapter.removeItem(getCompanyIdKey(token));
     await this.storageAdapter.removeItem(getSuperPropertiesKey(token));
     await this.storageAdapter.removeItem(getTimeEventsKey(token));
     await this.loadIdentity(token);

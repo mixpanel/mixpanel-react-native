@@ -136,7 +136,7 @@ export const MixpanelCore = (storage) => {
             setTimeout(processBatch, 0);
           }
         } catch (error) {
-          handleBatchError(token, error, type, processBatch);
+          handleBatchError(token, error, type, processBatch, clearCount);
         }
       }
     };
@@ -144,12 +144,18 @@ export const MixpanelCore = (storage) => {
     processBatch();
   };
 
-  const handleBatchError = (token, error, type, callback) => {
+  const handleBatchError = (token, error, type, callback, clearCount) => {
     if (error.code === 400) {
       MixpanelLogger.error(
         token,
         `Bad request received due to corrupted data within the batch. The corrupted data is now being removed from the queue...`
       );
+      // A clear while the batch was sending already removed the corrupted data, and records
+      // queued since were not sent
+      if (MixpanelQueueManager.getClearCount(token, type) !== clearCount) {
+        setTimeout(callback, 0);
+        return;
+      }
       // Remove the corrupted data from the queue, to avoid the data loss, only remove one event at a time
       MixpanelQueueManager.spliceQueue(token, type, 0, 1).then(() => {
         setTimeout(callback, 0);

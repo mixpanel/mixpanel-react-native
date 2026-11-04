@@ -149,6 +149,33 @@ describe("MixpanelQueueManager", () => {
     MixpanelQueueManager.getClearCount.mockReturnValue(0);
   });
 
+  it("does not remove records queued after a clear when the batch was rejected", async () => {
+    MixpanelQueueManager.getQueue.mockReturnValueOnce([data]).mockReturnValue([]);
+    MixpanelNetwork.sendRequest.mockImplementationOnce(async () => {
+      MixpanelQueueManager.getClearCount.mockReturnValue(1);
+      throw Object.assign(new Error("Bad request"), { code: 400 });
+    });
+
+    await MixpanelCore().flush(token, [type]);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(MixpanelQueueManager.spliceQueue).not.toHaveBeenCalled();
+    MixpanelQueueManager.getClearCount.mockReturnValue(0);
+  });
+
+  it("removes the first record of a rejected batch", async () => {
+    MixpanelQueueManager.getQueue.mockReturnValueOnce([data]).mockReturnValue([]);
+    MixpanelQueueManager.spliceQueue.mockResolvedValueOnce(undefined);
+    MixpanelNetwork.sendRequest.mockRejectedValueOnce(
+      Object.assign(new Error("Bad request"), { code: 400 })
+    );
+
+    await MixpanelCore().flush(token, [type]);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(MixpanelQueueManager.spliceQueue).toHaveBeenCalledWith(token, type, 0, 1);
+  });
+
   it("not flushes the queue if there is no data", async () => {
     MixpanelPersistent.getInstance().getOptedOut.mockReturnValueOnce(false);
     MixpanelQueueManager.getQueue.mockImplementation((token, type) => {

@@ -115,6 +115,7 @@ export const MixpanelCore = (storage) => {
         );
         const batchSize = config.getFlushBatchSize(token);
         const batch = queue.slice(0, batchSize);
+        const clearCount = MixpanelQueueManager.getClearCount(token, type);
         try {
           await MixpanelNetwork.sendRequest({
             token,
@@ -124,7 +125,11 @@ export const MixpanelCore = (storage) => {
             useIPAddressForGeoLocation:
               config.getUseIpAddressForGeolocation(token),
           });
-          await MixpanelQueueManager.spliceQueue(token, type, 0, batch.length);
+          // A clear while the batch was sending already removed it, and records queued since
+          // were not sent
+          if (MixpanelQueueManager.getClearCount(token, type) === clearCount) {
+            await MixpanelQueueManager.spliceQueue(token, type, 0, batch.length);
+          }
           // Process the next batch if there are more events in the queue
           const queue = MixpanelQueueManager.getQueue(token, type);
           if (queue.length > 0) {

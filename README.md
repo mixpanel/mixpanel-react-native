@@ -2,7 +2,7 @@
   <img src="https://user-images.githubusercontent.com/71290498/231855346-12c8fc52-5f24-485c-b9e6-24468599fb87.png" alt="Mixpanel React Native Library" height="150"/>
 </div>
 
-##### _October 13, 2026_ - [v4.0.0](https://github.com/mixpanel/mixpanel-react-native/releases/tag/v4.0.0)
+##### _November 02, 2026_ - [v4.1.0](https://github.com/mixpanel/mixpanel-react-native/releases/tag/v4.1.0)
 
 ## Table of Contents
 
@@ -22,11 +22,6 @@
 <!-- /MarkdownTOC -->
 
 > **iOS 15+ from v4.0.0.** Starting with v4.0.0, the SDK supports iOS 15.0 and above (required by Xcode 27). Need iOS 12–14? Stay on v3.x with Xcode 26. See the [Version Support Policy](#version-support-policy).
-
-> **Autocapture is in beta.** Autocapture — `$mp_click`, `$mp_rage_click` and `$mp_dead_click`, and
-> the `mixpanel.autocapture` API — may contain issues, and its API and the properties it captures may
-> change in a future release before general availability. Pin your SDK version if you build reports
-> on autocaptured events.
 
 ## Introduction
 
@@ -79,13 +74,25 @@ npm install @react-native-async-storage/async-storage
 >
 > This does not apply if AsyncStorage is not installed (for example, native mode only).
 
-3. Under your application's ios folder, run
+3. Link the iOS native module with CocoaPods or Swift Package Manager.
+
+**CocoaPods** (default). Under your application's ios folder, run
 
 ```
 pod install
 ```
 
 Please note: You do not need to update your Podfile to add Mixpanel.
+
+**Swift Package Manager** (React Native 0.88+, experimental). Mixpanel ships a `Package.swift` that React Native's SwiftPM autolinking picks up, so no extra configuration is needed. Opt your app into SwiftPM from its ios folder:
+
+```
+npx react-native spm --deintegrate
+```
+
+`--deintegrate` removes CocoaPods from the project, and `npx react-native spm deinit` reverses the change. After a fresh clone, and in CI, run `npx react-native spm` once before building, as you would `pod install`. React Native's SwiftPM support is still experimental; see the [React Native 0.88 release notes](https://reactnative.dev/blog/2026/10/19/react-native-0.88#experimental-swift-package-manager-support) for its current limitations.
+
+The package pins [mixpanel-swift](https://github.com/mixpanel/mixpanel-swift) to the exact version each release is tested with. If your app also depends on mixpanel-swift directly, use the version in [`ios/Package.swift`](ios/Package.swift), or Swift Package Manager won't be able to resolve your packages.
 
 ### 2. Initialize Mixpanel
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## [v4.1.0](https://github.com/mixpanel/mixpanel-react-native/tree/v4.1.0) (2026-11-02)
+
+### Features
+- support Swift Package Manager on React Native 0.88+ ([#471](https://github.com/mixpanel/mixpanel-react-native/pull/471))
+- graduate autocapture from beta to general availability ([#473](https://github.com/mixpanel/mixpanel-react-native/pull/473))
+
+[Full Changelog](https://github.com/mixpanel/mixpanel-react-native/compare/v4.0.0...v4.1.0)
+
 ## [v4.0.0](https://github.com/mixpanel/mixpanel-react-native/tree/v4.0.0) (2026-10-13)
 
 ### Breaking Changes ([#466](https://github.com/mixpanel/mixpanel-react-native/pull/466))

@@ -46,7 +46,7 @@
         <article><div align="center" style="text-align: center">
   <img src="https://user-images.githubusercontent.com/71290498/231855346-12c8fc52-5f24-485c-b9e6-24468599fb87.png" alt="Mixpanel React Native Library" height="150"/>
 </div>
-<h5><em>October 13, 2026</em> - <a href="https://github.com/mixpanel/mixpanel-react-native/releases/tag/v4.0.0">v4.0.0</a></h5>
+<h5><em>November 02, 2026</em> - <a href="https://github.com/mixpanel/mixpanel-react-native/releases/tag/v4.1.0">v4.1.0</a></h5>
 <h2>Table of Contents</h2>
 <!-- MarkdownTOC -->
 <ul>
@@ -60,15 +60,13 @@
 <li><a href="#complete-code-example">Complete Code Example</a></li>
 </ul>
 </li>
+<li><a href="#version-support-policy">Version Support Policy</a></li>
 <li><a href="#faq">FAQ</a></li>
 <li><a href="#i-want-to-know-more">I want to know more!</a></li>
 </ul>
 <!-- /MarkdownTOC -->
 <blockquote>
-<p><strong>Autocapture is in beta.</strong> Autocapture — <code>$mp_click</code>, <code>$mp_rage_click</code> and <code>$mp_dead_click</code>, and
-the <code>mixpanel.autocapture</code> API — may contain issues, and its API and the properties it captures may
-change in a future release before general availability. Pin your SDK version if you build reports
-on autocaptured events.</p>
+<p><strong>iOS 15+ from v4.0.0.</strong> Starting with v4.0.0, the SDK supports iOS 15.0 and above (required by Xcode 27). Need iOS 12–14? Stay on v3.x with Xcode 26. See the <a href="#version-support-policy">Version Support Policy</a>.</p>
 </blockquote>
 <h2>Introduction</h2>
 <p>Welcome to the official Mixpanel React Native library.
@@ -81,6 +79,7 @@ We'd also love for you to come and work with us! Check out <strong><a href="http
 <h4>Prerequisites</h4>
 <ul>
 <li>React Native v0.6+</li>
+<li>iOS 15.0+ deployment target. Xcode 27 rejects any target below iOS 15, so this SDK's minimum is iOS 15.0 from v4.0.0. Need to support iOS 12–14? Stay on v3.x with Xcode 26 (see <a href="#version-support-policy">Version Support Policy</a>).</li>
 <li><a href="https://reactnative.dev/docs/environment-setup">Setup development environment for React Native</a></li>
 </ul>
 <h4>Steps</h4>
@@ -97,15 +96,31 @@ We'd also love for you to come and work with us! Check out <strong><a href="http
 <blockquote>
 <p><strong>Note:</strong> Starting from v3.2.0, <code>@react-native-async-storage/async-storage</code> is a peer dependency. This allows your project to use either v1.x or v2.x, avoiding conflicts with frameworks like Expo 52+.</p>
 </blockquote>
+<blockquote>
+<p><strong>Building with Xcode 27 and AsyncStorage installed?</strong> Mixpanel only uses AsyncStorage in JavaScript mode, but AsyncStorage ships its own iOS pod (<code>RNCAsyncStorage</code>), which CocoaPods builds whenever the package is installed. Its podspec declares a deployment target below iOS 15 (v1.x and v2.x declare 13.4 or lower), and Xcode 27 rejects that for its resource-bundle target with an error like <code>IPHONEOS_DEPLOYMENT_TARGET is set to 13.4, but the range of supported deployment target versions is 15.0 to ...</code>. Until AsyncStorage raises its floor, add this inside the <code>post_install</code> block of your app's <code>ios/Podfile</code>, after <code>react_native_post_install</code>:</p>
+<pre class="prettyprint source lang-ruby"><code>installer.pods_project.targets.each do |target|
+  target.build_configurations.each do |config|
+    current = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+    if current.nil? || Gem::Version.new(current) &lt; Gem::Version.new('15.0')
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+    end
+  end
+end
+</code></pre>
+<p>This does not apply if AsyncStorage is not installed (for example, native mode only).</p>
+</blockquote>
 <ol start="3">
-<li>Under your application's ios folder, run</li>
+<li>Link the iOS native module with CocoaPods or Swift Package Manager.</li>
 </ol>
+<p><strong>CocoaPods</strong> (default). Under your application's ios folder, run</p>
 <pre class="prettyprint source"><code>pod install
 </code></pre>
 <p>Please note: You do not need to update your Podfile to add Mixpanel.</p>
-<ol start="4">
-<li>Since Xcode 12.5, there is a known swift compile issue, please refer to this <strong><a href="https://github.com/mixpanel/mixpanel-react-native/issues/43#issuecomment-829599732">workaround</a></strong>. However the compile issue has been resolved in Xcode 13.2.1+, there is no extra step required as long as you upgrade to Xcode 13.2.1+.</li>
-</ol>
+<p><strong>Swift Package Manager</strong> (React Native 0.88+, experimental). Mixpanel ships a <code>Package.swift</code> that React Native's SwiftPM autolinking picks up, so no extra configuration is needed. Opt your app into SwiftPM from its ios folder:</p>
+<pre class="prettyprint source"><code>npx react-native spm --deintegrate
+</code></pre>
+<p><code>--deintegrate</code> removes CocoaPods from the project, and <code>npx react-native spm deinit</code> reverses the change. After a fresh clone, and in CI, run <code>npx react-native spm</code> once before building, as you would <code>pod install</code>. React Native's SwiftPM support is still experimental; see the <a href="https://reactnative.dev/blog/2026/10/19/react-native-0.88#experimental-swift-package-manager-support">React Native 0.88 release notes</a> for its current limitations.</p>
+<p>The package pins <a href="https://github.com/mixpanel/mixpanel-swift">mixpanel-swift</a> to the exact version each release is tested with. If your app also depends on mixpanel-swift directly, use the version in <a href="ios/Package.swift"><code>ios/Package.swift</code></a>, or Swift Package Manager won't be able to resolve your packages.</p>
 <h3>2. Initialize Mixpanel</h3>
 <p>To start tracking with the library you must first initialize with your project token. You can get your project token from <a href="https://mixpanel.com/settings/project">project settings</a>.</p>
 <pre class="prettyprint source lang-js"><code>import { Mixpanel } from &quot;mixpanel-react-native&quot;;
@@ -177,6 +192,34 @@ const mixpanel = new Mixpanel(
 </code></pre>
 <p>This will activate JavaScript mode.</p>
 <p>👋 👋 Tell us about the Mixpanel developer experience! <a href="https://www.mixpanel.com/devnps">https://www.mixpanel.com/devnps</a> 👍 👎</p>
+<h2>Version Support Policy</h2>
+<p>Xcode 27 requires every target in your build, including CocoaPods pod targets, to have a deployment target of iOS 15 or higher. Apple also requires App Store submissions to use the iOS 27 SDK starting April 2027, so apps will move to iOS 15+ regardless.</p>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Minimum iOS</th>
+<th>Xcode</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v4.x</td>
+<td>15.0</td>
+<td>26 and 27</td>
+<td>Current: new features and fixes</td>
+</tr>
+<tr>
+<td>v3.x</td>
+<td>12.0</td>
+<td>26</td>
+<td>Maintenance: security, crash and data-loss fixes only, through April 2027</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Need iOS 12–14? Stay on v3.x with Xcode 26.</strong> Existing <code>^3.x</code> ranges keep resolving to v3.x and receive its maintenance patches without any action. When you are ready to move, upgrade to v4.x and raise your app's deployment target to iOS 15.0 or higher.</p>
+<p>Our policy: we add support for each new Xcode's deployment-target floor promptly after its GM release, and we drop the old floor only when Apple's SDK submission requirement makes it necessary, not on the day Xcode ships. The v3.x maintenance window ends in April 2027, when Apple requires the iOS 27 SDK. At that point we publish a final v3.x release and stop backporting.</p>
 <h2>FAQ</h2>
 <p><strong>I want to stop tracking an event/event property in Mixpanel. Is that possible?</strong>
 Yes, in Lexicon, you can intercept and drop incoming events or properties. Mixpanel won’t store any new data for the event or property you select to drop. <a href="https://help.mixpanel.com/hc/en-us/articles/360001307806#dropping-events-and-properties">See this article for more information</a>.</p>
@@ -217,7 +260,7 @@ Please refer to our <a href="https://mixpanel.com/legal/app-store-privacy-detail
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Tue Oct 13 2026 07:07:13 GMT+0000 (Coordinated Universal Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Nov 02 2026 13:59:42 GMT+0000 (Coordinated Universal Time)
 </footer>
 
 <script> prettyPrint(); </script>

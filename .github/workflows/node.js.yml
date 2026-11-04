@@ -168,3 +168,165 @@ jobs:
           if ! xcrun simctl spawn "$SIM_UDID" launchctl list | grep -Eq "^[0-9]+[[:space:]]+[-0-9]+[[:space:]]+UIKitApplication:$BUNDLE_ID"; then
             echo "$BUNDLE_ID is not running after launch"; exit 1
           fi
+
+  # Same as test_android, for the Swift Package Manager sample (React Native 0.88).
+  # Android doesn't use SwiftPM; this checks the library on that sample's React Native.
+  test_android_spm:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [24.15.0]
+        api-level: [34]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Setup Java
+        uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9  # v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@48b5f213c81028ace310571dc5ec0fbbca0b2947  # v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Test Integration - Install dependencies
+        working-directory: ./Samples/MixpanelExampleSpm
+        run: npm install
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      # Its own key: test_android runs at the same time and would race this job to save
+      # the same entry.
+      - name: AVD cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}-google-apis-x86_64-nexus5x-spm
+
+      - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5a  # v2
+        env:
+          GRADLE_OPTS: -Xmx4096m -Dorg.gradle.daemon=false
+          JAVA_OPTS: -Xmx4096m
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 5X
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          working-directory: ./Samples/MixpanelExampleSpm
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Run Android Tests
+        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5a  # v2
+        env:
+          GRADLE_OPTS: -Xmx4096m -Dorg.gradle.daemon=false
+          JAVA_OPTS: -Xmx4096m
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 5X
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          emulator-boot-timeout: 900
+          working-directory: ./Samples/MixpanelExampleSpm
+          # Release, so the JavaScript bundle is built into the APK: a Debug build without
+          # Metro would launch without running the sample. The runner executes each line in
+          # its own shell, so the wait and the check after launch each stay on one line.
+          # The wait polls for up to two minutes rather than sleeping a fixed time.
+          script: |
+            echo "org.gradle.jvmargs=-Xmx4096m -XX:MaxMetaspaceSize=1024m -XX:+HeapDumpOnOutOfMemoryError" >> android/gradle.properties
+            echo "org.gradle.daemon=false" >> android/gradle.properties
+            adb logcat -c
+            npx react-native run-android --no-packager --mode release --active-arch-only
+            for i in $(seq 60); do adb logcat -d -s ReactNativeJS:V | grep -q "MixpanelExampleSpm ready: native=" && break; sleep 2; done
+            adb logcat -d -s ReactNativeJS:V | grep -q "MixpanelExampleSpm ready: native=true" || { echo "Mixpanel did not initialize with the native module. JavaScript log:"; adb logcat -d -s ReactNativeJS:V | tail -50; exit 1; }
+
+  # Same as test_ios, for the Swift Package Manager sample (React Native 0.88): builds
+  # with the package's ios/Package.swift instead of the podspec, then launches the app.
+  test_ios_spm:
+    name: iOS SPM (Xcode ${{ matrix.xcode }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Latest Xcode 26.x
+          - { xcode: '26', runner: macos-26, node-version: 24.15.0, ios: '26', simulator: "iPhone 17 Pro" }
+          # Xcode 27
+          - { xcode: '27.0', runner: xcode-27, node-version: 24.15.0, ios: '27', simulator: "iPhone 18 Pro" }
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+      - name: Select Xcode ${{ matrix.xcode }}
+        uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90  # v1
+        with:
+          xcode-version: ${{ matrix.xcode }}
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020  # v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - name: Test Integration - Install dependencies
+        working-directory: ./Samples/MixpanelExampleSpm
+        run: npm install
+      # The SwiftPM equivalent of `pod install`: resolves the packages, including this
+      # library's ios/Package.swift, into the Xcode project.
+      - name: Set up Swift Package Manager
+        working-directory: ./Samples/MixpanelExampleSpm
+        run: npm run spm
+      - name: Select iOS ${{ matrix.ios }} simulator
+        run: |
+          UDID=$(xcrun simctl list devices available -j \
+            | jq -r --arg n "${{ matrix.simulator }}" --arg os "${{ matrix.ios }}" \
+              '[.devices | to_entries[] | select(.key | test("SimRuntime\\.iOS-" + $os + "-")) | .value[] | select(.name == $n)][0].udid // empty')
+          if [ -z "$UDID" ]; then
+            echo "Simulator '${{ matrix.simulator }}' (iOS ${{ matrix.ios }}) not found"; xcrun simctl list devices available; exit 1
+          fi
+          echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
+      # @react-native-community/cli >= 20.2.0 is required for Xcode 27 (Simulator.app was
+      # replaced by DeviceHub.app).
+      # Release, so the JavaScript bundle is built into the app: Debug simulator builds skip
+      # bundling and would launch without running the sample.
+      - name: Test iOS (Xcode ${{ matrix.xcode }})
+        working-directory: ./Samples/MixpanelExampleSpm
+        run: npx react-native run-ios --udid "$SIM_UDID" --mode Release
+      - name: Verify app is still running
+        run: |
+          BUNDLE_ID=org.reactjs.native.example.MixpanelExampleSpm
+          # Fail if the app terminated after launch (e.g. missing UIScene lifecycle on iOS 27).
+          sleep 15
+          if ! xcrun simctl spawn "$SIM_UDID" launchctl list | grep -Eq "^[0-9]+[[:space:]]+[-0-9]+[[:space:]]+UIKitApplication:$BUNDLE_ID"; then
+            echo "$BUNDLE_ID is not running after launch"; exit 1
+          fi
+      # The sample logs this line after init(); native=false means the SDK fell back to
+      # JavaScript mode because SwiftPM did not register the native module.
+      - name: Verify Mixpanel initialized with the native module
+        run: |
+          LOGS=$(xcrun simctl spawn "$SIM_UDID" log show --last 5m --info --debug \
+            --predicate 'subsystem == "com.facebook.react.log" AND category == "javascript"')
+          if ! grep -q "MixpanelExampleSpm ready: native=true" <<< "$LOGS"; then
+            echo "Mixpanel did not initialize with the native module. JavaScript log:"; echo "$LOGS" | tail -50; exit 1
+          fi

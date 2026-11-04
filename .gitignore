@@ -9,6 +9,9 @@ yarn-error.log
 
 # Xcode
 ios/build/
+ios/.build/
+ios/.swiftpm/
+ios/Package.resolved
 *.pbxuser
 !default.pbxuser
 *.mode1v3

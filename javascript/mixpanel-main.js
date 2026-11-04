@@ -1,5 +1,6 @@
 import { Platform } from "react-native";
 import { MixpanelCore } from "./mixpanel-core";
+import { MixpanelQueueManager } from "./mixpanel-queue";
 import { MixpanelType } from "./mixpanel-constants";
 import { MixpanelConfig } from "./mixpanel-config";
 import { MixpanelPersistent } from "./mixpanel-persistent";
@@ -8,6 +9,7 @@ import { identityToString } from "./mixpanel-utils";
 import packageJson from "mixpanel-react-native/package.json";
 
 const USER_ID_GROUP_KEY = "$user_id";
+const COMPANY_ID_GROUP_KEY = "$company_id";
 // /groups has no $add, $append or $merge
 const HIERARCHICAL_GROUPS_OPERATIONS = [
   "$set",
@@ -210,7 +212,9 @@ export default class MixpanelMain {
       this.mixpanelPersistent.getCompanyId(token)
     ) {
       // Delete the user's $user_id profile, never the company or team profiles. Sent now
-      // because nothing is flushed while opted out.
+      // because nothing is flushed while opted out, so pending /groups updates are cleared
+      // first to send only the delete.
+      await MixpanelQueueManager.clearQueue(token, MixpanelType.GROUPS);
       await this.deleteUser(token);
       await this.core.flush(token, [MixpanelType.GROUPS]);
     }
@@ -567,8 +571,12 @@ export default class MixpanelMain {
   async sendGroupDataToMixpanel({ token, groupKey, groupID, action }) {
     let companyProps = {};
     if (this.hierarchicalGroups) {
-      // Hierarchical groups require $company_id at the top level of every /groups write
-      const companyId = this.mixpanelPersistent.getCompanyId(token);
+      // Hierarchical groups require $company_id at the top level of every /groups write. A
+      // company profile's own id is its company, whatever the user is identified with now.
+      const companyId =
+        groupKey === COMPANY_ID_GROUP_KEY
+          ? groupID
+          : this.mixpanelPersistent.getCompanyId(token);
       if (!companyId) {
         MixpanelLogger.error(
           token,

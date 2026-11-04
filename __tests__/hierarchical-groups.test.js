@@ -29,6 +29,9 @@ const {
 const {
   MixpanelLogger,
 } = require("mixpanel-react-native/javascript/mixpanel-logger");
+const {
+  MixpanelQueueManager,
+} = require("mixpanel-react-native/javascript/mixpanel-queue");
 
 const token = "hg-token";
 
@@ -348,6 +351,21 @@ describe("opt in and out", () => {
     expect((await main.getIdentity(token)).companyId).toBeNull();
   });
 
+  it("opt out clears pending group updates before the user delete", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    const clearQueue = jest.spyOn(MixpanelQueueManager, "clearQueue");
+    const deleteUser = jest.spyOn(main, "deleteUser");
+
+    await main.optOutTracking(token);
+
+    expect(clearQueue).toHaveBeenCalledWith(token, MixpanelType.GROUPS);
+    expect(clearQueue.mock.invocationCallOrder[0]).toBeLessThan(
+      deleteUser.mock.invocationCallOrder[0]
+    );
+    clearQueue.mockRestore();
+  });
+
   it("opt out of an anonymous user deletes nothing", async () => {
     const main = await start();
     await main.optOutTracking(token);
@@ -621,6 +639,35 @@ describe("Mixpanel in JavaScript mode", () => {
         $group_id: "acme",
         $company_id: "acme",
         $set: { tier: "enterprise" },
+      }),
+    ]);
+  });
+
+  it("a saved getCompany handle keeps its company after identify and reset", async () => {
+    const mixpanel = await startMixpanel(true);
+    await mixpanel.identify(acme);
+    const company = await mixpanel.getCompany();
+    await mixpanel.identify({ userId: "user_123", companyId: "globex" });
+    mockCore.addToMixpanelQueue.mockClear();
+
+    company.set("tier", "enterprise");
+    await new Promise((resolve) => setImmediate(resolve));
+    await mixpanel.reset();
+    company.set("tier", "free");
+    await new Promise((resolve) => setImmediate(resolve));
+
+    expect(groups()).toEqual([
+      expect.objectContaining({
+        $group_key: "$company_id",
+        $group_id: "acme",
+        $company_id: "acme",
+        $set: { tier: "enterprise" },
+      }),
+      expect.objectContaining({
+        $group_key: "$company_id",
+        $group_id: "acme",
+        $company_id: "acme",
+        $set: { tier: "free" },
       }),
     ]);
   });

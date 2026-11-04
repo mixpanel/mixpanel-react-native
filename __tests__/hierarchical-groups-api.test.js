@@ -45,6 +45,16 @@ test(`identify with an identity sends only the identity fields`, async () => {
   expect(native.identify).not.toBeCalled();
 });
 
+test(`identify with an identity reaches the native SDK before a following track`, async () => {
+  const mixpanel = await start(true);
+  const identified = mixpanel.identify({ userId: "user_123", companyId: "acme" });
+  mixpanel.track("Signed In");
+  await identified;
+  expect(native.identifyWithIdentity.mock.invocationCallOrder[0]).toBeLessThan(
+    native.track.mock.invocationCallOrder[0]
+  );
+});
+
 test(`identify with a distinct id is unchanged`, async () => {
   const mixpanel = await start(false);
   await mixpanel.identify("user_123");

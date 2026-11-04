@@ -447,13 +447,18 @@ export class Mixpanel {
    */
   identify(distinctId) {
     if (distinctId !== null && typeof distinctId === "object") {
-      return new Promise((resolve) => {
-        resolve(IdentityHelper.normalize(distinctId));
-      })
-        .then((identity) =>
-          this.mixpanelImpl.identifyWithIdentity(this.token, identity)
-        )
-        .then(() => undefined);
+      // Called in the executor, as the string overload is, so calls made
+      // right after identify() run under the new identity
+      return new Promise((resolve, reject) => {
+        this.mixpanelImpl
+          .identifyWithIdentity(this.token, IdentityHelper.normalize(distinctId))
+          .then(() => {
+            resolve();
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
     }
     return new Promise((resolve, reject) => {
       if (!StringHelper.isValid(distinctId)) {

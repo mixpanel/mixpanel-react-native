@@ -244,7 +244,7 @@ export class Mixpanel {
   timeEvent(eventName: string): void;
   eventElapsedTime(eventName: string): Promise<number>;
   reset(): void;
-  /** @deprecated Use getIdentity() instead. */
+  /** Not for hierarchical groups projects; prefer getIdentity() there. */
   getDistinctId(): Promise<string>;
   getIdentity(): Promise<Readonly<Required<MixpanelIdentity>>>;
   getDeviceId(): Promise<string>;

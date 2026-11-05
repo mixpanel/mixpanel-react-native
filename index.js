@@ -856,7 +856,9 @@ export class Mixpanel {
    *
    * <p>On a hierarchical groups project Mixpanel builds the distinct id from the company and the
    * user, so once both are known this returns `$company:{companyId}|$user:{userId}`. Until a
-   * company is known it returns the device form, `$device:{deviceId}`.
+   * company is known it returns the device form, `$device:{deviceId}`. Don't use this on a
+   * hierarchical groups project; prefer getIdentity(), whose user, company and device ids every
+   * Mixpanel SDK accepts directly.
    *
    * example of usage:
    * <pre>
@@ -866,8 +868,6 @@ export class Mixpanel {
    * </pre>
    *
    * @return {Promise<string>} A Promise to the distinct id associated with Mixpanel event and People Analytics
-   * @deprecated Use getIdentity() instead. Its user, company and device ids are what every
-   *     Mixpanel SDK accepts directly, so nothing has to build or parse a combined id.
    *
    */
   getDistinctId() {

@@ -13,7 +13,7 @@ import {Mixpanel, MixpanelGroup} from 'mixpanel-react-native';
 
 // Hierarchical groups is an init-time option, so this page uses its own project and instance
 // rather than the one App initializes.
-const HG_PROJECT_TOKEN = '0d15128ec05aa2ba0fb3d45185f63a11';
+const HG_PROJECT_TOKEN = 'YOUR_HG_PROJECT_TOKEN';
 
 // Filter the Metro / device log on "HGDemo" to see which button each request belongs to.
 const LOG_PREFIX = '[HGDemo]';

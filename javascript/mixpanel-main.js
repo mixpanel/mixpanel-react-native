@@ -205,18 +205,32 @@ export default class MixpanelMain {
   }
 
   async optOutTracking(token) {
-    if (
+    const userId = this.mixpanelPersistent.getUserId(token);
+    const companyId = this.mixpanelPersistent.getCompanyId(token);
+    const deleteProfile =
       this.hierarchicalGroups &&
       !this.mixpanelPersistent.getOptedOut(token) &&
-      this.mixpanelPersistent.getUserId(token) &&
-      this.mixpanelPersistent.getCompanyId(token)
-    ) {
+      userId &&
+      companyId;
+    // Opted out before anything is awaited, so calls made meanwhile are dropped
+    this.mixpanelPersistent.updateOptedOut(token, true);
+    if (deleteProfile) {
       // Delete the user's $user_id profile, never the company or team profiles. Sent now
       // because nothing is flushed while opted out, so pending /groups updates are cleared
       // first to send only the delete.
+      MixpanelLogger.log(token, `Delete user`);
       await MixpanelQueueManager.clearQueue(token, MixpanelType.GROUPS);
-      await this.deleteUser(token);
-      await this.core.flush(token, [MixpanelType.GROUPS]);
+      await this.core.sendWhileOptedOut(
+        token,
+        MixpanelType.GROUPS,
+        this._groupRecord(
+          token,
+          USER_ID_GROUP_KEY,
+          userId,
+          { $company_id: companyId },
+          { $delete: "null" }
+        )
+      );
     }
     await this._optOutTracking(token);
   }
@@ -587,7 +601,15 @@ export default class MixpanelMain {
       }
       companyProps = { $company_id: companyId };
     }
-    const profileData = {
+    await this.core.addToMixpanelQueue(
+      token,
+      MixpanelType.GROUPS,
+      this._groupRecord(token, groupKey, groupID, companyProps, action)
+    );
+  }
+
+  _groupRecord(token, groupKey, groupID, companyProps, action) {
+    return {
       $token: token,
       $time: Date.now(),
       $group_key: groupKey,
@@ -595,7 +617,6 @@ export default class MixpanelMain {
       ...companyProps,
       ...action,
     };
-    await this.core.addToMixpanelQueue(token, MixpanelType.GROUPS, profileData);
   }
 
   async set(token, properties) {

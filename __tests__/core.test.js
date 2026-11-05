@@ -125,6 +125,21 @@ describe("MixpanelQueueManager", () => {
     expect(MixpanelNetwork.sendRequest).toHaveBeenCalledTimes(0);
   });
 
+  it("sends a record while opted out", async () => {
+    MixpanelPersistent.getInstance().getOptedOut.mockReturnValue(true);
+    MixpanelQueueManager.getQueue.mockReturnValueOnce([data]).mockReturnValue([]);
+
+    await MixpanelCore().sendWhileOptedOut(token, type, data);
+
+    expect(MixpanelQueueManager.enqueue).toHaveBeenCalledWith(
+      token,
+      type,
+      expect.objectContaining(data)
+    );
+    expect(MixpanelNetwork.sendRequest).toHaveBeenCalledTimes(1);
+    MixpanelPersistent.getInstance().getOptedOut.mockReset();
+  });
+
   it("removes a sent batch from the queue", async () => {
     MixpanelQueueManager.getQueue.mockReturnValueOnce([data]).mockReturnValue([]);
     MixpanelNetwork.sendRequest.mockResolvedValueOnce(undefined);

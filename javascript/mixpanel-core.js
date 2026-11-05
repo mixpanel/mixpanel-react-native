@@ -87,6 +87,16 @@ export const MixpanelCore = (storage) => {
     );
   };
 
+  // Queues and sends a record even when opted out, for the profile deletion sent on opting out
+  const sendWhileOptedOut = async (token, type, data) => {
+    const sessionMetadata = new SessionMetadata();
+    await MixpanelQueueManager.enqueue(token, type, {
+      ...sessionMetadata.toDict(type),
+      ...data,
+    });
+    await processQueue(token, type);
+  };
+
   const flush = async (
     token,
     types = [MixpanelType.EVENTS, MixpanelType.USER, MixpanelType.GROUPS]
@@ -176,6 +186,7 @@ export const MixpanelCore = (storage) => {
     initialize,
     startProcessingQueue,
     addToMixpanelQueue,
+    sendWhileOptedOut,
     flush,
     identifyUserQueue,
   };

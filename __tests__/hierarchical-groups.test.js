@@ -8,6 +8,7 @@ const mockCore = {
   initialize: jest.fn(),
   startProcessingQueue: jest.fn(),
   addToMixpanelQueue: jest.fn(),
+  sendWhileOptedOut: jest.fn(),
   flush: jest.fn(),
   identifyUserQueue: jest.fn(),
 };
@@ -69,6 +70,7 @@ const start = async ({ hierarchicalGroups = true, superProperties = {} } = {}) =
     hierarchicalGroups
   );
   mockCore.addToMixpanelQueue.mockClear();
+  mockCore.sendWhileOptedOut.mockClear();
   mockCore.flush.mockClear();
   return main;
 };
@@ -338,16 +340,19 @@ describe("opt in and out", () => {
 
     await main.optOutTracking(token);
 
-    expect(groups()).toEqual([
+    expect(mockCore.sendWhileOptedOut).toHaveBeenCalledTimes(1);
+    expect(mockCore.sendWhileOptedOut).toHaveBeenCalledWith(
+      token,
+      MixpanelType.GROUPS,
       expect.objectContaining({
         $group_key: "$user_id",
         $group_id: "user_123",
         $company_id: "acme",
         $delete: "null",
-      }),
-    ]);
+      })
+    );
+    expect(groups()).toHaveLength(0);
     expect(engage()).toHaveLength(0);
-    expect(mockCore.flush).toHaveBeenCalledWith(token, [MixpanelType.GROUPS]);
     expect((await main.getIdentity(token)).companyId).toBeNull();
   });
 
@@ -355,15 +360,35 @@ describe("opt in and out", () => {
     const main = await start();
     await main.identifyWithIdentity(token, acme);
     const clearQueue = jest.spyOn(MixpanelQueueManager, "clearQueue");
-    const deleteUser = jest.spyOn(main, "deleteUser");
 
     await main.optOutTracking(token);
 
     expect(clearQueue).toHaveBeenCalledWith(token, MixpanelType.GROUPS);
     expect(clearQueue.mock.invocationCallOrder[0]).toBeLessThan(
-      deleteUser.mock.invocationCallOrder[0]
+      mockCore.sendWhileOptedOut.mock.invocationCallOrder[0]
     );
     clearQueue.mockRestore();
+  });
+
+  it("opt out drops calls made while the user delete is sent", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    mockCore.addToMixpanelQueue.mockClear();
+    // The core drops what it is given while opted out
+    const optedOutWhenQueued = [];
+    mockCore.addToMixpanelQueue.mockImplementation(async () => {
+      optedOutWhenQueued.push(main.mixpanelPersistent.getOptedOut(token));
+    });
+
+    const optedOut = main.optOutTracking(token);
+    await main.track(token, "Opened");
+    await main.set(token, { plan: "pro" });
+    await optedOut;
+    mockCore.addToMixpanelQueue.mockReset();
+
+    expect(events()).toHaveLength(0);
+    expect(optedOutWhenQueued).toEqual([true]);
+    expect(mockCore.sendWhileOptedOut).toHaveBeenCalledTimes(1);
   });
 
   it("opt out of an anonymous user deletes nothing", async () => {

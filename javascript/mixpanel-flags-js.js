@@ -723,11 +723,13 @@ export class MixpanelFlagsJS {
       headers.traceparent = this._traceparent;
     }
 
+    // On a hierarchical groups project the user is $user_id and $company_id, so no distinct_id
+    const hierarchicalGroupsIdentity = this._hierarchicalGroupsIdentity();
     const payload = {
-      distinct_id: distinctId,
+      ...(hierarchicalGroupsIdentity.$user_id ? {} : { distinct_id: distinctId }),
       project_id: projectId,
       first_time_event_hash: firstTimeEventHash,
-      ...this._hierarchicalGroupsIdentity(),
+      ...hierarchicalGroupsIdentity,
     };
 
     MixpanelLogger.log(this.token, `Recording first-time event for flag: ${flagId}`);

@@ -852,7 +852,6 @@ describe("flags in JavaScript mode", () => {
 
     expect(firstTimeEventBody()).toBe(
       JSON.stringify({
-        distinct_id: "user_123",
         project_id: 123,
         first_time_event_hash: "HASH",
         $user_id: "user_123",

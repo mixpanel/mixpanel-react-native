@@ -13,16 +13,23 @@ export type MixpanelAsyncStorage = {
  * Pass `{userId, companyId}` to `identify()`. On a project that uses hierarchical groups,
  * enabled with the `hierarchicalGroups` argument of `init()`, both are required, since Mixpanel
  * builds the user's distinct id from `$company_id` and `$user_id`. Other projects take only a
- * `userId`. The SDK owns the device id, so `deviceId` is ignored when identifying; it is reported
- * by `getIdentity()`.
+ * `userId`.
  */
 export interface MixpanelIdentity {
   /** The user's id. On a hierarchical groups project it only needs to be unique within the company. */
   userId: string | null;
   /** The id of the user's top-level company, on a hierarchical groups project. */
   companyId?: string | null;
-  /** The device id the SDK assigned. Ignored by `identify()`. */
-  deviceId?: string | null;
+}
+
+/**
+ * The identity `getIdentity()` reports: the user, their company on a hierarchical groups project,
+ * and the device id the SDK assigned. Unset values are null. It can be passed back to
+ * `identify()`, which ignores the device id, since the SDK owns it.
+ */
+export interface ReportedMixpanelIdentity extends Required<MixpanelIdentity> {
+  /** The device id the SDK assigned. */
+  deviceId: string | null;
 }
 
 export type VariantSource = "network" | "persistence" | "fallback";
@@ -246,7 +253,7 @@ export class Mixpanel {
   reset(): void;
   /** Not for hierarchical groups projects; prefer getIdentity() there. */
   getDistinctId(): Promise<string>;
-  getIdentity(): Promise<Readonly<Required<MixpanelIdentity>>>;
+  getIdentity(): Promise<Readonly<ReportedMixpanelIdentity>>;
   getDeviceId(): Promise<string>;
   flush(): void;
 }

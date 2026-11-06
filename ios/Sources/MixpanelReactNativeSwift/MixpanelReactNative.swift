@@ -26,6 +26,7 @@ open class MixpanelReactNative: NSObject {
                     useGzipCompression: Bool = false,
                     featureFlagsOptions: [String: Any]?,
                     autocaptureConfig: [String: Any]?,
+                    hierarchicalGroups: Bool = false,
                     resolver resolve: RCTPromiseResolveBlock,
                     rejecter reject: RCTPromiseRejectBlock) -> Void {
         let autoProps = properties // copy
@@ -58,7 +59,8 @@ open class MixpanelReactNative: NSObject {
             serverURL: serverURL,
             useGzipCompression: useGzipCompression,
             featureFlagOptions: resolvedFeatureFlagOptions,
-            autocaptureOptions: resolvedAutocaptureOptions
+            autocaptureOptions: resolvedAutocaptureOptions,
+            hierarchicalGroups: hierarchicalGroups
         )
 
         Mixpanel.initialize(options: options)
@@ -212,6 +214,23 @@ open class MixpanelReactNative: NSObject {
         resolve(nil)
     }
 
+    @objc
+    func optInTrackingWithIdentity(_ token: String,
+                                   identity: [String: Any]?,
+                                   properties: [String: Any]?,
+                                   resolver resolve: RCTPromiseResolveBlock,
+                                   rejecter reject: RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        let optInProperties = properties.map { MixpanelTypeHandler.processProperties(properties: $0) }
+        if let identity = identity {
+            instance?.optInTracking(identity: MixpanelReactNative.mixpanelIdentity(identity),
+                                    properties: optInProperties)
+        } else {
+            instance?.optInTracking(distinctId: nil, properties: optInProperties)
+        }
+        resolve(nil)
+    }
+
     // MARK: - Track Events
 
     @objc
@@ -256,6 +275,42 @@ open class MixpanelReactNative: NSObject {
         instance?.identify(distinctId: distinctId) {
             resolve(nil)
         }
+    }
+
+    @objc
+    func identifyWithIdentity(_ token: String, identity: [String: Any],
+                              resolver resolve: RCTPromiseResolveBlock,
+                              rejecter reject: RCTPromiseRejectBlock) -> Void {
+        let instance = MixpanelReactNative.getMixpanelInstance(token)
+        instance?.identify(identity: MixpanelReactNative.mixpanelIdentity(identity))
+        resolve(nil)
+    }
+
+    @objc
+    func getIdentity(_ token: String, resolver resolve: RCTPromiseResolveBlock,
+                     rejecter reject: RCTPromiseRejectBlock) -> Void {
+        guard let identity = MixpanelReactNative.getMixpanelInstance(token)?.identity else {
+            resolve(nil)
+            return
+        }
+        let nullable: (String?) -> Any = { value in
+            if let value = value {
+                return value
+            }
+            return NSNull()
+        }
+        resolve([
+            "userId": nullable(identity.userId),
+            "companyId": nullable(identity.companyId),
+            "deviceId": nullable(identity.deviceId),
+        ])
+    }
+
+    // The SDK validates the ids, so a missing one is passed on as nil rather than rejected here
+    static func mixpanelIdentity(_ identity: [String: Any]) -> MixpanelIdentity {
+        return MixpanelIdentity(userId: identity["userId"] as? String,
+                                companyId: identity["companyId"] as? String,
+                                deviceId: identity["deviceId"] as? String)
     }
 
     @objc

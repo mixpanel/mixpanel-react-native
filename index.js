@@ -30,7 +30,12 @@ const PARAMS = {
   NAME: "name",
   CHARGE: "charge",
   PROPERTY_VALUE: "property value",
+  USER_ID: "userId",
+  COMPANY_ID: "companyId",
+  DEVICE_ID: "deviceId",
 };
+
+const COMPANY_ID_GROUP_KEY = "$company_id";
 
 const DEFAULT_OPT_OUT = false;
 
@@ -50,6 +55,7 @@ export class Mixpanel {
     this._flags = null; // Lazy-loaded flags instance
     this._autocapture = null; // Lazy-loaded autocapture instance
     this.storage = storage; // Store for JavaScript mode
+    this.hierarchicalGroups = false;
 
     if (useNative && MixpanelReactNative) {
       this.mixpanelImpl = MixpanelReactNative;
@@ -148,6 +154,16 @@ export class Mixpanel {
    *     Object form: {enabled, clickThreshold, timeWindowMs, radius}
    * @param {boolean|object} [autocaptureOptions.deadClick=true] Enable dead click detection.
    *     Object form: {enabled, timeWindowMs}
+   * @param {boolean} [hierarchicalGroups=false] Whether this instance tracks for a project that uses
+   *     hierarchical groups. Mixpanel then builds the user's distinct id from `$company_id` and
+   *     `$user_id`, so the company is part of the user's identity. When enabled:
+   *     identify with `identify({userId, companyId})`, after which every event carries
+   *     `$company_id` beside `$user_id` and `$device_id`; People updates are sent to `/groups`
+   *     as the `$user_id` group profile within the company, so increment, append, trackCharge and
+   *     clearCharges are dropped with an error log; and group profile updates carry the current
+   *     `$company_id` and are dropped until a company is known. Set this to match the project from
+   *     the first launch; it is fixed for the life of the instance. Defaults to false, which
+   *     behaves exactly as before.
    * @returns {Promise<void>} A promise that resolves when initialization is complete
    *
    * @example
@@ -185,6 +201,11 @@ export class Mixpanel {
    *   rageClick: { enabled: true, clickThreshold: 5, timeWindowMs: 2000 },
    *   deadClick: { enabled: true, timeWindowMs: 1000 },
    * });
+   *
+   * @example
+   * // Initialize for a hierarchical groups project
+   * await mixpanel.init(false, {}, 'https://api.mixpanel.com', false, {}, null, true);
+   * await mixpanel.identify({ userId: 'user_123', companyId: 'acme' });
    */
   async init(
     optOutTrackingDefault = DEFAULT_OPT_OUT,
@@ -192,10 +213,12 @@ export class Mixpanel {
     serverURL = "https://api.mixpanel.com",
     useGzipCompression = false,
     featureFlagsOptions = {},
-    autocaptureOptions = null
+    autocaptureOptions = null,
+    hierarchicalGroups = false
   ) {
     // Store feature flags options for later use
     this.featureFlagsOptions = featureFlagsOptions;
+    this.hierarchicalGroups = hierarchicalGroups === true;
 
     // Normalize autocapture options
     let resolvedAutocaptureOptions = null;
@@ -217,7 +240,8 @@ export class Mixpanel {
       serverURL,
       useGzipCompression,
       featureFlagsOptions,
-      resolvedAutocaptureOptions
+      resolvedAutocaptureOptions,
+      this.hierarchicalGroups
     );
 
     // If flags are enabled AND we're in native mode, initialize them
@@ -255,7 +279,8 @@ export class Mixpanel {
       "https://api.mixpanel.com",
       false,
       {},
-      null
+      null,
+      false
     );
     return new Mixpanel(token, trackAutomaticEvents);
   }
@@ -351,6 +376,30 @@ export class Mixpanel {
   }
 
   /**
+   * Use this method to opt-in an already opted-out user from tracking and identify them. People
+   * updates and track calls will be sent to Mixpanel after using this method.
+   * This method will internally track an opt-in event to your project.
+   *
+   * <p>Opting out clears the user's identity, so on a hierarchical groups project use this to
+   * opt back in with the user's company: the opt-in event and every event after it carry the
+   * user and company.
+   *
+   * @param {object} [identity] Optional user, and on a hierarchical groups project their
+   *     company, as `{userId, companyId}`. This will call identify(identity).
+   * @param {object} [properties] Optional properties to add to the opt-in event.
+   */
+  optInTrackingWithIdentity(identity, properties) {
+    if (!ObjectHelper.isValidOrUndefined(properties)) {
+      ObjectHelper.raiseError(PARAMS.PROPERTIES);
+    }
+    this.mixpanelImpl.optInTrackingWithIdentity(
+      this.token,
+      identity == null ? null : IdentityHelper.normalize(identity),
+      properties || null
+    );
+  }
+
+  /**
    * Use this method to opt-out a user from tracking. Events and people updates that haven't been
    * flushed yet will be deleted. Use flush() before calling this method if you want
    * to send all the queues to Mixpanel before.
@@ -373,7 +422,23 @@ export class Mixpanel {
    * <p>Once identify is called, the local distinct id persists across restarts of
    * your application.
    *
-   * @param {string} distinctId a string uniquely identifying this user. Events sent to
+   * <p>On a project that uses hierarchical groups, enabled with the `hierarchicalGroups`
+   * argument of init(), identify with an identity object naming both the user and their company:
+   *
+   * <pre><code>
+   * await mixpanel.identify({ userId: 'user_123', companyId: 'acme' });
+   * </code></pre>
+   *
+   * Mixpanel builds the user's distinct id from `$company_id` and `$user_id`, so the same user id
+   * in two companies is two users, and identifying the current user with a different company is
+   * an identity change. No `$identify` event is tracked: Mixpanel ties the device to the user from
+   * the `$device_id`, `$user_id` and `$company_id` on later events. A string distinct id, or an
+   * identity without both ids, is logged and ignored there. On any other project an identity names only a `userId`;
+   * one with a `companyId` is logged and ignored. The SDK owns the device id, so a `deviceId` on
+   * the identity is ignored.
+   *
+   * @param {string|object} distinctId a string uniquely identifying this user, or an identity
+   *     object `{userId, companyId}`. Events sent to
    *     Mixpanel using the same disinct_id will be considered associated with the
    *     same visitor/customer for retention and funnel reporting, so be sure that the given
    *     value is globally unique for each individual user you intend to track.
@@ -382,6 +447,20 @@ export class Mixpanel {
    *
    */
   identify(distinctId) {
+    if (distinctId !== null && typeof distinctId === "object") {
+      // Called in the executor, as the string overload is, so calls made
+      // right after identify() run under the new identity
+      return new Promise((resolve, reject) => {
+        this.mixpanelImpl
+          .identifyWithIdentity(this.token, IdentityHelper.normalize(distinctId))
+          .then(() => {
+            resolve();
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    }
     return new Promise((resolve, reject) => {
       if (!StringHelper.isValid(distinctId)) {
         StringHelper.raiseError(PARAMS.DISTINCT_ID);
@@ -407,6 +486,10 @@ export class Mixpanel {
    *
    * <p>This call does not identify the user after. You must still call identify()
    *  if you wish the new alias to be used for Events and People.
+   *
+   * <p>A hierarchical groups project identifies a user by their company and user id, which an
+   * alias of one distinct id to another can't express, so this is dropped with an error log
+   * there. Use identify({userId, companyId}) instead.
    *
    * @param {string} alias A unique identifier that you want to use as an identifier for this user.
    * @param {string} distinctId the current distinct_id that alias will be mapped to.
@@ -470,6 +553,9 @@ export class Mixpanel {
    * have a string name, and an optional set of name/value pairs that describe the properties of
    * that event. Group key/value pairs are upserted into the property map before tracking.
    *
+   * <p>On a hierarchical groups project a user belongs to one group per group key, so if any
+   * group value is an array the event is dropped with an error log.
+   *
    * @param {string} eventName The name of the event to send
    * @param {object} properties A Map containing the key value pairs of the properties to include in this event.
    *                   Pass null if no extra properties exist.
@@ -482,6 +568,18 @@ export class Mixpanel {
     }
     if (!ObjectHelper.isValidOrUndefined(properties)) {
       ObjectHelper.raiseError(PARAMS.PROPERTIES);
+    }
+    if (this.hierarchicalGroups && groups) {
+      // Checked here so native and JavaScript mode drop it the same way
+      const listKey = Object.keys(groups).find((key) => Array.isArray(groups[key]));
+      if (listKey !== undefined) {
+        MixpanelLogger.error(
+          this.token,
+          `trackWithGroups with a list is not supported for hierarchical groups projects, which ` +
+            `allow one ${listKey} per user. Use one group id per key. The event was dropped.`
+        );
+        return;
+      }
     }
     this.mixpanelImpl.trackWithGroups(
       this.token,
@@ -497,12 +595,25 @@ export class Mixpanel {
   /**
    * Set the group this user belongs to.
    *
+   * <p>On a hierarchical groups project a user belongs to one group per group key, so the group
+   * is stored as a single value rather than a list, and an array `groupID` is dropped with an
+   * error log.
+   *
    * @param {string} groupKey The property name associated with this group type (must already have been set up).
    * @param {object} groupID The group the user belongs to.
    */
   setGroup(groupKey, groupID) {
     if (!StringHelper.isValid(groupKey)) {
       StringHelper.raiseError(PARAMS.GROUP_KEY);
+    }
+    if (this.hierarchicalGroups && Array.isArray(groupID)) {
+      // Checked here because the Android bridge passes an array on as a single value
+      MixpanelLogger.error(
+        this.token,
+        `setGroup with a list is not supported for hierarchical groups projects, which allow ` +
+          `one ${groupKey} per user. Use setGroup(groupKey, groupID). The update was dropped.`
+      );
+      return;
     }
     this.mixpanelImpl.setGroup(this.token, groupKey, groupID);
   }
@@ -531,7 +642,54 @@ export class Mixpanel {
   }
 
   /**
+   * Returns the identified user's company profile on a hierarchical groups project, as a
+   * MixpanelGroup to set properties on. This is `getGroup("$company_id", companyId)` with the
+   * company from the last identify.
+   *
+   * <pre><code>
+   * await mixpanel.identify({ userId: 'user_123', companyId: 'acme' });
+   * const company = await mixpanel.getCompany();
+   * company?.set('tier', 'enterprise');
+   * </code></pre>
+   *
+   * <p>Only for projects that use hierarchical groups, enabled with the `hierarchicalGroups`
+   * argument of init(). On any other project, or before a company is identified, this logs an
+   * error and resolves to null. The company is fixed when this is called.
+   *
+   * @return {Promise<MixpanelGroup|null>} A promise to the identified company's MixpanelGroup, or
+   *     to null when there is no company
+   */
+  async getCompany() {
+    if (!this.hierarchicalGroups) {
+      MixpanelLogger.error(
+        this.token,
+        "getCompany() is only for hierarchical groups projects, enabled with the " +
+          "hierarchicalGroups argument of init()."
+      );
+      return null;
+    }
+    const identity = await this.mixpanelImpl.getIdentity(this.token);
+    const companyId = identity ? identity.companyId : null;
+    if (companyId == null || companyId === "") {
+      MixpanelLogger.error(
+        this.token,
+        "getCompany() needs a company. Call identify({userId, companyId}) first."
+      );
+      return null;
+    }
+    return new MixpanelGroup(
+      this.token,
+      COMPANY_ID_GROUP_KEY,
+      companyId,
+      this.mixpanelImpl
+    );
+  }
+
+  /**
    * Add a group to this user's membership for a particular group key
+   *
+   * <p>A hierarchical groups project allows one group per group key, so this is dropped with an
+   * error log there. Use setGroup() instead.
    *
    * @param {string} groupKey The property name associated with this group type (must already have been set up).
    * @param {object} groupID The new group the user belongs to.
@@ -545,6 +703,9 @@ export class Mixpanel {
 
   /**
    * Remove a group from this user's membership for a particular group key
+   *
+   * <p>On a hierarchical groups project this clears the group key when the user belongs to
+   * `groupID`, and does nothing otherwise.
    *
    * @param {string} groupKey The property name associated with this group type (must already have been set up).
    * @param {object} groupID The group value to remove.
@@ -694,6 +855,12 @@ export class Mixpanel {
    * Returns the current distinct id of the user.
    * This is either the id automatically generated by the library or the id that has been passed by a call to identify().
    *
+   * <p>On a hierarchical groups project Mixpanel builds the distinct id from the company and the
+   * user, so once both are known this returns `$company:{companyId}|$user:{userId}`. Until a
+   * company is known it returns the device form, `$device:{deviceId}`. Don't use this on a
+   * hierarchical groups project; prefer getIdentity(), whose user, company and device ids every
+   * Mixpanel SDK accepts directly.
+   *
    * example of usage:
    * <pre>
    * <code>
@@ -706,6 +873,34 @@ export class Mixpanel {
    */
   getDistinctId() {
     return this.mixpanelImpl.getDistinctId(this.token);
+  }
+
+  /**
+   * Returns who events are currently attributed to: the identified user, their company on a
+   * hierarchical groups project, and the device id.
+   *
+   * <pre>
+   * <code>
+   * const { userId, companyId, deviceId } = await mixpanel.getIdentity();
+   * </code>
+   * </pre>
+   *
+   * <p>Before identify() the user id is null and only the device id is set. The company id is
+   * null unless hierarchical groups is enabled. The result is a snapshot and does not change
+   * after a later identify or reset().
+   *
+   * @return {Promise<{userId: ?string, companyId: ?string, deviceId: ?string}>} A Promise to
+   *     the current identity
+   */
+  getIdentity() {
+    return Promise.resolve(this.mixpanelImpl.getIdentity(this.token)).then(
+      (identity) =>
+        Object.freeze({
+          userId: (identity && identity.userId) || null,
+          companyId: (identity && identity.companyId) || null,
+          deviceId: (identity && identity.deviceId) || null,
+        })
+    );
   }
 
   /**
@@ -964,6 +1159,11 @@ export class Autocapture {
  * object before you work with it. Once you call identify, the user identity will
  * persist across stops and starts of your application, until you make another
  * call to identify using a different id.
+ *
+ * <p>On a hierarchical groups project the user profile is the `$user_id` group profile within the
+ * user's company, so updates are sent to `/groups` and need identify({userId, companyId}) first.
+ * `/groups` has no increment or append, so increment(), append(), trackCharge() and
+ * clearCharges() are dropped with an error log there.
  *
  */
 export class People {
@@ -1292,6 +1492,31 @@ export class MixpanelGroup {
       name,
       value
     );
+  }
+}
+
+class IdentityHelper {
+  /**
+      Copy an identity's userId, companyId and deviceId, leaving out anything else.
+      The SDK validates the values, so a missing id becomes null rather than an error here.
+     */
+  static normalize(identity) {
+    return {
+      userId: IdentityHelper.field(identity, "userId", PARAMS.USER_ID),
+      companyId: IdentityHelper.field(identity, "companyId", PARAMS.COMPANY_ID),
+      deviceId: IdentityHelper.field(identity, "deviceId", PARAMS.DEVICE_ID),
+    };
+  }
+
+  static field(identity, key, paramName) {
+    const value = identity[key];
+    if (value == null) {
+      return null;
+    }
+    if (typeof value !== "string") {
+      StringHelper.raiseError(paramName);
+    }
+    return value;
   }
 }
 

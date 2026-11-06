@@ -357,12 +357,16 @@ export default class MixpanelMain {
     await this.mixpanelPersistent.persistIdentity(token);
     await this.core.identifyUserQueue(token);
 
-    await this.track(token, "$identify", {
-      distinctId: newDistinctId,
-      $user_id: newDistinctId,
-      $anon_distinct_id: oldDistinctId,
-      $device_id: deviceId,
-    });
+    // A hierarchical groups project ties the device to the user from the identity keys on later
+    // events, so it has no $identify
+    if (!this.hierarchicalGroups) {
+      await this.track(token, "$identify", {
+        distinctId: newDistinctId,
+        $user_id: newDistinctId,
+        $anon_distinct_id: oldDistinctId,
+        $device_id: deviceId,
+      });
+    }
 
     if (this._flagsJS) {
       this._flagsJS._invalidateInFlightFetch();

@@ -113,13 +113,16 @@ describe("events", () => {
     expect(props).not.toHaveProperty("distinct_id");
   });
 
-  it("$identify carries the new company", async () => {
+  it("identify tracks no $identify, and the next event carries the identity keys", async () => {
     const main = await start();
     await main.identifyWithIdentity(token, acme);
+    expect(events().some((e) => e.event === "$identify")).toBe(false);
 
-    const identify = events().find((e) => e.event === "$identify");
-    expect(identify.properties.$company_id).toBe("acme");
-    expect(identify.properties.$user_id).toBe("user_123");
+    await main.track(token, "Opened");
+    const props = lastEvent().properties;
+    expect(props.$company_id).toBe("acme");
+    expect(props.$user_id).toBe("user_123");
+    expect(props.$device_id).toBe(main.mixpanelPersistent.getDeviceId(token));
   });
 
   it("anonymous events carry no company", async () => {
@@ -151,9 +154,7 @@ describe("identify", () => {
     await main.identifyWithIdentity(token, { userId: "user_123", companyId: "globex" });
     await main.identifyWithIdentity(token, { userId: "user_123", companyId: "globex" });
 
-    const identifies = events().filter((e) => e.event === "$identify");
-    expect(identifies).toHaveLength(2);
-    expect(identifies[1].properties.$company_id).toBe("globex");
+    expect(await main.getDistinctId(token)).toBe("$company:globex|$user:user_123");
     expect((await main.getIdentity(token)).companyId).toBe("globex");
   });
 
@@ -207,6 +208,7 @@ describe("identify", () => {
     const main = await start();
     const deviceId = main.mixpanelPersistent.getDeviceId(token);
     await main.identifyWithIdentity(token, { ...acme, deviceId: "other-device" });
+    await main.track(token, "Opened");
 
     expect((await main.getIdentity(token)).deviceId).toBe(deviceId);
     expect(lastEvent().properties.$device_id).toBe(deviceId);
@@ -313,7 +315,8 @@ describe("opt in and out", () => {
     const optIn = events().find((e) => e.event === "$opt_in");
     expect(optIn.properties.$company_id).toBe("acme");
     expect(optIn.properties.source).toBe("settings");
-    expect(events().some((e) => e.event === "$identify")).toBe(true);
+    expect(events().some((e) => e.event === "$identify")).toBe(false);
+    expect((await main.getIdentity(token)).companyId).toBe("acme");
   });
 
   it("optInTrackingWithIdentity without an identity stays anonymous", async () => {

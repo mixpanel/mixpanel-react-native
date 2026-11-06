@@ -431,8 +431,9 @@ export class Mixpanel {
    *
    * Mixpanel builds the user's distinct id from `$company_id` and `$user_id`, so the same user id
    * in two companies is two users, and identifying the current user with a different company is
-   * an identity change that tracks `$identify`. A string distinct id, or an identity without both
-   * ids, is logged and ignored there. On any other project an identity names only a `userId`;
+   * an identity change. No `$identify` event is tracked: Mixpanel ties the device to the user from
+   * the `$device_id`, `$user_id` and `$company_id` on later events. A string distinct id, or an
+   * identity without both ids, is logged and ignored there. On any other project an identity names only a `userId`;
    * one with a `companyId` is logged and ignored. The SDK owns the device id, so a `deviceId` on
    * the identity is ignored.
    *

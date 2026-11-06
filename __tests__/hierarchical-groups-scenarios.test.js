@@ -176,12 +176,10 @@ describe("Hierarchical groups scenarios", () => {
   });
 
   it("Identify", async () => {
-    const anonymousDistinctId = `$device:${await deviceId()}`;
     await identify();
 
-    const props = onlyEvent("$identify");
-    await assertIdentified(props);
-    expect(props.$anon_distinct_id).toBe(anonymousDistinctId);
+    // No $identify: the next event's identity keys tie the device to the user
+    expect(mockSent.filter((s) => s.endpoint === TRACK)).toEqual([]);
   });
 
   it("Track (Identified)", async () => {
@@ -586,9 +584,9 @@ describe("Hierarchical groups scenarios", () => {
     mixpanel.optInTrackingWithIdentity({ userId: USER_ID, companyId: COMPANY_ID });
     await settle();
 
-    // $identify and $opt_in, in that order, both carrying the user and company
-    expect(mockSent.map((s) => s.endpoint)).toEqual([TRACK, TRACK]);
-    expect(mockSent.map((s) => s.data.event)).toEqual(["$identify", "$opt_in"]);
+    // Only $opt_in, carrying the user and company
+    expect(mockSent.map((s) => s.endpoint)).toEqual([TRACK]);
+    expect(mockSent.map((s) => s.data.event)).toEqual(["$opt_in"]);
     for (const { data } of mockSent) {
       await assertIdentified(data.properties);
     }

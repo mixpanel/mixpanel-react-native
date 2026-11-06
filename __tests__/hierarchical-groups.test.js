@@ -109,8 +109,8 @@ describe("events", () => {
     expect(props.$user_id).toBe("user_123");
     expect(props.$company_id).toBe("acme");
     expect(props.$device_id).toBe(main.mixpanelPersistent.getDeviceId(token));
-    // The stored distinct id, never the combined form
-    expect(props.distinct_id).toBe("user_123");
+    // No distinct_id; ingestion resolves the user from the identity keys
+    expect(props).not.toHaveProperty("distinct_id");
   });
 
   it("$identify carries the new company", async () => {
@@ -885,6 +885,6 @@ describe("flags in JavaScript mode", () => {
     expect(exposure.properties["Experiment name"]).toBe("checkout_flow");
     expect(exposure.properties.$user_id).toBe("user_123");
     expect(exposure.properties.$company_id).toBe("company_123");
-    expect(exposure.properties.distinct_id).toBe("user_123");
+    expect(exposure.properties).not.toHaveProperty("distinct_id");
   });
 });

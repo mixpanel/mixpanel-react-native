@@ -120,7 +120,7 @@ const assertAnonymous = async (props) => {
 };
 
 const assertIdentified = async (props) => {
-  expect(props.distinct_id).toBe(USER_ID);
+  expect(props).not.toHaveProperty("distinct_id");
   expect(props.$user_id).toBe(USER_ID);
   expect(props.$company_id).toBe(COMPANY_ID);
   expect(props.$device_id).toBe(await deviceId());

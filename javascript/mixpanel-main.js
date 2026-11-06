@@ -135,11 +135,17 @@ export default class MixpanelMain {
       properties
     );
     const superProperties = this.mixpanelPersistent.getSuperProperties(token);
+    const userId = this.mixpanelPersistent.getUserId(token);
+    const companyIdentityProps = this._companyIdentityProps(token);
     const identityProps = {
-      distinct_id: this.mixpanelPersistent.getDistinctId(token),
+      // On a hierarchical groups project an identified user is $user_id and $company_id, so no
+      // distinct_id
+      ...(userId && companyIdentityProps.$company_id
+        ? {}
+        : { distinct_id: this.mixpanelPersistent.getDistinctId(token) }),
       $device_id: this.mixpanelPersistent.getDeviceId(token),
-      $user_id: this.mixpanelPersistent.getUserId(token),
-      ...this._companyIdentityProps(token),
+      $user_id: userId,
+      ...companyIdentityProps,
     };
     const eventElapsedTime = await this.eventElapsedTime(token, eventName);
     const eventProperties = Object.freeze({

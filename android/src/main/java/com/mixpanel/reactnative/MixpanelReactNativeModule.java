@@ -32,11 +32,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
     private final ReactApplicationContext mReactContext;
+
+    // Whether each token's instance tracks for a hierarchical groups project. Fixed by the first
+    // initialize, as the instance is.
+    private static final Map<String, Boolean> sHierarchicalGroups = new ConcurrentHashMap<>();
 
     public MixpanelReactNativeModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -103,7 +108,17 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         if (useGzipCompression) {
             instance.setShouldGzipRequestPayload(true);
         }
+        sHierarchicalGroups.putIfAbsent(token, hierarchicalGroups);
         promise.resolve(null);
+    }
+
+    // A JavaScript null arrives as a Dynamic of type Null. A hierarchical groups project sets a
+    // null group, so it gets a real null there.
+    private static Object groupIDToObject(String token, Dynamic groupID) {
+        if (groupID.isNull() && Boolean.TRUE.equals(sHierarchicalGroups.get(token))) {
+            return null;
+        }
+        return ReactNativeHelper.dynamicToObject(groupID);
     }
 
     private AutocaptureOptions buildAutocaptureOptions(ReadableMap config) {
@@ -680,7 +695,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             return;
         }
         synchronized (instance) {
-            instance.setGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID));
+            instance.setGroup(groupKey, groupIDToObject(token, groupID));
             promise.resolve(null);
         }
     }
@@ -719,7 +734,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             return;
         }
         synchronized (instance) {
-            instance.removeGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID));
+            instance.removeGroup(groupKey, groupIDToObject(token, groupID));
             promise.resolve(null);
         }
     }

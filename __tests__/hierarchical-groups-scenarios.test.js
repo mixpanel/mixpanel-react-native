@@ -6,7 +6,10 @@
 // each test asserts the endpoint a call hits and the request it sends, or that nothing is sent.
 // Edge cases beyond the doc live in hierarchical-groups.test.js.
 
-import { MixpanelType } from "mixpanel-react-native/javascript/mixpanel-constants";
+import {
+  MixpanelType,
+  PENDING_PROFILE_QUEUE,
+} from "mixpanel-react-native/javascript/mixpanel-constants";
 
 const TRACK = MixpanelType.EVENTS;
 const GROUPS = MixpanelType.GROUPS;
@@ -641,11 +644,12 @@ describe("Hierarchical groups scenarios", () => {
     expect(await mixpanel.getSuperProperties()).not.toHaveProperty("team_id");
   });
 
-  it("Set User Property Before Identify (Unsupported)", async () => {
+  it("Set User Property Before Identify (Queued Until Identify)", async () => {
     mixpanel.getPeople().set("plan", "enterprise");
     await settle();
 
-    assertNothingSent();
+    // Kept for the user profile identify sets, so nothing is sent yet
+    expect(mockSent.filter(({ endpoint }) => endpoint !== PENDING_PROFILE_QUEUE)).toEqual([]);
   });
 
   it("Set Company Property Before Identify (Unsupported)", async () => {

@@ -46,6 +46,7 @@ export default class MixpanelMain {
 
     // Fixed for the life of the instance
     this.hierarchicalGroups = hierarchicalGroups === true;
+    this.mixpanelPersistent.setHierarchicalGroups(token, this.hierarchicalGroups);
 
     // Store feature flags options for later use
     this.featureFlagsOptions = featureFlagsOptions;

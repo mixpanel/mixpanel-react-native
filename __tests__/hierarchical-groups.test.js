@@ -305,6 +305,35 @@ describe("getIdentity and getDistinctId", () => {
   });
 });
 
+describe("company storage", () => {
+  const companyIdKey = `MIXPANEL_${token}_COMPANY_ID`;
+  const companyIdCalls = () =>
+    [storage.getItem, storage.setItem, storage.removeItem].flatMap((fn) =>
+      fn.mock.calls.filter(([key]) => key === companyIdKey)
+    );
+
+  it("is never touched when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.identify(token, "user_123");
+    await main.reset(token);
+    expect(companyIdCalls()).toEqual([]);
+  });
+
+  it("is loaded, saved and cleared when enabled", async () => {
+    storage.values[companyIdKey] = "acme";
+    const main = await start();
+    expect(storage.getItem).toHaveBeenCalledWith(companyIdKey);
+    expect((await main.getIdentity(token)).companyId).toBe("acme");
+
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "globex" });
+    expect(storage.values[companyIdKey]).toBe("globex");
+
+    await main.reset(token);
+    expect(storage.removeItem).toHaveBeenCalledWith(companyIdKey);
+    expect(storage.values).not.toHaveProperty(companyIdKey);
+  });
+});
+
 describe("opt in and out", () => {
   it("optInTrackingWithIdentity identifies with the company", async () => {
     const main = await start();

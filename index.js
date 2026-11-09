@@ -448,7 +448,11 @@ export class Mixpanel {
    *
    */
   identify(distinctId) {
-    if (distinctId !== null && typeof distinctId === "object") {
+    if (
+      distinctId !== null &&
+      typeof distinctId === "object" &&
+      !Array.isArray(distinctId)
+    ) {
       // Called in the executor, as the string overload is, so calls made
       // right after identify() run under the new identity
       return new Promise((resolve, reject) => {

@@ -55,6 +55,13 @@ test(`identify with an identity reaches the native SDK before a following track`
   );
 });
 
+test(`identify with an array rejects as a distinct id, as before`, async () => {
+  const mixpanel = await start(false);
+  await expect(mixpanel.identify(["user_123"])).rejects.toThrow();
+  expect(native.identify).not.toBeCalled();
+  expect(native.identifyWithIdentity).not.toBeCalled();
+});
+
 test(`identify with a distinct id is unchanged`, async () => {
   const mixpanel = await start(false);
   await mixpanel.identify("user_123");

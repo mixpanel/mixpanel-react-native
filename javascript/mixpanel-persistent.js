@@ -39,6 +39,12 @@ export class MixpanelPersistent {
     this._identity = {};
     this._optedOut = {};
     this._appHasOpenedBefore = {};
+    // Tokens initialized with hierarchical groups, the only ones that store a company
+    this._hierarchicalGroups = {};
+  }
+
+  setHierarchicalGroups(token, enabled) {
+    this._hierarchicalGroups[token] = enabled === true;
   }
 
   async initializationCompletePromise(token) {
@@ -119,14 +125,18 @@ export class MixpanelPersistent {
     await this.loadDeviceId(token);
     await this.loadDistinctId(token);
     await this.loadUserId(token);
-    await this.loadCompanyId(token);
+    if (this._hierarchicalGroups[token]) {
+      await this.loadCompanyId(token);
+    }
   }
 
   async persistIdentity(token) {
     await this.persistDeviceId(token);
     await this.persistDistinctId(token);
     await this.persistUserId(token);
-    await this.persistCompanyId(token);
+    if (this._hierarchicalGroups[token]) {
+      await this.persistCompanyId(token);
+    }
   }
 
   getDeviceId(token) {
@@ -346,7 +356,9 @@ export class MixpanelPersistent {
     await this.storageAdapter.removeItem(getDeviceIdKey(token));
     await this.storageAdapter.removeItem(getDistinctIdKey(token));
     await this.storageAdapter.removeItem(getUserIdKey(token));
-    await this.storageAdapter.removeItem(getCompanyIdKey(token));
+    if (this._hierarchicalGroups[token]) {
+      await this.storageAdapter.removeItem(getCompanyIdKey(token));
+    }
     await this.storageAdapter.removeItem(getSuperPropertiesKey(token));
     await this.storageAdapter.removeItem(getTimeEventsKey(token));
     await this.loadIdentity(token);

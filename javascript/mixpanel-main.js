@@ -700,6 +700,15 @@ export default class MixpanelMain {
       );
       return;
     }
+    // Checked when the call is made, since an opt in before the queued work runs would let an
+    // update made while opted out through. The work checks again for an opt out made since.
+    if (this.mixpanelPersistent.getOptedOut(token)) {
+      MixpanelLogger.log(
+        token,
+        `User has opted out of tracking, skipping tracking.`
+      );
+      return;
+    }
     // The user and company when the call is made, so a later identify doesn't move it
     const userId = this.mixpanelPersistent.getUserId(token);
     const companyId = this.mixpanelPersistent.getCompanyId(token);

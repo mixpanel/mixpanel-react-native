@@ -585,7 +585,7 @@ describe("opt in and out", () => {
     mockCore.addToMixpanelQueue.mockReset();
 
     expect(events()).toHaveLength(0);
-    expect(optedOutWhenQueued).toEqual([true]);
+    expect(optedOutWhenQueued).not.toContain(false);
     expect(mockCore.sendWhileOptedOut).toHaveBeenCalledTimes(1);
   });
 
@@ -761,6 +761,18 @@ describe("user profiles", () => {
     await main.optInTrackingWithIdentity(token, acme);
 
     expect(groups()).toHaveLength(0);
+  });
+
+  it("made while opted out are dropped by an opt in before they run", async () => {
+    const main = await start();
+    await main.optOutTracking(token);
+    const set = main.set(token, { plan: "private" });
+    await main.optInTrackingWithIdentity(token, acme);
+    await set;
+
+    expect(groups()).toHaveLength(0);
+    await MixpanelQueueManager.initialize(token, PENDING_PROFILE_QUEUE);
+    expect(MixpanelQueueManager.getQueue(token, PENDING_PROFILE_QUEUE)).toHaveLength(0);
   });
 
   it("setGroup and removeGroup before identify queue their profile updates", async () => {

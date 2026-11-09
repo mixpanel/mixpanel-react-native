@@ -319,6 +319,24 @@ describe("opt in and out", () => {
     expect((await main.getIdentity(token)).companyId).toBe("acme");
   });
 
+  it("optInTrackingWithIdentity without a company leaves the user opted out", async () => {
+    const main = await start();
+    await main.optOutTracking(token);
+    await main.optInTrackingWithIdentity(token, { userId: "user_123" });
+
+    expect(main.mixpanelPersistent.getOptedOut(token)).toBe(true);
+    expect(events().some((e) => e.event === "$opt_in")).toBe(false);
+  });
+
+  it("optInTrackingWithIdentity with a company without hierarchical groups leaves the user opted out", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.optOutTracking(token);
+    await main.optInTrackingWithIdentity(token, acme);
+
+    expect(main.mixpanelPersistent.getOptedOut(token)).toBe(true);
+    expect(events().some((e) => e.event === "$opt_in")).toBe(false);
+  });
+
   it("optInTrackingWithIdentity without an identity stays anonymous", async () => {
     const main = await start();
     await main.optOutTracking(token);

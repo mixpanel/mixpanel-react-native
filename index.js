@@ -385,7 +385,8 @@ export class Mixpanel {
    * user and company.
    *
    * @param {object} [identity] Optional user, and on a hierarchical groups project their
-   *     company, as `{userId, companyId}`. This will call identify(identity).
+   *     company, as `{userId, companyId}`. This will call identify(identity). An identity
+   *     identify() would refuse is logged, and the user stays opted out.
    * @param {object} [properties] Optional properties to add to the opt-in event.
    */
   optInTrackingWithIdentity(identity, properties) {

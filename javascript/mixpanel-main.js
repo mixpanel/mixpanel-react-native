@@ -254,6 +254,13 @@ export default class MixpanelMain {
   }
 
   async optInTrackingWithIdentity(token, identity, properties) {
+    if (identity != null && typeof identity === "object") {
+      const identityError = this._identityError(identity);
+      if (identityError) {
+        MixpanelLogger.error(token, `${identityError} The user is still opted out.`);
+        return;
+      }
+    }
     await this._setOptedOutTrackingFlag(token, false);
     MixpanelLogger.log(token, "User has opted in to tracking");
     if (identity != null) {
@@ -291,35 +298,14 @@ export default class MixpanelMain {
       MixpanelLogger.error(token, "Can't identify with a null identity.");
       return;
     }
-    const userId = identity.userId == null ? null : identity.userId;
+    const identityError = this._identityError(identity);
+    if (identityError) {
+      MixpanelLogger.error(token, `${identityError} Nothing was identified.`);
+      return;
+    }
+    const userId = identity.userId;
     const companyId = identity.companyId == null ? null : identity.companyId;
     const description = identityToString(identity);
-    if (this.hierarchicalGroups) {
-      if (!userId || !companyId) {
-        MixpanelLogger.error(
-          token,
-          `Can't identify ${description}: hierarchical groups projects identify a user by ` +
-            "company and user id, so both are required. Nothing was identified."
-        );
-        return;
-      }
-    } else {
-      if (!userId) {
-        MixpanelLogger.error(
-          token,
-          `Can't identify ${description} without a user id. Nothing was identified.`
-        );
-        return;
-      }
-      if (companyId != null) {
-        MixpanelLogger.error(
-          token,
-          `Can't identify ${description}: a company requires hierarchicalGroups in init(). ` +
-            "Mixpanel ignores $company_id on other projects, so nothing was identified."
-        );
-        return;
-      }
-    }
     const deviceId = identity.deviceId == null ? null : identity.deviceId;
     const currentDeviceId = this.mixpanelPersistent.getDeviceId(token);
     if (deviceId != null && deviceId !== currentDeviceId) {
@@ -330,6 +316,32 @@ export default class MixpanelMain {
       );
     }
     await this._identify(token, userId, companyId);
+  }
+
+  // Why an identity can't be used on this project, or null when it can. Callers add what was dropped.
+  _identityError(identity) {
+    const userId = identity.userId == null ? null : identity.userId;
+    const companyId = identity.companyId == null ? null : identity.companyId;
+    const description = identityToString(identity);
+    if (this.hierarchicalGroups) {
+      if (!userId || !companyId) {
+        return (
+          `Can't identify ${description}: hierarchical groups projects identify a user by ` +
+          "company and user id, so both are required."
+        );
+      }
+    } else {
+      if (!userId) {
+        return `Can't identify ${description} without a user id.`;
+      }
+      if (companyId != null) {
+        return (
+          `Can't identify ${description}: a company requires hierarchicalGroups in init(). ` +
+          "Mixpanel ignores $company_id on other projects."
+        );
+      }
+    }
+    return null;
   }
 
   async _identify(token, newDistinctId, companyId) {

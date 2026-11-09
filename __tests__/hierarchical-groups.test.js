@@ -196,6 +196,43 @@ describe("events", () => {
     expect(lastEvent().properties).not.toHaveProperty("$company_id");
     expect(lastEvent().properties.$user_id).toBe("user_123");
   });
+
+  it("drop a caller's distinct_id once identified", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    await main.track(token, "Opened", { distinct_id: "caller" });
+
+    expect(lastEvent().properties).not.toHaveProperty("distinct_id");
+    expect(lastEvent().properties.$user_id).toBe("user_123");
+  });
+
+  it("drop a distinct_id super property once identified", async () => {
+    const main = await start();
+    await main.registerSuperProperties(token, { distinct_id: "saved" });
+    await main.identifyWithIdentity(token, acme);
+    await main.track(token, "Opened");
+
+    expect(lastEvent().properties).not.toHaveProperty("distinct_id");
+  });
+
+  it("anonymous events replace a caller's distinct_id with the device", async () => {
+    const main = await start();
+    await main.registerSuperProperties(token, { distinct_id: "saved" });
+    await main.track(token, "Opened", { distinct_id: "caller" });
+
+    expect(lastEvent().properties.distinct_id).toBe(
+      main.mixpanelPersistent.getDistinctId(token)
+    );
+  });
+
+  it("replace a caller's distinct_id with the user when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.registerSuperProperties(token, { distinct_id: "saved" });
+    await main.identifyWithIdentity(token, { userId: "user_123" });
+    await main.track(token, "Opened", { distinct_id: "caller" });
+
+    expect(lastEvent().properties.distinct_id).toBe("user_123");
+  });
 });
 
 describe("identify", () => {
@@ -742,6 +779,130 @@ describe("user profiles", () => {
       expect.objectContaining({ $group_id: "user_123", $set: { region: "us" } }),
       expect.objectContaining({ $group_id: "user_123", $unset: ["region"] }),
     ]);
+  });
+
+  const pendingKey = `MIXPANEL_${token}_${PENDING_PROFILE_QUEUE}_QUEUE`;
+
+  // A fresh process over the same storage, with its own queue manager and persistent, so the
+  // pending queue is saved to this test's storage
+  const restart = async () => {
+    let Main;
+    let logger;
+    jest.isolateModules(() => {
+      Main = require("mixpanel-react-native/javascript/mixpanel-main").default;
+      logger = require("mixpanel-react-native/javascript/mixpanel-logger").MixpanelLogger;
+    });
+    // This process's errors, read by errors()
+    errorSpy.mockRestore();
+    errorSpy = jest.spyOn(logger, "error").mockImplementation(() => {});
+    const main = new Main(token, false, storage);
+    await main.initialize(token, false, false, {}, undefined, false, {}, null, true);
+    return main;
+  };
+
+  it("made right after identify follow the updates queued before it", async () => {
+    const main = await start();
+    await main.set(token, { plan: "old" });
+    const identify = main.identifyWithIdentity(token, acme);
+    const set = main.set(token, { plan: "new" });
+    await Promise.all([identify, set]);
+
+    expect(groups()).toEqual([
+      expect.objectContaining({ $group_id: "user_123", $set: { plan: "old" } }),
+      expect.objectContaining({ $group_id: "user_123", $set: { plan: "new" } }),
+    ]);
+  });
+
+  it("made before identify without waiting still go first", async () => {
+    const main = await start();
+    const old = main.set(token, { plan: "old" });
+    const identify = main.identifyWithIdentity(token, acme);
+    const set = main.set(token, { plan: "new" });
+    await Promise.all([old, identify, set]);
+
+    expect(groups().map((record) => record.$set)).toEqual([
+      { plan: "old" },
+      { plan: "new" },
+    ]);
+  });
+
+  it("queued before identify go to that identify's user when another identify follows", async () => {
+    const main = await start();
+    await main.set(token, { plan: "pro" });
+    const first = main.identifyWithIdentity(token, acme);
+    const second = main.identifyWithIdentity(token, { userId: "user_456", companyId: "globex" });
+    await Promise.all([first, second]);
+
+    expect(groups()).toEqual([
+      expect.objectContaining({ $group_id: "user_123", $company_id: "acme", $set: { plan: "pro" } }),
+    ]);
+  });
+
+  it("queued before identify stay saved until they are saved to /groups", async () => {
+    const main = await restart();
+    await main.set(token, { plan: "pro" });
+    // Saving to /groups fails, as when the app is closed before the save
+    mockCore.addToMixpanelQueue.mockImplementationOnce(async () => {
+      expect(storage.values[pendingKey]).toContain("pro");
+      throw new Error("storage failed");
+    });
+    await expect(main.identifyWithIdentity(token, acme)).rejects.toThrow("storage failed");
+    expect(storage.values[pendingKey]).toContain("pro");
+
+    mockCore.addToMixpanelQueue.mockClear();
+    await restart();
+
+    expect(groups()).toEqual([
+      expect.objectContaining({ $group_id: "user_123", $company_id: "acme", $set: { plan: "pro" } }),
+    ]);
+    expect(JSON.parse(storage.values[pendingKey])).toEqual([]);
+  });
+
+  it("left by an identify that didn't finish are sent on the next start", async () => {
+    const main = await restart();
+    await main.set(token, { plan: "pro" });
+    await main.setOnce(token, { first_seen: "today" });
+    // The identity is saved, but the app closes before the updates move
+    main.mixpanelPersistent.updateDistinctId(token, "user_123");
+    main.mixpanelPersistent.updateUserId(token, "user_123");
+    main.mixpanelPersistent.updateCompanyId(token, "acme");
+    await main.mixpanelPersistent.persistIdentity(token);
+
+    await restart();
+
+    expect(groups()).toEqual([
+      expect.objectContaining({ $group_id: "user_123", $company_id: "acme", $set: { plan: "pro" } }),
+      expect.objectContaining({ $group_id: "user_123", $set_once: { first_seen: "today" } }),
+    ]);
+    expect(JSON.parse(storage.values[pendingKey])).toEqual([]);
+  });
+
+  it("are not sent on start without a stored company", async () => {
+    const main = await restart();
+    await main.set(token, { plan: "pro" });
+
+    await restart();
+
+    expect(groups()).toHaveLength(0);
+    expect(storage.values[pendingKey]).toContain("pro");
+  });
+
+  it("that can't be saved are dropped without blocking later ones", async () => {
+    const main = await restart();
+    const circular = {};
+    circular.self = circular;
+    await main.set(token, { bad: circular });
+    await main.set(token, { plan: "pro" });
+
+    expect(errors()).toEqual([
+      expect.stringContaining("Error in Mixpanel payload"),
+      "The Mixpanel payload is not valid or not serializable.",
+    ]);
+    expect(storage.values[pendingKey]).toContain("pro");
+
+    await main.identifyWithIdentity(token, acme);
+
+    expect(groups()).toEqual([expect.objectContaining({ $set: { plan: "pro" } })]);
   });
 
   it("still drop the operations /groups can't express before identify", async () => {

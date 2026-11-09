@@ -61,6 +61,11 @@ export default class MixpanelMain {
     this.featureFlagsContext = featureFlagsOptions.context || {};
 
     await this.mixpanelPersistent.initializationCompletePromise(token);
+    // Profile updates queued before an identify that was saved but not finished moving them.
+    // Queued now so profile calls made from here on stay behind it.
+    const pendingTransfer = optOutTrackingDefault
+      ? null
+      : this._resumePendingProfileUpdates(token);
     if (optOutTrackingDefault) {
       await this._optOutTracking(token);
       return;
@@ -72,6 +77,9 @@ export default class MixpanelMain {
     await this._registerSuperProperties(token, {
       ...superProperties,
     });
+    if (pendingTransfer) {
+      await pendingTransfer;
+    }
 
     // Initialize feature flags if enabled
     if (this.featureFlagsEnabled) {
@@ -175,6 +183,11 @@ export default class MixpanelMain {
         { ...superProperties, ...properties },
         eventProperties
       );
+      // An identified user is $user_id and $company_id, so a caller's or super property's
+      // distinct_id is not sent either
+      if (userId && companyIdentityProps.$company_id) {
+        delete eventProperties.distinct_id;
+      }
     }
     Object.freeze(eventProperties);
 
@@ -421,11 +434,18 @@ export default class MixpanelMain {
     }
     this.mixpanelPersistent.updateDistinctId(token, newDistinctId);
     this.mixpanelPersistent.updateUserId(token, newDistinctId);
+    // Queued before anything is awaited, so profile calls made from here on follow the updates
+    // made before this identify, which go to this user and company whatever is identified next
+    const pendingTransfer = this.hierarchicalGroups
+      ? this._queueProfileWork(token, () =>
+          this._sendPendingProfileUpdates(token, newDistinctId, companyId)
+        )
+      : null;
     const deviceId = this.mixpanelPersistent.getDeviceId(token);
     await this.mixpanelPersistent.persistIdentity(token);
     await this.core.identifyUserQueue(token);
-    if (this.hierarchicalGroups) {
-      await this._sendPendingProfileUpdates(token);
+    if (pendingTransfer) {
+      await pendingTransfer;
     }
 
     // A hierarchical groups project ties the device to the user from the identity keys on later
@@ -680,41 +700,92 @@ export default class MixpanelMain {
       );
       return;
     }
+    // The user and company when the call is made, so a later identify doesn't move it
     const userId = this.mixpanelPersistent.getUserId(token);
     const companyId = this.mixpanelPersistent.getCompanyId(token);
-    if (!userId || !companyId) {
-      if (this.mixpanelPersistent.getOptedOut(token)) {
+    const time = Date.now();
+    await this._queueProfileWork(token, async () => {
+      if (!userId || !companyId) {
+        await this._queuePendingProfileUpdate(token, operation, {
+          $time: time,
+          ...action,
+        });
         return;
       }
-      MixpanelLogger.log(
+      await this.core.addToMixpanelQueue(
         token,
-        `Queueing the ${operation} user profile update until identify({userId, companyId}).`
+        MixpanelType.GROUPS,
+        this._groupRecord(
+          token,
+          USER_ID_GROUP_KEY,
+          userId,
+          { $company_id: companyId },
+          action
+        )
       );
-      await MixpanelQueueManager.initialize(token, PENDING_PROFILE_QUEUE);
-      await MixpanelQueueManager.enqueue(token, PENDING_PROFILE_QUEUE, {
-        $time: Date.now(),
-        ...action,
-      });
-      return;
-    }
-    await this.sendGroupDataToMixpanel({
-      token,
-      groupKey: USER_ID_GROUP_KEY,
-      groupID: userId,
-      action,
     });
   }
 
-  // Sends the user profile updates queued before identify to the identified user's profile
-  async _sendPendingProfileUpdates(token) {
+  // Runs hierarchical groups user profile work one call at a time, in the order it was queued,
+  // so updates made after an identify follow the updates it moves from before it
+  _queueProfileWork(token, work) {
+    if (!this._profileWork) {
+      this._profileWork = {};
+    }
+    const previous = this._profileWork[token] || Promise.resolve();
+    const run = previous.then(work);
+    this._profileWork[token] = run.catch(() => {});
+    return run;
+  }
+
+  async _queuePendingProfileUpdate(token, operation, record) {
+    if (this.mixpanelPersistent.getOptedOut(token)) {
+      return;
+    }
+    // Checked as the other queues check a record, since one that can't be saved blocks the
+    // pending updates saved after it
+    try {
+      JSON.stringify(record);
+    } catch (error) {
+      MixpanelLogger.error(token, `Error in Mixpanel payload: ${error}`);
+      MixpanelLogger.error(
+        token,
+        `The Mixpanel payload is not valid or not serializable.`
+      );
+      return;
+    }
+    MixpanelLogger.log(
+      token,
+      `Queueing the ${operation} user profile update until identify({userId, companyId}).`
+    );
+    await MixpanelQueueManager.initialize(token, PENDING_PROFILE_QUEUE);
+    await MixpanelQueueManager.enqueue(token, PENDING_PROFILE_QUEUE, record);
+  }
+
+  // Moves profile updates left from an identify that didn't finish, after a restart
+  _resumePendingProfileUpdates(token) {
+    if (!this.hierarchicalGroups) {
+      return null;
+    }
+    const userId = this.mixpanelPersistent.getUserId(token);
+    const companyId = this.mixpanelPersistent.getCompanyId(token);
+    if (!userId || !companyId) {
+      return null;
+    }
+    return this._queueProfileWork(token, () =>
+      this._sendPendingProfileUpdates(token, userId, companyId)
+    );
+  }
+
+  // Sends the user profile updates queued before identify to the profile of the user and company
+  // that identify was for. They are saved to /groups before they leave the pending queue, so a
+  // restart in between sends them again rather than losing them.
+  async _sendPendingProfileUpdates(token, userId, companyId) {
     await MixpanelQueueManager.initialize(token, PENDING_PROFILE_QUEUE);
     const pending = MixpanelQueueManager.getQueue(token, PENDING_PROFILE_QUEUE);
     if (pending.length === 0) {
       return;
     }
-    await MixpanelQueueManager.clearQueue(token, PENDING_PROFILE_QUEUE);
-    const userId = this.mixpanelPersistent.getUserId(token);
-    const companyId = this.mixpanelPersistent.getCompanyId(token);
     for (const { $time, ...action } of pending) {
       await this.core.addToMixpanelQueue(token, MixpanelType.GROUPS, {
         ...this._groupRecord(
@@ -727,14 +798,24 @@ export default class MixpanelMain {
         ...($time != null && { $time }),
       });
     }
+    // Only the moved updates; profile work runs one at a time, so nothing was added since
+    await MixpanelQueueManager.spliceQueue(
+      token,
+      PENDING_PROFILE_QUEUE,
+      0,
+      pending.length
+    );
   }
 
   async _clearPendingProfileUpdates(token) {
     if (!this.hierarchicalGroups) {
       return;
     }
-    await MixpanelQueueManager.initialize(token, PENDING_PROFILE_QUEUE);
-    await MixpanelQueueManager.clearQueue(token, PENDING_PROFILE_QUEUE);
+    // After the profile calls made before it
+    await this._queueProfileWork(token, async () => {
+      await MixpanelQueueManager.initialize(token, PENDING_PROFILE_QUEUE);
+      await MixpanelQueueManager.clearQueue(token, PENDING_PROFILE_QUEUE);
+    });
   }
 
   async sendGroupDataToMixpanel({ token, groupKey, groupID, action }) {

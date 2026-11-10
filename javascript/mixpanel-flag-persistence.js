@@ -116,6 +116,17 @@ export class MixpanelFlagPersistence {
       return null;
     }
 
+    // On a hierarchical groups project the user is $user_id and $company_id, with no distinct_id,
+    // and the same user id in another company is another user
+    const persistedContext = data.context || {};
+    if (
+      persistedContext.$user_id !== context.$user_id ||
+      persistedContext.$company_id !== context.$company_id
+    ) {
+      await this.clear();
+      return null;
+    }
+
     const persistedFlags = new Map();
     const flagVariants = data.flagVariants || {};
     Object.keys(flagVariants).forEach((key) => {

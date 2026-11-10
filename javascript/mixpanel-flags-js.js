@@ -123,10 +123,13 @@ export class MixpanelFlagsJS {
   }
 
   _buildContext() {
+    // On a hierarchical groups project the user is $user_id and $company_id, so no distinct_id
+    const hierarchicalGroupsIdentity = this._hierarchicalGroupsIdentity();
     return {
-      distinct_id: this.mixpanelPersistent.getDistinctId(this.token),
+      ...(hierarchicalGroupsIdentity.$user_id
+        ? hierarchicalGroupsIdentity
+        : { distinct_id: this.mixpanelPersistent.getDistinctId(this.token) }),
       device_id: this.mixpanelPersistent.getDeviceId(this.token),
-      ...this._hierarchicalGroupsIdentity(),
       ...this.context,
     };
   }

@@ -1301,13 +1301,12 @@ describe("flags in JavaScript mode", () => {
     return JSON.parse(query.get("context"));
   };
 
-  it("send the user and company in the context after identify", async () => {
+  it("send the user and company instead of distinct_id in the context after identify", async () => {
     const { main, flags } = await startFlags();
     await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
     await flags.fetchPromise;
 
     expect(lastContext()).toEqual({
-      distinct_id: "user_123",
       device_id: main.mixpanelPersistent.getDeviceId(token),
       $user_id: "user_123",
       $company_id: "company_123",
@@ -1334,7 +1333,7 @@ describe("flags in JavaScript mode", () => {
 
     expect(sendRequestSpy).toHaveBeenCalledTimes(3);
     expect(lastContext().$company_id).toBe("company_456");
-    expect(lastContext().distinct_id).toBe("user_123");
+    expect(lastContext()).not.toHaveProperty("distinct_id");
   });
 
   it("let the configured context override the user and company", async () => {

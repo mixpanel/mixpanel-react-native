@@ -503,6 +503,10 @@ export default class MixpanelMain {
     if (!this.hierarchicalGroups) {
       return distinctId;
     }
+    MixpanelLogger.warn(
+      token,
+      "getDistinctId() should not be used on a hierarchical groups project, which identifies a user by company and user id. Use getIdentity() instead."
+    );
     const userId = this.mixpanelPersistent.getUserId(token);
     if (!userId) {
       // Anonymous, so already $device:{deviceId}

@@ -421,6 +421,18 @@ describe("getIdentity and getDistinctId", () => {
     expect(await main.getDistinctId(token)).toBe(`$device:${deviceId}`);
   });
 
+  it("getDistinctId warns that it should not be used", async () => {
+    const main = await start();
+    await main.getDistinctId(token);
+    expect(warnings().some((w) => w.includes("getDistinctId() should not be used"))).toBe(true);
+  });
+
+  it("getDistinctId does not warn when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.getDistinctId(token);
+    expect(warnings().some((w) => w.includes("getDistinctId() should not be used"))).toBe(false);
+  });
+
   it("reset returns to the device and clears the company", async () => {
     const main = await start();
     await main.identifyWithIdentity(token, acme);

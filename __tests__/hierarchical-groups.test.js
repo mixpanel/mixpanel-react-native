@@ -1,0 +1,1426 @@
+// Hierarchical groups in JavaScript mode. Ports the behavioral contract of mixpanel-android's
+// HierarchicalGroupsTest: MixpanelMain runs on the real MixpanelPersistent over in-memory
+// storage, and the queue is mocked so each test reads exactly what would be sent where.
+
+import {
+  MixpanelType,
+  PENDING_PROFILE_QUEUE,
+} from "mixpanel-react-native/javascript/mixpanel-constants";
+
+const mockCore = {
+  initialize: jest.fn(),
+  startProcessingQueue: jest.fn(),
+  addToMixpanelQueue: jest.fn(),
+  sendWhileOptedOut: jest.fn(),
+  flush: jest.fn(),
+  identifyUserQueue: jest.fn(),
+};
+
+jest.mock("mixpanel-react-native/javascript/mixpanel-core", () => ({
+  MixpanelCore: () => mockCore,
+}));
+
+jest.mock("react-native", () => ({
+  NativeModules: {},
+  Platform: { OS: "ios", Version: "17", constants: {} },
+}));
+
+const MixpanelMain =
+  require("mixpanel-react-native/javascript/mixpanel-main").default;
+const {
+  MixpanelPersistent,
+} = require("mixpanel-react-native/javascript/mixpanel-persistent");
+const {
+  MixpanelLogger,
+} = require("mixpanel-react-native/javascript/mixpanel-logger");
+const {
+  MixpanelQueueManager,
+} = require("mixpanel-react-native/javascript/mixpanel-queue");
+
+const token = "hg-token";
+
+const createStorage = () => {
+  const values = {};
+  return {
+    values,
+    getItem: jest.fn(async (key) => (key in values ? values[key] : null)),
+    setItem: jest.fn(async (key, value) => {
+      values[key] = value;
+    }),
+    removeItem: jest.fn(async (key) => {
+      delete values[key];
+    }),
+  };
+};
+
+let storage;
+let errorSpy;
+let warnSpy;
+
+const start = async ({ hierarchicalGroups = true, superProperties = {} } = {}) => {
+  // A fresh process: the persistent singleton reloads from storage
+  MixpanelPersistent.instance = undefined;
+  const main = new MixpanelMain(token, false, storage);
+  await main.initialize(
+    token,
+    false,
+    false,
+    superProperties,
+    "https://api.mixpanel.com",
+    false,
+    {},
+    null,
+    hierarchicalGroups
+  );
+  mockCore.addToMixpanelQueue.mockClear();
+  mockCore.sendWhileOptedOut.mockClear();
+  mockCore.flush.mockClear();
+  return main;
+};
+
+const queued = (type) =>
+  mockCore.addToMixpanelQueue.mock.calls
+    .filter(([, queueType]) => queueType === type)
+    .map(([, , data]) => data);
+const events = () => queued(MixpanelType.EVENTS);
+const lastEvent = () => events().at(-1);
+const groups = () => queued(MixpanelType.GROUPS);
+const engage = () => queued(MixpanelType.USER);
+const errors = () => errorSpy.mock.calls.map((args) => args.slice(1).join(" "));
+const warnings = () => warnSpy.mock.calls.map((args) => args.slice(1).join(" "));
+
+const acme = { userId: "user_123", companyId: "acme" };
+
+beforeEach(async () => {
+  jest.clearAllMocks();
+  // The queue manager outlives each test's persistent, so start with no pending profile updates
+  await MixpanelQueueManager.clearQueue(token, PENDING_PROFILE_QUEUE);
+  storage = createStorage();
+  errorSpy = jest.spyOn(MixpanelLogger, "error").mockImplementation(() => {});
+  warnSpy = jest.spyOn(MixpanelLogger, "warn").mockImplementation(() => {});
+});
+
+afterEach(() => {
+  errorSpy.mockRestore();
+  warnSpy.mockRestore();
+});
+
+describe("events", () => {
+  it("carry the user, company and device", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    await main.track(token, "Opened");
+
+    const props = lastEvent().properties;
+    expect(props.$user_id).toBe("user_123");
+    expect(props.$company_id).toBe("acme");
+    expect(props.$device_id).toBe(main.mixpanelPersistent.getDeviceId(token));
+    // No distinct_id; ingestion resolves the user from the identity keys
+    expect(props).not.toHaveProperty("distinct_id");
+  });
+
+  it("identify tracks no $identify, and the next event carries the identity keys", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    expect(events().some((e) => e.event === "$identify")).toBe(false);
+
+    await main.track(token, "Opened");
+    const props = lastEvent().properties;
+    expect(props.$company_id).toBe("acme");
+    expect(props.$user_id).toBe("user_123");
+    expect(props.$device_id).toBe(main.mixpanelPersistent.getDeviceId(token));
+  });
+
+  it("anonymous events carry no company", async () => {
+    const main = await start();
+    await main.track(token, "Opened");
+    expect(lastEvent().properties).not.toHaveProperty("$company_id");
+  });
+
+  it("$company_id overrides a super property", async () => {
+    const main = await start({ superProperties: { $company_id: "spoofed" } });
+    await main.identifyWithIdentity(token, acme);
+    await main.track(token, "Opened");
+    expect(lastEvent().properties.$company_id).toBe("acme");
+  });
+
+  it("replace a caller's $company_id with the identified company, with a warning", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    await main.track(token, "Opened", { $company_id: "other", plan: "pro" });
+
+    expect(lastEvent().properties.$company_id).toBe("acme");
+    expect(lastEvent().properties.plan).toBe("pro");
+    expect(warnings()).toEqual([expect.stringContaining("Replacing $company_id other")]);
+  });
+
+  it("keep a caller's $company_id matching the identified company without a warning", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    await main.track(token, "Opened", { $company_id: "acme" });
+
+    expect(lastEvent().properties.$company_id).toBe("acme");
+    expect(warnings()).toEqual([]);
+  });
+
+  it("remove a caller's $company_id before a company is identified, with a warning", async () => {
+    const main = await start();
+    await main.track(token, "Opened", { $company_id: "other", plan: "pro" });
+
+    expect(events()).toHaveLength(1);
+    expect(lastEvent().properties).not.toHaveProperty("$company_id");
+    expect(lastEvent().properties.plan).toBe("pro");
+    expect(warnings()).toEqual([expect.stringContaining("Removing $company_id other")]);
+  });
+
+  it("remove a group $company_id from trackWithGroups before identify", async () => {
+    const main = await start();
+    await main.trackWithGroups(token, "Opened", {}, { $company_id: "other" });
+
+    expect(lastEvent().properties).not.toHaveProperty("$company_id");
+    expect(warnings()).toEqual([expect.stringContaining("Removing $company_id other")]);
+  });
+
+  it("keep a caller's $company_id when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.track(token, "Opened", { $company_id: "other" });
+
+    expect(lastEvent().properties.$company_id).toBe("other");
+    expect(warnings()).toEqual([]);
+  });
+
+  it("carry no company when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.identifyWithIdentity(token, { userId: "user_123" });
+    await main.track(token, "Opened");
+    expect(lastEvent().properties).not.toHaveProperty("$company_id");
+    expect(lastEvent().properties.$user_id).toBe("user_123");
+  });
+
+  it("drop a caller's distinct_id once identified", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    await main.track(token, "Opened", { distinct_id: "caller" });
+
+    expect(lastEvent().properties).not.toHaveProperty("distinct_id");
+    expect(lastEvent().properties.$user_id).toBe("user_123");
+  });
+
+  it("drop a distinct_id super property once identified", async () => {
+    const main = await start();
+    await main.registerSuperProperties(token, { distinct_id: "saved" });
+    await main.identifyWithIdentity(token, acme);
+    await main.track(token, "Opened");
+
+    expect(lastEvent().properties).not.toHaveProperty("distinct_id");
+  });
+
+  it("anonymous events replace a caller's distinct_id with the device", async () => {
+    const main = await start();
+    await main.registerSuperProperties(token, { distinct_id: "saved" });
+    await main.track(token, "Opened", { distinct_id: "caller" });
+
+    expect(lastEvent().properties.distinct_id).toBe(
+      main.mixpanelPersistent.getDistinctId(token)
+    );
+  });
+
+  it("replace a caller's distinct_id with the user when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.registerSuperProperties(token, { distinct_id: "saved" });
+    await main.identifyWithIdentity(token, { userId: "user_123" });
+    await main.track(token, "Opened", { distinct_id: "caller" });
+
+    expect(lastEvent().properties.distinct_id).toBe("user_123");
+  });
+});
+
+describe("identify", () => {
+  it.each([
+    ["enabled", true, { userId: "$device:abc", companyId: "acme" }],
+    ["disabled", false, { userId: "$device:abc" }],
+  ])("refuses a user id starting with $device: when %s", async (_, enabled, identity) => {
+    const main = await start({ hierarchicalGroups: enabled });
+    const deviceDistinctId = await main.getDistinctId(token);
+    await main.identifyWithIdentity(token, identity);
+
+    expect((await main.getIdentity(token)).userId).toBeNull();
+    expect(await main.getDistinctId(token)).toBe(deviceDistinctId);
+    expect(errors()).toEqual([expect.stringContaining("can't start with $device:")]);
+  });
+
+  it.each([
+    ["user id", { userId: "  ", companyId: "acme" }],
+    ["company id", { userId: "user_123", companyId: " \t" }],
+  ])("treats a whitespace-only %s as missing", async (_, identity) => {
+    const main = await start();
+    await main.identifyWithIdentity(token, identity);
+
+    expect((await main.getIdentity(token)).userId).toBeNull();
+    expect(errors()).toEqual([expect.stringContaining("both are required")]);
+  });
+
+  it("treats a whitespace-only user id as missing when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.identifyWithIdentity(token, { userId: " " });
+
+    expect((await main.getIdentity(token)).userId).toBeNull();
+    expect(errors()).toEqual([expect.stringContaining("without a user id")]);
+  });
+
+  it("keeps the ids as given otherwise", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, { userId: " user_123 ", companyId: " acme " });
+
+    expect(await main.getIdentity(token)).toMatchObject({
+      userId: " user_123 ",
+      companyId: " acme ",
+    });
+  });
+
+  it("treats a company change as an identity change", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "globex" });
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "globex" });
+
+    expect(await main.getDistinctId(token)).toBe("$company:globex|$user:user_123");
+    expect((await main.getIdentity(token)).companyId).toBe("globex");
+  });
+
+  it("rejects identify(distinctId) and keeps the current identity", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.identify(token, "someone_else");
+
+    expect(events()).toHaveLength(0);
+    expect(await main.getIdentity(token)).toMatchObject(acme);
+    expect(errors()).toContain(
+      "identify(String) is not supported for hierarchical groups projects, which identify a " +
+        "user by company and user id. Use identify({userId, companyId}). Nothing was identified."
+    );
+  });
+
+  it.each([
+    [{ userId: "user_123" }],
+    [{ userId: "user_123", companyId: "" }],
+    [{ userId: "", companyId: "acme" }],
+    [{ userId: null, companyId: "acme" }],
+    [{ companyId: "acme" }],
+  ])("ignores %o without both ids", async (identity) => {
+    const main = await start();
+    const before = await main.getIdentity(token);
+    await main.identifyWithIdentity(token, identity);
+
+    expect(events()).toHaveLength(0);
+    expect(await main.getIdentity(token)).toEqual(before);
+    expect(errors().at(-1)).toMatch(
+      /^Can't identify MixpanelIdentity\(.*\): hierarchical groups projects identify a user by company and user id, so both are required\. Nothing was identified\.$/
+    );
+  });
+
+  it("ignores a null identity", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, null);
+    expect(events()).toHaveLength(0);
+    expect(errors()).toHaveLength(1);
+  });
+
+  it("formats the identity in the error", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, { userId: "user_123" });
+    expect(errors()[0]).toMatch(/^Can't identify MixpanelIdentity\(userId=user_123\): /);
+  });
+
+  it("ignores the identity's device id", async () => {
+    const main = await start();
+    const deviceId = main.mixpanelPersistent.getDeviceId(token);
+    await main.identifyWithIdentity(token, { ...acme, deviceId: "other-device" });
+    await main.track(token, "Opened");
+
+    expect((await main.getIdentity(token)).deviceId).toBe(deviceId);
+    expect(lastEvent().properties.$device_id).toBe(deviceId);
+    expect(warnSpy).toHaveBeenCalled();
+  });
+
+  it("does nothing while opted out", async () => {
+    const main = await start();
+    await main.optOutTracking(token);
+    await main.identifyWithIdentity(token, acme);
+    expect((await main.getIdentity(token)).userId).toBeNull();
+  });
+
+  it("persists the company across restarts", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+
+    const restarted = await start();
+    expect(await restarted.getIdentity(token)).toMatchObject(acme);
+    await restarted.track(token, "Opened");
+    expect(lastEvent().properties.$company_id).toBe("acme");
+  });
+
+  it("rejects an identity with a company when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.identifyWithIdentity(token, acme);
+
+    expect(events()).toHaveLength(0);
+    expect((await main.getIdentity(token)).userId).toBeNull();
+    expect(errors()[0]).toContain("a company requires hierarchicalGroups");
+  });
+
+  it("identifies a user without a company when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.identifyWithIdentity(token, { userId: "user_123" });
+
+    expect(await main.getIdentity(token)).toMatchObject({
+      userId: "user_123",
+      companyId: null,
+    });
+    expect(await main.getDistinctId(token)).toBe("user_123");
+  });
+
+  it("drops alias", async () => {
+    const main = await start();
+    await main.alias(token, "new_alias", "user_123");
+    expect(events()).toHaveLength(0);
+    expect(errors()[0]).toContain("alias is not supported for hierarchical groups projects");
+  });
+});
+
+describe("getIdentity and getDistinctId", () => {
+  it("getIdentity reports the user, company and device", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    expect(await main.getIdentity(token)).toEqual({
+      ...acme,
+      deviceId: main.mixpanelPersistent.getDeviceId(token),
+    });
+  });
+
+  it("the distinct id is the device before identify", async () => {
+    const main = await start();
+    const deviceId = main.mixpanelPersistent.getDeviceId(token);
+    expect(await main.getDistinctId(token)).toBe(`$device:${deviceId}`);
+  });
+
+  it("the distinct id combines company and user", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    expect(await main.getDistinctId(token)).toBe("$company:acme|$user:user_123");
+  });
+
+  it("the distinct id stays on the device until a company is known", async () => {
+    const main = await start();
+    // A user stored without a company, e.g. identified before hierarchical groups was enabled
+    main.mixpanelPersistent.updateDistinctId(token, "user_123");
+    main.mixpanelPersistent.updateUserId(token, "user_123");
+    const deviceId = main.mixpanelPersistent.getDeviceId(token);
+    expect(await main.getDistinctId(token)).toBe(`$device:${deviceId}`);
+  });
+
+  it("getDistinctId warns that it should not be used", async () => {
+    const main = await start();
+    await main.getDistinctId(token);
+    expect(warnings().some((w) => w.includes("getDistinctId() should not be used"))).toBe(true);
+  });
+
+  it("getDistinctId does not warn when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.getDistinctId(token);
+    expect(warnings().some((w) => w.includes("getDistinctId() should not be used"))).toBe(false);
+  });
+
+  it("reset returns to the device and clears the company", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    await main.reset(token);
+
+    const identity = await main.getIdentity(token);
+    expect(identity.userId).toBeNull();
+    expect(identity.companyId).toBeNull();
+    expect(await main.getDistinctId(token)).toBe(`$device:${identity.deviceId}`);
+    await main.track(token, "Opened");
+    expect(lastEvent().properties).not.toHaveProperty("$company_id");
+  });
+});
+
+describe("company storage", () => {
+  const companyIdKey = `MIXPANEL_${token}_COMPANY_ID`;
+  const companyIdCalls = () =>
+    [storage.getItem, storage.setItem, storage.removeItem].flatMap((fn) =>
+      fn.mock.calls.filter(([key]) => key === companyIdKey)
+    );
+
+  it("is never touched when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.identify(token, "user_123");
+    await main.reset(token);
+    expect(companyIdCalls()).toEqual([]);
+  });
+
+  it("is loaded, saved and cleared when enabled", async () => {
+    storage.values[companyIdKey] = "acme";
+    const main = await start();
+    expect(storage.getItem).toHaveBeenCalledWith(companyIdKey);
+    expect((await main.getIdentity(token)).companyId).toBe("acme");
+
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "globex" });
+    expect(storage.values[companyIdKey]).toBe("globex");
+
+    await main.reset(token);
+    expect(storage.removeItem).toHaveBeenCalledWith(companyIdKey);
+    expect(storage.values).not.toHaveProperty(companyIdKey);
+  });
+});
+
+describe("opt in and out", () => {
+  it("optInTrackingWithIdentity identifies with the company", async () => {
+    const main = await start();
+    await main.optOutTracking(token);
+    await main.optInTrackingWithIdentity(token, acme, { source: "settings" });
+
+    expect(main.mixpanelPersistent.getOptedOut(token)).toBe(false);
+    const optIn = events().find((e) => e.event === "$opt_in");
+    expect(optIn.properties.$company_id).toBe("acme");
+    expect(optIn.properties.source).toBe("settings");
+    expect(events().some((e) => e.event === "$identify")).toBe(false);
+    expect((await main.getIdentity(token)).companyId).toBe("acme");
+  });
+
+  it("optInTrackingWithIdentity without a company leaves the user opted out", async () => {
+    const main = await start();
+    await main.optOutTracking(token);
+    await main.optInTrackingWithIdentity(token, { userId: "user_123" });
+
+    expect(main.mixpanelPersistent.getOptedOut(token)).toBe(true);
+    expect(events().some((e) => e.event === "$opt_in")).toBe(false);
+  });
+
+  it("optInTrackingWithIdentity with a company without hierarchical groups leaves the user opted out", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.optOutTracking(token);
+    await main.optInTrackingWithIdentity(token, acme);
+
+    expect(main.mixpanelPersistent.getOptedOut(token)).toBe(true);
+    expect(events().some((e) => e.event === "$opt_in")).toBe(false);
+  });
+
+  it("optInTrackingWithIdentity with a $device: user id leaves the user opted out", async () => {
+    const main = await start();
+    await main.optOutTracking(token);
+    await main.optInTrackingWithIdentity(token, { userId: "$device:abc", companyId: "acme" });
+
+    expect(main.mixpanelPersistent.getOptedOut(token)).toBe(true);
+    expect(errors()).toEqual([expect.stringContaining("can't start with $device:")]);
+  });
+
+  it("optInTrackingWithIdentity with a whitespace-only company leaves the user opted out", async () => {
+    const main = await start();
+    await main.optOutTracking(token);
+    await main.optInTrackingWithIdentity(token, { userId: "user_123", companyId: "  " });
+
+    expect(main.mixpanelPersistent.getOptedOut(token)).toBe(true);
+    expect(errors()).toEqual([expect.stringContaining("both are required")]);
+  });
+
+  it("optInTrackingWithIdentity without an identity stays anonymous", async () => {
+    const main = await start();
+    await main.optOutTracking(token);
+    await main.optInTrackingWithIdentity(token, null);
+
+    const optIn = events().find((e) => e.event === "$opt_in");
+    expect(optIn.properties.$user_id).toBeFalsy();
+    expect(optIn.properties).not.toHaveProperty("$company_id");
+  });
+
+  it("optInTracking without arguments still works", async () => {
+    const main = await start();
+    await main.optOutTracking(token);
+    await main.optInTracking(token);
+    expect(events().map((e) => e.event)).toEqual(["$opt_in"]);
+  });
+
+  it("opt out deletes the user profile without clearing charges", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.optOutTracking(token);
+
+    expect(mockCore.sendWhileOptedOut).toHaveBeenCalledTimes(1);
+    expect(mockCore.sendWhileOptedOut).toHaveBeenCalledWith(
+      token,
+      MixpanelType.GROUPS,
+      expect.objectContaining({
+        $group_key: "$user_id",
+        $group_id: "user_123",
+        $company_id: "acme",
+        $delete: "null",
+      })
+    );
+    expect(groups()).toHaveLength(0);
+    expect(engage()).toHaveLength(0);
+    expect((await main.getIdentity(token)).companyId).toBeNull();
+  });
+
+  it("opt out clears pending group updates before the user delete", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    const clearQueue = jest.spyOn(MixpanelQueueManager, "clearQueue");
+
+    await main.optOutTracking(token);
+
+    expect(clearQueue).toHaveBeenCalledWith(token, MixpanelType.GROUPS);
+    expect(clearQueue.mock.invocationCallOrder[0]).toBeLessThan(
+      mockCore.sendWhileOptedOut.mock.invocationCallOrder[0]
+    );
+    clearQueue.mockRestore();
+  });
+
+  it("opt out drops calls made while the user delete is sent", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    mockCore.addToMixpanelQueue.mockClear();
+    // The core drops what it is given while opted out
+    const optedOutWhenQueued = [];
+    mockCore.addToMixpanelQueue.mockImplementation(async () => {
+      optedOutWhenQueued.push(main.mixpanelPersistent.getOptedOut(token));
+    });
+
+    const optedOut = main.optOutTracking(token);
+    await main.track(token, "Opened");
+    await main.set(token, { plan: "pro" });
+    await optedOut;
+    mockCore.addToMixpanelQueue.mockReset();
+
+    expect(events()).toHaveLength(0);
+    expect(optedOutWhenQueued).not.toContain(false);
+    expect(mockCore.sendWhileOptedOut).toHaveBeenCalledTimes(1);
+  });
+
+  it("opt out of an anonymous user deletes nothing", async () => {
+    const main = await start();
+    await main.optOutTracking(token);
+    expect(groups()).toHaveLength(0);
+    expect(errors()).toHaveLength(0);
+  });
+});
+
+describe("user profiles", () => {
+  it("are sent to /engage when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.identifyWithIdentity(token, { userId: "user_123" });
+    await main.set(token, { plan: "pro" });
+
+    expect(groups()).toHaveLength(0);
+    expect(engage().at(-1)).toMatchObject({
+      $set: { plan: "pro" },
+      $distinct_id: "user_123",
+    });
+  });
+
+  it("become $user_id group profiles", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.set(token, { plan: "pro" });
+    await main.setOnce(token, { first_seen: "today" });
+    await main.union(token, "roles", ["admin"]);
+    await main.remove(token, "roles", "viewer");
+    await main.unset(token, "legacy");
+    await main.deleteUser(token);
+
+    expect(engage()).toHaveLength(0);
+    const sent = groups();
+    expect(sent.map((g) => Object.keys(g).find((k) => k.startsWith("$") && ![
+      "$token", "$time", "$group_key", "$group_id", "$company_id",
+    ].includes(k)))).toEqual(["$set", "$set_once", "$union", "$remove", "$unset", "$delete"]);
+    for (const update of sent) {
+      expect(update).toMatchObject({
+        $token: token,
+        $group_key: "$user_id",
+        $group_id: "user_123",
+        $company_id: "acme",
+      });
+      expect(update).not.toHaveProperty("$distinct_id");
+      expect(update).not.toHaveProperty("$device_id");
+      expect(update).not.toHaveProperty("$user_id");
+    }
+    expect(sent[0].$set).toEqual({ plan: "pro" });
+  });
+
+  it("drop the operations /groups can't express", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.increment(token, { logins: 1 });
+    await main.append(token, "history", "a");
+    await main.trackCharge(token, 9.99, {});
+    await main.clearCharges(token);
+
+    expect(groups()).toHaveLength(0);
+    expect(engage()).toHaveLength(0);
+    expect(errors()).toEqual([
+      "$add is not supported for hierarchical groups projects, whose user profiles are group " +
+        "profiles keyed by $user_id. Supported operations are [$set, $set_once, $unset, $union, " +
+        "$remove, $delete], so increment, append, merge and trackCharge have no hierarchical " +
+        "groups equivalent. The update was dropped.",
+      expect.stringMatching(/^\$append is not supported/),
+      expect.stringMatching(/^\$append is not supported/),
+      "clearCharges is not supported for hierarchical groups projects, which can't " +
+        "trackCharge. The update was dropped.",
+    ]);
+  });
+
+  it("are queued before identify and sent to the identified user's profile", async () => {
+    const main = await start();
+    await main.set(token, { plan: "pro" });
+    await main.setOnce(token, { first_seen: "today" });
+    await main.unset(token, "old");
+    await main.union(token, { tags: ["a"] });
+    await main.remove(token, { tags: "b" });
+    await main.deleteUser(token);
+
+    expect(groups()).toHaveLength(0);
+    expect(engage()).toHaveLength(0);
+    expect(errors()).toEqual([]);
+
+    await main.identifyWithIdentity(token, acme);
+
+    const profile = { $group_key: "$user_id", $group_id: "user_123", $company_id: "acme" };
+    expect(groups()).toEqual([
+      expect.objectContaining({ ...profile, $set: { plan: "pro" } }),
+      expect.objectContaining({ ...profile, $set_once: { first_seen: "today" } }),
+      expect.objectContaining({ ...profile, $unset: ["old"] }),
+      expect.objectContaining({ ...profile, $union: { tags: ["a"] } }),
+      expect.objectContaining({ ...profile, $remove: { tags: "b" } }),
+      expect.objectContaining({ ...profile, $delete: "null" }),
+    ]);
+    expect(engage()).toHaveLength(0);
+  });
+
+  it("queued before identify keep the time they were made", async () => {
+    const main = await start();
+    const now = jest.spyOn(Date, "now").mockReturnValue(1000);
+    await main.set(token, { plan: "pro" });
+    now.mockReturnValue(2000);
+    await main.identifyWithIdentity(token, acme);
+    now.mockRestore();
+
+    expect(groups()[0].$time).toBe(1000);
+  });
+
+  it("queued before identify are sent once", async () => {
+    const main = await start();
+    await main.set(token, { plan: "pro" });
+    await main.identifyWithIdentity(token, acme);
+    await main.identifyWithIdentity(token, { userId: "user_456", companyId: "acme" });
+
+    expect(groups()).toHaveLength(1);
+  });
+
+  it("queued before identify are kept across restarts", async () => {
+    let first;
+    jest.isolateModules(() => {
+      first = require("mixpanel-react-native/javascript/mixpanel-main").default;
+    });
+    const firstMain = new first(token, false, storage);
+    await firstMain.initialize(token, false, false, {}, undefined, false, {}, null, true);
+    await firstMain.set(token, { plan: "pro" });
+    expect(storage.values[`MIXPANEL_${token}_${PENDING_PROFILE_QUEUE}_QUEUE`]).toContain("pro");
+
+    let second;
+    jest.isolateModules(() => {
+      second = require("mixpanel-react-native/javascript/mixpanel-main").default;
+    });
+    const secondMain = new second(token, false, storage);
+    await secondMain.initialize(token, false, false, {}, undefined, false, {}, null, true);
+    mockCore.addToMixpanelQueue.mockClear();
+    await secondMain.identifyWithIdentity(token, acme);
+
+    expect(groups()).toEqual([
+      expect.objectContaining({ $group_id: "user_123", $company_id: "acme", $set: { plan: "pro" } }),
+    ]);
+  });
+
+  it("queued before identify are cleared by reset", async () => {
+    const main = await start();
+    await main.set(token, { plan: "pro" });
+    await main.reset(token);
+    await main.identifyWithIdentity(token, acme);
+
+    expect(groups()).toHaveLength(0);
+  });
+
+  it("queued before identify are cleared by opting out", async () => {
+    const main = await start();
+    await main.set(token, { plan: "pro" });
+    await main.optOutTracking(token);
+    await main.optInTrackingWithIdentity(token, acme);
+
+    expect(groups()).toHaveLength(0);
+  });
+
+  it("are not queued while opted out", async () => {
+    const main = await start();
+    await main.optOutTracking(token);
+    await main.set(token, { plan: "pro" });
+    await main.optInTrackingWithIdentity(token, acme);
+
+    expect(groups()).toHaveLength(0);
+  });
+
+  it("made while opted out are dropped by an opt in before they run", async () => {
+    const main = await start();
+    await main.optOutTracking(token);
+    const set = main.set(token, { plan: "private" });
+    await main.optInTrackingWithIdentity(token, acme);
+    await set;
+
+    expect(groups()).toHaveLength(0);
+    await MixpanelQueueManager.initialize(token, PENDING_PROFILE_QUEUE);
+    expect(MixpanelQueueManager.getQueue(token, PENDING_PROFILE_QUEUE)).toHaveLength(0);
+  });
+
+  it("setGroup and removeGroup before identify queue their profile updates", async () => {
+    const main = await start();
+    await main.setGroup(token, "team_id", "eng");
+    await main.setGroup(token, "region", "us");
+    await main.removeGroup(token, "region", "us");
+
+    expect(main.mixpanelPersistent.getSuperProperties(token).team_id).toBe("eng");
+    expect(groups()).toHaveLength(0);
+
+    await main.identifyWithIdentity(token, acme);
+
+    expect(groups()).toEqual([
+      expect.objectContaining({ $group_id: "user_123", $set: { team_id: "eng" } }),
+      expect.objectContaining({ $group_id: "user_123", $set: { region: "us" } }),
+      expect.objectContaining({ $group_id: "user_123", $unset: ["region"] }),
+    ]);
+  });
+
+  const pendingKey = `MIXPANEL_${token}_${PENDING_PROFILE_QUEUE}_QUEUE`;
+
+  // A fresh process over the same storage, with its own queue manager and persistent, so the
+  // pending queue is saved to this test's storage
+  const restart = async () => {
+    let Main;
+    let logger;
+    jest.isolateModules(() => {
+      Main = require("mixpanel-react-native/javascript/mixpanel-main").default;
+      logger = require("mixpanel-react-native/javascript/mixpanel-logger").MixpanelLogger;
+    });
+    // This process's errors, read by errors()
+    errorSpy.mockRestore();
+    errorSpy = jest.spyOn(logger, "error").mockImplementation(() => {});
+    const main = new Main(token, false, storage);
+    await main.initialize(token, false, false, {}, undefined, false, {}, null, true);
+    return main;
+  };
+
+  it("made right after identify follow the updates queued before it", async () => {
+    const main = await start();
+    await main.set(token, { plan: "old" });
+    const identify = main.identifyWithIdentity(token, acme);
+    const set = main.set(token, { plan: "new" });
+    await Promise.all([identify, set]);
+
+    expect(groups()).toEqual([
+      expect.objectContaining({ $group_id: "user_123", $set: { plan: "old" } }),
+      expect.objectContaining({ $group_id: "user_123", $set: { plan: "new" } }),
+    ]);
+  });
+
+  it("made before identify without waiting still go first", async () => {
+    const main = await start();
+    const old = main.set(token, { plan: "old" });
+    const identify = main.identifyWithIdentity(token, acme);
+    const set = main.set(token, { plan: "new" });
+    await Promise.all([old, identify, set]);
+
+    expect(groups().map((record) => record.$set)).toEqual([
+      { plan: "old" },
+      { plan: "new" },
+    ]);
+  });
+
+  it("queued before identify go to that identify's user when another identify follows", async () => {
+    const main = await start();
+    await main.set(token, { plan: "pro" });
+    const first = main.identifyWithIdentity(token, acme);
+    const second = main.identifyWithIdentity(token, { userId: "user_456", companyId: "globex" });
+    await Promise.all([first, second]);
+
+    expect(groups()).toEqual([
+      expect.objectContaining({ $group_id: "user_123", $company_id: "acme", $set: { plan: "pro" } }),
+    ]);
+  });
+
+  it("queued before identify stay saved until they are saved to /groups", async () => {
+    const main = await restart();
+    await main.set(token, { plan: "pro" });
+    // Saving to /groups fails, as when the app is closed before the save
+    mockCore.addToMixpanelQueue.mockImplementationOnce(async () => {
+      expect(storage.values[pendingKey]).toContain("pro");
+      throw new Error("storage failed");
+    });
+    await expect(main.identifyWithIdentity(token, acme)).rejects.toThrow("storage failed");
+    expect(storage.values[pendingKey]).toContain("pro");
+
+    mockCore.addToMixpanelQueue.mockClear();
+    await restart();
+
+    expect(groups()).toEqual([
+      expect.objectContaining({ $group_id: "user_123", $company_id: "acme", $set: { plan: "pro" } }),
+    ]);
+    expect(JSON.parse(storage.values[pendingKey])).toEqual([]);
+  });
+
+  it("left by an identify that didn't finish are sent on the next start", async () => {
+    const main = await restart();
+    await main.set(token, { plan: "pro" });
+    await main.setOnce(token, { first_seen: "today" });
+    // The identity is saved, but the app closes before the updates move
+    main.mixpanelPersistent.updateDistinctId(token, "user_123");
+    main.mixpanelPersistent.updateUserId(token, "user_123");
+    main.mixpanelPersistent.updateCompanyId(token, "acme");
+    await main.mixpanelPersistent.persistIdentity(token);
+
+    await restart();
+
+    expect(groups()).toEqual([
+      expect.objectContaining({ $group_id: "user_123", $company_id: "acme", $set: { plan: "pro" } }),
+      expect.objectContaining({ $group_id: "user_123", $set_once: { first_seen: "today" } }),
+    ]);
+    expect(JSON.parse(storage.values[pendingKey])).toEqual([]);
+  });
+
+  it("are not sent on start without a stored company", async () => {
+    const main = await restart();
+    await main.set(token, { plan: "pro" });
+
+    await restart();
+
+    expect(groups()).toHaveLength(0);
+    expect(storage.values[pendingKey]).toContain("pro");
+  });
+
+  it("that can't be saved are dropped without blocking later ones", async () => {
+    const main = await restart();
+    const circular = {};
+    circular.self = circular;
+    await main.set(token, { bad: circular });
+    await main.set(token, { plan: "pro" });
+
+    expect(errors()).toEqual([
+      expect.stringContaining("Error in Mixpanel payload"),
+      "The Mixpanel payload is not valid or not serializable.",
+    ]);
+    expect(storage.values[pendingKey]).toContain("pro");
+
+    await main.identifyWithIdentity(token, acme);
+
+    expect(groups()).toEqual([expect.objectContaining({ $set: { plan: "pro" } })]);
+  });
+
+  it("still drop the operations /groups can't express before identify", async () => {
+    const main = await start();
+    await main.increment(token, { logins: 1 });
+    await main.identifyWithIdentity(token, acme);
+
+    expect(groups()).toHaveLength(0);
+    expect(errors()[0]).toContain("$add is not supported");
+  });
+});
+
+describe("group membership", () => {
+  it("setGroup stores one group and writes the user profile through /groups", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.setGroup(token, "team_id", "eng");
+
+    expect(main.mixpanelPersistent.getSuperProperties(token).team_id).toBe("eng");
+    expect(groups()).toEqual([
+      expect.objectContaining({
+        $group_key: "$user_id",
+        $group_id: "user_123",
+        $company_id: "acme",
+        $set: { team_id: "eng" },
+      }),
+    ]);
+    await main.track(token, "Opened");
+    expect(lastEvent().properties.team_id).toBe("eng");
+  });
+
+  it("setGroup with a list is dropped", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.setGroup(token, "team_id", ["eng", "ops"]);
+
+    expect(main.mixpanelPersistent.getSuperProperties(token)).not.toHaveProperty("team_id");
+    expect(groups()).toHaveLength(0);
+    expect(errors()).toEqual([
+      "setGroup with a list is not supported for hierarchical groups projects, which allow " +
+        "one team_id per user. Use setGroup(groupKey, groupID). The update was dropped.",
+    ]);
+  });
+
+  it("addGroup is dropped", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    await main.setGroup(token, "team_id", "eng");
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.addGroup(token, "team_id", "ops");
+
+    expect(main.mixpanelPersistent.getSuperProperties(token).team_id).toBe("eng");
+    expect(groups()).toHaveLength(0);
+    expect(errors()[0]).toMatch(/^addGroup is not supported for hierarchical groups projects/);
+  });
+
+  it("removeGroup clears the group", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    await main.setGroup(token, "team_id", "eng");
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.removeGroup(token, "team_id", "eng");
+
+    expect(main.mixpanelPersistent.getSuperProperties(token)).not.toHaveProperty("team_id");
+    expect(groups()).toEqual([
+      expect.objectContaining({ $group_key: "$user_id", $unset: ["team_id"] }),
+    ]);
+  });
+
+  it("setGroup with null sets the group to null", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.setGroup(token, "team_id", null);
+
+    expect(main.mixpanelPersistent.getSuperProperties(token)).toHaveProperty("team_id", null);
+    expect(groups()).toEqual([
+      expect.objectContaining({ $group_key: "$user_id", $set: { team_id: null } }),
+    ]);
+    await main.track(token, "Opened");
+    expect(lastEvent().properties).toHaveProperty("team_id", null);
+  });
+
+  it("removeGroup with null clears a group set to null", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    await main.setGroup(token, "team_id", null);
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.removeGroup(token, "team_id", null);
+
+    expect(main.mixpanelPersistent.getSuperProperties(token)).not.toHaveProperty("team_id");
+    expect(groups()).toEqual([
+      expect.objectContaining({ $group_key: "$user_id", $unset: ["team_id"] }),
+    ]);
+  });
+
+  it("removeGroup with null leaves a set group", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    await main.setGroup(token, "team_id", "eng");
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.removeGroup(token, "team_id", null);
+
+    expect(main.mixpanelPersistent.getSuperProperties(token).team_id).toBe("eng");
+    expect(groups()).toHaveLength(0);
+  });
+
+  it("removeGroup of another group does nothing", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    await main.setGroup(token, "team_id", "eng");
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.removeGroup(token, "team_id", "ops");
+
+    expect(main.mixpanelPersistent.getSuperProperties(token).team_id).toBe("eng");
+    expect(groups()).toHaveLength(0);
+  });
+
+  it("removeGroup clears a one-item list stored before hierarchical groups", async () => {
+    const main = await start({ superProperties: { team_id: ["eng"] } });
+    await main.identifyWithIdentity(token, acme);
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.removeGroup(token, "team_id", "eng");
+
+    expect(main.mixpanelPersistent.getSuperProperties(token)).not.toHaveProperty("team_id");
+    expect(groups()).toHaveLength(1);
+  });
+
+  it.each([
+    ["registerSuperProperties", (main) => main.registerSuperProperties(token, { $company_id: "x", plan: "pro" })],
+    ["registerSuperPropertiesOnce", (main) => main.registerSuperPropertiesOnce(token, { $company_id: "x", plan: "pro" })],
+    ["setGroup", (main) => main.setGroup(token, "$company_id", "x")],
+  ])("%s with $company_id is refused whole", async (operation, call) => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await call(main);
+
+    const superProperties = main.mixpanelPersistent.getSuperProperties(token);
+    expect(superProperties).not.toHaveProperty("$company_id");
+    expect(superProperties).not.toHaveProperty("plan");
+    expect(groups()).toHaveLength(0);
+    expect(errors()).toEqual([
+      `${operation} with $company_id is not supported for hierarchical groups projects, which ` +
+        "set $company_id from identify({userId, companyId}). The update was dropped.",
+    ]);
+  });
+
+  it.each([
+    ["unregisterSuperProperty", (main) => main.unregisterSuperProperty(token, "$company_id")],
+    ["removeGroup", (main) => main.removeGroup(token, "$company_id", "x")],
+  ])("%s with $company_id is refused", async (operation, call) => {
+    const main = await start({ superProperties: { $company_id: "x" } });
+    await main.identifyWithIdentity(token, acme);
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await call(main);
+
+    expect(main.mixpanelPersistent.getSuperProperties(token).$company_id).toBe("x");
+    expect(groups()).toHaveLength(0);
+    expect(errors()).toEqual([expect.stringContaining(`${operation} with $company_id`)]);
+  });
+
+  it("$company_id super properties and groups are allowed when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.registerSuperProperties(token, { $company_id: "x" });
+    expect(main.mixpanelPersistent.getSuperProperties(token).$company_id).toBe("x");
+    await main.unregisterSuperProperty(token, "$company_id");
+    expect(main.mixpanelPersistent.getSuperProperties(token)).not.toHaveProperty("$company_id");
+    await main.setGroup(token, "$company_id", "x");
+    expect(main.mixpanelPersistent.getSuperProperties(token).$company_id).toEqual(["x"]);
+    expect(errors()).toEqual([]);
+  });
+
+  it("stays a list when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.setGroup(token, "team_id", "eng");
+    expect(main.mixpanelPersistent.getSuperProperties(token).team_id).toEqual(["eng"]);
+  });
+});
+
+describe("group profiles", () => {
+  it("carry the company", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    mockCore.addToMixpanelQueue.mockClear();
+
+    await main.groupSetProperties(token, "team_id", "eng", { name: "Engineering" });
+    await main.deleteGroup(token, "team_id", "eng");
+
+    expect(groups()).toEqual([
+      expect.objectContaining({
+        $group_key: "team_id",
+        $group_id: "eng",
+        $company_id: "acme",
+        $set: { name: "Engineering" },
+      }),
+      expect.objectContaining({
+        $group_key: "team_id",
+        $group_id: "eng",
+        $company_id: "acme",
+        $delete: "null",
+      }),
+    ]);
+  });
+
+  it("are dropped without a company", async () => {
+    const main = await start();
+    await main.groupSetProperties(token, "team_id", "eng", { name: "Engineering" });
+
+    expect(groups()).toHaveLength(0);
+    expect(errors()).toEqual([
+      "Group profile updates for hierarchical groups projects require a company. Call " +
+        "identify({userId, companyId}) first. The update to team_id=eng was dropped.",
+    ]);
+  });
+
+  it("carry no company when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.groupSetProperties(token, "team_id", "eng", { name: "Engineering" });
+
+    expect(groups()).toHaveLength(1);
+    expect(groups()[0]).not.toHaveProperty("$company_id");
+  });
+});
+
+describe("Mixpanel in JavaScript mode", () => {
+  const { Mixpanel } = require("mixpanel-react-native");
+
+  const startMixpanel = async (hierarchicalGroups) => {
+    MixpanelPersistent.instance = undefined;
+    const mixpanel = new Mixpanel(token, false, false, storage);
+    await mixpanel.init(false, {}, undefined, false, {}, null, hierarchicalGroups);
+    mockCore.addToMixpanelQueue.mockClear();
+    return mixpanel;
+  };
+
+  it("identifies with an identity and reports it", async () => {
+    const mixpanel = await startMixpanel(true);
+    await mixpanel.identify(acme);
+
+    const identity = await mixpanel.getIdentity();
+    expect(identity).toMatchObject(acme);
+    expect(identity.deviceId).toEqual(expect.any(String));
+    expect(await mixpanel.getDistinctId()).toBe("$company:acme|$user:user_123");
+  });
+
+  it("getCompany updates the identified company", async () => {
+    const mixpanel = await startMixpanel(true);
+    await mixpanel.identify(acme);
+    mockCore.addToMixpanelQueue.mockClear();
+
+    const company = await mixpanel.getCompany();
+    company.set("tier", "enterprise");
+    await new Promise((resolve) => setImmediate(resolve));
+
+    expect(groups()).toEqual([
+      expect.objectContaining({
+        $group_key: "$company_id",
+        $group_id: "acme",
+        $company_id: "acme",
+        $set: { tier: "enterprise" },
+      }),
+    ]);
+  });
+
+  it("a saved getCompany handle keeps its company after identify and reset", async () => {
+    const mixpanel = await startMixpanel(true);
+    await mixpanel.identify(acme);
+    const company = await mixpanel.getCompany();
+    await mixpanel.identify({ userId: "user_123", companyId: "globex" });
+    mockCore.addToMixpanelQueue.mockClear();
+
+    company.set("tier", "enterprise");
+    await new Promise((resolve) => setImmediate(resolve));
+    await mixpanel.reset();
+    company.set("tier", "free");
+    await new Promise((resolve) => setImmediate(resolve));
+
+    expect(groups()).toEqual([
+      expect.objectContaining({
+        $group_key: "$company_id",
+        $group_id: "acme",
+        $company_id: "acme",
+        $set: { tier: "enterprise" },
+      }),
+      expect.objectContaining({
+        $group_key: "$company_id",
+        $group_id: "acme",
+        $company_id: "acme",
+        $set: { tier: "free" },
+      }),
+    ]);
+  });
+
+  it("getCompany before identify resolves to null", async () => {
+    const mixpanel = await startMixpanel(true);
+
+    expect(await mixpanel.getCompany()).toBeNull();
+    expect(groups()).toHaveLength(0);
+    expect(errors()).toEqual([
+      "getCompany() needs a company. Call identify({userId, companyId}) first.",
+    ]);
+  });
+
+  it("getCompany when disabled resolves to null", async () => {
+    const mixpanel = await startMixpanel(false);
+    await mixpanel.identify({ userId: "user_123" });
+
+    expect(await mixpanel.getCompany()).toBeNull();
+    expect(groups()).toHaveLength(0);
+    expect(errors()).toEqual([
+      "getCompany() is only for hierarchical groups projects, enabled with the " +
+        "hierarchicalGroups argument of init().",
+    ]);
+  });
+});
+
+describe("flags in JavaScript mode", () => {
+  const {
+    MixpanelFlagsJS,
+  } = require("mixpanel-react-native/javascript/mixpanel-flags-js");
+  const {
+    MixpanelNetwork,
+  } = require("mixpanel-react-native/javascript/mixpanel-network");
+
+  let sendRequestSpy;
+  let fetchMock;
+  const originalFetch = global.fetch;
+
+  beforeEach(() => {
+    sendRequestSpy = jest.spyOn(MixpanelNetwork, "sendRequest").mockResolvedValue({
+      flags: {
+        checkout_flow: {
+          variant_key: "treatment",
+          variant_value: true,
+          experiment_id: "exp_1",
+          is_experiment_active: true,
+        },
+      },
+      pending_first_time_events: [
+        {
+          flag_key: "checkout_flow",
+          flag_id: "flag_1",
+          project_id: 123,
+          first_time_event_hash: "HASH",
+          event_name: "Signed Up",
+          pending_variant: { variant_key: "pending", variant_value: "pending" },
+        },
+      ],
+    });
+    fetchMock = jest.fn(() => Promise.resolve({ ok: true }));
+    global.fetch = fetchMock;
+  });
+
+  afterEach(() => {
+    sendRequestSpy.mockRestore();
+    global.fetch = originalFetch;
+  });
+
+  // Waits for the fetch init() starts, so later fetches are the ones under test
+  const startFlags = async ({ hierarchicalGroups = true, context } = {}) => {
+    const main = await start({ hierarchicalGroups });
+    const flags = new MixpanelFlagsJS(token, main, storage, { enabled: true, context });
+    await flags.init();
+    return { main, flags };
+  };
+
+  const lastContext = () => {
+    const endpoint = sendRequestSpy.mock.calls.at(-1)[0].endpoint;
+    const query = new URLSearchParams(endpoint.slice(endpoint.indexOf("?") + 1));
+    return JSON.parse(query.get("context"));
+  };
+
+  it("send the user and company instead of distinct_id in the context after identify", async () => {
+    const { main, flags } = await startFlags();
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+    await flags.fetchPromise;
+
+    expect(lastContext()).toEqual({
+      device_id: main.mixpanelPersistent.getDeviceId(token),
+      $user_id: "user_123",
+      $company_id: "company_123",
+    });
+  });
+
+  it("send no user or company in the context before identify", async () => {
+    const { main } = await startFlags();
+
+    expect(sendRequestSpy).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(lastContext())).toBe(
+      JSON.stringify({
+        distinct_id: main.mixpanelPersistent.getDistinctId(token),
+        device_id: main.mixpanelPersistent.getDeviceId(token),
+      })
+    );
+  });
+
+  it("refetch with the new company when it changes", async () => {
+    const { main, flags } = await startFlags();
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_456" });
+    await flags.fetchPromise;
+
+    expect(sendRequestSpy).toHaveBeenCalledTimes(3);
+    expect(lastContext().$company_id).toBe("company_456");
+    expect(lastContext()).not.toHaveProperty("distinct_id");
+  });
+
+  it("let the configured context override the user and company", async () => {
+    const { main, flags } = await startFlags({ context: { $company_id: "configured" } });
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+    await flags.fetchPromise;
+
+    expect(lastContext().$company_id).toBe("configured");
+    expect(lastContext().$user_id).toBe("user_123");
+  });
+
+  it("send the context unchanged when disabled", async () => {
+    const { main, flags } = await startFlags({ hierarchicalGroups: false });
+    await main.identifyWithIdentity(token, { userId: "user_123" });
+    await flags.fetchPromise;
+
+    // The user id is stored after identify, but only hierarchical groups sends it
+    expect(main.mixpanelPersistent.getUserId(token)).toBe("user_123");
+    expect(JSON.stringify(lastContext())).toBe(
+      JSON.stringify({
+        distinct_id: "user_123",
+        device_id: main.mixpanelPersistent.getDeviceId(token),
+      })
+    );
+  });
+
+  const firstTimeEventBody = () => {
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, options] = fetchMock.mock.calls[0];
+    expect(url).toContain("/flags/flag_1/first-time-events");
+    expect(options.method).toBe("POST");
+    return options.body;
+  };
+
+  it("send the user and company when recording a first-time event", async () => {
+    const { main, flags } = await startFlags();
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+    await flags.fetchPromise;
+    await main.track(token, "Signed Up");
+
+    expect(firstTimeEventBody()).toBe(
+      JSON.stringify({
+        project_id: 123,
+        first_time_event_hash: "HASH",
+        $user_id: "user_123",
+        $company_id: "company_123",
+      })
+    );
+  });
+
+  it("record a first-time event unchanged when disabled", async () => {
+    const { main, flags } = await startFlags({ hierarchicalGroups: false });
+    await main.identifyWithIdentity(token, { userId: "user_123" });
+    await flags.fetchPromise;
+    await main.track(token, "Signed Up");
+
+    expect(firstTimeEventBody()).toBe(
+      JSON.stringify({
+        distinct_id: "user_123",
+        project_id: 123,
+        first_time_event_hash: "HASH",
+      })
+    );
+  });
+
+  it("track $experiment_started with the user and company", async () => {
+    const { main, flags } = await startFlags();
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+    await flags.fetchPromise;
+    await flags.trackExperimentStarted("checkout_flow", flags.getVariantSync("checkout_flow", null));
+
+    const exposure = events().find((e) => e.event === "$experiment_started");
+    expect(exposure.properties["Experiment name"]).toBe("checkout_flow");
+    expect(exposure.properties.$user_id).toBe("user_123");
+    expect(exposure.properties.$company_id).toBe("company_123");
+    expect(exposure.properties).not.toHaveProperty("distinct_id");
+  });
+});

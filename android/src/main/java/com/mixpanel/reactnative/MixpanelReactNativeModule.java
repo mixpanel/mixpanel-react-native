@@ -1,5 +1,6 @@
 package com.mixpanel.reactnative;
 
+import com.mixpanel.android.identity.MixpanelIdentity;
 import com.mixpanel.android.mpmetrics.AutocaptureOptions;
 import com.mixpanel.android.mpmetrics.ClickOptions;
 import com.mixpanel.android.mpmetrics.DeadClickOptions;
@@ -31,11 +32,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
 
     private final ReactApplicationContext mReactContext;
+
+    // Whether each token's instance tracks for a hierarchical groups project. Fixed by the first
+    // initialize, as the instance is.
+    private static final Map<String, Boolean> sHierarchicalGroups = new ConcurrentHashMap<>();
 
     public MixpanelReactNativeModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -54,7 +60,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void initialize(String token, boolean trackAutomaticEvents, boolean optOutTrackingDefault, ReadableMap metadata, String serverURL, boolean useGzipCompression, ReadableMap featureFlagsOptions, ReadableMap autocaptureConfig, Promise promise) throws JSONException {
+    public void initialize(String token, boolean trackAutomaticEvents, boolean optOutTrackingDefault, ReadableMap metadata, String serverURL, boolean useGzipCompression, ReadableMap featureFlagsOptions, ReadableMap autocaptureConfig, boolean hierarchicalGroups, Promise promise) throws JSONException {
         JSONObject mixpanelProperties = ReactNativeHelper.reactToJSON(metadata);
         AutomaticProperties.setAutomaticProperties(mixpanelProperties);
 
@@ -78,7 +84,8 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         MixpanelOptions.Builder optionsBuilder = new MixpanelOptions.Builder()
             .optOutTrackingDefault(optOutTrackingDefault)
             .superProperties(mixpanelProperties)
-            .serverURL(serverURL);
+            .serverURL(serverURL)
+            .hierarchicalGroups(hierarchicalGroups);
 
         if (featureFlagsEnabled) {
             FeatureFlagOptions.Builder ffBuilder = new FeatureFlagOptions.Builder().enabled(true);
@@ -101,7 +108,17 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         if (useGzipCompression) {
             instance.setShouldGzipRequestPayload(true);
         }
+        sHierarchicalGroups.putIfAbsent(token, hierarchicalGroups);
         promise.resolve(null);
+    }
+
+    // A JavaScript null arrives as a Dynamic of type Null. A hierarchical groups project sets a
+    // null group, so it gets a real null there.
+    private static Object groupIDToObject(String token, Dynamic groupID) {
+        if (groupID.isNull() && Boolean.TRUE.equals(sHierarchicalGroups.get(token))) {
+            return null;
+        }
+        return ReactNativeHelper.dynamicToObject(groupID);
     }
 
     private AutocaptureOptions buildAutocaptureOptions(ReadableMap config) {
@@ -261,6 +278,20 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void optInTrackingWithIdentity(final String token, ReadableMap identity, ReadableMap properties, Promise promise) throws JSONException {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            promise.reject("Instance Error", "Failed to get Mixpanel instance");
+            return;
+        }
+        synchronized (instance) {
+            JSONObject optInProperties = properties == null ? null : ReactNativeHelper.reactToJSON(properties);
+            instance.optInTrackingWithIdentity(toMixpanelIdentity(identity), optInProperties);
+            promise.resolve(null);
+        }
+    }
+
+    @ReactMethod
     public void optOutTracking(final String token, Promise promise) {
         MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
         if (instance == null) {
@@ -284,6 +315,54 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             instance.identify(distinctId);
             promise.resolve(null);
         }
+    }
+
+    @ReactMethod
+    public void identifyWithIdentity(final String token, ReadableMap identity, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            promise.reject("Instance Error", "Failed to get Mixpanel instance");
+            return;
+        }
+        synchronized (instance) {
+            instance.identify(toMixpanelIdentity(identity));
+            promise.resolve(null);
+        }
+    }
+
+    @ReactMethod
+    public void getIdentity(final String token, Promise promise) {
+        MixpanelAPI instance = MixpanelAPI.getInstance(this.mReactContext, token, true);
+        if (instance == null) {
+            promise.reject("Instance Error", "Failed to get Mixpanel instance");
+            return;
+        }
+        synchronized (instance) {
+            MixpanelIdentity identity = instance.getIdentity();
+            WritableMap result = new WritableNativeMap();
+            result.putString("userId", identity.getUserId());
+            result.putString("companyId", identity.getCompanyId());
+            result.putString("deviceId", identity.getDeviceId());
+            promise.resolve(result);
+        }
+    }
+
+    // Null when the map is null, so the SDK reports a missing identity
+    private static MixpanelIdentity toMixpanelIdentity(ReadableMap identity) {
+        if (identity == null) {
+            return null;
+        }
+        return new MixpanelIdentity(
+                readNullableString(identity, "userId"),
+                readNullableString(identity, "companyId"),
+                readNullableString(identity, "deviceId"));
+    }
+
+    private static String readNullableString(ReadableMap map, String key) {
+        if (!map.hasKey(key) || map.isNull(key)) {
+            return null;
+        }
+        return map.getString(key);
     }
 
     @ReactMethod
@@ -616,7 +695,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             return;
         }
         synchronized (instance) {
-            instance.setGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID));
+            instance.setGroup(groupKey, groupIDToObject(token, groupID));
             promise.resolve(null);
         }
     }
@@ -655,7 +734,7 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
             return;
         }
         synchronized (instance) {
-            instance.removeGroup(groupKey, ReactNativeHelper.dynamicToObject(groupID));
+            instance.removeGroup(groupKey, groupIDToObject(token, groupID));
             promise.resolve(null);
         }
     }

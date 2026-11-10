@@ -3,6 +3,7 @@ import { MixpanelType } from "./mixpanel-constants";
 
 export const MixpanelQueueManager = (() => {
   let _queues = {};
+  let _clearCounts = {};
   let mixpanelPersistent;
 
   const getPersistent = () => {
@@ -65,8 +66,13 @@ export const MixpanelQueueManager = (() => {
       return;
     }
     _queues[token][type] = [];
+    _clearCounts[`${token}:${type}`] = getClearCount(token, type) + 1;
     await updateQueueInStorage(token, type);
   };
+
+  // How many times the queue was cleared, so a batch sent before a clear does not remove
+  // records queued after it
+  const getClearCount = (token, type) => _clearCounts[`${token}:${type}`] || 0;
 
   /**
    * Ensures all USER queue records for the given token have the correct identity fields.
@@ -111,6 +117,7 @@ export const MixpanelQueueManager = (() => {
     getQueue,
     spliceQueue,
     clearQueue,
+    getClearCount,
     identifyUserQueue,
   };
 })();

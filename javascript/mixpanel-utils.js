@@ -36,3 +36,13 @@ export class SessionMetadata {
     return dict;
   }
 }
+
+/**
+ * Formats an identity as `MixpanelIdentity(userId=u, companyId=c)`, omitting missing fields.
+ */
+export const identityToString = (identity) => {
+  const fields = ["userId", "companyId", "deviceId"]
+    .filter((key) => identity != null && identity[key] != null)
+    .map((key) => `${key}=${identity[key]}`);
+  return `MixpanelIdentity(${fields.join(", ")})`;
+};

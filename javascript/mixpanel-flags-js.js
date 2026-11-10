@@ -123,11 +123,29 @@ export class MixpanelFlagsJS {
   }
 
   _buildContext() {
+    // On a hierarchical groups project the user is $user_id and $company_id, so no distinct_id
+    const hierarchicalGroupsIdentity = this._hierarchicalGroupsIdentity();
     return {
-      distinct_id: this.mixpanelPersistent.getDistinctId(this.token),
+      ...(hierarchicalGroupsIdentity.$user_id
+        ? hierarchicalGroupsIdentity
+        : { distinct_id: this.mixpanelPersistent.getDistinctId(this.token) }),
       device_id: this.mixpanelPersistent.getDeviceId(this.token),
       ...this.context,
     };
+  }
+
+  // On a hierarchical groups project the flags service needs the user and the company, which
+  // are both known once identify has named them. Until then it gets what other projects send.
+  _hierarchicalGroupsIdentity() {
+    if (!this.mixpanelImpl?.hierarchicalGroups) {
+      return {};
+    }
+    const userId = this.mixpanelPersistent.getUserId(this.token);
+    const companyId = this.mixpanelPersistent.getCompanyId(this.token);
+    if (!userId || !companyId) {
+      return {};
+    }
+    return { $user_id: userId, $company_id: companyId };
   }
 
   _loadedPersistenceIsStale() {
@@ -708,10 +726,13 @@ export class MixpanelFlagsJS {
       headers.traceparent = this._traceparent;
     }
 
+    // On a hierarchical groups project the user is $user_id and $company_id, so no distinct_id
+    const hierarchicalGroupsIdentity = this._hierarchicalGroupsIdentity();
     const payload = {
-      distinct_id: distinctId,
+      ...(hierarchicalGroupsIdentity.$user_id ? {} : { distinct_id: distinctId }),
       project_id: projectId,
       first_time_event_hash: firstTimeEventHash,
+      ...hierarchicalGroupsIdentity,
     };
 
     MixpanelLogger.log(this.token, `Recording first-time event for flag: ${flagId}`);

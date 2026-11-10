@@ -1,10 +1,31 @@
 import { Platform } from "react-native";
 import { MixpanelCore } from "./mixpanel-core";
-import { MixpanelType } from "./mixpanel-constants";
+import { MixpanelQueueManager } from "./mixpanel-queue";
+import {
+  MixpanelType,
+  PENDING_PROFILE_QUEUE,
+} from "./mixpanel-constants";
 import { MixpanelConfig } from "./mixpanel-config";
 import { MixpanelPersistent } from "./mixpanel-persistent";
 import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger";
+import { identityToString } from "./mixpanel-utils";
 import packageJson from "mixpanel-react-native/package.json";
+
+const USER_ID_GROUP_KEY = "$user_id";
+const COMPANY_ID_GROUP_KEY = "$company_id";
+const DEVICE_ID_PREFIX = "$device:";
+// /groups has no $add, $append or $merge
+const HIERARCHICAL_GROUPS_OPERATIONS = [
+  "$set",
+  "$set_once",
+  "$unset",
+  "$union",
+  "$remove",
+  "$delete",
+];
+
+// A missing, empty or whitespace-only id
+const isBlank = (id) => id == null || (typeof id === "string" && id.trim() === "");
 
 export default class MixpanelMain {
   constructor(token, trackAutomaticEvents, storage) {
@@ -14,6 +35,7 @@ export default class MixpanelMain {
     this.core.initialize(token);
     this.core.startProcessingQueue(token);
     this.mixpanelPersistent = MixpanelPersistent.getInstance(storage, token);
+    this.hierarchicalGroups = false;
   }
 
   async initialize(
@@ -23,9 +45,15 @@ export default class MixpanelMain {
     superProperties = null,
     serverURL = "https://api.mixpanel.com",
     useGzipCompression = false,
-    featureFlagsOptions = {}
+    featureFlagsOptions = {},
+    autocaptureOptions = null,
+    hierarchicalGroups = false
   ) {
     MixpanelLogger.log(token, `Initializing Mixpanel`);
+
+    // Fixed for the life of the instance
+    this.hierarchicalGroups = hierarchicalGroups === true;
+    this.mixpanelPersistent.setHierarchicalGroups(token, this.hierarchicalGroups);
 
     // Store feature flags options for later use
     this.featureFlagsOptions = featureFlagsOptions;
@@ -33,17 +61,25 @@ export default class MixpanelMain {
     this.featureFlagsContext = featureFlagsOptions.context || {};
 
     await this.mixpanelPersistent.initializationCompletePromise(token);
+    // Profile updates queued before an identify that was saved but not finished moving them.
+    // Queued now so profile calls made from here on stay behind it.
+    const pendingTransfer = optOutTrackingDefault
+      ? null
+      : this._resumePendingProfileUpdates(token);
     if (optOutTrackingDefault) {
-      await this.optOutTracking(token);
+      await this._optOutTracking(token);
       return;
     } else {
       await this._setOptedOutTrackingFlag(token, false);
     }
 
     this.setServerURL(token, serverURL);
-    await this.registerSuperProperties(token, {
+    await this._registerSuperProperties(token, {
       ...superProperties,
     });
+    if (pendingTransfer) {
+      await pendingTransfer;
+    }
 
     // Initialize feature flags if enabled
     if (this.featureFlagsEnabled) {
@@ -80,6 +116,7 @@ export default class MixpanelMain {
 
   async reset(token) {
     await this.mixpanelPersistent.reset(token);
+    await this._clearPendingProfileUpdates(token);
   }
 
   /**
@@ -115,13 +152,20 @@ export default class MixpanelMain {
       properties
     );
     const superProperties = this.mixpanelPersistent.getSuperProperties(token);
+    const userId = this.mixpanelPersistent.getUserId(token);
+    const companyIdentityProps = this._companyIdentityProps(token);
     const identityProps = {
-      distinct_id: this.mixpanelPersistent.getDistinctId(token),
+      // On a hierarchical groups project an identified user is $user_id and $company_id, so no
+      // distinct_id
+      ...(userId && companyIdentityProps.$company_id
+        ? {}
+        : { distinct_id: this.mixpanelPersistent.getDistinctId(token) }),
       $device_id: this.mixpanelPersistent.getDeviceId(token),
-      $user_id: this.mixpanelPersistent.getUserId(token),
+      $user_id: userId,
+      ...companyIdentityProps,
     };
     const eventElapsedTime = await this.eventElapsedTime(token, eventName);
-    const eventProperties = Object.freeze({
+    const eventProperties = {
       token,
       time: Date.now(),
       ...this.getMetaData(),
@@ -131,7 +175,21 @@ export default class MixpanelMain {
       ...(eventElapsedTime !== null && {
         $duration: eventElapsedTime,
       }),
-    });
+    };
+    if (this.hierarchicalGroups) {
+      this._checkCallerCompanyId(
+        token,
+        eventName,
+        { ...superProperties, ...properties },
+        eventProperties
+      );
+      // An identified user is $user_id and $company_id, so a caller's or super property's
+      // distinct_id is not sent either
+      if (userId && companyIdentityProps.$company_id) {
+        delete eventProperties.distinct_id;
+      }
+    }
+    Object.freeze(eventProperties);
 
     const eventData = Object.freeze({
       event: eventName,
@@ -160,6 +218,37 @@ export default class MixpanelMain {
     await this.core.addToMixpanelQueue(token, MixpanelType.EVENTS, eventData);
   }
 
+  // The identified company is the event's $company_id, so a caller's own $company_id is replaced
+  // by it, or removed before a company is identified.
+  _checkCallerCompanyId(token, eventName, callerProperties, eventProperties) {
+    if (
+      callerProperties == null ||
+      !Object.prototype.hasOwnProperty.call(callerProperties, COMPANY_ID_GROUP_KEY)
+    ) {
+      return;
+    }
+    const callerCompanyId = callerProperties[COMPANY_ID_GROUP_KEY];
+    const companyId = this.mixpanelPersistent.getCompanyId(token);
+    if (companyId) {
+      if (callerCompanyId !== companyId) {
+        MixpanelLogger.warn(
+          token,
+          `Replacing $company_id ${callerCompanyId} on '${eventName}' with the identified ` +
+            `company ${companyId}. Hierarchical groups projects set $company_id from ` +
+            "identify({userId, companyId})."
+        );
+      }
+      return;
+    }
+    delete eventProperties[COMPANY_ID_GROUP_KEY];
+    MixpanelLogger.warn(
+      token,
+      `Removing $company_id ${callerCompanyId} from '${eventName}': no company is identified. ` +
+        "Hierarchical groups projects set $company_id from identify({userId, companyId}). The " +
+        "event is still sent."
+    );
+  }
+
   setLoggingEnabled(token, loggingEnabled) {
     this.config.setLoggingEnabled(token, loggingEnabled);
   }
@@ -184,15 +273,63 @@ export default class MixpanelMain {
   }
 
   async optOutTracking(token) {
+    const userId = this.mixpanelPersistent.getUserId(token);
+    const companyId = this.mixpanelPersistent.getCompanyId(token);
+    const deleteProfile =
+      this.hierarchicalGroups &&
+      !this.mixpanelPersistent.getOptedOut(token) &&
+      userId &&
+      companyId;
+    // Opted out before anything is awaited, so calls made meanwhile are dropped
+    this.mixpanelPersistent.updateOptedOut(token, true);
+    if (deleteProfile) {
+      // Delete the user's $user_id profile, never the company or team profiles. Sent now
+      // because nothing is flushed while opted out, so pending /groups updates are cleared
+      // first to send only the delete.
+      MixpanelLogger.log(token, `Delete user`);
+      await MixpanelQueueManager.clearQueue(token, MixpanelType.GROUPS);
+      await this.core.sendWhileOptedOut(
+        token,
+        MixpanelType.GROUPS,
+        this._groupRecord(
+          token,
+          USER_ID_GROUP_KEY,
+          userId,
+          { $company_id: companyId },
+          { $delete: "null" }
+        )
+      );
+    }
+    await this._optOutTracking(token);
+  }
+
+  async _optOutTracking(token) {
     await this._setOptedOutTrackingFlag(token, true);
     MixpanelLogger.log(token, "User has opted out of tracking");
     await this.mixpanelPersistent.reset(token);
+    await this._clearPendingProfileUpdates(token);
   }
 
   async optInTracking(token) {
     await this._setOptedOutTrackingFlag(token, false);
     MixpanelLogger.log(token, "User has opted in to tracking");
     await this.track(token, "$opt_in");
+  }
+
+  async optInTrackingWithIdentity(token, identity, properties) {
+    if (identity != null && typeof identity === "object") {
+      const identityError = this._identityError(identity);
+      if (identityError) {
+        MixpanelLogger.error(token, `${identityError} The user is still opted out.`);
+        return;
+      }
+    }
+    await this._setOptedOutTrackingFlag(token, false);
+    MixpanelLogger.log(token, "User has opted in to tracking");
+    if (identity != null) {
+      await this.identifyWithIdentity(token, identity);
+    }
+    await this.track(token, "$opt_in", properties);
   }
 
   async _setOptedOutTrackingFlag(token, optedOut) {
@@ -205,27 +342,122 @@ export default class MixpanelMain {
   }
 
   async identify(token, newDistinctId) {
+    if (this.hierarchicalGroups) {
+      MixpanelLogger.error(
+        token,
+        "identify(String) is not supported for hierarchical groups projects, which identify a " +
+          "user by company and user id. Use identify({userId, companyId}). Nothing was identified."
+      );
+      return;
+    }
+    await this._identify(token, newDistinctId, null);
+  }
+
+  async identifyWithIdentity(token, identity) {
+    if (this.mixpanelPersistent.getOptedOut(token)) {
+      return;
+    }
+    if (identity == null || typeof identity !== "object") {
+      MixpanelLogger.error(token, "Can't identify with a null identity.");
+      return;
+    }
+    const identityError = this._identityError(identity);
+    if (identityError) {
+      MixpanelLogger.error(token, `${identityError} Nothing was identified.`);
+      return;
+    }
+    const userId = identity.userId;
+    const companyId = identity.companyId == null ? null : identity.companyId;
+    const description = identityToString(identity);
+    const deviceId = identity.deviceId == null ? null : identity.deviceId;
+    const currentDeviceId = this.mixpanelPersistent.getDeviceId(token);
+    if (deviceId != null && deviceId !== currentDeviceId) {
+      MixpanelLogger.warn(
+        token,
+        `Ignoring deviceId ${deviceId} on ${description}. The SDK owns the device id ` +
+          `(${currentDeviceId}) so earlier anonymous events follow the user.`
+      );
+    }
+    await this._identify(token, userId, companyId);
+  }
+
+  // Why an identity can't be used on this project, or null when it can. Callers add what was dropped.
+  _identityError(identity) {
+    const userId = identity.userId == null ? null : identity.userId;
+    const companyId = identity.companyId == null ? null : identity.companyId;
+    const description = identityToString(identity);
+    if (typeof userId === "string" && userId.startsWith(DEVICE_ID_PREFIX)) {
+      return (
+        `Can't identify ${description}: a user id can't start with ${DEVICE_ID_PREFIX}, which ` +
+        "Mixpanel reserves for anonymous device ids."
+      );
+    }
+    if (this.hierarchicalGroups) {
+      if (isBlank(userId) || isBlank(companyId)) {
+        return (
+          `Can't identify ${description}: hierarchical groups projects identify a user by ` +
+          "company and user id, so both are required."
+        );
+      }
+    } else {
+      if (isBlank(userId)) {
+        return `Can't identify ${description} without a user id.`;
+      }
+      if (companyId != null) {
+        return (
+          `Can't identify ${description}: a company requires hierarchicalGroups in init(). ` +
+          "Mixpanel ignores $company_id on other projects."
+        );
+      }
+    }
+    return null;
+  }
+
+  async _identify(token, newDistinctId, companyId) {
     MixpanelLogger.log(token, `Identify '${newDistinctId}'`);
     const oldDistinctId = this.mixpanelPersistent.getDistinctId(token);
-    if (oldDistinctId === newDistinctId) {
+    const userChanged = oldDistinctId !== newDistinctId;
+    // A user in another company is another user, so a new company is an identity change.
+    const companyChanged =
+      this.hierarchicalGroups &&
+      companyId != null &&
+      companyId !== this.mixpanelPersistent.getCompanyId(token);
+    if (!userChanged && !companyChanged) {
       MixpanelLogger.log(
         token,
         `Distinct Id is already set to ${newDistinctId}, skipping identify.`
       );
       return;
     }
+    if (this.hierarchicalGroups) {
+      this.mixpanelPersistent.updateCompanyId(token, companyId);
+    }
     this.mixpanelPersistent.updateDistinctId(token, newDistinctId);
     this.mixpanelPersistent.updateUserId(token, newDistinctId);
+    // Queued before anything is awaited, so profile calls made from here on follow the updates
+    // made before this identify, which go to this user and company whatever is identified next
+    const pendingTransfer = this.hierarchicalGroups
+      ? this._queueProfileWork(token, () =>
+          this._sendPendingProfileUpdates(token, newDistinctId, companyId)
+        )
+      : null;
     const deviceId = this.mixpanelPersistent.getDeviceId(token);
     await this.mixpanelPersistent.persistIdentity(token);
     await this.core.identifyUserQueue(token);
+    if (pendingTransfer) {
+      await pendingTransfer;
+    }
 
-    await this.track(token, "$identify", {
-      distinctId: newDistinctId,
-      $user_id: newDistinctId,
-      $anon_distinct_id: oldDistinctId,
-      $device_id: deviceId,
-    });
+    // A hierarchical groups project ties the device to the user from the identity keys on later
+    // events, so it has no $identify
+    if (!this.hierarchicalGroups) {
+      await this.track(token, "$identify", {
+        distinctId: newDistinctId,
+        $user_id: newDistinctId,
+        $anon_distinct_id: oldDistinctId,
+        $device_id: deviceId,
+      });
+    }
 
     if (this._flagsJS) {
       this._flagsJS._invalidateInFlightFetch();
@@ -240,6 +472,14 @@ export default class MixpanelMain {
   }
 
   async alias(token, alias, distinctId) {
+    if (this.hierarchicalGroups) {
+      MixpanelLogger.error(
+        token,
+        "alias is not supported for hierarchical groups projects, which identify a user by " +
+          "company and user id. Use identify({userId, companyId}). The alias was dropped."
+      );
+      return;
+    }
     MixpanelLogger.log(token, `Alias '${alias}' to '${distinctId}'`);
     await this.track(token, "$create_alias", {
       alias,
@@ -259,7 +499,47 @@ export default class MixpanelMain {
     if (!this.mixpanelPersistent.getDistinctId(token)) {
       await this.mixpanelPersistent.loadIdentity(token);
     }
-    return this.mixpanelPersistent.getDistinctId(token);
+    const distinctId = this.mixpanelPersistent.getDistinctId(token);
+    if (!this.hierarchicalGroups) {
+      return distinctId;
+    }
+    MixpanelLogger.warn(
+      token,
+      "getDistinctId() should not be used on a hierarchical groups project, which identifies a user by company and user id. Use getIdentity() instead."
+    );
+    const userId = this.mixpanelPersistent.getUserId(token);
+    if (!userId) {
+      // Anonymous, so already $device:{deviceId}
+      return distinctId;
+    }
+    const companyId = this.mixpanelPersistent.getCompanyId(token);
+    if (companyId) {
+      return `$company:${companyId}|$user:${userId}`;
+    }
+    // Mixpanel ignores a user id without a company while the event carries a device id
+    const deviceId = this.mixpanelPersistent.getDeviceId(token);
+    return deviceId ? `$device:${deviceId}` : distinctId;
+  }
+
+  async getIdentity(token) {
+    if (!this.mixpanelPersistent.getDeviceId(token)) {
+      await this.mixpanelPersistent.loadIdentity(token);
+    }
+    return {
+      userId: this.mixpanelPersistent.getUserId(token) || null,
+      companyId: this.hierarchicalGroups
+        ? this.mixpanelPersistent.getCompanyId(token)
+        : null,
+      deviceId: this.mixpanelPersistent.getDeviceId(token) || null,
+    };
+  }
+
+  _companyIdentityProps(token) {
+    if (!this.hierarchicalGroups) {
+      return {};
+    }
+    const companyId = this.mixpanelPersistent.getCompanyId(token);
+    return companyId ? { $company_id: companyId } : {};
   }
 
   async _updateSuperProperties(token, properties) {
@@ -267,7 +547,30 @@ export default class MixpanelMain {
     await this.mixpanelPersistent.persistSuperProperties(token);
   }
 
+  // $company_id is set by identify on a hierarchical groups project, so a public call naming it is
+  // refused whole.
+  _refusesCompanyId(token, operation, keys) {
+    if (!this.hierarchicalGroups || !keys.includes(COMPANY_ID_GROUP_KEY)) {
+      return false;
+    }
+    MixpanelLogger.error(
+      token,
+      `${operation} with $company_id is not supported for hierarchical groups projects, which ` +
+        "set $company_id from identify({userId, companyId}). The update was dropped."
+    );
+    return true;
+  }
+
   async registerSuperProperties(token, properties) {
+    if (
+      this._refusesCompanyId(token, "registerSuperProperties", Object.keys(properties || {}))
+    ) {
+      return;
+    }
+    await this._registerSuperProperties(token, properties);
+  }
+
+  async _registerSuperProperties(token, properties) {
     MixpanelLogger.log(token, `Register super properties:`, properties);
     const currentSuperProperties =
       this.mixpanelPersistent.getSuperProperties(token);
@@ -290,6 +593,15 @@ export default class MixpanelMain {
   }
 
   async registerSuperPropertiesOnce(token, properties) {
+    if (
+      this._refusesCompanyId(
+        token,
+        "registerSuperPropertiesOnce",
+        Object.keys(properties || {})
+      )
+    ) {
+      return;
+    }
     MixpanelLogger.log(token, `Register super properties once`, properties);
     const currentSuperProperties =
       this.mixpanelPersistent.getSuperProperties(token);
@@ -308,6 +620,9 @@ export default class MixpanelMain {
   }
 
   async unregisterSuperProperty(token, propertyName) {
+    if (this._refusesCompanyId(token, "unregisterSuperProperty", [propertyName])) {
+      return;
+    }
     MixpanelLogger.log(token, `Unregister super property '${propertyName}'`);
     let superProperties = this.mixpanelPersistent.getSuperProperties(token);
     delete superProperties[propertyName];
@@ -357,6 +672,10 @@ export default class MixpanelMain {
   }
 
   async sendProfileDataToMixpanel(token, action) {
+    if (this.hierarchicalGroups) {
+      await this._sendHierarchicalProfileData(token, action);
+      return;
+    }
     const distinctId = this.mixpanelPersistent.getDistinctId(token);
     const deviceId = this.mixpanelPersistent.getDeviceId(token);
     const userId = this.mixpanelPersistent.getUserId(token);
@@ -371,15 +690,182 @@ export default class MixpanelMain {
     await this.core.addToMixpanelQueue(token, MixpanelType.USER, profileData);
   }
 
+  // A hierarchical groups user profile is a group profile keyed by $user_id, so it supports
+  // only what /groups supports.
+  async _sendHierarchicalProfileData(token, action) {
+    const operation = Object.keys(action)[0];
+    if (!HIERARCHICAL_GROUPS_OPERATIONS.includes(operation)) {
+      MixpanelLogger.error(
+        token,
+        `${operation} is not supported for hierarchical groups projects, whose user profiles ` +
+          "are group profiles keyed by $user_id. Supported operations are " +
+          `[${HIERARCHICAL_GROUPS_OPERATIONS.join(", ")}], so increment, append, merge and ` +
+          "trackCharge have no hierarchical groups equivalent. The update was dropped."
+      );
+      return;
+    }
+    // Checked when the call is made, since an opt in before the queued work runs would let an
+    // update made while opted out through. The work checks again for an opt out made since.
+    if (this.mixpanelPersistent.getOptedOut(token)) {
+      MixpanelLogger.log(
+        token,
+        `User has opted out of tracking, skipping tracking.`
+      );
+      return;
+    }
+    // The user and company when the call is made, so a later identify doesn't move it
+    const userId = this.mixpanelPersistent.getUserId(token);
+    const companyId = this.mixpanelPersistent.getCompanyId(token);
+    const time = Date.now();
+    await this._queueProfileWork(token, async () => {
+      if (!userId || !companyId) {
+        await this._queuePendingProfileUpdate(token, operation, {
+          $time: time,
+          ...action,
+        });
+        return;
+      }
+      await this.core.addToMixpanelQueue(
+        token,
+        MixpanelType.GROUPS,
+        this._groupRecord(
+          token,
+          USER_ID_GROUP_KEY,
+          userId,
+          { $company_id: companyId },
+          action
+        )
+      );
+    });
+  }
+
+  // Runs hierarchical groups user profile work one call at a time, in the order it was queued,
+  // so updates made after an identify follow the updates it moves from before it
+  _queueProfileWork(token, work) {
+    if (!this._profileWork) {
+      this._profileWork = {};
+    }
+    const previous = this._profileWork[token] || Promise.resolve();
+    const run = previous.then(work);
+    this._profileWork[token] = run.catch(() => {});
+    return run;
+  }
+
+  async _queuePendingProfileUpdate(token, operation, record) {
+    if (this.mixpanelPersistent.getOptedOut(token)) {
+      return;
+    }
+    // Checked as the other queues check a record, since one that can't be saved blocks the
+    // pending updates saved after it
+    try {
+      JSON.stringify(record);
+    } catch (error) {
+      MixpanelLogger.error(token, `Error in Mixpanel payload: ${error}`);
+      MixpanelLogger.error(
+        token,
+        `The Mixpanel payload is not valid or not serializable.`
+      );
+      return;
+    }
+    MixpanelLogger.log(
+      token,
+      `Queueing the ${operation} user profile update until identify({userId, companyId}).`
+    );
+    await MixpanelQueueManager.initialize(token, PENDING_PROFILE_QUEUE);
+    await MixpanelQueueManager.enqueue(token, PENDING_PROFILE_QUEUE, record);
+  }
+
+  // Moves profile updates left from an identify that didn't finish, after a restart
+  _resumePendingProfileUpdates(token) {
+    if (!this.hierarchicalGroups) {
+      return null;
+    }
+    const userId = this.mixpanelPersistent.getUserId(token);
+    const companyId = this.mixpanelPersistent.getCompanyId(token);
+    if (!userId || !companyId) {
+      return null;
+    }
+    return this._queueProfileWork(token, () =>
+      this._sendPendingProfileUpdates(token, userId, companyId)
+    );
+  }
+
+  // Sends the user profile updates queued before identify to the profile of the user and company
+  // that identify was for. They are saved to /groups before they leave the pending queue, so a
+  // restart in between sends them again rather than losing them.
+  async _sendPendingProfileUpdates(token, userId, companyId) {
+    await MixpanelQueueManager.initialize(token, PENDING_PROFILE_QUEUE);
+    const pending = MixpanelQueueManager.getQueue(token, PENDING_PROFILE_QUEUE);
+    if (pending.length === 0) {
+      return;
+    }
+    for (const { $time, ...action } of pending) {
+      await this.core.addToMixpanelQueue(token, MixpanelType.GROUPS, {
+        ...this._groupRecord(
+          token,
+          USER_ID_GROUP_KEY,
+          userId,
+          { $company_id: companyId },
+          action
+        ),
+        ...($time != null && { $time }),
+      });
+    }
+    // Only the moved updates; profile work runs one at a time, so nothing was added since
+    await MixpanelQueueManager.spliceQueue(
+      token,
+      PENDING_PROFILE_QUEUE,
+      0,
+      pending.length
+    );
+  }
+
+  async _clearPendingProfileUpdates(token) {
+    if (!this.hierarchicalGroups) {
+      return;
+    }
+    // After the profile calls made before it
+    await this._queueProfileWork(token, async () => {
+      await MixpanelQueueManager.initialize(token, PENDING_PROFILE_QUEUE);
+      await MixpanelQueueManager.clearQueue(token, PENDING_PROFILE_QUEUE);
+    });
+  }
+
   async sendGroupDataToMixpanel({ token, groupKey, groupID, action }) {
-    const profileData = {
+    let companyProps = {};
+    if (this.hierarchicalGroups) {
+      // Hierarchical groups require $company_id at the top level of every /groups write. A
+      // company profile's own id is its company, whatever the user is identified with now.
+      const companyId =
+        groupKey === COMPANY_ID_GROUP_KEY
+          ? groupID
+          : this.mixpanelPersistent.getCompanyId(token);
+      if (!companyId) {
+        MixpanelLogger.error(
+          token,
+          "Group profile updates for hierarchical groups projects require a company. Call " +
+            `identify({userId, companyId}) first. The update to ${groupKey}=${groupID} was dropped.`
+        );
+        return;
+      }
+      companyProps = { $company_id: companyId };
+    }
+    await this.core.addToMixpanelQueue(
+      token,
+      MixpanelType.GROUPS,
+      this._groupRecord(token, groupKey, groupID, companyProps, action)
+    );
+  }
+
+  _groupRecord(token, groupKey, groupID, companyProps, action) {
+    return {
       $token: token,
       $time: Date.now(),
       $group_key: groupKey,
       $group_id: groupID,
+      ...companyProps,
       ...action,
     };
-    await this.core.addToMixpanelQueue(token, MixpanelType.GROUPS, profileData);
   }
 
   async set(token, properties) {
@@ -451,6 +937,15 @@ export default class MixpanelMain {
   }
 
   async clearCharges(token) {
+    // trackCharge has no hierarchical groups equivalent, so there are no charges to clear
+    if (this.hierarchicalGroups) {
+      MixpanelLogger.error(
+        token,
+        "clearCharges is not supported for hierarchical groups projects, which can't " +
+          "trackCharge. The update was dropped."
+      );
+      return;
+    }
     MixpanelLogger.log(token, `Clear charges`);
     await this.set(token, {
       $transactions: [],
@@ -572,6 +1067,13 @@ export default class MixpanelMain {
 
   async setGroup(token, groupKey, groupID) {
     MixpanelLogger.log(token, `Set group: `, groupKey, groupID);
+    if (this._refusesCompanyId(token, "setGroup", [groupKey])) {
+      return;
+    }
+    if (this.hierarchicalGroups) {
+      await this._setHierarchicalGroup(token, groupKey, groupID);
+      return;
+    }
     const properties = { [groupKey]: [groupID] };
     await this.registerSuperProperties(token, properties);
     await this.set(token, properties);
@@ -579,6 +1081,10 @@ export default class MixpanelMain {
 
   async addGroup(token, groupKey, groupID) {
     MixpanelLogger.log(token, `Add group: `, groupKey, groupID);
+    if (this.hierarchicalGroups) {
+      this._logSingleGroupOnly(token, "addGroup", groupKey);
+      return;
+    }
     const superProperties = this.mixpanelPersistent.getSuperProperties(token);
     const groupArray = superProperties[groupKey] || [];
     if (!groupArray.includes(groupID)) {
@@ -591,6 +1097,13 @@ export default class MixpanelMain {
 
   async removeGroup(token, groupKey, groupID) {
     MixpanelLogger.log(token, `Remove group: `, groupKey, groupID);
+    if (this._refusesCompanyId(token, "removeGroup", [groupKey])) {
+      return;
+    }
+    if (this.hierarchicalGroups) {
+      await this._removeHierarchicalGroup(token, groupKey, groupID);
+      return;
+    }
     const superProperties = this.mixpanelPersistent.getSuperProperties(token);
     if (superProperties && superProperties[groupKey]) {
       const filteredGroup = superProperties[groupKey].filter(
@@ -602,6 +1115,57 @@ export default class MixpanelMain {
       }
     }
     await this.remove(token, { [groupKey]: groupID });
+  }
+
+  // A null groupID sets the group to null
+  async _setHierarchicalGroup(token, groupKey, groupID) {
+    if (groupKey == null) {
+      MixpanelLogger.warn(token, "groupKey must be non-null");
+      return;
+    }
+    if (groupID === undefined) {
+      groupID = null;
+    }
+    // Hierarchical groups read a list as the name of one group, not as membership in each
+    if (Array.isArray(groupID)) {
+      this._logSingleGroupOnly(token, "setGroup with a list", groupKey);
+      return;
+    }
+    const properties = { [groupKey]: groupID };
+    await this.registerSuperProperties(token, properties);
+    await this.set(token, properties);
+  }
+
+  _logSingleGroupOnly(token, operation, groupKey) {
+    MixpanelLogger.error(
+      token,
+      `${operation} is not supported for hierarchical groups projects, which allow one ` +
+        `${groupKey} per user. Use setGroup(groupKey, groupID). The update was dropped.`
+    );
+  }
+
+  // A null groupID matches a group set to null
+  async _removeHierarchicalGroup(token, groupKey, groupID) {
+    if (groupKey == null) {
+      MixpanelLogger.warn(token, "groupKey must be non-null");
+      return;
+    }
+    if (groupID === undefined) {
+      groupID = null;
+    }
+    const superProperties =
+      this.mixpanelPersistent.getSuperProperties(token) || {};
+    let current = superProperties[groupKey];
+    // A one-item list, stored by an earlier version or before hierarchical groups was
+    // enabled, counts as that item.
+    if (Array.isArray(current) && current.length === 1) {
+      current = current[0];
+    }
+    if (current === undefined || current !== groupID) {
+      return;
+    }
+    await this.unregisterSuperProperty(token, groupKey);
+    await this.unset(token, groupKey);
   }
 
   async deleteGroup(token, groupKey, groupID) {

@@ -609,9 +609,11 @@ export class MixpanelFlagsJS {
     this._loadedPersistedAtMs = null;
     this._loadedTtlMs = null;
     this._invalidateInFlightFetch();
+    // Readers wait on fetchPromise, so expose the refetch right away instead of after the clear
+    const resetPromise = this.persistence.clear().then(() => this.loadFlags());
+    this.fetchPromise = resetPromise;
     try {
-      await this.persistence.clear();
-      await this.loadFlags();
+      await resetPromise;
     } catch (error) {
       MixpanelLogger.log(this.token, 'Error during flags reset:', error);
     }

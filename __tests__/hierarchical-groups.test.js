@@ -1423,4 +1423,60 @@ describe("flags in JavaScript mode", () => {
     expect(exposure.properties.$company_id).toBe("company_123");
     expect(exposure.properties).not.toHaveProperty("distinct_id");
   });
+
+  it("drop a first-time variant activated for the previous company", async () => {
+    const { main, flags } = await startFlags();
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+    await flags.fetchPromise;
+    await main.track(token, "Signed Up");
+    expect(flags.getVariantSync("checkout_flow", null).key).toBe("pending");
+
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_456" });
+    await flags.fetchPromise;
+
+    // The same user in another company is another user, with its own first-time event
+    expect(flags.getVariantSync("checkout_flow", null).key).toBe("treatment");
+    await main.track(token, "Signed Up");
+    expect(flags.getVariantSync("checkout_flow", null).key).toBe("pending");
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body).$company_id).toBe("company_456");
+  });
+
+  it("wait for the new company's flags when read right after identify", async () => {
+    const { main, flags } = await startFlags();
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+    await flags.fetchPromise;
+    await main.track(token, "Signed Up");
+
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_456" });
+    const variant = await flags.getVariant("checkout_flow", { key: "fallback", value: null });
+
+    expect(variant.key).toBe("treatment");
+    expect(lastContext().$company_id).toBe("company_456");
+  });
+
+  it("drop a first-time variant activated for the previous user when disabled", async () => {
+    const { main, flags } = await startFlags({ hierarchicalGroups: false });
+    await main.identifyWithIdentity(token, { userId: "user_a" });
+    await flags.fetchPromise;
+    await main.track(token, "Signed Up");
+    expect(flags.getVariantSync("checkout_flow", null).key).toBe("pending");
+
+    await main.identifyWithIdentity(token, { userId: "user_b" });
+    await flags.fetchPromise;
+
+    expect(flags.getVariantSync("checkout_flow", null).key).toBe("treatment");
+    expect(lastContext().distinct_id).toBe("user_b");
+  });
+
+  it("keep a first-time variant when identify repeats the same identity", async () => {
+    const { main, flags } = await startFlags();
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+    await flags.fetchPromise;
+    await main.track(token, "Signed Up");
+
+    await main.identifyWithIdentity(token, { userId: "user_123", companyId: "company_123" });
+
+    expect(flags.getVariantSync("checkout_flow", null).key).toBe("pending");
+  });
 });

@@ -459,9 +459,9 @@ export default class MixpanelMain {
       });
     }
 
+    // Flag state, including first-time event activations, belongs to the previous identity
     if (this._flagsJS) {
-      this._flagsJS._invalidateInFlightFetch();
-      this._flagsJS.loadFlags().catch(() => {
+      this._flagsJS.reset().catch(() => {
         MixpanelLogger.log(
           token,
           `Failed to load flags for distinct Id ${newDistinctId}.`

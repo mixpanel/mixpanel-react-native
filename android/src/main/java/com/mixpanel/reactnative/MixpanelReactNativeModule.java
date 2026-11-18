@@ -1,5 +1,7 @@
 package com.mixpanel.reactnative;
 
+import android.annotation.SuppressLint;
+
 import com.mixpanel.android.identity.MixpanelIdentity;
 import com.mixpanel.android.mpmetrics.AutocaptureOptions;
 import com.mixpanel.android.mpmetrics.ClickOptions;
@@ -347,7 +349,9 @@ public class MixpanelReactNativeModule extends ReactContextBaseJavaModule {
         }
     }
 
-    // Null when the map is null, so the SDK reports a missing identity
+    // Null when the map is null, so the SDK reports a missing identity. The constructor that takes a
+    // device id is restricted to Mixpanel's own libraries, which this module is.
+    @SuppressLint("RestrictedApi")
     private static MixpanelIdentity toMixpanelIdentity(ReadableMap identity) {
         if (identity == null) {
             return null;

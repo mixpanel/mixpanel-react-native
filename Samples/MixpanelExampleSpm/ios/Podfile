@@ -1,0 +1,4 @@
+# Placeholder: this app builds with Swift Package Manager, not CocoaPods.
+#
+# The React Native CLI only recognizes an iOS project that has a Podfile, so this file
+# must exist. Do not run `pod install` here; run `npm run spm` instead.

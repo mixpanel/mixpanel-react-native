@@ -18,6 +18,10 @@ RCT_EXTERN_METHOD(setUseIpAddressForGeolocation:(NSString *)token useIpAddressFo
 
 RCT_EXTERN_METHOD(setFlushBatchSize:(NSString *)token flushBatchSize:(NSInteger)flushBatchSize resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
+// MARK: - Random IDs
+
+RCT_EXTERN_METHOD(randomUUID:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
 // MARK: - Opting Users Out of Tracking
 
 RCT_EXTERN_METHOD(optOutTracking:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)

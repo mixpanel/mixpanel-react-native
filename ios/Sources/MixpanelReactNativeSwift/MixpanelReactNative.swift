@@ -1,6 +1,12 @@
 import Foundation
 import Mixpanel
 import UIKit
+// Swift Package Manager targets have no bridging header, so React's types come
+// from its module there. CocoaPods still reaches them through the bridging header.
+// SWIFT_PACKAGE is defined only by SwiftPM, which keeps the two builds apart.
+#if SWIFT_PACKAGE
+import React
+#endif
 
 @objc(MixpanelReactNative)
 open class MixpanelReactNative: NSObject {
@@ -169,6 +175,15 @@ open class MixpanelReactNative: NSObject {
         let instance = MixpanelReactNative.getMixpanelInstance(token)
         instance?.useIPAddressForGeoLocation = useIpAddressForGeolocation
         resolve(nil)
+    }
+
+    // MARK: - Random IDs
+
+    // A secure random source for JavaScript mode in apps built with this module.
+    @objc
+    func randomUUID(_ resolve: RCTPromiseResolveBlock,
+                    rejecter reject: RCTPromiseRejectBlock) -> Void {
+        resolve(UUID().uuidString.lowercased())
     }
 
     // MARK: - Opting Users Out of Tracking

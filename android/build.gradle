@@ -42,6 +42,7 @@ repositories {
 dependencies {
     implementation 'com.facebook.react:react-native:+'
     // 8.10.0 is the first release carrying autocapture; 8.11.0 is the first
-    // carrying the custom operators.
-    implementation 'com.mixpanel.android:mixpanel-android:8.11.0'
+    // carrying the custom operators; 8.12.0 is the first with autocapture
+    // generally available.
+    implementation 'com.mixpanel.android:mixpanel-android:8.12.0'
 }

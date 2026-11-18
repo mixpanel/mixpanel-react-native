@@ -214,23 +214,6 @@ open class MixpanelReactNative: NSObject {
         resolve(nil)
     }
 
-    @objc
-    func optInTrackingWithIdentity(_ token: String,
-                                   identity: [String: Any]?,
-                                   properties: [String: Any]?,
-                                   resolver resolve: RCTPromiseResolveBlock,
-                                   rejecter reject: RCTPromiseRejectBlock) -> Void {
-        let instance = MixpanelReactNative.getMixpanelInstance(token)
-        let optInProperties = properties.map { MixpanelTypeHandler.processProperties(properties: $0) }
-        if let identity = identity {
-            instance?.optInTracking(identity: MixpanelReactNative.mixpanelIdentity(identity),
-                                    properties: optInProperties)
-        } else {
-            instance?.optInTracking(distinctId: nil, properties: optInProperties)
-        }
-        resolve(nil)
-    }
-
     // MARK: - Track Events
 
     @objc

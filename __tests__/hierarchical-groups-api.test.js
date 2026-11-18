@@ -168,22 +168,6 @@ test(`getCompany when disabled resolves to null`, async () => {
   );
 });
 
-test(`optInTrackingWithIdentity passes the identity and properties`, async () => {
-  const mixpanel = await start(true);
-  mixpanel.optInTrackingWithIdentity({ userId: "user_123", companyId: "acme" }, { a: 1 });
-  expect(native.optInTrackingWithIdentity).toBeCalledWith(
-    "token",
-    { userId: "user_123", companyId: "acme", deviceId: null },
-    { a: 1 }
-  );
-});
-
-test(`optInTrackingWithIdentity without an identity passes nulls`, async () => {
-  const mixpanel = await start(true);
-  mixpanel.optInTrackingWithIdentity();
-  expect(native.optInTrackingWithIdentity).toBeCalledWith("token", null, null);
-});
-
 test(`optInTracking is unchanged`, async () => {
   const mixpanel = await start(true);
   mixpanel.optInTracking();

@@ -67,7 +67,6 @@ jest.doMock("react-native", () => {
             companyId: null,
             deviceId: "device-id",
           }),
-          optInTrackingWithIdentity: jest.fn(),
           alias: jest.fn(),
           track: jest.fn(),
           trackWithGroups: jest.fn(),

@@ -222,10 +222,6 @@ export class Mixpanel {
   setFlushBatchSize(flushBatchSize: number): void;
   hasOptedOutTracking(): Promise<boolean>;
   optInTracking(): void;
-  optInTrackingWithIdentity(
-    identity?: MixpanelIdentity | null,
-    properties?: MixpanelProperties
-  ): void;
   optOutTracking(): void;
   identify(distinctId: string): Promise<void>;
   identify(identity: MixpanelIdentity): Promise<void>;

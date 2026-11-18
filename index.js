@@ -376,31 +376,6 @@ export class Mixpanel {
   }
 
   /**
-   * Use this method to opt-in an already opted-out user from tracking and identify them. People
-   * updates and track calls will be sent to Mixpanel after using this method.
-   * This method will internally track an opt-in event to your project.
-   *
-   * <p>Opting out clears the user's identity, so on a hierarchical groups project use this to
-   * opt back in with the user's company: the opt-in event and every event after it carry the
-   * user and company.
-   *
-   * @param {object} [identity] Optional user, and on a hierarchical groups project their
-   *     company, as `{userId, companyId}`. This will call identify(identity). An identity
-   *     identify() would refuse is logged, and the user stays opted out.
-   * @param {object} [properties] Optional properties to add to the opt-in event.
-   */
-  optInTrackingWithIdentity(identity, properties) {
-    if (!ObjectHelper.isValidOrUndefined(properties)) {
-      ObjectHelper.raiseError(PARAMS.PROPERTIES);
-    }
-    this.mixpanelImpl.optInTrackingWithIdentity(
-      this.token,
-      identity == null ? null : IdentityHelper.normalize(identity),
-      properties || null
-    );
-  }
-
-  /**
    * Use this method to opt-out a user from tracking. Events and people updates that haven't been
    * flushed yet will be deleted. Use flush() before calling this method if you want
    * to send all the queues to Mixpanel before.

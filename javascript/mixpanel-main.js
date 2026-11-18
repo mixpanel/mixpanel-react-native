@@ -316,22 +316,6 @@ export default class MixpanelMain {
     await this.track(token, "$opt_in");
   }
 
-  async optInTrackingWithIdentity(token, identity, properties) {
-    if (identity != null && typeof identity === "object") {
-      const identityError = this._identityError(identity);
-      if (identityError) {
-        MixpanelLogger.error(token, `${identityError} The user is still opted out.`);
-        return;
-      }
-    }
-    await this._setOptedOutTrackingFlag(token, false);
-    MixpanelLogger.log(token, "User has opted in to tracking");
-    if (identity != null) {
-      await this.identifyWithIdentity(token, identity);
-    }
-    await this.track(token, "$opt_in", properties);
-  }
-
   async _setOptedOutTrackingFlag(token, optedOut) {
     this.mixpanelPersistent.updateOptedOut(token, optedOut);
     await this.mixpanelPersistent.persistOptedOut(token);

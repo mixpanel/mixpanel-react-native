@@ -580,16 +580,21 @@ describe("Hierarchical groups scenarios", () => {
     expect(hasOptedOutTracking()).toBe(false);
   });
 
-  it("Opt In With Identity", async () => {
+  it("Opt In, Then Identify", async () => {
     mixpanel.optOutTracking();
     await settle();
     clearSent();
-    mixpanel.optInTrackingWithIdentity({ userId: USER_ID, companyId: COMPANY_ID });
+    mixpanel.optInTracking();
+    await settle();
+    await mixpanel.identify({ userId: USER_ID, companyId: COMPANY_ID });
+    await settle();
+    clearSent();
+    mixpanel.track("After Opt In");
     await settle();
 
-    // Only $opt_in, carrying the user and company
+    // Events after opting in and identifying carry the user and company
     expect(mockSent.map((s) => s.endpoint)).toEqual([TRACK]);
-    expect(mockSent.map((s) => s.data.event)).toEqual(["$opt_in"]);
+    expect(mockSent.map((s) => s.data.event)).toEqual(["After Opt In"]);
     for (const { data } of mockSent) {
       await assertIdentified(data.properties);
     }

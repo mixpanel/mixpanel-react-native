@@ -165,8 +165,11 @@ function HierarchicalGroupsPage({onBack}: Props): React.JSX.Element {
         {title: 'Opt Out', run: () => mixpanel.optOutTracking()},
         {title: 'Opt In', run: () => mixpanel.optInTracking()},
         {
-          title: 'Opt In With Identity',
-          run: () => mixpanel.optInTrackingWithIdentity({userId, companyId}),
+          title: 'Opt In and Identify',
+          run: () => {
+            mixpanel.optInTracking();
+            return mixpanel.identify({userId, companyId});
+          },
         },
       ],
     },

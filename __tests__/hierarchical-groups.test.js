@@ -477,65 +477,6 @@ describe("company storage", () => {
 });
 
 describe("opt in and out", () => {
-  it("optInTrackingWithIdentity identifies with the company", async () => {
-    const main = await start();
-    await main.optOutTracking(token);
-    await main.optInTrackingWithIdentity(token, acme, { source: "settings" });
-
-    expect(main.mixpanelPersistent.getOptedOut(token)).toBe(false);
-    const optIn = events().find((e) => e.event === "$opt_in");
-    expect(optIn.properties.$company_id).toBe("acme");
-    expect(optIn.properties.source).toBe("settings");
-    expect(events().some((e) => e.event === "$identify")).toBe(false);
-    expect((await main.getIdentity(token)).companyId).toBe("acme");
-  });
-
-  it("optInTrackingWithIdentity without a company leaves the user opted out", async () => {
-    const main = await start();
-    await main.optOutTracking(token);
-    await main.optInTrackingWithIdentity(token, { userId: "user_123" });
-
-    expect(main.mixpanelPersistent.getOptedOut(token)).toBe(true);
-    expect(events().some((e) => e.event === "$opt_in")).toBe(false);
-  });
-
-  it("optInTrackingWithIdentity with a company without hierarchical groups leaves the user opted out", async () => {
-    const main = await start({ hierarchicalGroups: false });
-    await main.optOutTracking(token);
-    await main.optInTrackingWithIdentity(token, acme);
-
-    expect(main.mixpanelPersistent.getOptedOut(token)).toBe(true);
-    expect(events().some((e) => e.event === "$opt_in")).toBe(false);
-  });
-
-  it("optInTrackingWithIdentity with a $device: user id leaves the user opted out", async () => {
-    const main = await start();
-    await main.optOutTracking(token);
-    await main.optInTrackingWithIdentity(token, { userId: "$device:abc", companyId: "acme" });
-
-    expect(main.mixpanelPersistent.getOptedOut(token)).toBe(true);
-    expect(errors()).toEqual([expect.stringContaining("can't start with $device:")]);
-  });
-
-  it("optInTrackingWithIdentity with a whitespace-only company leaves the user opted out", async () => {
-    const main = await start();
-    await main.optOutTracking(token);
-    await main.optInTrackingWithIdentity(token, { userId: "user_123", companyId: "  " });
-
-    expect(main.mixpanelPersistent.getOptedOut(token)).toBe(true);
-    expect(errors()).toEqual([expect.stringContaining("both are required")]);
-  });
-
-  it("optInTrackingWithIdentity without an identity stays anonymous", async () => {
-    const main = await start();
-    await main.optOutTracking(token);
-    await main.optInTrackingWithIdentity(token, null);
-
-    const optIn = events().find((e) => e.event === "$opt_in");
-    expect(optIn.properties.$user_id).toBeFalsy();
-    expect(optIn.properties).not.toHaveProperty("$company_id");
-  });
-
   it("optInTracking without arguments still works", async () => {
     const main = await start();
     await main.optOutTracking(token);
@@ -761,7 +702,8 @@ describe("user profiles", () => {
     const main = await start();
     await main.set(token, { plan: "pro" });
     await main.optOutTracking(token);
-    await main.optInTrackingWithIdentity(token, acme);
+    await main.optInTracking(token);
+    await main.identifyWithIdentity(token, acme);
 
     expect(groups()).toHaveLength(0);
   });
@@ -770,7 +712,8 @@ describe("user profiles", () => {
     const main = await start();
     await main.optOutTracking(token);
     await main.set(token, { plan: "pro" });
-    await main.optInTrackingWithIdentity(token, acme);
+    await main.optInTracking(token);
+    await main.identifyWithIdentity(token, acme);
 
     expect(groups()).toHaveLength(0);
   });
@@ -779,7 +722,8 @@ describe("user profiles", () => {
     const main = await start();
     await main.optOutTracking(token);
     const set = main.set(token, { plan: "private" });
-    await main.optInTrackingWithIdentity(token, acme);
+    await main.optInTracking(token);
+    await main.identifyWithIdentity(token, acme);
     await set;
 
     expect(groups()).toHaveLength(0);

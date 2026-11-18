@@ -30,8 +30,6 @@ RCT_EXTERN_METHOD(hasOptedOutTracking:(NSString *)token resolver:(RCTPromiseReso
 
 RCT_EXTERN_METHOD(optInTracking:(NSString *)token resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(optInTrackingWithIdentity:(NSString *)token identity:(NSDictionary *)identity properties:(NSDictionary *)properties resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
-
 // MARK: - Track Events
 
 RCT_EXTERN_METHOD(track:(NSString *)token event:(NSString *)event properties:(NSDictionary *)properties resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)

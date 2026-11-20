@@ -999,17 +999,6 @@ describe("group membership", () => {
     expect(groups()).toHaveLength(0);
   });
 
-  it("removeGroup clears a one-item list stored before hierarchical groups", async () => {
-    const main = await start({ superProperties: { team_id: ["eng"] } });
-    await main.identifyWithIdentity(token, acme);
-    mockCore.addToMixpanelQueue.mockClear();
-
-    await main.removeGroup(token, "team_id", "eng");
-
-    expect(main.mixpanelPersistent.getSuperProperties(token)).not.toHaveProperty("team_id");
-    expect(groups()).toHaveLength(1);
-  });
-
   it.each([
     ["registerSuperProperties", (main) => main.registerSuperProperties(token, { $company_id: "x", plan: "pro" })],
     ["registerSuperPropertiesOnce", (main) => main.registerSuperPropertiesOnce(token, { $company_id: "x", plan: "pro" })],

@@ -1139,12 +1139,7 @@ export default class MixpanelMain {
     }
     const superProperties =
       this.mixpanelPersistent.getSuperProperties(token) || {};
-    let current = superProperties[groupKey];
-    // A one-item list, stored by an earlier version or before hierarchical groups was
-    // enabled, counts as that item.
-    if (Array.isArray(current) && current.length === 1) {
-      current = current[0];
-    }
+    const current = superProperties[groupKey];
     if (current === undefined || current !== groupID) {
       return;
     }

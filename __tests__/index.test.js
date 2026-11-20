@@ -438,6 +438,19 @@ test(`it calls MixpanelReactNative group set properties`, async () => {
   );
 });
 
+test(`it updates the group passed to each getGroup call`, async () => {
+  const mixpanel = new Mixpanel("token", true);
+  mixpanel.init();
+  mixpanel.getGroup("company_id", 12345).set("prop_key", "prop_value");
+  mixpanel.getGroup("team_id", "team_42").set("prop_key", "prop_value");
+  expect(NativeModules.MixpanelReactNative.groupSetProperties).toHaveBeenLastCalledWith(
+    "token",
+    "team_id",
+    "team_42",
+    { prop_key: "prop_value" }
+  );
+});
+
 test(`it calls MixpanelReactNative group set property once`, async () => {
   const mixpanel = new Mixpanel("token", true);
   mixpanel.init();

@@ -87,7 +87,20 @@ export const MixpanelCore = (storage) => {
     );
   };
 
-  const flush = async (token) => {
+  // Queues and sends a record even when opted out, for the profile deletion sent on opting out
+  const sendWhileOptedOut = async (token, type, data) => {
+    const sessionMetadata = new SessionMetadata();
+    await MixpanelQueueManager.enqueue(token, type, {
+      ...sessionMetadata.toDict(type),
+      ...data,
+    });
+    await processQueue(token, type);
+  };
+
+  const flush = async (
+    token,
+    types = [MixpanelType.EVENTS, MixpanelType.USER, MixpanelType.GROUPS]
+  ) => {
     if (mixpanelPersistent.getOptedOut(token)) {
       MixpanelLogger.log(
         token,
@@ -95,9 +108,9 @@ export const MixpanelCore = (storage) => {
       );
       return;
     }
-    await processQueue(token, MixpanelType.EVENTS);
-    await processQueue(token, MixpanelType.USER);
-    await processQueue(token, MixpanelType.GROUPS);
+    for (const type of types) {
+      await processQueue(token, type);
+    }
   };
 
   const processQueue = async (token, type) => {
@@ -112,6 +125,7 @@ export const MixpanelCore = (storage) => {
         );
         const batchSize = config.getFlushBatchSize(token);
         const batch = queue.slice(0, batchSize);
+        const clearCount = MixpanelQueueManager.getClearCount(token, type);
         try {
           await MixpanelNetwork.sendRequest({
             token,
@@ -121,14 +135,18 @@ export const MixpanelCore = (storage) => {
             useIPAddressForGeoLocation:
               config.getUseIpAddressForGeolocation(token),
           });
-          await MixpanelQueueManager.spliceQueue(token, type, 0, batch.length);
+          // A clear while the batch was sending already removed it, and records queued since
+          // were not sent
+          if (MixpanelQueueManager.getClearCount(token, type) === clearCount) {
+            await MixpanelQueueManager.spliceQueue(token, type, 0, batch.length);
+          }
           // Process the next batch if there are more events in the queue
           const queue = MixpanelQueueManager.getQueue(token, type);
           if (queue.length > 0) {
             setTimeout(processBatch, 0);
           }
         } catch (error) {
-          handleBatchError(token, error, type, processBatch);
+          handleBatchError(token, error, type, processBatch, clearCount);
         }
       }
     };
@@ -136,12 +154,18 @@ export const MixpanelCore = (storage) => {
     processBatch();
   };
 
-  const handleBatchError = (token, error, type, callback) => {
+  const handleBatchError = (token, error, type, callback, clearCount) => {
     if (error.code === 400) {
       MixpanelLogger.error(
         token,
         `Bad request received due to corrupted data within the batch. The corrupted data is now being removed from the queue...`
       );
+      // A clear while the batch was sending already removed the corrupted data, and records
+      // queued since were not sent
+      if (MixpanelQueueManager.getClearCount(token, type) !== clearCount) {
+        setTimeout(callback, 0);
+        return;
+      }
       // Remove the corrupted data from the queue, to avoid the data loss, only remove one event at a time
       MixpanelQueueManager.spliceQueue(token, type, 0, 1).then(() => {
         setTimeout(callback, 0);
@@ -162,6 +186,7 @@ export const MixpanelCore = (storage) => {
     initialize,
     startProcessingQueue,
     addToMixpanelQueue,
+    sendWhileOptedOut,
     flush,
     identifyUserQueue,
   };

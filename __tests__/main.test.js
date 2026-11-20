@@ -22,6 +22,7 @@ jest.mock("mixpanel-react-native/javascript/mixpanel-persistent", () => {
       getInstance: jest.fn().mockImplementation(() => {
         return {
           initializationCompletePromise: jest.fn(),
+          setHierarchicalGroups: jest.fn(),
           reset: jest.fn(),
           updateOptedOut: jest.fn(),
           persistOptedOut: jest.fn(),

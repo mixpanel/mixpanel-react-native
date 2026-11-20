@@ -4,11 +4,16 @@ export const MixpanelType = {
   GROUPS: "/groups/",
 };
 
+// User profile updates made on a hierarchical groups project before a user and company are
+// identified, kept until they are. Stored like the queues above but never sent as is.
+export const PENDING_PROFILE_QUEUE = "/pending-hierarchical-groups-profile/";
+
 export const getQueueKey = (token, type) => `MIXPANEL_${token}_${type}_QUEUE`;
 
 export const getDeviceIdKey = (token) => `MIXPANEL_${token}_DEVICE_ID`;
 export const getDistinctIdKey = (token) => `MIXPANEL_${token}_DISTINCT_ID`;
 export const getUserIdKey = (token) => `MIXPANEL_${token}_USER_ID`;
+export const getCompanyIdKey = (token) => `MIXPANEL_${token}_COMPANY_ID`;
 
 export const getOptedOutKey = (token) => `MIXPANEL_${token}_OPT_OUT`;
 export const getSuperPropertiesKey = (token) =>

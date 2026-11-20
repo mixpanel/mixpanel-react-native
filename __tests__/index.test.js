@@ -11,7 +11,8 @@ test(`it calls MixpanelReactNative initialize`, async () => {
     "https://api.mixpanel.com",
     false,
     {},
-    null
+    null,
+    false
   );
 });
 
@@ -30,7 +31,8 @@ test(`it calls MixpanelReactNative initialize with optOut, superProperties and u
     "https://api.mixpanel.com",
     false,
     {},
-    null
+    null,
+    false
   );
 });
 
@@ -48,7 +50,8 @@ test(`it passes useGzipCompression parameter to native modules when enabled`, as
     "https://api.mixpanel.com",
     true,
     {},
-    null
+    null,
+    false
   );
 });
 

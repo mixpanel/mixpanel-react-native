@@ -74,17 +74,9 @@ npm install @react-native-async-storage/async-storage
 >
 > This does not apply if AsyncStorage is not installed (for example, native mode only).
 
-3. Link the iOS native module with CocoaPods or Swift Package Manager.
+3. Link the iOS native module with Swift Package Manager (recommended) or CocoaPods (deprecated).
 
-**CocoaPods** (default). Under your application's ios folder, run
-
-```
-pod install
-```
-
-Please note: You do not need to update your Podfile to add Mixpanel.
-
-**Swift Package Manager** (React Native 0.88+, experimental). Mixpanel ships a `Package.swift` that React Native's SwiftPM autolinking picks up, so no extra configuration is needed. Opt your app into SwiftPM from its ios folder:
+**Swift Package Manager** (recommended; `mixpanel-react-native` 4.1.0+ on React Native 0.88+). Mixpanel ships a `Package.swift` that React Native's SwiftPM autolinking picks up, so no extra configuration is needed. Opt your app into SwiftPM from its ios folder:
 
 ```
 npx react-native spm --deintegrate
@@ -93,6 +85,17 @@ npx react-native spm --deintegrate
 `--deintegrate` removes CocoaPods from the project, and `npx react-native spm deinit` reverses the change. After a fresh clone, and in CI, run `npx react-native spm` once before building, as you would `pod install`. React Native's SwiftPM support is still experimental; see the [React Native 0.88 release notes](https://reactnative.dev/blog/2026/10/19/react-native-0.88#experimental-swift-package-manager-support) for its current limitations.
 
 The package pins [mixpanel-swift](https://github.com/mixpanel/mixpanel-swift) to the exact version each release is tested with. If your app also depends on mixpanel-swift directly, use the version in [`ios/Package.swift`](ios/Package.swift), or Swift Package Manager won't be able to resolve your packages.
+
+**CocoaPods** (deprecated). Under your application's ios folder, run
+
+```
+pod install
+```
+
+Please note: You do not need to update your Podfile to add Mixpanel.
+
+> [!WARNING]
+> CocoaPods support is deprecated and will be removed in a future major version of the SDK, after November 2027. That release will also raise the minimum supported React Native version to 0.89. We recommend switching to Swift Package Manager.
 
 ### 2. Initialize Mixpanel
 

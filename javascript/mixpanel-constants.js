@@ -8,6 +8,9 @@ export const MixpanelType = {
 // identified, kept until they are. Stored like the queues above but never sent as is.
 export const PENDING_PROFILE_QUEUE = "/pending-hierarchical-groups-profile/";
 
+// The group key and property naming the company on a hierarchical groups project
+export const COMPANY_ID_GROUP_KEY = "$company_id";
+
 export const getQueueKey = (token, type) => `MIXPANEL_${token}_${type}_QUEUE`;
 
 export const getDeviceIdKey = (token) => `MIXPANEL_${token}_DEVICE_ID`;

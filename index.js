@@ -5,6 +5,7 @@ import packageJson from "./package.json";
 const {MixpanelReactNative} = NativeModules;
 import MixpanelMain from "mixpanel-react-native/javascript/mixpanel-main"
 import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger"
+import { COMPANY_ID_GROUP_KEY } from "mixpanel-react-native/javascript/mixpanel-constants"
 
 const DevicePlatform = {
   Unknown: "Unknown",
@@ -34,8 +35,6 @@ const PARAMS = {
   COMPANY_ID: "companyId",
   DEVICE_ID: "deviceId",
 };
-
-const COMPANY_ID_GROUP_KEY = "$company_id";
 
 const DEFAULT_OPT_OUT = false;
 

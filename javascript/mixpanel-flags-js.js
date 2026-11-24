@@ -9,6 +9,7 @@ import {
   MixpanelFlagPersistence,
   VariantLookupPolicy,
 } from './mixpanel-flag-persistence';
+import { COMPANY_ID_GROUP_KEY } from './mixpanel-constants';
 import packageJson from 'mixpanel-react-native/package.json';
 
 // Registered at module scope so the operators are in place before eventMatchesCriteria below can
@@ -145,7 +146,7 @@ export class MixpanelFlagsJS {
     if (!userId || !companyId) {
       return {};
     }
-    return { $user_id: userId, $company_id: companyId };
+    return { $user_id: userId, [COMPANY_ID_GROUP_KEY]: companyId };
   }
 
   _loadedPersistenceIsStale() {

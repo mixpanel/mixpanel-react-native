@@ -2,6 +2,7 @@ import { Platform } from "react-native";
 import { MixpanelCore } from "./mixpanel-core";
 import { MixpanelQueueManager } from "./mixpanel-queue";
 import {
+  COMPANY_ID_GROUP_KEY,
   MixpanelType,
   PENDING_PROFILE_QUEUE,
 } from "./mixpanel-constants";
@@ -12,7 +13,6 @@ import { identityToString } from "./mixpanel-utils";
 import packageJson from "mixpanel-react-native/package.json";
 
 const USER_ID_GROUP_KEY = "$user_id";
-const COMPANY_ID_GROUP_KEY = "$company_id";
 const DEVICE_ID_PREFIX = "$device:";
 // /groups has no $add, $append or $merge
 const HIERARCHICAL_GROUPS_OPERATIONS = [
@@ -485,6 +485,7 @@ export default class MixpanelMain {
     return this.mixpanelPersistent.getDeviceId(token);
   }
 
+  /** The combined $company:{c}|$user:{u} id is best-effort: it mirrors Mixpanel's format and may drift from it. */
   async getDistinctId(token) {
     if (!this.mixpanelPersistent.getDistinctId(token)) {
       await this.mixpanelPersistent.loadIdentity(token);

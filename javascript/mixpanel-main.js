@@ -383,6 +383,12 @@ export default class MixpanelMain {
           "company and user id, so both are required."
         );
       }
+      if (String(userId).includes("|") || String(companyId).includes("|")) {
+        return (
+          `Can't identify ${description}: hierarchical groups projects don't allow | in a ` +
+          "user or company id."
+        );
+      }
     } else {
       if (isBlank(userId)) {
         return `Can't identify ${description} without a user id.`;

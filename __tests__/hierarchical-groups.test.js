@@ -260,6 +260,30 @@ describe("identify", () => {
     expect(errors()).toEqual([expect.stringContaining("both are required")]);
   });
 
+  it.each([
+    ["user id", { userId: "user|123", companyId: "acme" }],
+    ["company id", { userId: "user_123", companyId: "ac|me" }],
+  ])("refuses a %s containing |", async (_, identity) => {
+    const main = await start();
+    await main.identifyWithIdentity(token, identity);
+
+    expect(events()).toHaveLength(0);
+    expect((await main.getIdentity(token)).userId).toBeNull();
+    expect(errors()).toEqual([
+      expect.stringMatching(
+        /^Can't identify MixpanelIdentity\(.*\): hierarchical groups projects don't allow \| in a user or company id\. Nothing was identified\.$/
+      ),
+    ]);
+  });
+
+  it("allows | in a user id when disabled", async () => {
+    const main = await start({ hierarchicalGroups: false });
+    await main.identifyWithIdentity(token, { userId: "user|123" });
+
+    expect((await main.getIdentity(token)).userId).toBe("user|123");
+    expect(errors()).toEqual([]);
+  });
+
   it("treats a whitespace-only user id as missing when disabled", async () => {
     const main = await start({ hierarchicalGroups: false });
     await main.identifyWithIdentity(token, { userId: " " });

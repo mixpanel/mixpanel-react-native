@@ -225,6 +225,7 @@ export class Mixpanel {
   optOutTracking(): void;
   identify(distinctId: string): Promise<void>;
   identify(identity: MixpanelIdentity): Promise<void>;
+  identify(distinctIdOrIdentity: string | MixpanelIdentity): Promise<void>;
   alias(alias: string, distinctId: string): void;
   track(eventName: string, properties?: MixpanelProperties): void;
   getPeople(): People;

@@ -291,6 +291,29 @@ describe("MixpanelFlagPersistence — direct unit coverage", () => {
     expect(await storage.getItem(persistedKey(token))).toBeNull();
   });
 
+  it("clears the blob for another user in the same company", async () => {
+    const p = makePersistence();
+    await p.save({ $user_id: "user-A", $company_id: "acme" }, new Map([["a", { key: "k", value: 1 }]]), {});
+    const loaded = await p.loadFlagsFromStorage({ $user_id: "user-B", $company_id: "acme" });
+    expect(loaded).toBeNull();
+    expect(await storage.getItem(persistedKey(token))).toBeNull();
+  });
+
+  it("clears the blob for the same user in another company", async () => {
+    const p = makePersistence();
+    await p.save({ $user_id: "user-A", $company_id: "acme" }, new Map([["a", { key: "k", value: 1 }]]), {});
+    const loaded = await p.loadFlagsFromStorage({ $user_id: "user-A", $company_id: "globex" });
+    expect(loaded).toBeNull();
+  });
+
+  it("loads the blob for the same user and company", async () => {
+    const p = makePersistence();
+    const context = { $user_id: "user-A", $company_id: "acme" };
+    await p.save(context, new Map([["a", { key: "k", value: 1 }]]), {});
+    const loaded = await p.loadFlagsFromStorage(context);
+    expect(loaded.flags.get("a").key).toBe("k");
+  });
+
   it("networkOnly policy wipes any existing blob on load", async () => {
     const persisting = makePersistence();
     await persisting.save({ distinct_id: "u1" }, new Map([["a", { key: "k", value: 1 }]]), {});

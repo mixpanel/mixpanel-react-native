@@ -9,6 +9,7 @@ import {
   MixpanelFlagPersistence,
   VariantLookupPolicy,
 } from './mixpanel-flag-persistence';
+import { COMPANY_ID_GROUP_KEY, USER_ID_GROUP_KEY } from './mixpanel-constants';
 import packageJson from 'mixpanel-react-native/package.json';
 
 // Registered at module scope so the operators are in place before eventMatchesCriteria below can
@@ -123,11 +124,29 @@ export class MixpanelFlagsJS {
   }
 
   _buildContext() {
+    // On a hierarchical groups project the user is $user_id and $company_id, so no distinct_id
+    const hierarchicalGroupsIdentity = this._hierarchicalGroupsIdentity();
     return {
-      distinct_id: this.mixpanelPersistent.getDistinctId(this.token),
+      ...(hierarchicalGroupsIdentity.$user_id
+        ? hierarchicalGroupsIdentity
+        : { distinct_id: this.mixpanelPersistent.getDistinctId(this.token) }),
       device_id: this.mixpanelPersistent.getDeviceId(this.token),
       ...this.context,
     };
+  }
+
+  // On a hierarchical groups project the flags service needs the user and the company, which
+  // are both known once identify has named them. Until then it gets what other projects send.
+  _hierarchicalGroupsIdentity() {
+    if (!this.mixpanelImpl?.hierarchicalGroups) {
+      return {};
+    }
+    const userId = this.mixpanelPersistent.getUserId(this.token);
+    const companyId = this.mixpanelPersistent.getCompanyId(this.token);
+    if (!userId || !companyId) {
+      return {};
+    }
+    return { [USER_ID_GROUP_KEY]: userId, [COMPANY_ID_GROUP_KEY]: companyId };
   }
 
   _loadedPersistenceIsStale() {
@@ -609,9 +628,11 @@ export class MixpanelFlagsJS {
     this._loadedPersistedAtMs = null;
     this._loadedTtlMs = null;
     this._invalidateInFlightFetch();
+    // Readers wait on fetchPromise, so expose the refetch right away instead of after the clear
+    const resetPromise = this.persistence.clear().then(() => this.loadFlags());
+    this.fetchPromise = resetPromise;
     try {
-      await this.persistence.clear();
-      await this.loadFlags();
+      await resetPromise;
     } catch (error) {
       MixpanelLogger.log(this.token, 'Error during flags reset:', error);
     }
@@ -708,10 +729,13 @@ export class MixpanelFlagsJS {
       headers.traceparent = this._traceparent;
     }
 
+    // On a hierarchical groups project the user is $user_id and $company_id, so no distinct_id
+    const hierarchicalGroupsIdentity = this._hierarchicalGroupsIdentity();
     const payload = {
-      distinct_id: distinctId,
+      ...(hierarchicalGroupsIdentity.$user_id ? {} : { distinct_id: distinctId }),
       project_id: projectId,
       first_time_event_hash: firstTimeEventHash,
+      ...hierarchicalGroupsIdentity,
     };
 
     MixpanelLogger.log(this.token, `Recording first-time event for flag: ${flagId}`);

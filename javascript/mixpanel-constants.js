@@ -9,6 +9,7 @@ export const MixpanelType = {
 export const PENDING_PROFILE_QUEUE = "/pending-hierarchical-groups-profile/";
 
 // The group key and property naming the company on a hierarchical groups project
+export const USER_ID_GROUP_KEY = "$user_id";
 export const COMPANY_ID_GROUP_KEY = "$company_id";
 
 export const getQueueKey = (token, type) => `MIXPANEL_${token}_${type}_QUEUE`;

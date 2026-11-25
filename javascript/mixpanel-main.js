@@ -3,6 +3,7 @@ import { MixpanelCore } from "./mixpanel-core";
 import { MixpanelQueueManager } from "./mixpanel-queue";
 import {
   COMPANY_ID_GROUP_KEY,
+  USER_ID_GROUP_KEY,
   MixpanelType,
   PENDING_PROFILE_QUEUE,
 } from "./mixpanel-constants";
@@ -12,7 +13,6 @@ import { MixpanelLogger } from "mixpanel-react-native/javascript/mixpanel-logger
 import { identityToString } from "./mixpanel-utils";
 import packageJson from "mixpanel-react-native/package.json";
 
-const USER_ID_GROUP_KEY = "$user_id";
 const DEVICE_ID_PREFIX = "$device:";
 // /groups has no $add, $append or $merge
 const HIERARCHICAL_GROUPS_OPERATIONS = [

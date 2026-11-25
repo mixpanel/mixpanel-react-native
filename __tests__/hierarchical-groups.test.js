@@ -970,6 +970,27 @@ describe("group membership", () => {
     ]);
   });
 
+  it("removeGroup unsets the group on the user identified when it was called", async () => {
+    const main = await start();
+    await main.identifyWithIdentity(token, acme);
+    await main.setGroup(token, "team_id", "eng");
+    mockCore.addToMixpanelQueue.mockClear();
+
+    // Not awaited: an identify made right after must not retarget the removal
+    const removal = main.removeGroup(token, "team_id", "eng");
+    const identify = main.identifyWithIdentity(token, { userId: "user_456", companyId: "globex" });
+    await Promise.all([removal, identify]);
+
+    expect(groups()).toEqual([
+      expect.objectContaining({
+        $group_key: "$user_id",
+        $group_id: "user_123",
+        $company_id: "acme",
+        $unset: ["team_id"],
+      }),
+    ]);
+  });
+
   it("setGroup with null sets the group to null", async () => {
     const main = await start();
     await main.identifyWithIdentity(token, acme);

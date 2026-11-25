@@ -1150,7 +1150,9 @@ export default class MixpanelMain {
     if (current === undefined || current !== groupID) {
       return;
     }
-    await this.unregisterSuperProperty(token, groupKey);
+    // Not awaited, as master's removeGroup doesn't await its super property update: the profile
+    // update below must capture the current user and company before anything else runs
+    this.unregisterSuperProperty(token, groupKey);
     await this.unset(token, groupKey);
   }
 

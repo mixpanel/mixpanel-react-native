@@ -112,10 +112,13 @@ mixpanel.init();
 Once you've called this method once, you can access `mixpanel` throughout the rest of your application.
 
 > [!IMPORTANT]
-> If your project uses [EU](https://docs.mixpanel.com/docs/privacy/eu-residency) or [India](https://docs.mixpanel.com/docs/privacy/in-residency) data residency, pass your region's server URL as the third argument to `init()`. Mixpanel won't ingest events sent to the wrong region.
+> If your project uses [EU](https://docs.mixpanel.com/docs/privacy/eu-residency) or [India](https://docs.mixpanel.com/docs/privacy/in-residency) data residency, pass your region's server URL as the third argument to `init()` (or call `setServerURL()` later). Mixpanel won't ingest events sent to the wrong region. Use one of:
 >
 > ```js
 > mixpanel.init(false, {}, "https://api-eu.mixpanel.com"); // EU
+> ```
+>
+> ```js
 > mixpanel.init(false, {}, "https://api-in.mixpanel.com"); // India
 > ```
 

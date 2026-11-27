@@ -183,7 +183,7 @@ describe("MixpanelMain", () => {
     expect(mixpanelMain.core.addToMixpanelQueue).not.toHaveBeenCalled();
   });
 
-  it("should set serverURL even if initialize with optOutTrackingDefault being true", async () => {
+  it("should set serverURL when initialized with optOutTrackingDefault set to true", async () => {
     await mixpanelMain.initialize(token, false, true, {}, "https://api-eu.mixpanel.com");
 
     expect(mixpanelMain.config.setServerURL).toHaveBeenCalledWith(

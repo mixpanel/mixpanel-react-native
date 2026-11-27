@@ -218,9 +218,12 @@ export class MixpanelPersistent {
     const timeEventsString = await this.storageAdapter.getItem(
       getTimeEventsKey(token)
     );
-    this._timeEvents[token] = timeEventsString
-      ? JSON.parse(timeEventsString)
-      : {};
+    // Keep timers started while the read was in flight (e.g. timeEvent()
+    // called right after an un-awaited init()), so they are not overwritten.
+    this._timeEvents[token] = {
+      ...(timeEventsString ? JSON.parse(timeEventsString) : {}),
+      ...this._timeEvents[token],
+    };
   }
 
   getTimeEvents(token) {
@@ -316,6 +319,7 @@ export class MixpanelPersistent {
     await this.storageAdapter.removeItem(getTimeEventsKey(token));
     await this.loadIdentity(token);
     await this.loadSuperProperties(token);
+    this._timeEvents[token] = {};
     await this.loadTimeEvents(token);
   }
 }

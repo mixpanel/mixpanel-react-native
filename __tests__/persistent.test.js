@@ -63,3 +63,53 @@ describe("MixpanelPersistent - device ID", () => {
     expect(mixpanelPersistent.getDeviceId(token)).toBe(existingDeviceId);
   });
 });
+
+describe("MixpanelPersistent - time events", () => {
+  const token = "test-token";
+  const key = `MIXPANEL_${token}_TIME_EVENTS`;
+
+  beforeEach(() => {
+    jest.resetModules();
+    jest.clearAllMocks();
+  });
+
+  const createPersistent = (store) => {
+    jest.doMock("mixpanel-react-native/javascript/mixpanel-storage", () => ({
+      AsyncStorageAdapter: jest.fn().mockImplementation(() => ({
+        getItem: jest.fn().mockImplementation(async (k) => store[k] ?? null),
+        setItem: jest.fn().mockImplementation(async (k, v) => {
+          store[k] = v;
+        }),
+        removeItem: jest.fn().mockImplementation(async (k) => {
+          delete store[k];
+        }),
+      })),
+    }));
+    const { MixpanelPersistent } = require("mixpanel-react-native/javascript/mixpanel-persistent");
+    MixpanelPersistent.instance = null;
+    return MixpanelPersistent.getInstance(null, token);
+  };
+
+  it("keeps a timer started while time events were loading", async () => {
+    const persistent = createPersistent({ [key]: JSON.stringify({ stored: 1 }) });
+    await persistent.initializationCompletePromise(token);
+
+    const load = persistent.loadTimeEvents(token); // e.g. an un-awaited init()
+    persistent.updateTimeEvents(token, {
+      ...persistent.getTimeEvents(token),
+      started: 2,
+    });
+    await load;
+
+    expect(persistent.getTimeEvents(token)).toEqual({ stored: 1, started: 2 });
+  });
+
+  it("clears time events on reset", async () => {
+    const persistent = createPersistent({ [key]: JSON.stringify({ stored: 1 }) });
+    await persistent.initializationCompletePromise(token);
+
+    await persistent.reset(token);
+
+    expect(persistent.getTimeEvents(token)).toEqual({});
+  });
+});

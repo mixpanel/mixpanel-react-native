@@ -183,6 +183,26 @@ describe("MixpanelMain", () => {
     expect(mixpanelMain.core.addToMixpanelQueue).not.toHaveBeenCalled();
   });
 
+  it("should set serverURL when initialized with optOutTrackingDefault set to true", async () => {
+    await mixpanelMain.initialize(token, false, true, {}, "https://api-eu.mixpanel.com");
+
+    expect(mixpanelMain.config.setServerURL).toHaveBeenCalledWith(
+      token,
+      "https://api-eu.mixpanel.com"
+    );
+  });
+
+  it("should not overwrite a serverURL set while initialize is pending", async () => {
+    const initPromise = mixpanelMain.initialize(token, false, false, {});
+    mixpanelMain.setServerURL(token, "https://api-eu.mixpanel.com");
+    await initPromise;
+
+    expect(mixpanelMain.config.setServerURL).toHaveBeenLastCalledWith(
+      token,
+      "https://api-eu.mixpanel.com"
+    );
+  });
+
   it("should track if initialize with optOutTrackingDefault being false", async () => {
     const trackAutomaticEvents = false;
     const optOutTrackingDefault = false;

@@ -32,6 +32,10 @@ export default class MixpanelMain {
     this.featureFlagsEnabled = featureFlagsOptions.enabled || false;
     this.featureFlagsContext = featureFlagsOptions.context || {};
 
+    // Set before the first await so a setServerURL() call made right after an
+    // un-awaited init() is not overwritten, and so opted-out users keep it too.
+    this.setServerURL(token, serverURL);
+
     await this.mixpanelPersistent.initializationCompletePromise(token);
     if (optOutTrackingDefault) {
       await this.optOutTracking(token);
@@ -40,7 +44,6 @@ export default class MixpanelMain {
       await this._setOptedOutTrackingFlag(token, false);
     }
 
-    this.setServerURL(token, serverURL);
     await this.registerSuperProperties(token, {
       ...superProperties,
     });

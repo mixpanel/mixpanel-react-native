@@ -6,6 +6,8 @@ import { MixpanelConfig } from "./mixpanel-config";
 import { MixpanelPersistent } from "./mixpanel-persistent";
 import { MixpanelLogger } from "./mixpanel-logger";
 
+const flushesInFlight = new Set();
+
 export const MixpanelCore = (storage) => {
   const mixpanelPersistent = MixpanelPersistent.getInstance(storage);
   const config = MixpanelConfig.getInstance();
@@ -101,10 +103,22 @@ export const MixpanelCore = (storage) => {
   };
 
   const processQueue = async (token, type) => {
+    // The queue is shared by every instance for this token, so only one flush
+    // may send it at a time; otherwise the same batch is sent more than once.
+    const flushKey = `${token}${type}`;
+    if (flushesInFlight.has(flushKey)) {
+      MixpanelLogger.log(token, `Flush already in progress for endpoint: ${type}`);
+      return;
+    }
+    flushesInFlight.add(flushKey);
+    const done = () => flushesInFlight.delete(flushKey);
+
     MixpanelLogger.log(token, `Processing queue for endpoint: ${type}`);
     const processBatch = async () => {
       const queue = MixpanelQueueManager.getQueue(token, type);
-      if (queue.length > 0) {
+      if (queue.length === 0) {
+        done();
+      } else {
         MixpanelLogger.log(token, `[Flushing queue] endpoint: ${type}`);
         MixpanelLogger.log(
           token,
@@ -126,8 +140,13 @@ export const MixpanelCore = (storage) => {
           const queue = MixpanelQueueManager.getQueue(token, type);
           if (queue.length > 0) {
             setTimeout(processBatch, 0);
+          } else {
+            done();
           }
         } catch (error) {
+          if (error.code !== 400) {
+            done();
+          }
           handleBatchError(token, error, type, processBatch);
         }
       }

@@ -132,4 +132,29 @@ describe("MixpanelQueueManager", () => {
     await MixpanelCore().flush(token);
     expect(MixpanelNetwork.sendRequest).toHaveBeenCalledTimes(0);
   });
+
+  it("does not send the same batch twice while a request is in flight", async () => {
+    const queue = [data];
+    MixpanelQueueManager.getQueue.mockImplementation(() => [...queue]);
+    MixpanelQueueManager.spliceQueue.mockImplementation(async (t, ty, start, count) => {
+      queue.splice(start, count);
+    });
+    let finishRequest;
+    MixpanelNetwork.sendRequest.mockImplementation(
+      () => new Promise((resolve) => (finishRequest = resolve))
+    );
+
+    // Two instances for the same token (e.g. a component that creates its own
+    // Mixpanel) flush the shared queue at the same time.
+    await MixpanelCore().flush("in-flight-token");
+    await MixpanelCore().flush("in-flight-token");
+    finishRequest();
+    await new Promise(setImmediate);
+
+    const trackCalls = MixpanelNetwork.sendRequest.mock.calls.filter(
+      ([args]) => args.endpoint === MixpanelType.EVENTS
+    );
+    expect(trackCalls).toHaveLength(1);
+    expect(queue).toHaveLength(0);
+  });
 });

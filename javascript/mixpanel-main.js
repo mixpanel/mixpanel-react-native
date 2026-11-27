@@ -32,9 +32,13 @@ export default class MixpanelMain {
     this.featureFlagsEnabled = featureFlagsOptions.enabled || false;
     this.featureFlagsContext = featureFlagsOptions.context || {};
 
-    this._loadingPersistentData =
-      this.mixpanelPersistent.initializationCompletePromise(token);
-    await this._loadingPersistentData;
+    const loading = this.mixpanelPersistent.initializationCompletePromise(token);
+    // Lets identify() wait only while this load is pending, even if it fails.
+    const settled = () => {
+      this._loadingPersistentData = null;
+    };
+    this._loadingPersistentData = Promise.resolve(loading).then(settled, settled);
+    await loading;
     if (optOutTrackingDefault) {
       await this.optOutTracking(token);
       return;
@@ -209,8 +213,11 @@ export default class MixpanelMain {
   async identify(token, newDistinctId) {
     MixpanelLogger.log(token, `Identify '${newDistinctId}'`);
     // init() is often not awaited, so wait for the stored identity to load
-    // before changing it.
-    await this._loadingPersistentData;
+    // before changing it. Don't yield otherwise: a following un-awaited
+    // track() must see the new identity.
+    if (this._loadingPersistentData) {
+      await this._loadingPersistentData;
+    }
     const oldDistinctId = this.mixpanelPersistent.getDistinctId(token);
     if (oldDistinctId === newDistinctId) {
       MixpanelLogger.log(

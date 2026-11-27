@@ -38,6 +38,7 @@ jest.mock("mixpanel-react-native/javascript/mixpanel-config", () => ({
 jest.mock("mixpanel-react-native/javascript/mixpanel-logger", () => ({
   MixpanelLogger: {
     log: jest.fn(),
+    warn: jest.fn(),
     error: jest.fn(),
   },
 }));
@@ -156,5 +157,60 @@ describe("MixpanelQueueManager", () => {
     );
     expect(trackCalls).toHaveLength(1);
     expect(queue).toHaveLength(0);
+  });
+
+  describe("with an events-only queue", () => {
+    let queue;
+    // Scope the queue to one token so flush loops left running by other tests
+    // (e.g. "flushes the queue") can't send or remove these events.
+    let queueToken;
+    const eventSends = () =>
+      MixpanelNetwork.sendRequest.mock.calls.filter(
+        ([args]) => args.token === queueToken && args.endpoint === MixpanelType.EVENTS
+      ).length;
+
+    beforeEach(() => {
+      queue = [data];
+      MixpanelQueueManager.getQueue.mockImplementation((t, ty) =>
+        t === queueToken && ty === MixpanelType.EVENTS ? [...queue] : []
+      );
+      MixpanelQueueManager.spliceQueue.mockImplementation(async (t, ty, start, count) => {
+        queue.splice(start, count);
+      });
+      MixpanelNetwork.sendRequest.mockResolvedValue(undefined);
+    });
+
+    it("starts a new flush when the in-flight request never settles", async () => {
+      queueToken = "stuck-token";
+      MixpanelNetwork.sendRequest.mockImplementationOnce(() => new Promise(() => {}));
+      const now = jest.spyOn(Date, "now").mockReturnValue(1000);
+
+      await MixpanelCore().flush("stuck-token");
+      now.mockReturnValue(1000 + 60 * 1000); // still within the retry window
+      await MixpanelCore().flush("stuck-token");
+      expect(eventSends()).toBe(1);
+
+      now.mockReturnValue(1000 + 3 * 60 * 1000);
+      await MixpanelCore().flush("stuck-token");
+      await new Promise(setImmediate);
+      expect(eventSends()).toBe(2);
+      expect(queue).toHaveLength(0);
+      now.mockRestore();
+    });
+
+    it("releases the flush when processing throws unexpectedly", async () => {
+      queueToken = "throwing-token";
+      MixpanelQueueManager.getQueue.mockImplementationOnce(() => {
+        throw new Error("storage failure");
+      });
+
+      await MixpanelCore().flush("throwing-token");
+      await new Promise(setImmediate);
+      await MixpanelCore().flush("throwing-token");
+      await new Promise(setImmediate);
+
+      expect(eventSends()).toBe(1);
+      expect(queue).toHaveLength(0);
+    });
   });
 });

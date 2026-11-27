@@ -6,7 +6,12 @@ import { MixpanelConfig } from "./mixpanel-config";
 import { MixpanelPersistent } from "./mixpanel-persistent";
 import { MixpanelLogger } from "./mixpanel-logger";
 
-const flushesInFlight = new Set();
+// One flush per token and endpoint at a time; the queue is shared by every
+// instance for a token. A flush whose current batch has been pending longer
+// than sendRequest's full retry window (~62s of backoff) is treated as stuck,
+// so a request that never settles can't block flushing for the session.
+const FLUSH_LOCK_STALE_MS = 2 * 60 * 1000;
+const flushLocks = new Map();
 
 export const MixpanelCore = (storage) => {
   const mixpanelPersistent = MixpanelPersistent.getInstance(storage);
@@ -103,22 +108,36 @@ export const MixpanelCore = (storage) => {
   };
 
   const processQueue = async (token, type) => {
-    // The queue is shared by every instance for this token, so only one flush
-    // may send it at a time; otherwise the same batch is sent more than once.
-    const flushKey = `${token}${type}`;
-    if (flushesInFlight.has(flushKey)) {
+    const flushKey = `${token}|${type}`;
+    const current = flushLocks.get(flushKey);
+    if (current && Date.now() - current.batchStartedAt < FLUSH_LOCK_STALE_MS) {
       MixpanelLogger.log(token, `Flush already in progress for endpoint: ${type}`);
       return;
     }
-    flushesInFlight.add(flushKey);
-    const done = () => flushesInFlight.delete(flushKey);
+    if (current) {
+      MixpanelLogger.warn(
+        token,
+        `Previous flush for endpoint ${type} appears stuck, starting a new one.`
+      );
+    }
+    const lock = { batchStartedAt: Date.now() };
+    flushLocks.set(flushKey, lock);
 
     MixpanelLogger.log(token, `Processing queue for endpoint: ${type}`);
-    const processBatch = async () => {
-      const queue = MixpanelQueueManager.getQueue(token, type);
-      if (queue.length === 0) {
-        done();
-      } else {
+    drainQueue(token, type, flushKey, lock);
+  };
+
+  const drainQueue = async (token, type, flushKey, lock) => {
+    // A newer flush may take over a stuck lock; this loop then stops without
+    // touching the queue, so it can't remove events the new flush hasn't sent.
+    const ownsLock = () => flushLocks.get(flushKey) === lock;
+    try {
+      while (ownsLock()) {
+        const queue = MixpanelQueueManager.getQueue(token, type);
+        if (queue.length === 0) {
+          return;
+        }
+        lock.batchStartedAt = Date.now();
         MixpanelLogger.log(token, `[Flushing queue] endpoint: ${type}`);
         MixpanelLogger.log(
           token,
@@ -126,6 +145,7 @@ export const MixpanelCore = (storage) => {
         );
         const batchSize = config.getFlushBatchSize(token);
         const batch = queue.slice(0, batchSize);
+        let removeCount = batch.length;
         try {
           await MixpanelNetwork.sendRequest({
             token,
@@ -135,41 +155,34 @@ export const MixpanelCore = (storage) => {
             useIPAddressForGeoLocation:
               config.getUseIpAddressForGeolocation(token),
           });
-          await MixpanelQueueManager.spliceQueue(token, type, 0, batch.length);
-          // Process the next batch if there are more events in the queue
-          const queue = MixpanelQueueManager.getQueue(token, type);
-          if (queue.length > 0) {
-            setTimeout(processBatch, 0);
-          } else {
-            done();
-          }
         } catch (error) {
           if (error.code !== 400) {
-            done();
+            MixpanelLogger.error(
+              token,
+              `Error sending event batch from queue, error: ${error}`
+            );
+            return;
           }
-          handleBatchError(token, error, type, processBatch);
+          MixpanelLogger.error(
+            token,
+            `Bad request received due to corrupted data within the batch. The corrupted data is now being removed from the queue...`
+          );
+          // Remove the corrupted data from the queue, to avoid the data loss, only remove one event at a time
+          removeCount = 1;
         }
+        if (!ownsLock()) {
+          return;
+        }
+        await MixpanelQueueManager.spliceQueue(token, type, 0, removeCount);
+        // Yield before the next batch
+        await new Promise((resolve) => setTimeout(resolve, 0));
       }
-    };
-
-    processBatch();
-  };
-
-  const handleBatchError = (token, error, type, callback) => {
-    if (error.code === 400) {
-      MixpanelLogger.error(
-        token,
-        `Bad request received due to corrupted data within the batch. The corrupted data is now being removed from the queue...`
-      );
-      // Remove the corrupted data from the queue, to avoid the data loss, only remove one event at a time
-      MixpanelQueueManager.spliceQueue(token, type, 0, 1).then(() => {
-        setTimeout(callback, 0);
-      });
-    } else {
-      MixpanelLogger.error(
-        token,
-        `Error sending event batch from queue, error: ${error}`
-      );
+    } catch (error) {
+      MixpanelLogger.error(token, `Error flushing queue, error: ${error}`);
+    } finally {
+      if (ownsLock()) {
+        flushLocks.delete(flushKey);
+      }
     }
   };
 
